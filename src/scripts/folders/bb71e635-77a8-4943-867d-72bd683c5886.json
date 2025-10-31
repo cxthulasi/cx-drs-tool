@@ -1,0 +1,16 @@
+{
+  "uid": "bb71e635-77a8-4943-867d-72bd683c5886",
+  "title": "K8sOtel",
+  "url": "/grafana/dashboards/f/bb71e635-77a8-4943-867d-72bd683c5886/k8sotel",
+  "hasAcl": false,
+  "canSave": true,
+  "canEdit": true,
+  "canAdmin": true,
+  "canDelete": true,
+  "createdBy": "4017056 | bot@coralogix.com",
+  "created": "2025-10-20T07:19:19Z",
+  "updatedBy": "4017056 | bot@coralogix.com",
+  "updated": "2025-10-20T07:19:19Z",
+  "version": 1,
+  "overwrite": true
+}
