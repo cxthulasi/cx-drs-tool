@@ -1,5 +1,5 @@
 {
-  "timestamp": "2025-11-03T10:57:54.091272",
+  "timestamp": "2025-11-03T09:27:07.889823",
   "service": "recording-rules",
   "team": "teama",
   "resources": [
@@ -14,10 +14,10 @@
             {
               "record": "namespace_pod_name_container_name:container_cpu_usage_seconds_total:sum_rate",
               "expr": "sum by (namespace, pod, container, source_cluster, datacenter) (\n          rate(container_cpu_usage_seconds_total{job=\"kubelet\", image!=\"\", container!=\"\"}[5m])\n          )\n",
-              "lastEvalDurationMs": "893"
+              "lastEvalDurationMs": "703"
             }
           ],
-          "lastEvalAt": "1762147598",
+          "lastEvalAt": "1762142138",
           "version": 17,
           "id": "01JMEEZRN4JSKTRH26B5GE9FBM"
         },
@@ -32,7 +32,7 @@
               "labels": {
                 "quantile": "0.99"
               },
-              "lastEvalDurationMs": "3209"
+              "lastEvalDurationMs": "3302"
             },
             {
               "record": "cluster_quantile:apiserver_request_duration_seconds:histogram_quantile",
@@ -40,7 +40,7 @@
               "labels": {
                 "quantile": "0.9"
               },
-              "lastEvalDurationMs": "3032"
+              "lastEvalDurationMs": "4299"
             },
             {
               "record": "cluster_quantile:apiserver_request_duration_seconds:histogram_quantile",
@@ -48,10 +48,10 @@
               "labels": {
                 "quantile": "0.5"
               },
-              "lastEvalDurationMs": "2903"
+              "lastEvalDurationMs": "2661"
             }
           ],
-          "lastEvalAt": "1762147598",
+          "lastEvalAt": "1762142138",
           "version": 17,
           "id": "01JMEEZRN65FXPRG4WEHDKX3EG"
         },
@@ -63,40 +63,40 @@
             {
               "record": "instance:node_cpu:rate:sum",
               "expr": "sum(rate(node_cpu_seconds_total{mode!=\"idle\",mode!=\"iowait\"}[3m])) BY (instance)",
-              "lastEvalDurationMs": "1488"
+              "lastEvalDurationMs": "1660"
             },
             {
               "record": "instance:node_filesystem_usage:sum",
               "expr": "sum((node_filesystem_size_bytes{mountpoint=\"/\"} - node_filesystem_free_bytes{mountpoint=\"/\"})) BY (instance)",
-              "lastEvalDurationMs": "544"
+              "lastEvalDurationMs": "247"
             },
             {
               "record": "instance:node_network_receive_bytes:rate:sum",
               "expr": "sum(rate(node_network_receive_bytes_total[3m])) BY (instance)",
-              "lastEvalDurationMs": "209"
+              "lastEvalDurationMs": "174"
             },
             {
               "record": "instance:node_network_transmit_bytes:rate:sum",
               "expr": "sum(rate(node_network_transmit_bytes_total[3m])) BY (instance)",
-              "lastEvalDurationMs": "175"
+              "lastEvalDurationMs": "77"
             },
             {
               "record": "instance:node_cpu:ratio",
               "expr": "sum(rate(node_cpu_seconds_total{mode!=\"idle\",mode!=\"iowait\"}[5m])) WITHOUT (cpu, mode) / ON(instance) GROUP_LEFT() count(sum(node_cpu_seconds_total) BY (instance, cpu)) BY (instance)",
-              "lastEvalDurationMs": "3368"
+              "lastEvalDurationMs": "3812"
             },
             {
               "record": "cluster:node_cpu:sum_rate5m",
               "expr": "sum(rate(node_cpu_seconds_total{mode!=\"idle\",mode!=\"iowait\"}[5m]))",
-              "lastEvalDurationMs": "1551"
+              "lastEvalDurationMs": "1384"
             },
             {
               "record": "cluster:node_cpu:ratio",
               "expr": "cluster:node_cpu_seconds_total:rate5m / count(sum(node_cpu_seconds_total) BY (instance, cpu))",
-              "lastEvalDurationMs": "1988"
+              "lastEvalDurationMs": "2276"
             }
           ],
-          "lastEvalAt": "1762147598",
+          "lastEvalAt": "1762142138",
           "version": 17,
           "id": "01JMEEZRN7VTXP4V96W14RNQZ1"
         },
@@ -108,60 +108,60 @@
             {
               "record": "instance:node_num_cpu:sum",
               "expr": "count without (cpu) (count without (mode) (node_cpu_seconds_total{job=\"node-exporter\"}))",
-              "lastEvalDurationMs": "2285"
+              "lastEvalDurationMs": "2862"
             },
             {
               "record": "instance:node_cpu_utilisation:rate1m",
               "expr": "1 - avg without (cpu, mode) (rate(node_cpu_seconds_total{job=\"node-exporter\", mode=\"idle\"}[1m]))",
-              "lastEvalDurationMs": "215"
+              "lastEvalDurationMs": "273"
             },
             {
               "record": "instance:node_load1_per_cpu:ratio",
               "expr": "(node_load1{job=\"node-exporter\"} / instance:node_num_cpu:sum{job=\"node-exporter\"})",
-              "lastEvalDurationMs": "73"
+              "lastEvalDurationMs": "152"
             },
             {
               "record": "instance:node_memory_utilisation:ratio",
               "expr": "1 - (node_memory_MemAvailable_bytes{job=\"node-exporter\"} / node_memory_MemTotal_bytes{job=\"node-exporter\"})",
-              "lastEvalDurationMs": "306"
+              "lastEvalDurationMs": "41"
             },
             {
               "record": "instance:node_memory_swap_io_pages:rate1m",
               "expr": "(rate(node_vmstat_pgpgin{job=\"node-exporter\"}[1m]) + rate(node_vmstat_pgpgout{job=\"node-exporter\"}[1m]))",
-              "lastEvalDurationMs": "40"
+              "lastEvalDurationMs": "42"
             },
             {
               "record": "instance_device:node_disk_io_time_seconds:rate1m",
               "expr": "rate(node_disk_io_time_seconds_total{job=\"node-exporter\", device=~\"nvme.+|rbd.+|sd.+|vd.+|xvd.+|dm-.+\"}[1m])",
-              "lastEvalDurationMs": "43"
+              "lastEvalDurationMs": "60"
             },
             {
               "record": "instance_device:node_disk_io_time_weighted_seconds:rate1m",
               "expr": "rate(node_disk_io_time_weighted_seconds_total{job=\"node-exporter\", device=~\"nvme.+|rbd.+|sd.+|vd.+|xvd.+|dm-.+\"}[1m])",
-              "lastEvalDurationMs": "81"
+              "lastEvalDurationMs": "35"
             },
             {
               "record": "instance:node_network_receive_bytes_excluding_lo:rate1m",
               "expr": "sum without (device) (rate(node_network_receive_bytes_total{job=\"node-exporter\", device!=\"lo\"}[1m]))",
-              "lastEvalDurationMs": "97"
+              "lastEvalDurationMs": "190"
             },
             {
               "record": "instance:node_network_transmit_bytes_excluding_lo:rate1m",
               "expr": "sum without (device) (rate(node_network_transmit_bytes_total{job=\"node-exporter\", device!=\"lo\"}[1m]))",
-              "lastEvalDurationMs": "151"
+              "lastEvalDurationMs": "97"
             },
             {
               "record": "instance:node_network_receive_drop_excluding_lo:rate1m",
               "expr": "sum without (device) (rate(node_network_receive_drop_total{job=\"node-exporter\", device!=\"lo\"}[1m]))",
-              "lastEvalDurationMs": "90"
+              "lastEvalDurationMs": "89"
             },
             {
               "record": "instance:node_network_transmit_drop_excluding_lo:rate1m",
               "expr": "sum without (device) (rate(node_network_transmit_drop_total{job=\"node-exporter\", device!=\"lo\"}[1m]))",
-              "lastEvalDurationMs": "73"
+              "lastEvalDurationMs": "79"
             }
           ],
-          "lastEvalAt": "1762147598",
+          "lastEvalAt": "1762142138",
           "version": 17,
           "id": "01JMEEZRN5G1AXBK0RQD671SDB"
         },
@@ -218,10 +218,10 @@
             {
               "record": "namespace:container_cpu_usage_seconds_total:sum_rate",
               "expr": "sum(rate(container_cpu_usage_seconds_total{job=\"kubelet\", image!=\"\", container!=\"POD\"}[5m])) by (namespace, source_cluster, datacenter)",
-              "lastEvalDurationMs": "259"
+              "lastEvalDurationMs": "269"
             }
           ],
-          "lastEvalAt": "1762147581",
+          "lastEvalAt": "1762142181",
           "version": 6,
           "id": "01JWFTK9EHW5VAWSFZJZHZ2ST8"
         },
@@ -233,10 +233,10 @@
             {
               "record": "namespace_pod_container:container_cpu_usage_seconds_total:sum_rate",
               "expr": "sum by (namespace, pod, container, source_cluster, datacenter) (\n          rate(container_cpu_usage_seconds_total{job=\"kubelet\", image!=\"\", container!=\"POD\"}[5m])\n        )\n",
-              "lastEvalDurationMs": "664"
+              "lastEvalDurationMs": "596"
             }
           ],
-          "lastEvalAt": "1762147635",
+          "lastEvalAt": "1762142175",
           "version": 5,
           "id": "01JWFTMY6X6S2J4RAE2QVNXZ9F"
         },
@@ -248,10 +248,10 @@
             {
               "record": "namespace:container_memory_usage_bytes:sum",
               "expr": "sum(container_memory_usage_bytes{job=\"kubelet\", image!=\"\", container!=\"POD\"}) by (namespace, source_cluster, datacenter)",
-              "lastEvalDurationMs": "439"
+              "lastEvalDurationMs": "224"
             }
           ],
-          "lastEvalAt": "1762147615",
+          "lastEvalAt": "1762142155",
           "version": 4,
           "id": "01JWFTP5R63TQ6AWRHZGKV7VGV"
         },
@@ -266,10 +266,10 @@
               "labels": {
                 "workload_type": "deployment"
               },
-              "lastEvalDurationMs": "163"
+              "lastEvalDurationMs": "387"
             }
           ],
-          "lastEvalAt": "1762147611",
+          "lastEvalAt": "1762142151",
           "version": 3,
           "id": "01JWFTQW8NENXA3VAGDYC6ZYMT"
         }
@@ -292,10 +292,10 @@
                 "slo_id": "7681fe9d-03f4-4d8b-957b-23135f2a597f",
                 "slo_time_window": "7d"
               },
-              "lastEvalDurationMs": "799"
+              "lastEvalDurationMs": "878"
             }
           ],
-          "lastEvalAt": "1762146665",
+          "lastEvalAt": "1762139465",
           "id": "01K7KS21V5ACEJGNKGBVZJ11D0"
         },
         {
@@ -311,7 +311,7 @@
                 "slo_id": "7681fe9d-03f4-4d8b-957b-23135f2a597f",
                 "slo_time_window": "7d"
               },
-              "lastEvalDurationMs": "4"
+              "lastEvalDurationMs": "55"
             },
             {
               "record": "cx:slo:request:total_events",
@@ -321,7 +321,7 @@
                 "slo_id": "7681fe9d-03f4-4d8b-957b-23135f2a597f",
                 "slo_time_window": "7d"
               },
-              "lastEvalDurationMs": "4"
+              "lastEvalDurationMs": "52"
             },
             {
               "record": "cx:slo:target",
@@ -331,10 +331,10 @@
                 "slo_id": "7681fe9d-03f4-4d8b-957b-23135f2a597f",
                 "slo_time_window": "7d"
               },
-              "lastEvalDurationMs": "1"
+              "lastEvalDurationMs": "0"
             }
           ],
-          "lastEvalAt": "1762147625",
+          "lastEvalAt": "1762142165",
           "id": "01K7KS21V4XEHAYXE8AY2QBYP6"
         }
       ],

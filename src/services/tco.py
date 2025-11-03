@@ -40,7 +40,7 @@ class TCOService(BaseService):
 
     @property
     def api_endpoint(self) -> str:
-        return "/v1/policies"
+        return "/latest/v1/policies"
 
     def get_resource_identifier(self, resource: Dict[str, Any]) -> str:
         """Get unique identifier for a policy."""
@@ -436,6 +436,14 @@ class TCOService(BaseService):
         if priority not in valid_priorities:
             priority = 'PRIORITY_TYPE_MEDIUM'
         cleaned_policy['priority'] = priority
+
+        # Transform enabled field to disabled field with opposite value
+        # If enabled: true in Team A → disabled: false in Team B
+        # If enabled: false in Team A → disabled: true in Team B
+        if 'enabled' in policy:
+            enabled_value = policy['enabled']
+            cleaned_policy['disabled'] = not enabled_value
+            self.logger.debug(f"Transformed enabled={enabled_value} to disabled={not enabled_value} for policy '{policy_name}'")
 
         # Application Rule - ONLY include if present in original policy
         if 'applicationRule' in policy and isinstance(policy['applicationRule'], dict):
