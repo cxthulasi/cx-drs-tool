@@ -27,10 +27,10 @@ else
 fi
 
 # Check if required variables are set
-if [ -z "$TEAMB_HOST" ] || [ -z "$TEAMB_KEY" ]; then
-    echo "❌ ERROR: TEAMB_HOST and TEAMB_KEY must be set in .env file"
+if [ -z "$TEAMB_HOST" ] || [ -z "$CX_API_KEY_TEAMB" ]; then
+    echo "❌ ERROR: TEAMB_HOST and CX_API_KEY_TEAMB must be set in .env file"
     echo "   TEAMB_HOST: $TEAMB_HOST"
-    echo "   TEAMB_KEY: $TEAMB_KEY"
+    echo "   CX_API_KEY_TEAMB: $CX_API_KEY_TEAMB"
     exit 1
 fi
 
@@ -54,10 +54,10 @@ get_existing_teamb_resources() {
     echo "🔍 Fetching existing resources from Team B..."
 
     # Get existing dashboards
-    EXISTING_DASHBOARDS=$(curl -s -k -H "Authorization: Bearer $TEAMB_KEY" "$TEAMB_HOST/api/search?query=&" | jq -r '.[] | select(.type == "dash-db") | .uid' 2>/dev/null)
+    EXISTING_DASHBOARDS=$(curl -s -k -H "Authorization: Bearer $CX_API_KEY_TEAMB" "$TEAMB_HOST/api/search?query=&" | jq -r '.[] | select(.type == "dash-db") | .uid' 2>/dev/null)
 
     # Get existing folders
-    EXISTING_FOLDERS=$(curl -s -k -H "Authorization: Bearer $TEAMB_KEY" "$TEAMB_HOST/api/folders" | jq -r '.[] | .uid' 2>/dev/null)
+    EXISTING_FOLDERS=$(curl -s -k -H "Authorization: Bearer $CX_API_KEY_TEAMB" "$TEAMB_HOST/api/folders" | jq -r '.[] | .uid' 2>/dev/null)
 
     echo "   Found $(echo "$EXISTING_DASHBOARDS" | wc -w) existing dashboards"
     echo "   Found $(echo "$EXISTING_FOLDERS" | wc -w) existing folders"
@@ -69,7 +69,7 @@ delete_folder() {
 
     echo "🗑️  Deleting folder: $folder_uid"
 
-    response=$(curl -s -k -H "Authorization: Bearer $TEAMB_KEY" \
+    response=$(curl -s -k -H "Authorization: Bearer $CX_API_KEY_TEAMB" \
         -X DELETE "$TEAMB_HOST/api/folders/$folder_uid")
 
     if [ $? -eq 0 ]; then
@@ -89,7 +89,7 @@ delete_dashboard() {
 
     echo "🗑️  Deleting dashboard: $dashboard_uid"
 
-    response=$(curl -s -k -H "Authorization: Bearer $TEAMB_KEY" \
+    response=$(curl -s -k -H "Authorization: Bearer $CX_API_KEY_TEAMB" \
         -X DELETE "$TEAMB_HOST/api/dashboards/uid/$dashboard_uid")
 
     if [ $? -eq 0 ]; then
@@ -128,7 +128,7 @@ create_folder() {
     fi
 
     # Create folder using Grafana API
-    response=$(curl -s -k -H "Authorization: Bearer $TEAMB_KEY" \
+    response=$(curl -s -k -H "Authorization: Bearer $CX_API_KEY_TEAMB" \
         -H "Content-Type: application/json" \
         -X POST "$TEAMB_HOST/api/folders" \
         -d @"$folder_file")
@@ -161,7 +161,7 @@ create_dashboard() {
     fi
 
     # Create dashboard using Grafana API
-    response=$(curl -s -k -H "Authorization: Bearer $TEAMB_KEY" \
+    response=$(curl -s -k -H "Authorization: Bearer $CX_API_KEY_TEAMB" \
         -H "Content-Type: application/json" \
         -X POST "$TEAMB_HOST/api/dashboards/db" \
         -d @"$dashboard_file")

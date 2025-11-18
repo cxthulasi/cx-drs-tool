@@ -1,0 +1,1222 @@
+{
+  "dashboard": {
+    "annotations": {
+      "list": [
+        {
+          "builtIn": 1,
+          "datasource": "-- Grafana --",
+          "enable": true,
+          "hide": true,
+          "iconColor": "rgba(0, 211, 255, 1)",
+          "limit": 100,
+          "name": "Annotations & Alerts",
+          "showIn": 0,
+          "type": "dashboard"
+        }
+      ]
+    },
+    "editable": true,
+    "gnetId": null,
+    "graphTooltip": 0,
+    "iteration": 1756965998350,
+    "links": [],
+    "panels": [
+      {
+        "collapsed": false,
+        "datasource": null,
+        "gridPos": {
+          "h": 1,
+          "w": 24,
+          "x": 0,
+          "y": 0
+        },
+        "id": 15,
+        "panels": [],
+        "title": "Health Dashboard",
+        "type": "row"
+      },
+      {
+        "datasource": "-FPV4La7z",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 1
+        },
+        "id": 7,
+        "options": {
+          "colorMode": "value",
+          "graphMode": "area",
+          "justifyMode": "auto",
+          "orientation": "auto",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "text": {},
+          "textMode": "auto"
+        },
+        "pluginVersion": "7.5.17",
+        "targets": [
+          {
+            "exemplar": true,
+            "expr": "count(kube_pod_info{namespace=\"productivity-engg\",  source_cluster=\"$source_cluster\",pod=~\"gradle-enterprise-app-.*\"}) by (namespace)",
+            "interval": "",
+            "legendFormat": "",
+            "queryType": "randomWalk",
+            "refId": "A"
+          }
+        ],
+        "title": "Running Pods",
+        "type": "stat"
+      },
+      {
+        "datasource": "-FPV4La7z",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 12,
+          "y": 1
+        },
+        "id": 8,
+        "options": {
+          "colorMode": "value",
+          "graphMode": "area",
+          "justifyMode": "auto",
+          "orientation": "auto",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "text": {},
+          "textMode": "auto"
+        },
+        "pluginVersion": "7.5.17",
+        "targets": [
+          {
+            "exemplar": true,
+            "expr": "sum by (namespace)(changes(kube_pod_status_ready{condition=\"true\",namespace=\"productivity-engg\", source_cluster=\"$source_cluster\"}[1m]))",
+            "hide": false,
+            "interval": "",
+            "legendFormat": "",
+            "queryType": "randomWalk",
+            "refId": "A"
+          }
+        ],
+        "title": "Restarted Pods",
+        "type": "stat"
+      },
+      {
+        "datasource": "-FPV4La7z",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 9
+        },
+        "id": 12,
+        "options": {
+          "colorMode": "value",
+          "graphMode": "area",
+          "justifyMode": "auto",
+          "orientation": "auto",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "text": {},
+          "textMode": "auto"
+        },
+        "pluginVersion": "7.5.17",
+        "targets": [
+          {
+            "exemplar": true,
+            "expr": "sum by (namespace) (kube_pod_status_ready{condition=\"false\",namespace=\"productivity-engg\",source_cluster=\"$source_cluster\",pod=~\"gradle-enterprise-app-.*\"})",
+            "hide": false,
+            "interval": "",
+            "legendFormat": "",
+            "queryType": "randomWalk",
+            "refId": "A"
+          }
+        ],
+        "title": "Pod Not Ready",
+        "type": "stat"
+      },
+      {
+        "aliasColors": {},
+        "bars": false,
+        "dashLength": 10,
+        "dashes": false,
+        "datasource": "-FPV4La7z",
+        "fieldConfig": {
+          "defaults": {},
+          "overrides": []
+        },
+        "fill": 1,
+        "fillGradient": 0,
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 12,
+          "y": 9
+        },
+        "hiddenSeries": false,
+        "id": 10,
+        "legend": {
+          "avg": false,
+          "current": false,
+          "max": false,
+          "min": false,
+          "show": true,
+          "total": false,
+          "values": false
+        },
+        "lines": true,
+        "linewidth": 1,
+        "nullPointMode": "null",
+        "options": {
+          "alertThreshold": true
+        },
+        "percentage": false,
+        "pluginVersion": "7.5.17",
+        "pointradius": 2,
+        "points": false,
+        "renderer": "flot",
+        "seriesOverrides": [],
+        "spaceLength": 10,
+        "stack": false,
+        "steppedLine": false,
+        "targets": [
+          {
+            "exemplar": true,
+            "expr": "sum((rate(container_cpu_usage_seconds_total{container!=\"POD\",container!=\"\",namespace=\"productivity-engg\",source_cluster=\"$source_cluster\",pod=~\"gradle-enterprise-app-.*\"}[30m]) - on (namespace,pod,container) group_left avg by (namespace, pod, container)(kube_pod_container_resource_requests{resource=\"cpu\",namespace=\"productivity-engg\",source_cluster=\"$source_cluster\",pod=~\"gradle-enterprise-app-.*\"})) * -1 >0)",
+            "interval": "",
+            "legendFormat": "Memory-Idle",
+            "queryType": "randomWalk",
+            "refId": "A"
+          }
+        ],
+        "thresholds": [],
+        "timeFrom": null,
+        "timeRegions": [],
+        "timeShift": null,
+        "title": "CPU Idle",
+        "tooltip": {
+          "shared": true,
+          "sort": 0,
+          "value_type": "individual"
+        },
+        "type": "graph",
+        "xaxis": {
+          "buckets": null,
+          "mode": "time",
+          "name": null,
+          "show": true,
+          "values": []
+        },
+        "yaxes": [
+          {
+            "format": "short",
+            "label": null,
+            "logBase": 1,
+            "max": null,
+            "min": null,
+            "show": true
+          },
+          {
+            "format": "short",
+            "label": null,
+            "logBase": 1,
+            "max": null,
+            "min": null,
+            "show": true
+          }
+        ],
+        "yaxis": {
+          "align": false,
+          "alignLevel": null
+        }
+      },
+      {
+        "alert": {
+          "alertRuleTags": {},
+          "conditions": [
+            {
+              "evaluator": {
+                "params": [
+                  3
+                ],
+                "type": "gt"
+              },
+              "operator": {
+                "type": "and"
+              },
+              "query": {
+                "params": [
+                  "B",
+                  "5m",
+                  "now"
+                ]
+              },
+              "reducer": {
+                "params": [],
+                "type": "avg"
+              },
+              "type": "query"
+            }
+          ],
+          "executionErrorState": "alerting",
+          "for": "1m",
+          "frequency": "20s",
+          "handler": 1,
+          "message": "@oncall-ci-cd-engg \nCPU usage is too high. However there is no CPU bound, its good to check what might be causing it. If its temp spike, fine, if it is observed frequently, should be checked",
+          "name": "CPU Usage alert",
+          "noDataState": "no_data",
+          "notifications": [
+            {
+              "uid": "Vc7jZmf4k"
+            }
+          ]
+        },
+        "aliasColors": {},
+        "bars": false,
+        "dashLength": 10,
+        "dashes": false,
+        "datasource": "-FPV4La7z",
+        "fieldConfig": {
+          "defaults": {},
+          "overrides": []
+        },
+        "fill": 10,
+        "fillGradient": 0,
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 17
+        },
+        "hiddenSeries": false,
+        "id": 1,
+        "legend": {
+          "avg": true,
+          "current": true,
+          "max": true,
+          "min": true,
+          "show": true,
+          "total": false,
+          "values": true
+        },
+        "lines": true,
+        "linewidth": 0,
+        "links": [],
+        "nullPointMode": "null as zero",
+        "options": {
+          "alertThreshold": true
+        },
+        "percentage": false,
+        "pluginVersion": "7.5.17",
+        "pointradius": 5,
+        "points": false,
+        "renderer": "flot",
+        "seriesOverrides": [],
+        "spaceLength": 10,
+        "stack": true,
+        "steppedLine": false,
+        "targets": [
+          {
+            "exemplar": true,
+            "expr": "sum(\n  label_replace(\n    namespace_pod_container:container_cpu_usage_seconds_total:sum_rate{source_cluster=\"$source_cluster\", namespace=\"productivity-engg\"},\n    \"pod\", \"$1\", \"pod\", \"(.*)\"\n  ) * on(namespace,pod) group_left(workload, workload_type) mixin_pod_workload{source_cluster=\"$source_cluster\", namespace=\"productivity-engg\", workload_type=\"statefulset\"}\n) by (pod)\n",
+            "format": "time_series",
+            "hide": true,
+            "interval": "",
+            "intervalFactor": 2,
+            "legendFormat": "{{pod}}",
+            "legendLink": null,
+            "refId": "A",
+            "step": 10
+          },
+          {
+            "exemplar": true,
+            "expr": "sum(namespace_pod_container:container_cpu_usage_seconds_total:sum_rate{source_cluster=\"$source_cluster\", namespace=\"productivity-engg\", pod=~\"gradle-enterprise-app-.*\"}) by (pod)",
+            "hide": false,
+            "interval": "",
+            "legendFormat": "{{ pod }}",
+            "refId": "B"
+          }
+        ],
+        "thresholds": [
+          {
+            "colorMode": "critical",
+            "fill": true,
+            "line": true,
+            "op": "gt",
+            "value": 3,
+            "visible": true
+          }
+        ],
+        "timeFrom": null,
+        "timeRegions": [],
+        "timeShift": null,
+        "title": "CPU Usage (Request - 4, Max-N/A)",
+        "tooltip": {
+          "shared": false,
+          "sort": 0,
+          "value_type": "individual"
+        },
+        "type": "graph",
+        "xaxis": {
+          "buckets": null,
+          "mode": "time",
+          "name": null,
+          "show": true,
+          "values": []
+        },
+        "yaxes": [
+          {
+            "format": "short",
+            "label": null,
+            "logBase": 1,
+            "max": null,
+            "min": 0,
+            "show": true
+          },
+          {
+            "format": "short",
+            "label": null,
+            "logBase": 1,
+            "max": null,
+            "min": null,
+            "show": false
+          }
+        ],
+        "yaxis": {
+          "align": false,
+          "alignLevel": null
+        }
+      },
+      {
+        "aliasColors": {},
+        "bars": false,
+        "dashLength": 10,
+        "dashes": false,
+        "datasource": "-FPV4La7z",
+        "fieldConfig": {
+          "defaults": {},
+          "overrides": []
+        },
+        "fill": 1,
+        "fillGradient": 0,
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 12,
+          "y": 17
+        },
+        "hiddenSeries": false,
+        "id": 11,
+        "legend": {
+          "avg": false,
+          "current": false,
+          "max": false,
+          "min": false,
+          "show": true,
+          "total": false,
+          "values": false
+        },
+        "lines": true,
+        "linewidth": 1,
+        "nullPointMode": "null",
+        "options": {
+          "alertThreshold": true
+        },
+        "percentage": false,
+        "pluginVersion": "7.5.17",
+        "pointradius": 2,
+        "points": false,
+        "renderer": "flot",
+        "seriesOverrides": [],
+        "spaceLength": 10,
+        "stack": false,
+        "steppedLine": false,
+        "targets": [
+          {
+            "exemplar": true,
+            "expr": "sum((container_memory_usage_bytes{container!=\"POD\",container!=\"\",namespace=\"productivity-engg\",source_cluster=\"$source_cluster\",pod=~\"gradle-enterprise-app-.*\"} - on (namespace,pod,container) avg by (namespace, pod, container)(kube_pod_container_resource_requests{resource=\"memory\",namespace=\"productivity-engg\",source_cluster=\"$source_cluster\",pod=~\"gradle-enterprise-app-.*\"})) * -1 >0 ) / (1024*1024*1024)",
+            "interval": "",
+            "legendFormat": "Memory-Idle",
+            "queryType": "randomWalk",
+            "refId": "A"
+          }
+        ],
+        "thresholds": [],
+        "timeFrom": null,
+        "timeRegions": [],
+        "timeShift": null,
+        "title": "Memory Idle",
+        "tooltip": {
+          "shared": true,
+          "sort": 0,
+          "value_type": "individual"
+        },
+        "type": "graph",
+        "xaxis": {
+          "buckets": null,
+          "mode": "time",
+          "name": null,
+          "show": true,
+          "values": []
+        },
+        "yaxes": [
+          {
+            "format": "short",
+            "label": null,
+            "logBase": 1,
+            "max": null,
+            "min": null,
+            "show": true
+          },
+          {
+            "format": "short",
+            "label": null,
+            "logBase": 1,
+            "max": null,
+            "min": null,
+            "show": true
+          }
+        ],
+        "yaxis": {
+          "align": false,
+          "alignLevel": null
+        }
+      },
+      {
+        "aliasColors": {},
+        "bars": false,
+        "dashLength": 10,
+        "dashes": false,
+        "datasource": "-FPV4La7z",
+        "fieldConfig": {
+          "defaults": {},
+          "overrides": []
+        },
+        "fill": 10,
+        "fillGradient": 0,
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 25
+        },
+        "hiddenSeries": false,
+        "id": 3,
+        "legend": {
+          "avg": true,
+          "current": false,
+          "max": true,
+          "min": true,
+          "show": true,
+          "total": false,
+          "values": true
+        },
+        "lines": true,
+        "linewidth": 0,
+        "nullPointMode": "null",
+        "options": {
+          "alertThreshold": true
+        },
+        "percentage": false,
+        "pluginVersion": "7.5.17",
+        "pointradius": 2,
+        "points": false,
+        "renderer": "flot",
+        "seriesOverrides": [],
+        "spaceLength": 10,
+        "stack": true,
+        "steppedLine": false,
+        "targets": [
+          {
+            "exemplar": true,
+            "expr": "(sum(container_memory_working_set_bytes{namespace=\"productivity-engg\", container_name!~\"POD\", source_cluster=\"$source_cluster\"}) by (container_name) / sum(label_join(kube_pod_container_resource_limits_memory_bytes{namespace=\"productivity-engg\",container_name!~\"POD\", source_cluster=\"$source_cluster\"},\n    \"container_name\", \"\", \"container\")) by (container_name))* 100",
+            "hide": true,
+            "interval": "",
+            "legendFormat": "Memory %",
+            "queryType": "randomWalk",
+            "refId": "A"
+          },
+          {
+            "exemplar": true,
+            "expr": "sum(container_memory_usage_bytes{source_cluster=\"$source_cluster\", namespace=\"productivity-engg\", pod=~\"gradle-enterprise-app-.*\",  container!=\"POD\", container!=\"\"}) by (pod) / sum(label_join(kube_pod_container_resource_limits_memory_bytes{namespace=\"productivity-engg\",container_name!~\"POD\", pod=~\"gradle-enterprise-app-.*\", source_cluster=\"$source_cluster\"},\n    \"pod_name\", \"\", \"pod\")) by (pod))* 100",
+            "hide": true,
+            "interval": "",
+            "legendFormat": "Memory %",
+            "refId": "B"
+          },
+          {
+            "exemplar": true,
+            "expr": "max(sum(container_memory_usage_bytes{source_cluster=\"$source_cluster\",namespace=\"productivity-engg\", pod=~\"gradle-enterprise-app-.*\",  container!=\"POD\", container!=\"\"}) by (pod)/sum(kube_pod_container_resource_requests_memory_bytes{source_cluster=\"$source_cluster\", namespace=\"productivity-engg\", pod=~\"gradle-enterprise-app-.*\",  container!=\"POD\", container!=\"\"}) by (pod)) * 100",
+            "hide": false,
+            "interval": "",
+            "legendFormat": "{{pod}}",
+            "refId": "C"
+          }
+        ],
+        "thresholds": [],
+        "timeFrom": null,
+        "timeRegions": [],
+        "timeShift": null,
+        "title": "Average Memory Usage %",
+        "tooltip": {
+          "shared": true,
+          "sort": 0,
+          "value_type": "individual"
+        },
+        "type": "graph",
+        "xaxis": {
+          "buckets": null,
+          "mode": "time",
+          "name": null,
+          "show": true,
+          "values": []
+        },
+        "yaxes": [
+          {
+            "format": "short",
+            "label": null,
+            "logBase": 1,
+            "max": null,
+            "min": null,
+            "show": true
+          },
+          {
+            "format": "short",
+            "label": null,
+            "logBase": 1,
+            "max": null,
+            "min": null,
+            "show": true
+          }
+        ],
+        "yaxis": {
+          "align": false,
+          "alignLevel": null
+        }
+      },
+      {
+        "alert": {
+          "alertRuleTags": {},
+          "conditions": [
+            {
+              "evaluator": {
+                "params": [
+                  16000000000
+                ],
+                "type": "gt"
+              },
+              "operator": {
+                "type": "and"
+              },
+              "query": {
+                "params": [
+                  "C",
+                  "1m",
+                  "now"
+                ]
+              },
+              "reducer": {
+                "params": [],
+                "type": "avg"
+              },
+              "type": "query"
+            }
+          ],
+          "executionErrorState": "alerting",
+          "for": "1m",
+          "frequency": "20s",
+          "handler": 1,
+          "message": "@oncall-ci-cd-engg \nGradle Enterprise Memory Usage is beyond 80% limit.",
+          "name": "Memory Usage alert",
+          "noDataState": "no_data",
+          "notifications": [
+            {
+              "uid": "Vc7jZmf4k"
+            }
+          ]
+        },
+        "aliasColors": {},
+        "bars": false,
+        "dashLength": 10,
+        "dashes": false,
+        "datasource": "-FPV4La7z",
+        "fieldConfig": {
+          "defaults": {
+            "unit": "bytes"
+          },
+          "overrides": []
+        },
+        "fill": 1,
+        "fillGradient": 0,
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 12,
+          "y": 25
+        },
+        "hiddenSeries": false,
+        "id": 9,
+        "legend": {
+          "avg": false,
+          "current": false,
+          "max": false,
+          "min": false,
+          "show": true,
+          "total": false,
+          "values": false
+        },
+        "lines": true,
+        "linewidth": 1,
+        "links": [],
+        "nullPointMode": "null",
+        "options": {
+          "alertThreshold": true
+        },
+        "percentage": false,
+        "pluginVersion": "7.5.17",
+        "pointradius": 2,
+        "points": false,
+        "renderer": "flot",
+        "seriesOverrides": [],
+        "spaceLength": 10,
+        "stack": false,
+        "steppedLine": false,
+        "targets": [
+          {
+            "exemplar": true,
+            "expr": "sum(\n  label_replace(\n    namespace_pod_container:container_cpu_usage_seconds_total:sum_rate{source_cluster=\"$source_cluster\", namespace=\"productivity-engg\"},\n    \"pod\", \"$1\", \"pod\", \"(.*)\"\n  ) * on(namespace,pod) group_left(workload, workload_type) mixin_pod_workload{source_cluster=\"$source_cluster\", namespace=\"productivity-engg\", workload_type=\"statefulset\"}\n) by (pod)\n",
+            "format": "time_series",
+            "hide": true,
+            "interval": "",
+            "intervalFactor": 2,
+            "legendFormat": "{{pod}}-old",
+            "legendLink": null,
+            "refId": "A",
+            "step": 10
+          },
+          {
+            "exemplar": true,
+            "expr": "sum(\n  label_replace(\n    container_memory_usage_bytes{source_cluster=\"$source_cluster\", namespace=\"productivity-engg\", container!=\"\"},\n    \"pod\", \"$1\", \"pod\", \"(.*)\"\n  ) * on(namespace,pod) group_left(workload, workload_type) mixin_pod_workload{source_cluster=\"$source_cluster\", namespace=\"productivity-engg\", workload_type=\"statefulset\"}\n  ) by (pod)",
+            "hide": true,
+            "interval": "",
+            "legendFormat": "{{pod}}-old-2",
+            "refId": "B"
+          },
+          {
+            "exemplar": true,
+            "expr": "sum(container_memory_usage_bytes{source_cluster=\"$source_cluster\", namespace=\"productivity-engg\", pod=~\"gradle-enterprise-app-.*\",  container!=\"POD\", container!=\"\"}) by (pod)",
+            "hide": false,
+            "interval": "",
+            "legendFormat": "{{pod}}-(Total)",
+            "refId": "C"
+          },
+          {
+            "exemplar": true,
+            "expr": "sum(container_memory_rss{source_cluster=\"$source_cluster\", namespace=\"productivity-engg\", pod=~\"gradle-enterprise-app-.*\", container!=\"POD\", container!=\"\"}) by (pod)",
+            "hide": false,
+            "interval": "",
+            "legendFormat": "{{pod}}-(RSS)",
+            "refId": "D"
+          },
+          {
+            "exemplar": true,
+            "expr": "sum(container_memory_cache{source_cluster=\"$source_cluster\", namespace=\"productivity-engg\", pod=~\"gradle-enterprise-app-.*\", container!=\"POD\", container!=\"\"}) by (pod)",
+            "hide": false,
+            "interval": "",
+            "legendFormat": "{{pod}}-(cache)",
+            "refId": "E"
+          },
+          {
+            "exemplar": true,
+            "expr": "sum(container_memory_swap{source_cluster=\"$source_cluster\", namespace=\"productivity-engg\", pod=~\"gradle-enterprise-app-.*\", container!=\"POD\", container!=\"\"}) by (pod)",
+            "hide": false,
+            "interval": "",
+            "legendFormat": "{{pod}}-(swap)",
+            "refId": "F"
+          }
+        ],
+        "thresholds": [
+          {
+            "colorMode": "critical",
+            "fill": true,
+            "line": true,
+            "op": "gt",
+            "value": 16000000000,
+            "visible": true
+          }
+        ],
+        "timeFrom": null,
+        "timeRegions": [],
+        "timeShift": null,
+        "title": "Memory Usage (Max 20Gi)",
+        "tooltip": {
+          "shared": true,
+          "sort": 0,
+          "value_type": "individual"
+        },
+        "type": "graph",
+        "xaxis": {
+          "buckets": null,
+          "mode": "time",
+          "name": null,
+          "show": true,
+          "values": []
+        },
+        "yaxes": [
+          {
+            "format": "bytes",
+            "label": null,
+            "logBase": 1,
+            "max": null,
+            "min": null,
+            "show": true
+          },
+          {
+            "format": "short",
+            "label": null,
+            "logBase": 1,
+            "max": null,
+            "min": null,
+            "show": true
+          }
+        ],
+        "yaxis": {
+          "align": false,
+          "alignLevel": null
+        }
+      },
+      {
+        "aliasColors": {},
+        "bars": false,
+        "dashLength": 10,
+        "dashes": false,
+        "datasource": "-FPV4La7z",
+        "description": "",
+        "fieldConfig": {
+          "defaults": {},
+          "overrides": []
+        },
+        "fill": 1,
+        "fillGradient": 0,
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 33
+        },
+        "hiddenSeries": false,
+        "id": 5,
+        "legend": {
+          "avg": false,
+          "current": false,
+          "max": false,
+          "min": false,
+          "show": true,
+          "total": false,
+          "values": false
+        },
+        "lines": true,
+        "linewidth": 1,
+        "nullPointMode": "null",
+        "options": {
+          "alertThreshold": true
+        },
+        "percentage": false,
+        "pluginVersion": "7.5.17",
+        "pointradius": 2,
+        "points": false,
+        "renderer": "flot",
+        "seriesOverrides": [],
+        "spaceLength": 10,
+        "stack": false,
+        "steppedLine": false,
+        "targets": [
+          {
+            "exemplar": true,
+            "expr": "sum(rate(container_network_receive_bytes_total{namespace=\"productivity-engg\", source_cluster=\"$source_cluster\", pod=~\"gradle-enterprise-app-.*\"}[5m])) by (name, pod)",
+            "hide": false,
+            "interval": "",
+            "legendFormat": "Network Bytes Received-{{ pod }}",
+            "queryType": "randomWalk",
+            "refId": "A"
+          },
+          {
+            "exemplar": true,
+            "expr": "sum(rate(container_network_transmit_bytes_total{namespace=\"productivity-engg\", source_cluster=\"prod-use1-cmd.k8s.hotstar-labs.com\", pod=~\"gradle-enterprise-app-.*\"}[5m])) by (name, pod)",
+            "hide": false,
+            "interval": "",
+            "legendFormat": "Network Bytes Transmitted-{{pod}}",
+            "refId": "B"
+          }
+        ],
+        "thresholds": [],
+        "timeFrom": null,
+        "timeRegions": [],
+        "timeShift": null,
+        "title": "Network Utilization",
+        "tooltip": {
+          "shared": true,
+          "sort": 0,
+          "value_type": "individual"
+        },
+        "type": "graph",
+        "xaxis": {
+          "buckets": null,
+          "mode": "time",
+          "name": null,
+          "show": true,
+          "values": []
+        },
+        "yaxes": [
+          {
+            "format": "short",
+            "label": null,
+            "logBase": 1,
+            "max": null,
+            "min": null,
+            "show": true
+          },
+          {
+            "format": "short",
+            "label": null,
+            "logBase": 1,
+            "max": null,
+            "min": null,
+            "show": true
+          }
+        ],
+        "yaxis": {
+          "align": false,
+          "alignLevel": null
+        }
+      },
+      {
+        "aliasColors": {},
+        "bars": false,
+        "dashLength": 10,
+        "dashes": false,
+        "datasource": "-FPV4La7z",
+        "fieldConfig": {
+          "defaults": {},
+          "overrides": []
+        },
+        "fill": 1,
+        "fillGradient": 0,
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 12,
+          "y": 33
+        },
+        "hiddenSeries": false,
+        "id": 4,
+        "legend": {
+          "avg": false,
+          "current": false,
+          "max": false,
+          "min": false,
+          "show": true,
+          "total": false,
+          "values": false
+        },
+        "lines": true,
+        "linewidth": 1,
+        "nullPointMode": "null",
+        "options": {
+          "alertThreshold": true
+        },
+        "percentage": false,
+        "pluginVersion": "7.5.17",
+        "pointradius": 2,
+        "points": false,
+        "renderer": "flot",
+        "seriesOverrides": [],
+        "spaceLength": 10,
+        "stack": false,
+        "steppedLine": false,
+        "targets": [
+          {
+            "exemplar": true,
+            "expr": "sum(rate(container_fs_writes_bytes_total{namespace=\"productivity-engg\", source_cluster=\"$source_cluster\"}[5m])) by (container_name, device, pod)",
+            "hide": false,
+            "interval": "",
+            "legendFormat": "Bytes Written-{{pod}}",
+            "queryType": "randomWalk",
+            "refId": "A"
+          },
+          {
+            "exemplar": true,
+            "expr": "sum(rate(container_fs_reads_bytes_total{namespace=\"productivity-engg\", source_cluster=\"prod-use1-cmd.k8s.hotstar-labs.com\"}[5m])) by (container_name, device, pod)",
+            "hide": false,
+            "interval": "",
+            "legendFormat": "Bytes Read-{{pod}}",
+            "refId": "B"
+          }
+        ],
+        "thresholds": [],
+        "timeFrom": null,
+        "timeRegions": [],
+        "timeShift": null,
+        "title": "Disk Utilization",
+        "tooltip": {
+          "shared": true,
+          "sort": 0,
+          "value_type": "individual"
+        },
+        "type": "graph",
+        "xaxis": {
+          "buckets": null,
+          "mode": "time",
+          "name": null,
+          "show": true,
+          "values": []
+        },
+        "yaxes": [
+          {
+            "format": "short",
+            "label": null,
+            "logBase": 1,
+            "max": null,
+            "min": null,
+            "show": true
+          },
+          {
+            "format": "short",
+            "label": null,
+            "logBase": 1,
+            "max": null,
+            "min": null,
+            "show": true
+          }
+        ],
+        "yaxis": {
+          "align": false,
+          "alignLevel": null
+        }
+      },
+      {
+        "collapsed": true,
+        "datasource": null,
+        "gridPos": {
+          "h": 1,
+          "w": 24,
+          "x": 0,
+          "y": 41
+        },
+        "id": 17,
+        "panels": [
+          {
+            "datasource": "-FPV4La7z",
+            "fieldConfig": {
+              "defaults": {
+                "color": {
+                  "mode": "palette-classic"
+                },
+                "custom": {
+                  "axisLabel": "",
+                  "axisPlacement": "auto",
+                  "barAlignment": 0,
+                  "drawStyle": "line",
+                  "fillOpacity": 0,
+                  "gradientMode": "none",
+                  "hideFrom": {
+                    "graph": false,
+                    "legend": false,
+                    "tooltip": false
+                  },
+                  "lineInterpolation": "linear",
+                  "lineWidth": 1,
+                  "pointSize": 5,
+                  "scaleDistribution": {
+                    "type": "linear"
+                  },
+                  "showPoints": "auto",
+                  "spanNulls": false
+                },
+                "mappings": [],
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": null
+                    },
+                    {
+                      "color": "red",
+                      "value": 80
+                    }
+                  ]
+                }
+              },
+              "overrides": []
+            },
+            "gridPos": {
+              "h": 8,
+              "w": 12,
+              "x": 0,
+              "y": 2
+            },
+            "id": 13,
+            "options": {
+              "legend": {
+                "calcs": [],
+                "displayMode": "list",
+                "placement": "bottom"
+              },
+              "tooltipOptions": {
+                "mode": "single"
+              }
+            },
+            "pluginVersion": "7.5.17",
+            "targets": [
+              {
+                "exemplar": true,
+                "expr": "sum(kube_node_status_condition{condition=\"Ready\",status=\"true\"}==1)",
+                "interval": "",
+                "legendFormat": "",
+                "queryType": "randomWalk",
+                "refId": "A"
+              }
+            ],
+            "title": "Nodes ready per cluster",
+            "type": "timeseries"
+          }
+        ],
+        "title": "K8s Dashboard",
+        "type": "row"
+      }
+    ],
+    "refresh": false,
+    "schemaVersion": 27,
+    "style": "dark",
+    "tags": [],
+    "templating": {
+      "list": [
+        {
+          "allValue": null,
+          "current": {
+            "selected": true,
+            "text": "hs-eks-cmd-prod-api-aps1",
+            "value": "hs-eks-cmd-prod-api-aps1"
+          },
+          "description": "cluster name",
+          "error": null,
+          "hide": 0,
+          "includeAll": false,
+          "label": "source_cluster",
+          "multi": false,
+          "name": "source_cluster",
+          "options": [
+            {
+              "selected": false,
+              "text": "prod-use1-cmd.k8s.hotstar-labs.com",
+              "value": "prod-use1-cmd.k8s.hotstar-labs.com"
+            },
+            {
+              "selected": true,
+              "text": "hs-eks-cmd-prod-api-aps1",
+              "value": "hs-eks-cmd-prod-api-aps1"
+            }
+          ],
+          "query": "prod-use1-cmd.k8s.hotstar-labs.com,hs-eks-cmd-prod-api-aps1",
+          "queryValue": "",
+          "skipUrlSync": false,
+          "type": "custom"
+        }
+      ]
+    },
+    "time": {
+      "from": "now-5m",
+      "to": "now"
+    },
+    "timepicker": {},
+    "timezone": "",
+    "title": "Gradle Enterprise K8s Dashboard",
+    "uid": "S-0ajhU72",
+    "version": 1
+  },
+  "folderUid": "",
+  "overwrite": true
+}

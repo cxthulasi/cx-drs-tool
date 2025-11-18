@@ -1,0 +1,1503 @@
+{
+  "dashboard": {
+    "annotations": {
+      "list": [
+        {
+          "builtIn": 1,
+          "datasource": null,
+          "enable": true,
+          "hide": true,
+          "iconColor": "rgba(0, 211, 255, 1)",
+          "name": "Annotations & Alerts",
+          "type": "dashboard"
+        }
+      ]
+    },
+    "editable": true,
+    "gnetId": null,
+    "graphTooltip": 0,
+    "iteration": 1729672098652,
+    "links": [],
+    "panels": [
+      {
+        "collapsed": true,
+        "datasource": null,
+        "gridPos": {
+          "h": 1,
+          "w": 24,
+          "x": 0,
+          "y": 0
+        },
+        "id": 8,
+        "maxDataPoints": 1360,
+        "panels": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "-FPV4La7z"
+            },
+            "fieldConfig": {
+              "defaults": {
+                "color": {
+                  "mode": "thresholds"
+                },
+                "mappings": [],
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": null
+                    }
+                  ]
+                },
+                "unit": "currencyUSD"
+              },
+              "overrides": []
+            },
+            "gridPos": {
+              "h": 8,
+              "w": 6,
+              "x": 0,
+              "y": 1
+            },
+            "id": 5,
+            "maxDataPoints": 1360,
+            "options": {
+              "colorMode": "value",
+              "graphMode": "area",
+              "justifyMode": "auto",
+              "orientation": "auto",
+              "reduceOptions": {
+                "calcs": [
+                  "lastNotNull"
+                ],
+                "fields": "",
+                "values": false
+              },
+              "text": {},
+              "textMode": "auto"
+            },
+            "pluginVersion": "7.5.17",
+            "targets": [
+              {
+                "exemplar": true,
+                "expr": "sum(avg_over_time(kube_node_status_allocatable_cpu_cores{source_cluster=~\"$EKSCluster\"})) * .067 * ($__range_s / 3600) * .$CostFactor",
+                "format": "table",
+                "instant": true,
+                "interval": "60",
+                "legendFormat": "",
+                "queryType": "randomWalk",
+                "refId": "A"
+              }
+            ],
+            "timeFrom": null,
+            "timeShift": null,
+            "title": "$EKSCluster Overall Cost",
+            "type": "stat"
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "-FPV4La7z"
+            },
+            "fieldConfig": {
+              "defaults": {
+                "color": {
+                  "mode": "thresholds"
+                },
+                "mappings": [],
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": null
+                    }
+                  ]
+                },
+                "unit": "currencyUSD"
+              },
+              "overrides": []
+            },
+            "gridPos": {
+              "h": 8,
+              "w": 6,
+              "x": 9,
+              "y": 1
+            },
+            "id": 3,
+            "maxDataPoints": 1360,
+            "options": {
+              "colorMode": "value",
+              "graphMode": "area",
+              "justifyMode": "auto",
+              "orientation": "auto",
+              "reduceOptions": {
+                "calcs": [
+                  "lastNotNull"
+                ],
+                "fields": "",
+                "values": false
+              },
+              "text": {},
+              "textMode": "auto"
+            },
+            "pluginVersion": "7.5.17",
+            "targets": [
+              {
+                "exemplar": true,
+                "expr": "sum(avg_over_time(kube_pod_container_resource_limits_cpu_cores{source_cluster=~\"$EKSCluster\"})) * .067 * ($__range_s / 3600) * .$CostFactor",
+                "format": "table",
+                "instant": true,
+                "interval": "60",
+                "legendFormat": "EKS Utilisation Cost",
+                "queryType": "randomWalk",
+                "refId": "A"
+              }
+            ],
+            "timeFrom": null,
+            "timeShift": null,
+            "title": "$EKSCluster Utilisation Cost",
+            "type": "stat"
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "-FPV4La7z"
+            },
+            "fieldConfig": {
+              "defaults": {
+                "color": {
+                  "mode": "thresholds"
+                },
+                "mappings": [],
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": null
+                    },
+                    {
+                      "color": "red",
+                      "value": 0
+                    }
+                  ]
+                },
+                "unit": "currencyUSD"
+              },
+              "overrides": []
+            },
+            "gridPos": {
+              "h": 8,
+              "w": 6,
+              "x": 18,
+              "y": 1
+            },
+            "id": 4,
+            "maxDataPoints": 1360,
+            "options": {
+              "colorMode": "value",
+              "graphMode": "area",
+              "justifyMode": "auto",
+              "orientation": "auto",
+              "reduceOptions": {
+                "calcs": [
+                  "lastNotNull"
+                ],
+                "fields": "",
+                "values": false
+              },
+              "text": {},
+              "textMode": "auto"
+            },
+            "pluginVersion": "7.5.17",
+            "targets": [
+              {
+                "exemplar": true,
+                "expr": "(sum(avg_over_time(kube_node_status_allocatable_cpu_cores{source_cluster=~\"$EKSCluster\"})) * .067 * ($__range_s / 3600) * .$CostFactor) - (sum(avg_over_time(kube_pod_container_resource_limits_cpu_cores{source_cluster=~\"$EKSCluster\"})) * .067 * ($__range_s / 3600) * .$CostFactor)",
+                "format": "table",
+                "instant": true,
+                "interval": "60",
+                "legendFormat": "EKS Wastage Cost",
+                "queryType": "randomWalk",
+                "refId": "A"
+              }
+            ],
+            "timeFrom": null,
+            "timeShift": null,
+            "title": "$EKSCluster Wastage Cost",
+            "type": "stat"
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "-FPV4La7z"
+            },
+            "fieldConfig": {
+              "defaults": {
+                "color": {
+                  "mode": "palette-classic"
+                },
+                "mappings": [],
+                "noValue": "0",
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": null
+                    }
+                  ]
+                },
+                "unit": "currencyUSD"
+              },
+              "overrides": []
+            },
+            "gridPos": {
+              "h": 16,
+              "w": 12,
+              "x": 0,
+              "y": 9
+            },
+            "id": 2,
+            "maxDataPoints": 1360,
+            "options": {
+              "displayLabels": [],
+              "legend": {
+                "displayMode": "table",
+                "placement": "right",
+                "values": [
+                  "value"
+                ]
+              },
+              "pieType": "pie",
+              "reduceOptions": {
+                "calcs": [
+                  "lastNotNull"
+                ],
+                "fields": "",
+                "values": false
+              },
+              "text": {}
+            },
+            "pluginVersion": "7.5.17",
+            "targets": [
+              {
+                "exemplar": true,
+                "expr": "sum by (namespace) (avg_over_time(kube_pod_container_resource_limits_cpu_cores{source_cluster=~\"$EKSCluster\"})) * .067 * ($__range_s / 3600) * .$CostFactor",
+                "format": "time_series",
+                "instant": false,
+                "interval": "60",
+                "intervalFactor": 1,
+                "legendFormat": "{{namespace }}",
+                "queryType": "randomWalk",
+                "refId": "A"
+              }
+            ],
+            "timeFrom": null,
+            "timeShift": null,
+            "title": "Namespace Utilisation Cost",
+            "type": "piechart"
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "-FPV4La7z"
+            },
+            "fieldConfig": {
+              "defaults": {
+                "color": {
+                  "mode": "palette-classic"
+                },
+                "mappings": [],
+                "noValue": "0",
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": null
+                    }
+                  ]
+                },
+                "unit": "currencyUSD"
+              },
+              "overrides": []
+            },
+            "gridPos": {
+              "h": 16,
+              "w": 12,
+              "x": 12,
+              "y": 9
+            },
+            "id": 6,
+            "maxDataPoints": 1360,
+            "options": {
+              "displayLabels": [],
+              "legend": {
+                "displayMode": "table",
+                "placement": "right",
+                "values": [
+                  "value"
+                ]
+              },
+              "pieType": "pie",
+              "reduceOptions": {
+                "calcs": [
+                  "lastNotNull"
+                ],
+                "fields": "",
+                "values": false
+              },
+              "text": {}
+            },
+            "pluginVersion": "7.5.17",
+            "targets": [
+              {
+                "exemplar": true,
+                "expr": "sum by (namespace) ((((((sum by (namespace) (avg_over_time(kube_pod_container_resource_limits_cpu_cores{source_cluster=~\"$EKSCluster\"})) * .067 * ($__range_s / 3600) * .$CostFactor) * 100 )/ (sum(avg_over_time(kube_pod_container_resource_limits_cpu_cores{source_cluster=~\"$EKSCluster\"})) * .067 * ($__range_s / 3600) * .$CostFactor)) * ((sum(avg_over_time(kube_node_status_allocatable_cpu_cores{source_cluster=~\"$EKSCluster\"})) * .067 * ($__range_s / 3600) * .$CostFactor) - (sum(avg_over_time(kube_pod_container_resource_limits_cpu_cores{source_cluster=~\"$EKSCluster\"})) * .067 * ($__range_s / 3600) * .$CostFactor)))/100) + (sum by (namespace) (avg_over_time(kube_pod_container_resource_limits_cpu_cores{source_cluster=~\"$EKSCluster\"})) * .067 * ($__range_s / 3600) * .$CostFactor))",
+                "format": "time_series",
+                "instant": false,
+                "interval": "60",
+                "intervalFactor": 1,
+                "legendFormat": "{{namespace }}",
+                "queryType": "randomWalk",
+                "refId": "A"
+              }
+            ],
+            "timeFrom": null,
+            "timeShift": null,
+            "title": "Namespace Utilisation Cost(Including Wastage)",
+            "type": "piechart"
+          }
+        ],
+        "title": "$EKSCluster  Details",
+        "type": "row"
+      },
+      {
+        "collapsed": true,
+        "datasource": null,
+        "gridPos": {
+          "h": 1,
+          "w": 24,
+          "x": 0,
+          "y": 1
+        },
+        "id": 17,
+        "maxDataPoints": 1360,
+        "panels": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "-FPV4La7z"
+            },
+            "fieldConfig": {
+              "defaults": {
+                "color": {
+                  "mode": "palette-classic"
+                },
+                "mappings": [],
+                "noValue": "0",
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": null
+                    }
+                  ]
+                },
+                "unit": "currencyUSD"
+              },
+              "overrides": []
+            },
+            "gridPos": {
+              "h": 16,
+              "w": 12,
+              "x": 0,
+              "y": 2
+            },
+            "id": 21,
+            "maxDataPoints": 1360,
+            "options": {
+              "displayLabels": [],
+              "legend": {
+                "displayMode": "table",
+                "placement": "right",
+                "values": [
+                  "value"
+                ]
+              },
+              "pieType": "pie",
+              "reduceOptions": {
+                "calcs": [
+                  "lastNotNull"
+                ],
+                "fields": "",
+                "values": false
+              },
+              "text": {}
+            },
+            "pluginVersion": "7.5.17",
+            "targets": [
+              {
+                "exemplar": true,
+                "expr": "sum by (namespace) (avg_over_time(kube_pod_container_resource_limits_cpu_cores{})) * .067 * ($__range_s / 3600) * .$CostFactor",
+                "format": "time_series",
+                "instant": false,
+                "interval": "60",
+                "intervalFactor": 1,
+                "legendFormat": "{{namespace }}",
+                "queryType": "randomWalk",
+                "refId": "A"
+              }
+            ],
+            "timeFrom": null,
+            "timeShift": null,
+            "title": "ALL Team Utilisation Cost",
+            "type": "piechart"
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "-FPV4La7z"
+            },
+            "fieldConfig": {
+              "defaults": {
+                "color": {
+                  "mode": "palette-classic"
+                },
+                "mappings": [],
+                "noValue": "0",
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": null
+                    }
+                  ]
+                },
+                "unit": "currencyUSD"
+              },
+              "overrides": []
+            },
+            "gridPos": {
+              "h": 16,
+              "w": 12,
+              "x": 12,
+              "y": 2
+            },
+            "id": 20,
+            "maxDataPoints": 1360,
+            "options": {
+              "displayLabels": [],
+              "legend": {
+                "displayMode": "table",
+                "placement": "right",
+                "values": [
+                  "value"
+                ]
+              },
+              "pieType": "pie",
+              "reduceOptions": {
+                "calcs": [
+                  "lastNotNull"
+                ],
+                "fields": "",
+                "values": false
+              },
+              "text": {}
+            },
+            "pluginVersion": "7.5.17",
+            "targets": [
+              {
+                "exemplar": true,
+                "expr": "sum by (namespace) ((((((sum by (namespace) (avg_over_time(kube_pod_container_resource_limits_cpu_cores{})) * .067 * ($__range_s / 3600) * .$CostFactor) * 100 )/ (sum(avg_over_time(kube_pod_container_resource_limits_cpu_cores{})) * .067 * ($__range_s / 3600) * .$CostFactor)) * ((sum(avg_over_time(kube_node_status_allocatable_cpu_cores{})) * .067 * ($__range_s / 3600) * .$CostFactor) - (sum(avg_over_time(kube_pod_container_resource_limits_cpu_cores{})) * .067 * ($__range_s / 3600) * .$CostFactor)))/100) + (sum by (namespace) (avg_over_time(kube_pod_container_resource_limits_cpu_cores{})) * .067 * ($__range_s / 3600) * .$CostFactor))",
+                "format": "time_series",
+                "instant": false,
+                "interval": "60",
+                "intervalFactor": 1,
+                "legendFormat": "{{namespace }}",
+                "queryType": "randomWalk",
+                "refId": "A"
+              }
+            ],
+            "timeFrom": null,
+            "timeShift": null,
+            "title": "ALL Team Overall Cost(Including Wastage)",
+            "type": "piechart"
+          }
+        ],
+        "title": "ALL Team Cost",
+        "type": "row"
+      },
+      {
+        "collapsed": true,
+        "datasource": null,
+        "gridPos": {
+          "h": 1,
+          "w": 24,
+          "x": 0,
+          "y": 2
+        },
+        "id": 10,
+        "maxDataPoints": 1360,
+        "panels": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "-FPV4La7z"
+            },
+            "fieldConfig": {
+              "defaults": {
+                "color": {
+                  "mode": "thresholds"
+                },
+                "mappings": [],
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": null
+                    }
+                  ]
+                },
+                "unit": "currencyUSD"
+              },
+              "overrides": []
+            },
+            "gridPos": {
+              "h": 6,
+              "w": 6,
+              "x": 2,
+              "y": 3
+            },
+            "id": 12,
+            "maxDataPoints": 1360,
+            "options": {
+              "colorMode": "value",
+              "graphMode": "area",
+              "justifyMode": "auto",
+              "orientation": "auto",
+              "reduceOptions": {
+                "calcs": [
+                  "lastNotNull"
+                ],
+                "fields": "",
+                "values": false
+              },
+              "text": {},
+              "textMode": "auto"
+            },
+            "pluginVersion": "7.5.17",
+            "targets": [
+              {
+                "exemplar": true,
+                "expr": "sum(avg_over_time(kube_pod_container_resource_limits_cpu_cores{namespace=~\"$Team\"})) * .067 * ($__range_s / 3600) * .$CostFactor",
+                "instant": true,
+                "interval": "60",
+                "legendFormat": "$Team",
+                "queryType": "randomWalk",
+                "refId": "A"
+              }
+            ],
+            "title": "$Team Utilisation Cost(Excluding Wastage)",
+            "type": "stat"
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "-FPV4La7z"
+            },
+            "fieldConfig": {
+              "defaults": {
+                "color": {
+                  "mode": "thresholds"
+                },
+                "mappings": [],
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": null
+                    }
+                  ]
+                },
+                "unit": "currencyUSD"
+              },
+              "overrides": []
+            },
+            "gridPos": {
+              "h": 6,
+              "w": 6,
+              "x": 16,
+              "y": 3
+            },
+            "id": 14,
+            "maxDataPoints": 1360,
+            "options": {
+              "colorMode": "value",
+              "graphMode": "area",
+              "justifyMode": "auto",
+              "orientation": "auto",
+              "reduceOptions": {
+                "calcs": [
+                  "lastNotNull"
+                ],
+                "fields": "",
+                "values": false
+              },
+              "text": {},
+              "textMode": "auto"
+            },
+            "pluginVersion": "7.5.17",
+            "targets": [
+              {
+                "exemplar": true,
+                "expr": "sum (\n  (\n    (\n      (\n        (\n          (\n            sum by (namespace) (\n              avg_over_time(kube_pod_container_resource_limits_cpu_cores{namespace=\"$Team\"})\n            ) \n            * .067 \n            * ($__range_s / 3600) \n            * .$CostFactor\n          ) \n          * 100 \n        ) \n        / \n        (\n          sum(\n            avg_over_time(kube_pod_container_resource_limits_cpu_cores{})\n          ) \n          * .067 \n          * ($__range_s / 3600) \n          * .$CostFactor\n        )\n      ) \n      * \n      (\n        (\n          sum(\n            avg_over_time(kube_node_status_allocatable_cpu_cores{})\n          ) \n          * .067 \n          * ($__range_s / 3600) \n          * .$CostFactor\n        ) \n        - \n        (\n          sum(\n            avg_over_time(kube_pod_container_resource_limits_cpu_cores{})\n          ) \n          * .067 \n          * ($__range_s / 3600) \n          * .$CostFactor\n        )\n      )\n    ) \n    / 100\n  ) \n  + \n  (\n    sum(\n      avg_over_time(kube_pod_container_resource_limits_cpu_cores{namespace=\"$Team\"})\n    ) \n    * .067 \n    * ($__range_s / 3600) \n    * .$CostFactor\n  )\n)",
+                "instant": true,
+                "interval": "60",
+                "legendFormat": "$Team",
+                "queryType": "randomWalk",
+                "refId": "A"
+              }
+            ],
+            "title": "$Team Overall Cost(Including Wastage)",
+            "type": "stat"
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "-FPV4La7z"
+            },
+            "fieldConfig": {
+              "defaults": {
+                "color": {
+                  "mode": "palette-classic"
+                },
+                "mappings": [],
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": null
+                    }
+                  ]
+                },
+                "unit": "currencyUSD"
+              },
+              "overrides": []
+            },
+            "gridPos": {
+              "h": 6,
+              "w": 10,
+              "x": 0,
+              "y": 9
+            },
+            "id": 13,
+            "maxDataPoints": 1360,
+            "options": {
+              "displayLabels": [],
+              "legend": {
+                "displayMode": "table",
+                "placement": "right",
+                "values": [
+                  "value"
+                ]
+              },
+              "pieType": "pie",
+              "reduceOptions": {
+                "calcs": [
+                  "lastNotNull"
+                ],
+                "fields": "",
+                "values": false
+              },
+              "text": {}
+            },
+            "pluginVersion": "7.5.17",
+            "targets": [
+              {
+                "exemplar": true,
+                "expr": "sum by (source_cluster) (avg_over_time(kube_pod_container_resource_limits_cpu_cores{namespace=~\"$Team\"})) * .067 * ($__range_s / 3600) * .$CostFactor",
+                "format": "time_series",
+                "instant": true,
+                "interval": "60",
+                "legendFormat": "{{$source_cluster}}",
+                "queryType": "randomWalk",
+                "refId": "A"
+              }
+            ],
+            "title": "$Team Cost by EKS Cluster(Excluding Wastage)",
+            "type": "piechart"
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "-FPV4La7z"
+            },
+            "fieldConfig": {
+              "defaults": {
+                "color": {
+                  "mode": "palette-classic"
+                },
+                "mappings": [],
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": null
+                    }
+                  ]
+                },
+                "unit": "currencyUSD"
+              },
+              "overrides": []
+            },
+            "gridPos": {
+              "h": 6,
+              "w": 10,
+              "x": 14,
+              "y": 9
+            },
+            "id": 18,
+            "maxDataPoints": 1360,
+            "options": {
+              "displayLabels": [],
+              "legend": {
+                "displayMode": "table",
+                "placement": "right",
+                "values": [
+                  "value"
+                ]
+              },
+              "pieType": "pie",
+              "reduceOptions": {
+                "calcs": [
+                  "lastNotNull"
+                ],
+                "fields": "",
+                "values": false
+              },
+              "text": {}
+            },
+            "pluginVersion": "7.5.17",
+            "targets": [
+              {
+                "exemplar": true,
+                "expr": "sum by (source_cluster) (avg_over_time(kube_pod_container_resource_limits_cpu_cores{namespace=~\"$Team\"})) * .067 * ($__range_s / 3600) * .$CostFactor",
+                "format": "time_series",
+                "instant": true,
+                "interval": "60",
+                "legendFormat": "{{$source_cluster}}",
+                "queryType": "randomWalk",
+                "refId": "A"
+              }
+            ],
+            "title": "$Team Cost by EKS Cluster(Excluding Wastage)",
+            "type": "piechart"
+          }
+        ],
+        "title": "Team $Team Cost Distribution",
+        "type": "row"
+      }
+    ],
+    "refresh": false,
+    "schemaVersion": 27,
+    "style": "dark",
+    "tags": [],
+    "templating": {
+      "list": [
+        {
+          "allValue": null,
+          "current": {
+            "selected": false,
+            "text": "hs-eks-prod6-api-aps1",
+            "value": "hs-eks-prod6-api-aps1"
+          },
+          "datasource": {
+            "type": "prometheus",
+            "uid": "-FPV4La7z"
+          },
+          "definition": "label_values(kube_deployment_spec_replicas, source_cluster)",
+          "description": null,
+          "error": null,
+          "hide": 0,
+          "includeAll": false,
+          "label": null,
+          "multi": false,
+          "name": "EKSCluster",
+          "options": [
+            {
+              "selected": false,
+              "text": "hs-eks-prod-api-euw1",
+              "value": "hs-eks-prod-api-euw1"
+            },
+            {
+              "selected": true,
+              "text": "hs-eks-prod6-api-aps1",
+              "value": "hs-eks-prod6-api-aps1"
+            },
+            {
+              "selected": false,
+              "text": "hs-eks-prod7-api-apse1",
+              "value": "hs-eks-prod7-api-apse1"
+            },
+            {
+              "selected": false,
+              "text": "prod-apse1.k8s.hotstar-labs.com",
+              "value": "prod-apse1.k8s.hotstar-labs.com"
+            },
+            {
+              "selected": false,
+              "text": "prod-use1.data.k8s.hotstar-labs.com",
+              "value": "prod-use1.data.k8s.hotstar-labs.com"
+            },
+            {
+              "selected": false,
+              "text": "prod-euw1.eu.hotstar-labs.com",
+              "value": "prod-euw1.eu.hotstar-labs.com"
+            },
+            {
+              "selected": false,
+              "text": "hs-eks-prod-api-apse1",
+              "value": "hs-eks-prod-api-apse1"
+            },
+            {
+              "selected": false,
+              "text": "hs-eks-prod5-api-apse1",
+              "value": "hs-eks-prod5-api-apse1"
+            },
+            {
+              "selected": false,
+              "text": "prod-use1.k8s.hotstar-labs.com",
+              "value": "prod-use1.k8s.hotstar-labs.com"
+            },
+            {
+              "selected": false,
+              "text": "hs-eks-prod4-api-apse1",
+              "value": "hs-eks-prod4-api-apse1"
+            },
+            {
+              "selected": false,
+              "text": "prod-use1-cmd.k8s.hotstar-labs.com",
+              "value": "prod-use1-cmd.k8s.hotstar-labs.com"
+            },
+            {
+              "selected": false,
+              "text": "prod-apse1.hs-cricinfo.com",
+              "value": "prod-apse1.hs-cricinfo.com"
+            },
+            {
+              "selected": false,
+              "text": "hs-eks-prod6-api-apse1",
+              "value": "hs-eks-prod6-api-apse1"
+            },
+            {
+              "selected": false,
+              "text": "hs-eks-video-prod-api-aps1",
+              "value": "hs-eks-video-prod-api-aps1"
+            }
+          ],
+          "query": {
+            "query": "label_values(kube_deployment_spec_replicas, source_cluster)",
+            "refId": "StandardVariableQuery"
+          },
+          "refresh": 0,
+          "regex": "",
+          "skipUrlSync": false,
+          "sort": 0,
+          "tagValuesQuery": "",
+          "tags": [],
+          "tagsQuery": "",
+          "type": "query",
+          "useTags": false
+        },
+        {
+          "allValue": null,
+          "current": {
+            "selected": false,
+            "text": "60",
+            "value": "60"
+          },
+          "description": null,
+          "error": null,
+          "hide": 0,
+          "includeAll": false,
+          "label": null,
+          "multi": false,
+          "name": "CostFactor",
+          "options": [
+            {
+              "selected": false,
+              "text": "26",
+              "value": "26"
+            },
+            {
+              "selected": false,
+              "text": "28",
+              "value": "28"
+            },
+            {
+              "selected": false,
+              "text": "30",
+              "value": "30"
+            },
+            {
+              "selected": true,
+              "text": "60",
+              "value": "60"
+            },
+            {
+              "selected": false,
+              "text": "62",
+              "value": "62"
+            },
+            {
+              "selected": false,
+              "text": "68",
+              "value": "68"
+            },
+            {
+              "selected": false,
+              "text": "70",
+              "value": "70"
+            },
+            {
+              "selected": false,
+              "text": "72",
+              "value": "72"
+            },
+            {
+              "selected": false,
+              "text": "74",
+              "value": "74"
+            }
+          ],
+          "query": "26,28,30,60,62,68,70,72,74",
+          "queryValue": "",
+          "skipUrlSync": false,
+          "type": "custom"
+        },
+        {
+          "allValue": null,
+          "current": {
+            "selected": false,
+            "text": "adtech",
+            "value": "adtech"
+          },
+          "datasource": {
+            "type": "prometheus",
+            "uid": "-FPV4La7z"
+          },
+          "definition": "label_values(kube_deployment_spec_replicas{namespace!~\"ambassador.*|kube-system|monitoring|logging|velero|victoria-metrics|victoria-metrics-scaling|apps|auth\"}, namespace)",
+          "description": null,
+          "error": null,
+          "hide": 0,
+          "includeAll": false,
+          "label": null,
+          "multi": false,
+          "name": "Team",
+          "options": [
+            {
+              "selected": true,
+              "text": "adtech",
+              "value": "adtech"
+            },
+            {
+              "selected": false,
+              "text": "adtech-beta-in-prod-apse1",
+              "value": "adtech-beta-in-prod-apse1"
+            },
+            {
+              "selected": false,
+              "text": "adtech-in-prod-apse1",
+              "value": "adtech-in-prod-apse1"
+            },
+            {
+              "selected": false,
+              "text": "airflow-in-pp-use1",
+              "value": "airflow-in-pp-use1"
+            },
+            {
+              "selected": false,
+              "text": "airflow-in-prod-use1",
+              "value": "airflow-in-prod-use1"
+            },
+            {
+              "selected": false,
+              "text": "ap-in-prod-apse1",
+              "value": "ap-in-prod-apse1"
+            },
+            {
+              "selected": false,
+              "text": "argus",
+              "value": "argus"
+            },
+            {
+              "selected": false,
+              "text": "audience-platform",
+              "value": "audience-platform"
+            },
+            {
+              "selected": false,
+              "text": "audienceplatform-in-prod-use1",
+              "value": "audienceplatform-in-prod-use1"
+            },
+            {
+              "selected": false,
+              "text": "cert-manager",
+              "value": "cert-manager"
+            },
+            {
+              "selected": false,
+              "text": "cex",
+              "value": "cex"
+            },
+            {
+              "selected": false,
+              "text": "cex-in-prod-apse1",
+              "value": "cex-in-prod-apse1"
+            },
+            {
+              "selected": false,
+              "text": "cms",
+              "value": "cms"
+            },
+            {
+              "selected": false,
+              "text": "cms-in-prod-apse1",
+              "value": "cms-in-prod-apse1"
+            },
+            {
+              "selected": false,
+              "text": "cms-na-prod-use1",
+              "value": "cms-na-prod-use1"
+            },
+            {
+              "selected": false,
+              "text": "consumption",
+              "value": "consumption"
+            },
+            {
+              "selected": false,
+              "text": "contentengg",
+              "value": "contentengg"
+            },
+            {
+              "selected": false,
+              "text": "cricinfo-in-prod-apse1",
+              "value": "cricinfo-in-prod-apse1"
+            },
+            {
+              "selected": false,
+              "text": "crm",
+              "value": "crm"
+            },
+            {
+              "selected": false,
+              "text": "data-platform",
+              "value": "data-platform"
+            },
+            {
+              "selected": false,
+              "text": "default",
+              "value": "default"
+            },
+            {
+              "selected": false,
+              "text": "devops",
+              "value": "devops"
+            },
+            {
+              "selected": false,
+              "text": "devops-in-prod-use1",
+              "value": "devops-in-prod-use1"
+            },
+            {
+              "selected": false,
+              "text": "devops-oncall",
+              "value": "devops-oncall"
+            },
+            {
+              "selected": false,
+              "text": "dp-in-prod-apse1",
+              "value": "dp-in-prod-apse1"
+            },
+            {
+              "selected": false,
+              "text": "dp-na-prod-use1",
+              "value": "dp-na-prod-use1"
+            },
+            {
+              "selected": false,
+              "text": "emissary-system",
+              "value": "emissary-system"
+            },
+            {
+              "selected": false,
+              "text": "flink-eu-prod-euw1",
+              "value": "flink-eu-prod-euw1"
+            },
+            {
+              "selected": false,
+              "text": "flink-in-prod-apse1",
+              "value": "flink-in-prod-apse1"
+            },
+            {
+              "selected": false,
+              "text": "frontier",
+              "value": "frontier"
+            },
+            {
+              "selected": false,
+              "text": "growth",
+              "value": "growth"
+            },
+            {
+              "selected": false,
+              "text": "harness-bootcamp-delegate",
+              "value": "harness-bootcamp-delegate"
+            },
+            {
+              "selected": false,
+              "text": "harness-delegate",
+              "value": "harness-delegate"
+            },
+            {
+              "selected": false,
+              "text": "hes",
+              "value": "hes"
+            },
+            {
+              "selected": false,
+              "text": "hes-airflow",
+              "value": "hes-airflow"
+            },
+            {
+              "selected": false,
+              "text": "hs-core",
+              "value": "hs-core"
+            },
+            {
+              "selected": false,
+              "text": "hspay",
+              "value": "hspay"
+            },
+            {
+              "selected": false,
+              "text": "hspay-eu-prod-euw1",
+              "value": "hspay-eu-prod-euw1"
+            },
+            {
+              "selected": false,
+              "text": "hspay-in-prod-apse1",
+              "value": "hspay-in-prod-apse1"
+            },
+            {
+              "selected": false,
+              "text": "hspay-na-prod-use1",
+              "value": "hspay-na-prod-use1"
+            },
+            {
+              "selected": false,
+              "text": "infra-in-prod-apse1",
+              "value": "infra-in-prod-apse1"
+            },
+            {
+              "selected": false,
+              "text": "infra-pipelines",
+              "value": "infra-pipelines"
+            },
+            {
+              "selected": false,
+              "text": "infrastructure",
+              "value": "infrastructure"
+            },
+            {
+              "selected": false,
+              "text": "infrastructure-internal",
+              "value": "infrastructure-internal"
+            },
+            {
+              "selected": false,
+              "text": "karpenter",
+              "value": "karpenter"
+            },
+            {
+              "selected": false,
+              "text": "keda",
+              "value": "keda"
+            },
+            {
+              "selected": false,
+              "text": "kube-public",
+              "value": "kube-public"
+            },
+            {
+              "selected": false,
+              "text": "kubernetes-dashboard",
+              "value": "kubernetes-dashboard"
+            },
+            {
+              "selected": false,
+              "text": "linkerd",
+              "value": "linkerd"
+            },
+            {
+              "selected": false,
+              "text": "litmus",
+              "value": "litmus"
+            },
+            {
+              "selected": false,
+              "text": "liveops",
+              "value": "liveops"
+            },
+            {
+              "selected": false,
+              "text": "liveops-in-prod-apse1",
+              "value": "liveops-in-prod-apse1"
+            },
+            {
+              "selected": false,
+              "text": "p13n-airflow-prod-in-apse1-0",
+              "value": "p13n-airflow-prod-in-apse1-0"
+            },
+            {
+              "selected": false,
+              "text": "personalisation",
+              "value": "personalisation"
+            },
+            {
+              "selected": false,
+              "text": "personalisation-in-prod-apse1",
+              "value": "personalisation-in-prod-apse1"
+            },
+            {
+              "selected": false,
+              "text": "personalisation-na-prod-use1",
+              "value": "personalisation-na-prod-use1"
+            },
+            {
+              "selected": false,
+              "text": "pipeline-bloc2-in-prod-use1",
+              "value": "pipeline-bloc2-in-prod-use1"
+            },
+            {
+              "selected": false,
+              "text": "pipeline-bloc3-in-prod-use1",
+              "value": "pipeline-bloc3-in-prod-use1"
+            },
+            {
+              "selected": false,
+              "text": "platform-frameworks",
+              "value": "platform-frameworks"
+            },
+            {
+              "selected": false,
+              "text": "platform-in-prod-apse1",
+              "value": "platform-in-prod-apse1"
+            },
+            {
+              "selected": false,
+              "text": "playback",
+              "value": "playback"
+            },
+            {
+              "selected": false,
+              "text": "productivity-engg",
+              "value": "productivity-engg"
+            },
+            {
+              "selected": false,
+              "text": "quality",
+              "value": "quality"
+            },
+            {
+              "selected": false,
+              "text": "releng-github-actions-system",
+              "value": "releng-github-actions-system"
+            },
+            {
+              "selected": false,
+              "text": "rook-ceph",
+              "value": "rook-ceph"
+            },
+            {
+              "selected": false,
+              "text": "rook-ceph-system",
+              "value": "rook-ceph-system"
+            },
+            {
+              "selected": false,
+              "text": "search",
+              "value": "search"
+            },
+            {
+              "selected": false,
+              "text": "seceng",
+              "value": "seceng"
+            },
+            {
+              "selected": false,
+              "text": "seceng-in-prod-apse1",
+              "value": "seceng-in-prod-apse1"
+            },
+            {
+              "selected": false,
+              "text": "seceng-na-prod-use1",
+              "value": "seceng-na-prod-use1"
+            },
+            {
+              "selected": false,
+              "text": "security",
+              "value": "security"
+            },
+            {
+              "selected": false,
+              "text": "sentinels",
+              "value": "sentinels"
+            },
+            {
+              "selected": false,
+              "text": "sentinels-in-prod-apse1",
+              "value": "sentinels-in-prod-apse1"
+            },
+            {
+              "selected": false,
+              "text": "social",
+              "value": "social"
+            },
+            {
+              "selected": false,
+              "text": "social-in-prod-apse1",
+              "value": "social-in-prod-apse1"
+            },
+            {
+              "selected": false,
+              "text": "test-dns",
+              "value": "test-dns"
+            },
+            {
+              "selected": false,
+              "text": "test-statsd",
+              "value": "test-statsd"
+            },
+            {
+              "selected": false,
+              "text": "tf-inventory",
+              "value": "tf-inventory"
+            },
+            {
+              "selected": false,
+              "text": "tizen-in-prod-apse1",
+              "value": "tizen-in-prod-apse1"
+            },
+            {
+              "selected": false,
+              "text": "umsp",
+              "value": "umsp"
+            },
+            {
+              "selected": false,
+              "text": "umsp-eu-prod-euw1",
+              "value": "umsp-eu-prod-euw1"
+            },
+            {
+              "selected": false,
+              "text": "umsp-in-prod-apse1",
+              "value": "umsp-in-prod-apse1"
+            },
+            {
+              "selected": false,
+              "text": "umsp-na-prod-use1",
+              "value": "umsp-na-prod-use1"
+            },
+            {
+              "selected": false,
+              "text": "victoria-metrics-monitoring",
+              "value": "victoria-metrics-monitoring"
+            },
+            {
+              "selected": false,
+              "text": "video",
+              "value": "video"
+            },
+            {
+              "selected": false,
+              "text": "vp-in-prod-aps1",
+              "value": "vp-in-prod-aps1"
+            },
+            {
+              "selected": false,
+              "text": "vp-in-prod-apse1",
+              "value": "vp-in-prod-apse1"
+            },
+            {
+              "selected": false,
+              "text": "web",
+              "value": "web"
+            },
+            {
+              "selected": false,
+              "text": "webapp",
+              "value": "webapp"
+            },
+            {
+              "selected": false,
+              "text": "webapp-eu-prod-euw1",
+              "value": "webapp-eu-prod-euw1"
+            },
+            {
+              "selected": false,
+              "text": "webapp-in-prod-apse1",
+              "value": "webapp-in-prod-apse1"
+            },
+            {
+              "selected": false,
+              "text": "webapp-na-prod-use1",
+              "value": "webapp-na-prod-use1"
+            },
+            {
+              "selected": false,
+              "text": "webos-in-prod-apse1",
+              "value": "webos-in-prod-apse1"
+            }
+          ],
+          "query": {
+            "query": "label_values(kube_deployment_spec_replicas{namespace!~\"ambassador.*|kube-system|monitoring|logging|velero|victoria-metrics|victoria-metrics-scaling|apps|auth\"}, namespace)",
+            "refId": "StandardVariableQuery"
+          },
+          "refresh": 0,
+          "regex": "",
+          "skipUrlSync": false,
+          "sort": 0,
+          "tagValuesQuery": "",
+          "tags": [],
+          "tagsQuery": "",
+          "type": "query",
+          "useTags": false
+        }
+      ]
+    },
+    "time": {
+      "from": "now-5m",
+      "to": "now"
+    },
+    "timepicker": {},
+    "timezone": "",
+    "title": "Kubernetes Cluster Cost",
+    "uid": "6gDJnsgHk",
+    "version": 1
+  },
+  "folderUid": "c2ab6eb8-5670-49a2-a829-76201c7e16bf",
+  "overwrite": true
+}

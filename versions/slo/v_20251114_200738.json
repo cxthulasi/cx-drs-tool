@@ -1,0 +1,51 @@
+{
+  "version_id": "v_20251114_200738",
+  "timestamp": "2025-11-14T20:07:38.904371",
+  "service": "slo",
+  "version_type": "pre_migration",
+  "teama": {
+    "count": 1,
+    "resources": [
+      {
+        "id": "76af8c83-2b65-476f-8f04-d3df1fd954f0",
+        "name": "API Availability SLO",
+        "description": "Monitors the availability of our critical API endpoints",
+        "creator": "sre-team@example.com",
+        "labels": {},
+        "revision": {
+          "revision": 1,
+          "updateTime": "2025-10-23T06:22:14.404Z"
+        },
+        "grouping": {
+          "labels": [
+            "service_name"
+          ]
+        },
+        "createTime": "2025-10-23T06:22:14.404Z",
+        "updateTime": "2025-10-23T06:22:14.417Z",
+        "targetThresholdPercentage": 99.95,
+        "sloTimeFrame": "SLO_TIME_FRAME_28_DAYS",
+        "windowBasedMetricSli": {
+          "query": {
+            "query": "histogram_quantile(0.95, sum(increase(duration_ms_bucket)) by (service_name, le))"
+          },
+          "window": "WINDOW_SLO_WINDOW_1_MINUTE",
+          "comparisonOperator": "COMPARISON_OPERATOR_GREATER_THAN",
+          "threshold": 65
+        }
+      }
+    ],
+    "resource_identifiers": [
+      "API Availability SLO"
+    ]
+  },
+  "teamb": {
+    "count": 0,
+    "resources": [],
+    "resource_identifiers": []
+  },
+  "metadata": {
+    "created_by": "version_manager",
+    "purpose": "pre_migration_snapshot"
+  }
+}

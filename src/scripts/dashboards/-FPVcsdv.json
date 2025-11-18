@@ -1,0 +1,761 @@
+{
+  "dashboard": {
+    "annotations": {
+      "list": [
+        {
+          "builtIn": 1,
+          "datasource": {
+            "type": "grafana",
+            "uid": "-- Grafana --"
+          },
+          "enable": true,
+          "hide": true,
+          "iconColor": "rgba(0, 211, 255, 1)",
+          "name": "Annotations & Alerts",
+          "target": {
+            "limit": 100,
+            "matchAny": false,
+            "tags": [],
+            "type": "dashboard"
+          },
+          "type": "dashboard"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "enable": true,
+          "expr": "sum_over_time(live_event_in_progress{datacenter=\"sgp\"}[2m:1m]) == 1",
+          "iconColor": "orange",
+          "name": "Live event status",
+          "target": {
+            "limit": 100,
+            "matchAny": false,
+            "tags": [],
+            "type": "dashboard"
+          },
+          "textFormat": "{{datacenter}}",
+          "titleFormat": "Event started"
+        }
+      ]
+    },
+    "editable": true,
+    "fiscalYearStartMonth": 0,
+    "graphTooltip": 0,
+    "links": [],
+    "liveNow": false,
+    "panels": [
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${datasource}"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "drawStyle": "line",
+              "fillOpacity": 0,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "insertNulls": false,
+              "lineInterpolation": "linear",
+              "lineWidth": 1,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": [
+            {
+              "__systemRef": "hideSeriesFrom",
+              "matcher": {
+                "id": "byNames",
+                "maxDataPoints": 3000,
+                "options": {
+                  "mode": "exclude",
+                  "names": [
+                    "Stable workloads"
+                  ],
+                  "prefix": "All except:",
+                  "readOnly": true
+                }
+              },
+              "properties": [
+                {
+                  "id": "custom.hideFrom",
+                  "maxDataPoints": 3000,
+                  "value": {
+                    "legend": false,
+                    "tooltip": false,
+                    "viz": true
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 0
+        },
+        "id": 2,
+        "maxDataPoints": 3000,
+        "options": {
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "right",
+            "showLegend": true
+          },
+          "tooltip": {
+            "mode": "single",
+            "sort": "none"
+          }
+        },
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "${datasource}"
+            },
+            "editorMode": "code",
+            "expr": "sum(karpenter_nodepools_usage{source_cluster=\"$cluster\", resource_type=\"cpu\", nodepool=~\"common-workloads-c.*\"}) * 100 / sum(karpenter_nodepools_limit{source_cluster=\"$cluster\", resource_type=\"cpu\", nodepool=~\"common-workloads-c.*\"})",
+            "legendFormat": "Common workloads",
+            "range": true,
+            "refId": "A"
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "${datasource}"
+            },
+            "editorMode": "code",
+            "expr": "sum(karpenter_nodepools_usage{source_cluster=\"$cluster\", resource_type=\"cpu\", nodepool=~\"monitoring-workload.*\"}) * 100 / sum(karpenter_nodepools_limit{source_cluster=\"$cluster\", resource_type=\"cpu\", nodepool=~\"monitoring-workload.*\"})",
+            "hide": false,
+            "legendFormat": "Monitoring workloads",
+            "range": true,
+            "refId": "B"
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "${datasource}"
+            },
+            "editorMode": "code",
+            "expr": "sum(karpenter_nodepools_usage{source_cluster=\"$cluster\", resource_type=\"cpu\", nodepool=~\"ssai-common-workloads.*\"}) * 100 / sum(karpenter_nodepools_limit{source_cluster=\"$cluster\", resource_type=\"cpu\", nodepool=~\"ssai-common-workloads.*\"})",
+            "hide": false,
+            "legendFormat": "SSAI Common workloads",
+            "range": true,
+            "refId": "C"
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "${datasource}"
+            },
+            "editorMode": "code",
+            "expr": "sum(karpenter_nodepools_usage{source_cluster=\"$cluster\", resource_type=\"cpu\", nodepool=~\"cpu-affinity-workloads.*\"}) * 100 / sum(karpenter_nodepools_limit{source_cluster=\"$cluster\", resource_type=\"cpu\", nodepool=~\"cpu-affinity-workloads.*\"})",
+            "hide": false,
+            "legendFormat": "CPU Affinity Workloads",
+            "range": true,
+            "refId": "D"
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "${datasource}"
+            },
+            "editorMode": "code",
+            "expr": "sum(karpenter_nodepools_usage{source_cluster=\"$cluster\", resource_type=\"cpu\", nodepool=~\"memory-optimized-workloads.*\"}) * 100 / sum(karpenter_nodepools_limit{source_cluster=\"$cluster\", resource_type=\"cpu\", nodepool=~\"memory-optimized-workloads.*\"})",
+            "hide": false,
+            "legendFormat": "Memory Optimized workloads",
+            "range": true,
+            "refId": "E"
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "${datasource}"
+            },
+            "editorMode": "code",
+            "expr": "sum(karpenter_nodepools_usage{source_cluster=\"$cluster\", resource_type=\"cpu\", nodepool=~\"flink-workloads.*\"}) * 100 / sum(karpenter_nodepools_limit{source_cluster=\"$cluster\", resource_type=\"cpu\", nodepool=~\"flink-workloads.*\"})",
+            "hide": false,
+            "legendFormat": "Flink workloads",
+            "range": true,
+            "refId": "F"
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "${datasource}"
+            },
+            "editorMode": "code",
+            "expr": "sum(karpenter_nodepools_usage{source_cluster=\"$cluster\", resource_type=\"cpu\", nodepool=~\"ceph-workloads.*\"}) * 100 / sum(karpenter_nodepools_limit{source_cluster=\"$cluster\", resource_type=\"cpu\", nodepool=~\"ceph-workloads.*\"})",
+            "hide": false,
+            "legendFormat": "Ceph workloads",
+            "range": true,
+            "refId": "G"
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "${datasource}"
+            },
+            "editorMode": "code",
+            "expr": "sum(karpenter_nodepools_usage{source_cluster=\"$cluster\", resource_type=\"cpu\", nodepool=~\"graviton-workloads.*\"}) * 100 / sum(karpenter_nodepools_limit{source_cluster=\"$cluster\", resource_type=\"cpu\", nodepool=~\"graviton-workloads.*\"})",
+            "hide": false,
+            "legendFormat": "Graviton workloads",
+            "range": true,
+            "refId": "H"
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "${datasource}"
+            },
+            "editorMode": "code",
+            "expr": "sum(karpenter_nodepools_usage{source_cluster=\"$cluster\", resource_type=\"cpu\", nodepool=~\"stable-workloads.*\"}) * 100 / sum(karpenter_nodepools_limit{source_cluster=\"$cluster\", resource_type=\"cpu\", nodepool=~\"stable-workloads.*\"})",
+            "hide": false,
+            "legendFormat": "Stable workloads",
+            "range": true,
+            "refId": "I"
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "${datasource}"
+            },
+            "editorMode": "code",
+            "expr": "sum(karpenter_nodepools_usage{source_cluster=\"$cluster\", resource_type=\"cpu\", nodepool=~\"common-workloads-spot.*\"}) * 100 / sum(karpenter_nodepools_limit{source_cluster=\"$cluster\", resource_type=\"cpu\", nodepool=~\"common-workloads-spot.*\"})",
+            "hide": false,
+            "legendFormat": "Spot Common workloads",
+            "range": true,
+            "refId": "J"
+          }
+        ],
+        "title": "CPU Usage Per Nodepool",
+        "type": "timeseries"
+      },
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${datasource}"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "drawStyle": "line",
+              "fillOpacity": 0,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "insertNulls": false,
+              "lineInterpolation": "linear",
+              "lineWidth": 1,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 12,
+          "y": 0
+        },
+        "id": 3,
+        "maxDataPoints": 3000,
+        "options": {
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "right",
+            "showLegend": true
+          },
+          "tooltip": {
+            "mode": "single",
+            "sort": "none"
+          }
+        },
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "${datasource}"
+            },
+            "editorMode": "code",
+            "expr": "sum(karpenter_nodepools_usage{source_cluster=\"$cluster\", resource_type=\"memory\", nodepool=~\"common-workloads-c.*\"}) * 100 / sum(karpenter_nodepools_limit{source_cluster=\"$cluster\", resource_type=\"memory\", nodepool=~\"common-workloads-c.*\"})",
+            "legendFormat": "Common workloads",
+            "range": true,
+            "refId": "A"
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "${datasource}"
+            },
+            "editorMode": "code",
+            "expr": "sum(karpenter_nodepools_usage{source_cluster=\"$cluster\", resource_type=\"memory\", nodepool=~\"monitoring-workload.*\"}) * 100 / sum(karpenter_nodepools_limit{source_cluster=\"$cluster\", resource_type=\"memory\", nodepool=~\"monitoring-workload.*\"})",
+            "hide": false,
+            "legendFormat": "Monitoring workloads",
+            "range": true,
+            "refId": "B"
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "${datasource}"
+            },
+            "editorMode": "code",
+            "expr": "sum(karpenter_nodepools_usage{source_cluster=\"$cluster\", resource_type=\"memory\", nodepool=~\"ssai-common-workloads.*\"}) * 100 / sum(karpenter_nodepools_limit{source_cluster=\"$cluster\", resource_type=\"memory\", nodepool=~\"ssai-common-workloads.*\"})",
+            "hide": false,
+            "legendFormat": "SSAI Common workloads",
+            "range": true,
+            "refId": "C"
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "${datasource}"
+            },
+            "editorMode": "code",
+            "expr": "sum(karpenter_nodepools_usage{source_cluster=\"$cluster\", resource_type=\"memory\", nodepool=~\"cpu-affinity-workloads.*\"}) * 100 / sum(karpenter_nodepools_limit{source_cluster=\"$cluster\", resource_type=\"memory\", nodepool=~\"cpu-affinity-workloads.*\"})",
+            "hide": false,
+            "legendFormat": "CPU Affinity Workloads",
+            "range": true,
+            "refId": "D"
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "${datasource}"
+            },
+            "editorMode": "code",
+            "expr": "sum(karpenter_nodepools_usage{source_cluster=\"$cluster\", resource_type=\"memory\", nodepool=~\"memory-optimized-workloads.*\"}) * 100 / sum(karpenter_nodepools_limit{source_cluster=\"$cluster\", resource_type=\"memory\", nodepool=~\"memory-optimized-workloads.*\"})",
+            "hide": false,
+            "legendFormat": "Memory Optimized workloads",
+            "range": true,
+            "refId": "E"
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "${datasource}"
+            },
+            "editorMode": "code",
+            "expr": "sum(karpenter_nodepools_usage{source_cluster=\"$cluster\", resource_type=\"memory\", nodepool=~\"flink-workloads.*\"}) * 100 / sum(karpenter_nodepools_limit{source_cluster=\"$cluster\", resource_type=\"memory\", nodepool=~\"flink-workloads.*\"})",
+            "hide": false,
+            "legendFormat": "Flink workloads",
+            "range": true,
+            "refId": "F"
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "${datasource}"
+            },
+            "editorMode": "code",
+            "expr": "sum(karpenter_nodepools_usage{source_cluster=\"$cluster\", resource_type=\"memory\", nodepool=~\"ceph-workloads.*\"}) * 100 / sum(karpenter_nodepools_limit{source_cluster=\"$cluster\", resource_type=\"memory\", nodepool=~\"ceph-workloads.*\"})",
+            "hide": false,
+            "legendFormat": "Ceph workloads",
+            "range": true,
+            "refId": "G"
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "${datasource}"
+            },
+            "editorMode": "code",
+            "expr": "sum(karpenter_nodepools_usage{source_cluster=\"$cluster\", resource_type=\"memory\", nodepool=~\"graviton-workloads.*\"}) * 100 / sum(karpenter_nodepools_limit{source_cluster=\"$cluster\", resource_type=\"memory\", nodepool=~\"graviton-workloads.*\"})",
+            "hide": false,
+            "legendFormat": "Graviton workloads",
+            "range": true,
+            "refId": "H"
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "${datasource}"
+            },
+            "editorMode": "code",
+            "expr": "sum(karpenter_nodepools_usage{source_cluster=\"$cluster\", resource_type=\"memory\", nodepool=~\"stable-workloads.*\"}) * 100 / sum(karpenter_nodepools_limit{source_cluster=\"$cluster\", resource_type=\"memory\", nodepool=~\"stable-workloads.*\"})",
+            "hide": false,
+            "legendFormat": "Stable workloads",
+            "range": true,
+            "refId": "I"
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "${datasource}"
+            },
+            "editorMode": "code",
+            "expr": "sum(karpenter_nodepools_usage{source_cluster=\"$cluster\", resource_type=\"memory\", nodepool=~\"common-workloads-spot.*\"}) * 100 / sum(karpenter_nodepools_limit{source_cluster=\"$cluster\", resource_type=\"memory\", nodepool=~\"common-workloads-spot.*\"})",
+            "hide": false,
+            "legendFormat": "Spot Common workloads",
+            "range": true,
+            "refId": "J"
+          }
+        ],
+        "title": "Memory Usage Per Nodepool",
+        "type": "timeseries"
+      },
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${datasource}"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "drawStyle": "line",
+              "fillOpacity": 0,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "insertNulls": false,
+              "lineInterpolation": "linear",
+              "lineWidth": 1,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 8
+        },
+        "id": 5,
+        "maxDataPoints": 3000,
+        "options": {
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "tooltip": {
+            "mode": "single",
+            "sort": "none"
+          }
+        },
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "${datasource}"
+            },
+            "editorMode": "code",
+            "expr": "karpenter_voluntary_disruption_eligible_nodes{source_cluster=\"$cluster\", reason=\"underutilized\"}",
+            "legendFormat": "Underutilized nodes",
+            "range": true,
+            "refId": "A"
+          }
+        ],
+        "title": "Underutilized Nodes",
+        "type": "timeseries"
+      },
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${datasource}"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "drawStyle": "line",
+              "fillOpacity": 0,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "insertNulls": false,
+              "lineInterpolation": "linear",
+              "lineWidth": 1,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 12,
+          "y": 8
+        },
+        "id": 6,
+        "maxDataPoints": 3000,
+        "options": {
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "tooltip": {
+            "mode": "single",
+            "sort": "none"
+          }
+        },
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "${datasource}"
+            },
+            "editorMode": "code",
+            "expr": "sum(increase(karpenter_cloudprovider_errors_total{source_cluster=\"$cluster\", datacenter=\"$datacenter\"}[$__interval])) by (error)",
+            "legendFormat": "{{error}}",
+            "range": true,
+            "refId": "A"
+          }
+        ],
+        "title": "Cloud Provider errors",
+        "type": "timeseries"
+      }
+    ],
+    "refresh": "",
+    "schemaVersion": 38,
+    "style": "dark",
+    "tags": [],
+    "templating": {
+      "list": [
+        {
+          "current": {
+            "selected": false,
+            "text": "Legacy Cluster - ap-southeast-1 (system)",
+            "value": "Legacy Cluster - ap-southeast-1 (system)"
+          },
+          "hide": 0,
+          "includeAll": false,
+          "label": "datasource",
+          "multi": false,
+          "name": "datasource",
+          "options": [],
+          "query": "prometheus",
+          "queryValue": "",
+          "refresh": 1,
+          "regex": "",
+          "skipUrlSync": false,
+          "type": "datasource"
+        },
+        {
+          "current": {
+            "selected": false,
+            "text": "sgp",
+            "value": "sgp"
+          },
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "definition": "label_values(live_event_in_progress, datacenter)",
+          "hide": 0,
+          "includeAll": false,
+          "multi": false,
+          "name": "datacenter",
+          "options": [],
+          "query": {
+            "query": "label_values(live_event_in_progress, datacenter)",
+            "refId": "StandardVariableQuery"
+          },
+          "refresh": 1,
+          "regex": "",
+          "skipUrlSync": false,
+          "sort": 0,
+          "type": "query"
+        },
+        {
+          "current": {
+            "selected": false,
+            "text": "hs-eks-prod-api-apse1",
+            "value": "hs-eks-prod-api-apse1"
+          },
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "definition": "label_values(kube_node_info{datacenter=\"$datacenter\"}, source_cluster)",
+          "hide": 0,
+          "includeAll": false,
+          "multi": false,
+          "name": "cluster",
+          "options": [],
+          "query": {
+            "query": "label_values(kube_node_info{datacenter=\"$datacenter\"}, source_cluster)",
+            "refId": "StandardVariableQuery"
+          },
+          "refresh": 1,
+          "regex": "hs-eks.*",
+          "skipUrlSync": false,
+          "sort": 0,
+          "type": "query"
+        }
+      ]
+    },
+    "time": {
+      "from": "now-6h",
+      "to": "now"
+    },
+    "timepicker": {},
+    "timezone": "",
+    "title": "Kubernetes Fleet Utilisation",
+    "uid": "-FPVcsdv",
+    "version": 1,
+    "weekStart": ""
+  },
+  "folderUid": "d4480be7-99b5-4c30-85ad-a79f79c08ce9",
+  "overwrite": true
+}

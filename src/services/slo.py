@@ -9,10 +9,19 @@ from datetime import datetime
 from typing import Dict, List, Any, Optional
 
 from core.base_service import BaseService
+from core.safety_manager import SafetyManager
+from core.version_manager import VersionManager
 
 
 class SLOService(BaseService):
     """Service for migrating SLOs between teams."""
+
+    def __init__(self, config, logger=None):
+        super().__init__(config, logger)
+
+        # Initialize safety manager and version manager
+        self.safety_manager = SafetyManager(config, self.service_name)
+        self.version_manager = VersionManager(config, self.service_name)
 
     @property
     def service_name(self) -> str:
@@ -23,7 +32,10 @@ class SLOService(BaseService):
         return "/v1/slo/slos"
 
     def fetch_resources_from_teama(self) -> List[Dict[str, Any]]:
-        """Fetch all SLOs from Team A."""
+        """Fetch all SLOs from Team A with safety checks."""
+        api_error = None
+        slos = []
+
         try:
             self.logger.info("Fetching SLOs from Team A")
             data = self.teama_client.get("/v1/slo/slos")
@@ -43,15 +55,39 @@ class SLOService(BaseService):
                         self.logger.debug(f"🔍 SLO Debug - Nested SLO keys: {list(sample_slo['slo'].keys())}")
                         if 'id' in sample_slo['slo']:
                             self.logger.debug(f"🔍 SLO Debug - Nested ID: {sample_slo['slo'].get('id')}")
-
-                return slos
             else:
                 self.logger.warning("No SLOs found in Team A or invalid response format")
-                return []
+                slos = []
 
         except Exception as e:
             self.logger.error(f"Error fetching SLOs from Team A: {e}")
-            return []
+            api_error = e
+
+        # Get previous count for safety check
+        previous_version = self.version_manager.get_current_version()
+        previous_count = previous_version.get('teama', {}).get('count') if previous_version else None
+
+        # Perform safety check
+        safety_result = self.safety_manager.check_teama_fetch_safety(
+            slos, api_error, previous_count
+        )
+
+        if not safety_result.is_safe:
+            self.logger.error(f"TeamA fetch safety check failed: {safety_result.reason}")
+            self.logger.error(f"Safety check details: {safety_result.details}")
+
+            # If we have an API error, raise it
+            if api_error:
+                raise api_error
+
+            # If it's a safety issue without API error, raise a custom exception
+            raise RuntimeError(f"Safety check failed: {safety_result.reason}")
+
+        # If we had an API error but safety check passed, still raise the error
+        if api_error:
+            raise api_error
+
+        return slos
 
     def fetch_resources_from_teamb(self) -> List[Dict[str, Any]]:
         """Fetch all SLOs from Team B."""
@@ -431,10 +467,12 @@ class SLOService(BaseService):
                 # 1. None response (204 No Content)
                 # 2. Empty dict {}
                 # 3. Dict with success message
-                # 4. HTTP 200/204 status (handled by client)
+                # 4. Dict with 'effectedSloAlertIds' (valid SLO deletion response)
+                # 5. HTTP 200/204 status (handled by client)
                 if response is None or response == {} or (isinstance(response, dict) and (
                     'message' in response or
                     response.get('success') == True or
+                    'effectedSloAlertIds' in response or  # Valid SLO deletion response
                     len(response) == 0
                 )):
                     self.logger.info(f"✅ Successfully deleted SLO: {resource_id}")
@@ -645,7 +683,7 @@ class SLOService(BaseService):
 
     def migrate(self) -> bool:
         """
-        Perform the actual SLO migration.
+        Perform the actual SLO migration with enhanced safety checks.
 
         Returns:
             True if migration completed successfully, False otherwise
@@ -653,16 +691,62 @@ class SLOService(BaseService):
         try:
             self.log_migration_start(self.service_name)
 
-            # Fetch current resources from both teams
-            self.logger.info("Fetching resources from Team A...")
-            teama_resources = self.fetch_resources_from_teama()
-
-            self.logger.info("Fetching resources from Team B...")
+            # Step 1: Fetch resources from both teams (with safety checks for TeamA)
+            self.logger.info("📥 Fetching SLOs from both teams...")
+            teama_resources = self.fetch_resources_from_teama()  # This includes safety checks
             teamb_resources = self.fetch_resources_from_teamb()
+
+            # Step 2: Create pre-migration version snapshot
+            self.logger.info("📸 Creating pre-migration version snapshot...")
+            pre_migration_version = self.version_manager.create_version_snapshot(
+                teama_resources, teamb_resources, 'pre_migration'
+            )
+            self.logger.info(f"Pre-migration snapshot created: {pre_migration_version}")
+
+            # Get previous TeamA count for safety checks
+            previous_version = self.version_manager.get_previous_version()
+            previous_teama_count = previous_version.get('teama', {}).get('count') if previous_version else None
 
             # Save artifacts for comparison
             self.save_artifacts(teama_resources, 'teama')
             self.save_artifacts(teamb_resources, 'teamb')
+
+            # Check if any operations are needed
+            total_operations = len(teama_resources)
+
+            if total_operations == 0:
+                self.logger.info("No SLO migration needed - Team A has no SLOs")
+
+                # Display migration results even when no operations are needed
+                print("\n" + "=" * 60)
+                print("🎉 SLO MIGRATION RESULTS")
+                print("=" * 60)
+                print(f"Team A SLOs: {len(teama_resources)}")
+                print(f"Team B SLOs (before): {len(teamb_resources)}")
+                print(f"Deleted from Team B: 0")
+                print(f"Created in Team B: 0")
+                print(f"Failed operations: 0")
+                print(f"Success rate: 100.0%")
+                print(f"✅ SUCCESS: Team B should now have 0 SLOs (same as Team A)")
+                print("=" * 60)
+
+                # Still create post-migration snapshot for consistency
+                self.version_manager.create_version_snapshot(
+                    teama_resources, teamb_resources, 'post_migration'
+                )
+                self.log_migration_complete(self.service_name, True, 0, 0)
+                return True
+
+            # Step 3: Perform mass deletion safety check
+            # SLO uses delete-all + recreate-all strategy, so all TeamB SLOs would be deleted
+            mass_deletion_check = self.safety_manager.check_mass_deletion_safety(
+                teamb_resources, len(teamb_resources), len(teama_resources), previous_teama_count
+            )
+
+            if not mass_deletion_check.is_safe:
+                self.logger.error(f"Mass deletion safety check failed: {mass_deletion_check.reason}")
+                self.logger.error(f"Safety check details: {mass_deletion_check.details}")
+                raise RuntimeError(f"Mass deletion safety check failed: {mass_deletion_check.reason}")
 
             # Track migration statistics
             deleted_count = 0
@@ -702,32 +786,67 @@ class SLOService(BaseService):
             total_operations = created_count + deleted_count
             success_rate = (total_operations / (total_operations + failed_count) * 100) if (total_operations + failed_count) > 0 else 100
 
-            self.logger.info("=" * 60)
-            self.logger.info("SLO MIGRATION RESULTS")
-            self.logger.info("=" * 60)
-            self.logger.info(f"Team A SLOs: {len(teama_resources)}")
-            self.logger.info(f"Team B SLOs (before): {len(teamb_resources)}")
-            self.logger.info(f"Deleted from Team B: {deleted_count}")
-            self.logger.info(f"Created in Team B: {created_count}")
-            self.logger.info(f"Failed operations: {failed_count}")
-            self.logger.info(f"Success rate: {success_rate:.1f}%")
+            print("\n" + "=" * 60)
+            print("🎉 SLO MIGRATION RESULTS")
+            print("=" * 60)
+            print(f"Team A SLOs: {len(teama_resources)}")
+            print(f"Team B SLOs (before): {len(teamb_resources)}")
+            print(f"Deleted from Team B: {deleted_count}")
+            print(f"Created in Team B: {created_count}")
+            print(f"Failed operations: {failed_count}")
+            print(f"Success rate: {success_rate:.1f}%")
 
             # Expected final count should equal Team A count
             expected_final_count = len(teama_resources)
             actual_successful_creates = created_count
 
             if actual_successful_creates == expected_final_count:
-                self.logger.info(f"✅ SUCCESS: Team B should now have {expected_final_count} SLOs (same as Team A)")
+                print(f"✅ SUCCESS: Team B should now have {expected_final_count} SLOs (same as Team A)")
             else:
-                self.logger.error(f"❌ MISMATCH: Team B should have {expected_final_count} SLOs, but only {actual_successful_creates} were created successfully")
+                print(f"❌ MISMATCH: Team B should have {expected_final_count} SLOs, but only {actual_successful_creates} were created successfully")
+
+            print("=" * 60)
+
+            # Step 4: Create post-migration version snapshot
+            self.logger.info("📸 Creating post-migration version snapshot...")
+            try:
+                # Fetch updated resources from both teams for post-migration snapshot
+                updated_teama_resources = self.fetch_resources_from_teama()
+                updated_teamb_resources = self.fetch_resources_from_teamb()
+
+                post_migration_version = self.version_manager.create_version_snapshot(
+                    updated_teama_resources, updated_teamb_resources, 'post_migration'
+                )
+                self.logger.info(f"Post-migration snapshot created: {post_migration_version}")
+            except Exception as e:
+                self.logger.warning(f"Failed to create post-migration snapshot: {e}")
 
             # Log migration completion
             success = failed_count == 0 and created_count == len(teama_resources)
             self.log_migration_complete(self.service_name, success, len(teama_resources), failed_count)
 
+            if success:
+                self.logger.info("🎉 SLO migration completed successfully!")
+            else:
+                self.logger.warning(f"⚠️ SLO migration completed with {failed_count} failures")
+
             return success
 
         except Exception as e:
             self.logger.error(f"SLO migration failed: {e}")
+
+            # Display migration results even when migration fails
+            if 'teama_resources' in locals() and 'teamb_resources' in locals():
+                print("\n" + "=" * 60)
+                print("❌ SLO MIGRATION RESULTS (FAILED)")
+                print("=" * 60)
+                print(f"Team A SLOs: {len(teama_resources)}")
+                print(f"Team B SLOs (before): {len(teamb_resources)}")
+                print(f"Deleted from Team B: {locals().get('deleted_count', 0)}")
+                print(f"Created in Team B: {locals().get('created_count', 0)}")
+                print(f"Failed operations: {locals().get('failed_count', 0)}")
+                print(f"❌ MIGRATION FAILED: {e}")
+                print("=" * 60)
+
             self.log_migration_complete(self.service_name, False, 0, 1)
             return False

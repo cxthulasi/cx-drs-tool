@@ -17,6 +17,8 @@ from pathlib import Path
 from core.base_service import BaseService
 from core.config import Config
 from core.api_client import CoralogixAPIError
+from core.safety_manager import SafetyManager
+from core.version_manager import VersionManager
 
 
 class Events2MetricsService(BaseService):
@@ -25,6 +27,10 @@ class Events2MetricsService(BaseService):
     def __init__(self, config: Config, logger):
         super().__init__(config, logger)
         self._setup_failed_e2m_logging()
+
+        # Initialize safety manager and version manager
+        self.safety_manager = SafetyManager(config, self.service_name)
+        self.version_manager = VersionManager(config, self.service_name)
 
     @property
     def service_name(self) -> str:
@@ -41,33 +47,61 @@ class Events2MetricsService(BaseService):
 
     def fetch_resources_from_teama(self) -> List[Dict[str, Any]]:
         """
-        Fetch all Events2Metrics from Team A.
+        Fetch all Events2Metrics from Team A with safety checks.
 
         Returns:
             List of E2M definitions from Team A
         """
+        api_error = None
+        e2m_list = []
+
         try:
             self.logger.info("Fetching Events2Metrics from Team A...")
             response = self.teama_client.get(self.api_endpoint)
 
             if not response or 'e2m' not in response:
                 self.logger.warning("No Events2Metrics found in Team A or invalid response format")
-                return []
-
-            e2m_list = response['e2m']
-            self.logger.info(f"Found {len(e2m_list)} Events2Metrics in Team A")
-
-            # Save artifacts for comparison
-            self._save_artifacts("teama", e2m_list)
-
-            return e2m_list
+                e2m_list = []
+            else:
+                e2m_list = response['e2m']
+                self.logger.info(f"Found {len(e2m_list)} Events2Metrics in Team A")
 
         except CoralogixAPIError as e:
             self.logger.error(f"Failed to fetch Events2Metrics from Team A: {e}")
-            return []
+            api_error = e
         except Exception as e:
             self.logger.error(f"Unexpected error fetching Events2Metrics from Team A: {e}")
-            return []
+            api_error = e
+
+        # Get previous count for safety check
+        previous_version = self.version_manager.get_current_version()
+        previous_count = previous_version.get('teama', {}).get('count') if previous_version else None
+
+        # Perform safety check
+        safety_result = self.safety_manager.check_teama_fetch_safety(
+            e2m_list, api_error, previous_count
+        )
+
+        if not safety_result.is_safe:
+            self.logger.error(f"TeamA fetch safety check failed: {safety_result.reason}")
+            self.logger.error(f"Safety check details: {safety_result.details}")
+
+            # If we have an API error, raise it
+            if api_error:
+                raise api_error
+
+            # If it's a safety issue without API error, raise a custom exception
+            raise RuntimeError(f"Safety check failed: {safety_result.reason}")
+
+        # If we had an API error but safety check passed, still raise the error
+        if api_error:
+            raise api_error
+
+        # Save artifacts for comparison
+        if e2m_list:
+            self._save_artifacts("teama", e2m_list)
+
+        return e2m_list
 
     def fetch_resources_from_teamb(self) -> List[Dict[str, Any]]:
         """
@@ -325,7 +359,14 @@ class Events2MetricsService(BaseService):
 
     def migrate(self) -> bool:
         """
-        Perform the actual Events2Metrics migration.
+        Perform the actual Events2Metrics migration with enhanced safety checks.
+
+        Enhanced Implementation:
+        1. Create pre-migration version snapshot
+        2. Fetch E2Ms from Team A and Team B with safety checks
+        3. Perform mass deletion safety check
+        4. Execute migration operations
+        5. Create post-migration version snapshot
 
         Returns:
             True if migration completed successfully, False otherwise
@@ -333,12 +374,45 @@ class Events2MetricsService(BaseService):
         self.logger.info("Starting Events2Metrics migration...")
 
         try:
+            # Step 1: Fetch resources from both teams (with safety checks for TeamA)
+            self.logger.info("📥 Fetching Events2Metrics from both teams...")
+            teama_e2ms = self.fetch_resources_from_teama()  # This includes safety checks
+            teamb_e2ms = self.fetch_resources_from_teamb()
+
+            # Step 2: Create pre-migration version snapshot
+            self.logger.info("📸 Creating pre-migration version snapshot...")
+            pre_migration_version = self.version_manager.create_version_snapshot(
+                teama_e2ms, teamb_e2ms, 'pre_migration'
+            )
+            self.logger.info(f"Pre-migration snapshot created: {pre_migration_version}")
+
+            # Get previous TeamA count for safety checks
+            previous_version = self.version_manager.get_previous_version()
+            previous_teama_count = previous_version.get('teama', {}).get('count') if previous_version else None
+
             # Get dry run results to know what to do
             dry_run_results = self.dry_run()
 
             if dry_run_results['total_operations'] == 0:
                 self.logger.info("No Events2Metrics migration needed - teams are in sync")
+                # Still create post-migration snapshot for consistency
+                self.version_manager.create_version_snapshot(
+                    teama_e2ms, teamb_e2ms, 'post_migration'
+                )
                 return True
+
+            # Step 3: Perform mass deletion safety check
+            # Calculate total resources that would be deleted (including recreations)
+            resources_to_delete = dry_run_results['to_delete'] + [e2m_b for _, e2m_b in dry_run_results['to_recreate']]
+
+            mass_deletion_check = self.safety_manager.check_mass_deletion_safety(
+                resources_to_delete, len(teamb_e2ms), len(teama_e2ms), previous_teama_count
+            )
+
+            if not mass_deletion_check.is_safe:
+                self.logger.error(f"Mass deletion safety check failed: {mass_deletion_check.reason}")
+                self.logger.error(f"Safety check details: {mass_deletion_check.details}")
+                raise RuntimeError(f"Mass deletion safety check failed: {mass_deletion_check.reason}")
 
             # Track migration statistics
             stats = {
@@ -465,10 +539,35 @@ class Events2MetricsService(BaseService):
             self.logger.info(f"  Failed: {stats['failed']}")
             self.logger.info(f"  Success rate: {success_rate:.1f}%")
 
-            return stats['failed'] == 0
+            # Step 4: Create post-migration version snapshot
+            self.logger.info("📸 Creating post-migration version snapshot...")
+            try:
+                # Fetch updated resources from both teams for post-migration snapshot
+                updated_teama_e2ms = self.fetch_resources_from_teama()
+                updated_teamb_e2ms = self.fetch_resources_from_teamb()
+
+                post_migration_version = self.version_manager.create_version_snapshot(
+                    updated_teama_e2ms, updated_teamb_e2ms, 'post_migration'
+                )
+                self.logger.info(f"Post-migration snapshot created: {post_migration_version}")
+            except Exception as e:
+                self.logger.warning(f"Failed to create post-migration snapshot: {e}")
+
+            success = stats['failed'] == 0
+            if success:
+                self.logger.info("🎉 Events2Metrics migration completed successfully!")
+            else:
+                self.logger.warning(f"⚠️ Events2Metrics migration completed with {stats['failed']} failures")
+
+            return success
 
         except Exception as e:
             self.logger.error(f"Events2Metrics migration failed with error: {e}")
+
+            # Log failed operations if any exist
+            if 'failed_operations' in locals() and failed_operations:
+                self._log_failed_e2ms(failed_operations)
+
             return False
 
     def _log_failed_e2ms(self, failed_operations: List[Dict[str, Any]]):

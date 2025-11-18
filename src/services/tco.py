@@ -10,6 +10,8 @@ from enum import Enum
 
 from core.base_service import BaseService
 from core.api_client import CoralogixAPIError
+from core.safety_manager import SafetyManager
+from core.version_manager import VersionManager
 
 
 class SourceType(Enum):
@@ -33,6 +35,10 @@ class TCOService(BaseService):
         self.retention_name_to_id_teama = {}  # Team A retention name -> Team A retention id
         self.retention_name_to_id_teamb = {}  # Team A retention name -> Team B retention id
         self.retention_id_mapping = {}  # Team A retention id -> Team B retention id
+
+        # Initialize safety manager and version manager
+        self.safety_manager = SafetyManager(config, self.service_name)
+        self.version_manager = VersionManager(config, self.service_name)
 
     @property
     def service_name(self) -> str:
@@ -209,31 +215,57 @@ class TCOService(BaseService):
         return all_policies
 
     def fetch_resources_from_teama(self) -> List[Dict[str, Any]]:
-        """Fetch all policies from Team A, organized by source type."""
+        """Fetch all policies from Team A with safety checks."""
+        api_error = None
+        flattened_policies = []
+
         try:
             self.logger.info("Fetching policies from Team A")
             all_policies = self.fetch_all_policies_from_team(self.teama_client)
-            
+
             # Flatten the policies for compatibility with base service
-            flattened_policies = []
             for source_type, policies in all_policies.items():
                 for policy in policies:
                     # Add source type to policy for tracking
                     policy['_source_type'] = source_type
                     flattened_policies.append(policy)
-            
+
             total_count = len(flattened_policies)
             self.logger.info(f"Fetched {total_count} total policies from Team A")
-            
+
             # Log breakdown by source type
             for source_type, policies in all_policies.items():
                 self.logger.info(f"  {source_type}: {len(policies)} policies")
-            
-            return flattened_policies
 
         except Exception as e:
             self.logger.error(f"Failed to fetch policies from Team A: {e}")
-            raise
+            api_error = e
+
+        # Get previous count for safety check
+        previous_version = self.version_manager.get_current_version()
+        previous_count = previous_version.get('teama', {}).get('count') if previous_version else None
+
+        # Perform safety check
+        safety_result = self.safety_manager.check_teama_fetch_safety(
+            flattened_policies, api_error, previous_count
+        )
+
+        if not safety_result.is_safe:
+            self.logger.error(f"TeamA fetch safety check failed: {safety_result.reason}")
+            self.logger.error(f"Safety check details: {safety_result.details}")
+
+            # If we have an API error, raise it
+            if api_error:
+                raise api_error
+
+            # If it's a safety issue without API error, raise a custom exception
+            raise RuntimeError(f"Safety check failed: {safety_result.reason}")
+
+        # If we had an API error but safety check passed, still raise the error
+        if api_error:
+            raise api_error
+
+        return flattened_policies
 
     def fetch_resources_from_teamb(self) -> List[Dict[str, Any]]:
         """Fetch all policies from Team B, organized by source type."""
@@ -744,13 +776,25 @@ class TCOService(BaseService):
         return stats
 
     def migrate(self) -> bool:
-        """Perform the actual TCO policies migration."""
+        """Perform the actual TCO policies migration with enhanced safety checks."""
         try:
             self.log_migration_start(self.service_name, dry_run=False)
 
-            # Fetch resources from both teams
-            self.logger.info("Fetching policies from Team A...")
-            teama_policies_flat = self.fetch_resources_from_teama()
+            # Step 1: Fetch resources from both teams (with safety checks for TeamA)
+            self.logger.info("📥 Fetching policies from both teams...")
+            teama_policies_flat = self.fetch_resources_from_teama()  # This includes safety checks
+            teamb_policies_flat = self.fetch_resources_from_teamb()
+
+            # Step 2: Create pre-migration version snapshot
+            self.logger.info("📸 Creating pre-migration version snapshot...")
+            pre_migration_version = self.version_manager.create_version_snapshot(
+                teama_policies_flat, teamb_policies_flat, 'pre_migration'
+            )
+            self.logger.info(f"Pre-migration snapshot created: {pre_migration_version}")
+
+            # Get previous TeamA count for safety checks
+            previous_version = self.version_manager.get_previous_version()
+            previous_teama_count = previous_version.get('teama', {}).get('count') if previous_version else None
 
             # Organize Team A policies by source type
             teama_policies = {}
@@ -760,12 +804,32 @@ class TCOService(BaseService):
                     if policy.get('_source_type') == source_type.value
                 ]
 
+            # Check if any operations are needed
+            total_operations = len(teama_policies_flat)
+
+            if total_operations == 0:
+                self.logger.info("No TCO policies migration needed - Team A has no policies")
+                # Still create post-migration snapshot for consistency
+                self.version_manager.create_version_snapshot(
+                    teama_policies_flat, teamb_policies_flat, 'post_migration'
+                )
+                self.log_migration_complete(self.service_name, True, 0, 0)
+                return True
+
+            # Step 3: Perform mass deletion safety check
+            # TCO uses delete-all + recreate-all strategy, so all TeamB policies would be deleted
+            mass_deletion_check = self.safety_manager.check_mass_deletion_safety(
+                teamb_policies_flat, len(teamb_policies_flat), len(teama_policies_flat), previous_teama_count
+            )
+
+            if not mass_deletion_check.is_safe:
+                self.logger.error(f"Mass deletion safety check failed: {mass_deletion_check.reason}")
+                self.logger.error(f"Safety check details: {mass_deletion_check.details}")
+                raise RuntimeError(f"Mass deletion safety check failed: {mass_deletion_check.reason}")
+
             # Export Team A artifacts
             self.logger.info("Saving Team A artifacts...")
             self.save_artifacts(teama_policies_flat, "teama")
-
-            self.logger.info("Fetching policies from Team B...")
-            teamb_policies_flat = self.fetch_resources_from_teamb()
 
             # Export Team B artifacts
             self.logger.info("Saving Team B artifacts...")
@@ -883,6 +947,20 @@ class TCOService(BaseService):
             print(f"{'Successfully Created:':<25} {total_stats['total_created']:>10}")
             print(f"{'Failed Operations:':<25} {total_stats['total_failed']:>10}")
             print(f"{'Overall Success Rate:':<25} {overall_success_rate:>9.1f}%")
+
+            # Step 4: Create post-migration version snapshot
+            self.logger.info("📸 Creating post-migration version snapshot...")
+            try:
+                # Fetch updated resources from both teams for post-migration snapshot
+                updated_teama_policies = self.fetch_resources_from_teama()
+                updated_teamb_policies = self.fetch_resources_from_teamb()
+
+                post_migration_version = self.version_manager.create_version_snapshot(
+                    updated_teama_policies, updated_teamb_policies, 'post_migration'
+                )
+                self.logger.info(f"Post-migration snapshot created: {post_migration_version}")
+            except Exception as e:
+                self.logger.warning(f"Failed to create post-migration snapshot: {e}")
 
             self.log_migration_complete(self.service_name, success, total_stats['total_created'], total_stats['total_failed'])
 

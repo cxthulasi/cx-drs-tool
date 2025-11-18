@@ -1,0 +1,2898 @@
+{
+  "dashboard": {
+    "annotations": {
+      "list": [
+        {
+          "builtIn": 1,
+          "datasource": null,
+          "enable": true,
+          "hide": true,
+          "iconColor": "rgba(0, 211, 255, 1)",
+          "name": "Annotations & Alerts",
+          "type": "dashboard"
+        }
+      ]
+    },
+    "editable": true,
+    "gnetId": null,
+    "graphTooltip": 1,
+    "iteration": 1730419649758,
+    "links": [],
+    "panels": [
+      {
+        "collapsed": true,
+        "datasource": null,
+        "gridPos": {
+          "h": 1,
+          "w": 24,
+          "x": 0,
+          "y": 0
+        },
+        "id": 38,
+        "maxDataPoints": 1360,
+        "panels": [
+          {
+            "aliasColors": {},
+            "bars": true,
+            "dashLength": 10,
+            "dashes": false,
+            "datasource": {
+              "type": "prometheus",
+              "uid": "-FPV4La7z"
+            },
+            "fieldConfig": {
+              "defaults": {},
+              "overrides": []
+            },
+            "fill": 1,
+            "fillGradient": 0,
+            "gridPos": {
+              "h": 9,
+              "w": 12,
+              "x": 0,
+              "y": 1
+            },
+            "hiddenSeries": false,
+            "id": 42,
+            "legend": {
+              "alignAsTable": true,
+              "avg": false,
+              "current": true,
+              "max": false,
+              "min": false,
+              "rightSide": true,
+              "show": true,
+              "sort": "total",
+              "sortDesc": true,
+              "total": true,
+              "values": true
+            },
+            "lines": true,
+            "linewidth": 1,
+            "maxDataPoints": 1360,
+            "nullPointMode": "null",
+            "options": {
+              "alertThreshold": true
+            },
+            "percentage": false,
+            "pluginVersion": "7.5.17",
+            "pointradius": 2,
+            "points": false,
+            "renderer": "flot",
+            "seriesOverrides": [
+              {
+                "$$hashKey": "object:3949",
+                "alias": "SUM",
+                "bars": false,
+                "lines": true,
+                "stack": false
+              }
+            ],
+            "spaceLength": 10,
+            "stack": true,
+            "steppedLine": false,
+            "targets": [
+              {
+                "exemplar": true,
+                "expr": "increase(flink_taskmanager_job_task_operator_deserializer_parsingSuccessCounter_MinervaDeserializationSchema_$event_name{namespace=\"$namespace\", job_name=\"$job_name\"}[1m])",
+                "hide": false,
+                "interval": "60",
+                "legendFormat": "{{operator_name}}_{{subtask_index}}",
+                "queryType": "randomWalk",
+                "refId": "A"
+              },
+              {
+                "exemplar": true,
+                "expr": "sum(increase(flink_taskmanager_job_task_operator_deserializer_parsingSuccessCounter_MinervaDeserializationSchema_$event_name{namespace=\"$namespace\", job_name=\"$job_name\"}[1m]))",
+                "hide": false,
+                "interval": "60",
+                "legendFormat": "SUM",
+                "queryType": "randomWalk",
+                "refId": "B"
+              }
+            ],
+            "thresholds": [],
+            "timeFrom": null,
+            "timeRegions": [],
+            "timeShift": null,
+            "title": "Event Parsing Success",
+            "tooltip": {
+              "shared": true,
+              "sort": 0,
+              "value_type": "individual"
+            },
+            "type": "graph",
+            "xaxis": {
+              "buckets": null,
+              "mode": "time",
+              "name": null,
+              "show": true,
+              "values": []
+            },
+            "yaxes": [
+              {
+                "$$hashKey": "object:155",
+                "format": "short",
+                "label": "RPM",
+                "logBase": 1,
+                "max": null,
+                "min": "0",
+                "show": true
+              },
+              {
+                "$$hashKey": "object:156",
+                "format": "short",
+                "label": null,
+                "logBase": 1,
+                "max": null,
+                "min": null,
+                "show": true
+              }
+            ],
+            "yaxis": {
+              "align": false,
+              "alignLevel": null
+            }
+          },
+          {
+            "aliasColors": {},
+            "bars": true,
+            "dashLength": 10,
+            "dashes": false,
+            "datasource": {
+              "type": "prometheus",
+              "uid": "-FPV4La7z"
+            },
+            "fieldConfig": {
+              "defaults": {},
+              "overrides": []
+            },
+            "fill": 1,
+            "fillGradient": 0,
+            "gridPos": {
+              "h": 9,
+              "w": 12,
+              "x": 12,
+              "y": 1
+            },
+            "hiddenSeries": false,
+            "id": 43,
+            "legend": {
+              "alignAsTable": true,
+              "avg": false,
+              "current": true,
+              "max": false,
+              "min": false,
+              "rightSide": true,
+              "show": true,
+              "sort": "total",
+              "sortDesc": true,
+              "total": true,
+              "values": true
+            },
+            "lines": true,
+            "linewidth": 1,
+            "maxDataPoints": 1360,
+            "nullPointMode": "null",
+            "options": {
+              "alertThreshold": true
+            },
+            "percentage": false,
+            "pluginVersion": "7.5.17",
+            "pointradius": 2,
+            "points": false,
+            "renderer": "flot",
+            "seriesOverrides": [
+              {
+                "$$hashKey": "object:3949",
+                "alias": "SUM",
+                "bars": false,
+                "lines": true,
+                "stack": false
+              }
+            ],
+            "spaceLength": 10,
+            "stack": true,
+            "steppedLine": false,
+            "targets": [
+              {
+                "exemplar": true,
+                "expr": "increase(flink_taskmanager_job_task_operator_deserializer_parsingFailureCounter_MinervaDeserializationSchema_$event_name{namespace=\"$namespace\", job_name=\"$job_name\"}[1m])",
+                "hide": false,
+                "interval": "60",
+                "legendFormat": "{{operator_name}}_{{subtask_index}}",
+                "queryType": "randomWalk",
+                "refId": "A"
+              },
+              {
+                "exemplar": true,
+                "expr": "sum(increase(flink_taskmanager_job_task_operator_deserializer_parsingFailureCounter_MinervaDeserializationSchema_$event_name{namespace=\"$namespace\", job_name=\"$job_name\"}[1m]))",
+                "hide": false,
+                "interval": "60",
+                "legendFormat": "SUM",
+                "queryType": "randomWalk",
+                "refId": "B"
+              }
+            ],
+            "thresholds": [],
+            "timeFrom": null,
+            "timeRegions": [],
+            "timeShift": null,
+            "title": "Event Parsing Failure",
+            "tooltip": {
+              "shared": true,
+              "sort": 0,
+              "value_type": "individual"
+            },
+            "type": "graph",
+            "xaxis": {
+              "buckets": null,
+              "mode": "time",
+              "name": null,
+              "show": true,
+              "values": []
+            },
+            "yaxes": [
+              {
+                "$$hashKey": "object:155",
+                "format": "short",
+                "label": "RPM",
+                "logBase": 1,
+                "max": null,
+                "min": "0",
+                "show": true
+              },
+              {
+                "$$hashKey": "object:156",
+                "format": "short",
+                "label": null,
+                "logBase": 1,
+                "max": null,
+                "min": null,
+                "show": true
+              }
+            ],
+            "yaxis": {
+              "align": false,
+              "alignLevel": null
+            }
+          },
+          {
+            "aliasColors": {},
+            "bars": false,
+            "dashLength": 10,
+            "dashes": false,
+            "datasource": {
+              "type": "prometheus",
+              "uid": "-FPV4La7z"
+            },
+            "fieldConfig": {
+              "defaults": {},
+              "overrides": []
+            },
+            "fill": 0,
+            "fillGradient": 0,
+            "gridPos": {
+              "h": 9,
+              "w": 12,
+              "x": 0,
+              "y": 10
+            },
+            "hiddenSeries": false,
+            "id": 4,
+            "legend": {
+              "alignAsTable": true,
+              "avg": false,
+              "current": true,
+              "max": false,
+              "min": false,
+              "rightSide": true,
+              "show": true,
+              "sort": "current",
+              "sortDesc": true,
+              "total": false,
+              "values": true
+            },
+            "lines": true,
+            "linewidth": 2,
+            "maxDataPoints": 1360,
+            "nullPointMode": "null",
+            "options": {
+              "alertThreshold": true
+            },
+            "percentage": false,
+            "pluginVersion": "7.5.17",
+            "pointradius": 2,
+            "points": false,
+            "renderer": "flot",
+            "seriesOverrides": [
+              {
+                "$$hashKey": "object:5990",
+                "alias": "/.*/",
+                "yaxis": 2
+              }
+            ],
+            "spaceLength": 10,
+            "stack": false,
+            "steppedLine": false,
+            "targets": [
+              {
+                "exemplar": true,
+                "expr": "avg_over_time(flink_taskmanager_job_task_operator_SentinelTimestamp{namespace=\"$namespace\", job_name=\"$job_name\", task_name=~\".*Sentinel.*\", operator_name=~\".*Sentinel.*\"}[2m] > 0)",
+                "format": "time_series",
+                "hide": false,
+                "instant": false,
+                "interval": "60",
+                "intervalFactor": 1,
+                "legendFormat": "{{operator_name}}_{{subtask_index}}",
+                "queryType": "randomWalk",
+                "refId": "B"
+              }
+            ],
+            "thresholds": [],
+            "timeFrom": null,
+            "timeRegions": [],
+            "timeShift": null,
+            "title": "Event Timestamp (Local)",
+            "tooltip": {
+              "shared": true,
+              "sort": 0,
+              "value_type": "individual"
+            },
+            "type": "graph",
+            "xaxis": {
+              "buckets": null,
+              "mode": "time",
+              "name": null,
+              "show": true,
+              "values": []
+            },
+            "yaxes": [
+              {
+                "$$hashKey": "object:309",
+                "format": "ms",
+                "label": null,
+                "logBase": 1,
+                "max": null,
+                "min": null,
+                "show": false
+              },
+              {
+                "$$hashKey": "object:310",
+                "format": "dateTimeAsLocal",
+                "label": null,
+                "logBase": 1,
+                "max": null,
+                "min": null,
+                "show": true
+              }
+            ],
+            "yaxis": {
+              "align": false,
+              "alignLevel": null
+            }
+          },
+          {
+            "aliasColors": {},
+            "bars": false,
+            "dashLength": 10,
+            "dashes": false,
+            "datasource": {
+              "type": "prometheus",
+              "uid": "-FPV4La7z"
+            },
+            "fieldConfig": {
+              "defaults": {},
+              "overrides": []
+            },
+            "fill": 0,
+            "fillGradient": 0,
+            "gridPos": {
+              "h": 9,
+              "w": 12,
+              "x": 12,
+              "y": 10
+            },
+            "hiddenSeries": false,
+            "id": 36,
+            "legend": {
+              "alignAsTable": true,
+              "avg": false,
+              "current": true,
+              "max": false,
+              "min": false,
+              "rightSide": true,
+              "show": true,
+              "total": false,
+              "values": true
+            },
+            "lines": true,
+            "linewidth": 2,
+            "maxDataPoints": 1360,
+            "nullPointMode": "null",
+            "options": {
+              "alertThreshold": true
+            },
+            "percentage": false,
+            "pluginVersion": "7.5.17",
+            "pointradius": 2,
+            "points": false,
+            "renderer": "flot",
+            "seriesOverrides": [
+              {
+                "$$hashKey": "object:5990",
+                "alias": "/.*/",
+                "yaxis": 2
+              }
+            ],
+            "spaceLength": 10,
+            "stack": false,
+            "steppedLine": false,
+            "targets": [
+              {
+                "exemplar": true,
+                "expr": "(time() * 1000 - avg_over_time(flink_taskmanager_job_task_operator_SentinelTimestamp{namespace=\"$namespace\", job_name=\"$job_name\", task_name=~\".*Sentinel.*\", operator_name=~\".*Sentinel.*\"}[2m] > 0)) > 0",
+                "format": "time_series",
+                "hide": false,
+                "instant": false,
+                "interval": "60",
+                "intervalFactor": 1,
+                "legendFormat": "{{operator_name}}_{{subtask_index}}",
+                "queryType": "randomWalk",
+                "refId": "B"
+              }
+            ],
+            "thresholds": [],
+            "timeFrom": null,
+            "timeRegions": [],
+            "timeShift": null,
+            "title": "Event Timestamp Lag",
+            "tooltip": {
+              "shared": true,
+              "sort": 0,
+              "value_type": "individual"
+            },
+            "type": "graph",
+            "xaxis": {
+              "buckets": null,
+              "mode": "time",
+              "name": null,
+              "show": true,
+              "values": []
+            },
+            "yaxes": [
+              {
+                "$$hashKey": "object:309",
+                "format": "ms",
+                "label": null,
+                "logBase": 1,
+                "max": null,
+                "min": null,
+                "show": false
+              },
+              {
+                "$$hashKey": "object:310",
+                "format": "ms",
+                "label": null,
+                "logBase": 1,
+                "max": null,
+                "min": null,
+                "show": true
+              }
+            ],
+            "yaxis": {
+              "align": false,
+              "alignLevel": null
+            }
+          }
+        ],
+        "title": "Records",
+        "type": "row"
+      },
+      {
+        "collapsed": true,
+        "datasource": null,
+        "gridPos": {
+          "h": 1,
+          "w": 24,
+          "x": 0,
+          "y": 1
+        },
+        "id": 13,
+        "maxDataPoints": 1360,
+        "panels": [
+          {
+            "aliasColors": {},
+            "bars": true,
+            "dashLength": 10,
+            "dashes": false,
+            "datasource": {
+              "type": "prometheus",
+              "uid": "-FPV4La7z"
+            },
+            "fieldConfig": {
+              "defaults": {},
+              "overrides": []
+            },
+            "fill": 1,
+            "fillGradient": 0,
+            "gridPos": {
+              "h": 9,
+              "w": 12,
+              "x": 0,
+              "y": 2
+            },
+            "hiddenSeries": false,
+            "id": 7,
+            "legend": {
+              "alignAsTable": true,
+              "avg": false,
+              "current": true,
+              "max": false,
+              "min": false,
+              "rightSide": true,
+              "show": true,
+              "sort": "total",
+              "sortDesc": true,
+              "total": true,
+              "values": true
+            },
+            "lines": true,
+            "linewidth": 1,
+            "maxDataPoints": 1360,
+            "nullPointMode": "null",
+            "options": {
+              "alertThreshold": true
+            },
+            "percentage": false,
+            "pluginVersion": "7.5.17",
+            "pointradius": 2,
+            "points": false,
+            "renderer": "flot",
+            "seriesOverrides": [
+              {
+                "$$hashKey": "object:3949",
+                "alias": "SUM",
+                "bars": false,
+                "lines": true,
+                "stack": false
+              }
+            ],
+            "spaceLength": 10,
+            "stack": true,
+            "steppedLine": false,
+            "targets": [
+              {
+                "exemplar": true,
+                "expr": "increase(flink_taskmanager_job_task_operator_numRecordsIn{namespace=\"$namespace\", job_name=\"$job_name\", task_name=~\".*Source.*\", operator_name=~\".*Source.*\"}[1m])",
+                "hide": false,
+                "interval": "60",
+                "legendFormat": "{{operator_name}}_{{subtask_index}}",
+                "queryType": "randomWalk",
+                "refId": "A"
+              },
+              {
+                "exemplar": true,
+                "expr": "sum(increase(flink_taskmanager_job_task_operator_numRecordsIn{namespace=\"$namespace\", job_name=\"$job_name\", task_name=~\".*Source.*\", operator_name=~\".*Source.*\"}[1m]))",
+                "hide": false,
+                "interval": "60",
+                "legendFormat": "SUM",
+                "queryType": "randomWalk",
+                "refId": "B"
+              }
+            ],
+            "thresholds": [],
+            "timeFrom": null,
+            "timeRegions": [],
+            "timeShift": null,
+            "title": "Source Total Volume",
+            "tooltip": {
+              "shared": true,
+              "sort": 0,
+              "value_type": "individual"
+            },
+            "type": "graph",
+            "xaxis": {
+              "buckets": null,
+              "mode": "time",
+              "name": null,
+              "show": true,
+              "values": []
+            },
+            "yaxes": [
+              {
+                "$$hashKey": "object:155",
+                "format": "short",
+                "label": "RPM",
+                "logBase": 1,
+                "max": null,
+                "min": "0",
+                "show": true
+              },
+              {
+                "$$hashKey": "object:156",
+                "format": "short",
+                "label": null,
+                "logBase": 1,
+                "max": null,
+                "min": null,
+                "show": true
+              }
+            ],
+            "yaxis": {
+              "align": false,
+              "alignLevel": null
+            }
+          },
+          {
+            "aliasColors": {},
+            "bars": false,
+            "dashLength": 10,
+            "dashes": false,
+            "datasource": {
+              "type": "prometheus",
+              "uid": "-FPV4La7z"
+            },
+            "fieldConfig": {
+              "defaults": {},
+              "overrides": []
+            },
+            "fill": 0,
+            "fillGradient": 0,
+            "gridPos": {
+              "h": 9,
+              "w": 12,
+              "x": 12,
+              "y": 2
+            },
+            "hiddenSeries": false,
+            "id": 35,
+            "legend": {
+              "alignAsTable": true,
+              "avg": false,
+              "current": true,
+              "max": false,
+              "min": false,
+              "rightSide": true,
+              "show": true,
+              "sort": "current",
+              "sortDesc": true,
+              "total": false,
+              "values": true
+            },
+            "lines": true,
+            "linewidth": 2,
+            "maxDataPoints": 1360,
+            "nullPointMode": "null",
+            "options": {
+              "alertThreshold": true
+            },
+            "percentage": false,
+            "pluginVersion": "7.5.17",
+            "pointradius": 2,
+            "points": false,
+            "renderer": "flot",
+            "seriesOverrides": [
+              {
+                "$$hashKey": "object:5990",
+                "alias": "/.*/",
+                "yaxis": 2
+              }
+            ],
+            "spaceLength": 10,
+            "stack": false,
+            "steppedLine": false,
+            "targets": [
+              {
+                "exemplar": true,
+                "expr": "(time() * 1000 - (flink_taskmanager_job_task_operator_currentOutputWatermark{namespace=\"$namespace\", job_name=\"$job_name\", task_name=~\".*Source:_X.*\", operator_name=~\".*Source.*\"} > 0)) > 0",
+                "format": "time_series",
+                "hide": false,
+                "instant": false,
+                "interval": "60",
+                "intervalFactor": 1,
+                "legendFormat": "{{operator_name}}_{{subtask_index}}",
+                "queryType": "randomWalk",
+                "refId": "B"
+              }
+            ],
+            "thresholds": [],
+            "timeFrom": null,
+            "timeRegions": [],
+            "timeShift": null,
+            "title": "Source Watermark Lag",
+            "tooltip": {
+              "shared": true,
+              "sort": 0,
+              "value_type": "individual"
+            },
+            "type": "graph",
+            "xaxis": {
+              "buckets": null,
+              "mode": "time",
+              "name": null,
+              "show": true,
+              "values": []
+            },
+            "yaxes": [
+              {
+                "$$hashKey": "object:309",
+                "format": "ms",
+                "label": null,
+                "logBase": 1,
+                "max": null,
+                "min": null,
+                "show": false
+              },
+              {
+                "$$hashKey": "object:310",
+                "format": "ms",
+                "label": null,
+                "logBase": 1,
+                "max": null,
+                "min": null,
+                "show": true
+              }
+            ],
+            "yaxis": {
+              "align": false,
+              "alignLevel": null
+            }
+          },
+          {
+            "aliasColors": {},
+            "bars": true,
+            "dashLength": 10,
+            "dashes": false,
+            "datasource": {
+              "type": "prometheus",
+              "uid": "-FPV4La7z"
+            },
+            "fieldConfig": {
+              "defaults": {},
+              "overrides": []
+            },
+            "fill": 1,
+            "fillGradient": 0,
+            "gridPos": {
+              "h": 9,
+              "w": 12,
+              "x": 0,
+              "y": 11
+            },
+            "hiddenSeries": false,
+            "id": 5,
+            "legend": {
+              "alignAsTable": true,
+              "avg": false,
+              "current": true,
+              "max": false,
+              "min": false,
+              "rightSide": true,
+              "show": true,
+              "sort": "total",
+              "sortDesc": true,
+              "total": true,
+              "values": true
+            },
+            "lines": true,
+            "linewidth": 1,
+            "maxDataPoints": 1360,
+            "nullPointMode": "null",
+            "options": {
+              "alertThreshold": true
+            },
+            "percentage": false,
+            "pluginVersion": "7.5.17",
+            "pointradius": 2,
+            "points": false,
+            "renderer": "flot",
+            "seriesOverrides": [
+              {
+                "$$hashKey": "object:4228",
+                "alias": "SUM",
+                "bars": false,
+                "lines": true,
+                "stack": false
+              }
+            ],
+            "spaceLength": 10,
+            "stack": true,
+            "steppedLine": false,
+            "targets": [
+              {
+                "exemplar": true,
+                "expr": "increase(flink_taskmanager_job_task_operator_numRecordsIn{namespace=\"$namespace\", job_name=\"$job_name\", task_name=~\".*Sentinel.*\", operator_name=~\".*Sentinel.*\"}[1m])",
+                "interval": "60",
+                "legendFormat": "{{operator_name}}_{{subtask_index}}",
+                "queryType": "randomWalk",
+                "refId": "A"
+              },
+              {
+                "exemplar": true,
+                "expr": "sum(increase(flink_taskmanager_job_task_operator_numRecordsIn{namespace=\"$namespace\", job_name=\"$job_name\", task_name=~\".*Sentinel.*\", operator_name=~\".*Sentinel.*\"}[1m]))",
+                "hide": false,
+                "interval": "60",
+                "legendFormat": "SUM",
+                "queryType": "randomWalk",
+                "refId": "B"
+              }
+            ],
+            "thresholds": [],
+            "timeFrom": null,
+            "timeRegions": [],
+            "timeShift": null,
+            "title": "Sentinel Total Volume",
+            "tooltip": {
+              "shared": true,
+              "sort": 0,
+              "value_type": "individual"
+            },
+            "type": "graph",
+            "xaxis": {
+              "buckets": null,
+              "mode": "time",
+              "name": null,
+              "show": true,
+              "values": []
+            },
+            "yaxes": [
+              {
+                "$$hashKey": "object:155",
+                "format": "short",
+                "label": "RPM",
+                "logBase": 1,
+                "max": null,
+                "min": "0",
+                "show": true
+              },
+              {
+                "$$hashKey": "object:156",
+                "format": "short",
+                "label": null,
+                "logBase": 1,
+                "max": null,
+                "min": null,
+                "show": true
+              }
+            ],
+            "yaxis": {
+              "align": false,
+              "alignLevel": null
+            }
+          },
+          {
+            "aliasColors": {},
+            "bars": false,
+            "dashLength": 10,
+            "dashes": false,
+            "datasource": {
+              "type": "prometheus",
+              "uid": "-FPV4La7z"
+            },
+            "fieldConfig": {
+              "defaults": {},
+              "overrides": []
+            },
+            "fill": 0,
+            "fillGradient": 0,
+            "gridPos": {
+              "h": 9,
+              "w": 12,
+              "x": 12,
+              "y": 11
+            },
+            "hiddenSeries": false,
+            "id": 34,
+            "legend": {
+              "alignAsTable": true,
+              "avg": false,
+              "current": true,
+              "max": false,
+              "min": false,
+              "rightSide": true,
+              "show": true,
+              "sort": "current",
+              "sortDesc": true,
+              "total": false,
+              "values": true
+            },
+            "lines": true,
+            "linewidth": 2,
+            "maxDataPoints": 1360,
+            "nullPointMode": "null",
+            "options": {
+              "alertThreshold": true
+            },
+            "percentage": false,
+            "pluginVersion": "7.5.17",
+            "pointradius": 2,
+            "points": false,
+            "renderer": "flot",
+            "seriesOverrides": [
+              {
+                "$$hashKey": "object:5969",
+                "alias": "/.*/",
+                "yaxis": 2
+              }
+            ],
+            "spaceLength": 10,
+            "stack": false,
+            "steppedLine": false,
+            "targets": [
+              {
+                "exemplar": true,
+                "expr": "(time() * 1000 - (flink_taskmanager_job_task_operator_currentOutputWatermark{namespace=\"$namespace\", job_name=\"$job_name\", task_name=~\".*Sentinel.*\", operator_name=~\".*Sentinel.*\"} > 0)) > 0",
+                "format": "time_series",
+                "hide": false,
+                "instant": false,
+                "interval": "60",
+                "intervalFactor": 1,
+                "legendFormat": "{{operator_name}}_{{subtask_index}}",
+                "queryType": "randomWalk",
+                "refId": "B"
+              }
+            ],
+            "thresholds": [],
+            "timeFrom": null,
+            "timeRegions": [],
+            "timeShift": null,
+            "title": "Sentinel Watermark Lag",
+            "tooltip": {
+              "shared": true,
+              "sort": 0,
+              "value_type": "individual"
+            },
+            "type": "graph",
+            "xaxis": {
+              "buckets": null,
+              "mode": "time",
+              "name": null,
+              "show": true,
+              "values": []
+            },
+            "yaxes": [
+              {
+                "$$hashKey": "object:309",
+                "format": "ms",
+                "label": null,
+                "logBase": 1,
+                "max": null,
+                "min": null,
+                "show": false
+              },
+              {
+                "$$hashKey": "object:310",
+                "format": "ms",
+                "label": null,
+                "logBase": 1,
+                "max": null,
+                "min": null,
+                "show": true
+              }
+            ],
+            "yaxis": {
+              "align": false,
+              "alignLevel": null
+            }
+          },
+          {
+            "aliasColors": {},
+            "bars": true,
+            "dashLength": 10,
+            "dashes": false,
+            "datasource": {
+              "type": "prometheus",
+              "uid": "-FPV4La7z"
+            },
+            "fieldConfig": {
+              "defaults": {},
+              "overrides": []
+            },
+            "fill": 1,
+            "fillGradient": 0,
+            "gridPos": {
+              "h": 9,
+              "w": 12,
+              "x": 0,
+              "y": 20
+            },
+            "hiddenSeries": false,
+            "id": 23,
+            "legend": {
+              "alignAsTable": true,
+              "avg": false,
+              "current": true,
+              "max": false,
+              "min": false,
+              "rightSide": true,
+              "show": true,
+              "sort": "total",
+              "sortDesc": true,
+              "total": true,
+              "values": true
+            },
+            "lines": true,
+            "linewidth": 1,
+            "maxDataPoints": 1360,
+            "nullPointMode": "null",
+            "options": {
+              "alertThreshold": true
+            },
+            "percentage": false,
+            "pluginVersion": "7.5.17",
+            "pointradius": 2,
+            "points": false,
+            "renderer": "flot",
+            "seriesOverrides": [
+              {
+                "$$hashKey": "object:3854",
+                "alias": "SUM",
+                "bars": false,
+                "lines": true,
+                "stack": false
+              }
+            ],
+            "spaceLength": 10,
+            "stack": true,
+            "steppedLine": false,
+            "targets": [
+              {
+                "exemplar": true,
+                "expr": "increase(flink_taskmanager_job_task_operator_numRecordsIn{namespace=\"$namespace\", job_name=\"$job_name\", task_name=~\".*StateReader.*\", operator_name=~\".*StateReader.*\"}[1m])",
+                "interval": "60",
+                "legendFormat": "{{operator_name}}_{{subtask_index}}",
+                "queryType": "randomWalk",
+                "refId": "A"
+              },
+              {
+                "exemplar": true,
+                "expr": "sum(increase(flink_taskmanager_job_task_operator_numRecordsIn{namespace=\"$namespace\", job_name=\"$job_name\", task_name=~\".*StateReader.*\", operator_name=~\".*StateReader.*\"}[1m]))",
+                "hide": false,
+                "interval": "60",
+                "legendFormat": "SUM",
+                "queryType": "randomWalk",
+                "refId": "B"
+              }
+            ],
+            "thresholds": [],
+            "timeFrom": null,
+            "timeRegions": [],
+            "timeShift": null,
+            "title": "StateReader Total Volume",
+            "tooltip": {
+              "shared": true,
+              "sort": 0,
+              "value_type": "individual"
+            },
+            "type": "graph",
+            "xaxis": {
+              "buckets": null,
+              "mode": "time",
+              "name": null,
+              "show": true,
+              "values": []
+            },
+            "yaxes": [
+              {
+                "$$hashKey": "object:155",
+                "format": "short",
+                "label": "RPM",
+                "logBase": 1,
+                "max": null,
+                "min": "0",
+                "show": true
+              },
+              {
+                "$$hashKey": "object:156",
+                "format": "short",
+                "label": null,
+                "logBase": 1,
+                "max": null,
+                "min": null,
+                "show": true
+              }
+            ],
+            "yaxis": {
+              "align": false,
+              "alignLevel": null
+            }
+          },
+          {
+            "aliasColors": {},
+            "bars": false,
+            "dashLength": 10,
+            "dashes": false,
+            "datasource": {
+              "type": "prometheus",
+              "uid": "-FPV4La7z"
+            },
+            "fieldConfig": {
+              "defaults": {},
+              "overrides": []
+            },
+            "fill": 0,
+            "fillGradient": 0,
+            "gridPos": {
+              "h": 9,
+              "w": 12,
+              "x": 12,
+              "y": 20
+            },
+            "hiddenSeries": false,
+            "id": 24,
+            "legend": {
+              "alignAsTable": true,
+              "avg": false,
+              "current": true,
+              "hideEmpty": false,
+              "hideZero": false,
+              "max": false,
+              "min": false,
+              "rightSide": true,
+              "show": true,
+              "total": false,
+              "values": true
+            },
+            "lines": true,
+            "linewidth": 2,
+            "maxDataPoints": 1360,
+            "nullPointMode": "null",
+            "options": {
+              "alertThreshold": true
+            },
+            "percentage": false,
+            "pluginVersion": "7.5.17",
+            "pointradius": 2,
+            "points": false,
+            "renderer": "flot",
+            "seriesOverrides": [
+              {
+                "$$hashKey": "object:5969",
+                "alias": "/.*/",
+                "yaxis": 2
+              }
+            ],
+            "spaceLength": 10,
+            "stack": false,
+            "steppedLine": false,
+            "targets": [
+              {
+                "exemplar": true,
+                "expr": "(time() * 1000 - (flink_taskmanager_job_task_operator_currentOutputWatermark{namespace=\"$namespace\", job_name=\"$job_name\", task_name=~\".*StateReader.*\", operator_name=~\".*StateReader.*\"} > 0)) > 0",
+                "format": "time_series",
+                "hide": false,
+                "instant": false,
+                "interval": "60",
+                "intervalFactor": 1,
+                "legendFormat": "{{operator_name}}_{{subtask_index}}",
+                "queryType": "randomWalk",
+                "refId": "B"
+              }
+            ],
+            "thresholds": [],
+            "timeFrom": null,
+            "timeRegions": [],
+            "timeShift": null,
+            "title": "StateReader Watermark Lag",
+            "tooltip": {
+              "shared": true,
+              "sort": 0,
+              "value_type": "individual"
+            },
+            "type": "graph",
+            "xaxis": {
+              "buckets": null,
+              "mode": "time",
+              "name": null,
+              "show": true,
+              "values": []
+            },
+            "yaxes": [
+              {
+                "$$hashKey": "object:309",
+                "format": "ms",
+                "label": null,
+                "logBase": 1,
+                "max": null,
+                "min": null,
+                "show": false
+              },
+              {
+                "$$hashKey": "object:310",
+                "format": "ms",
+                "label": null,
+                "logBase": 1,
+                "max": null,
+                "min": null,
+                "show": true
+              }
+            ],
+            "yaxis": {
+              "align": false,
+              "alignLevel": null
+            }
+          },
+          {
+            "aliasColors": {},
+            "bars": true,
+            "dashLength": 10,
+            "dashes": false,
+            "datasource": {
+              "type": "prometheus",
+              "uid": "-FPV4La7z"
+            },
+            "fieldConfig": {
+              "defaults": {},
+              "overrides": []
+            },
+            "fill": 1,
+            "fillGradient": 0,
+            "gridPos": {
+              "h": 9,
+              "w": 12,
+              "x": 0,
+              "y": 29
+            },
+            "hiddenSeries": false,
+            "id": 8,
+            "legend": {
+              "alignAsTable": true,
+              "avg": false,
+              "current": true,
+              "max": false,
+              "min": false,
+              "rightSide": true,
+              "show": true,
+              "sort": "total",
+              "sortDesc": true,
+              "total": true,
+              "values": true
+            },
+            "lines": true,
+            "linewidth": 1,
+            "maxDataPoints": 1360,
+            "nullPointMode": "null",
+            "options": {
+              "alertThreshold": true
+            },
+            "percentage": false,
+            "pluginVersion": "7.5.17",
+            "pointradius": 2,
+            "points": false,
+            "renderer": "flot",
+            "seriesOverrides": [
+              {
+                "$$hashKey": "object:4323",
+                "alias": "SUM",
+                "bars": false,
+                "lines": true,
+                "stack": false
+              }
+            ],
+            "spaceLength": 10,
+            "stack": true,
+            "steppedLine": false,
+            "targets": [
+              {
+                "exemplar": true,
+                "expr": "increase(flink_taskmanager_job_task_operator_numRecordsIn{namespace=\"$namespace\", job_name=\"$job_name\", task_name=~\".*Aggregator.*\", operator_name=~\".*Aggregator.*\"}[1m])",
+                "interval": "60",
+                "legendFormat": "{{operator_name}}_{{subtask_index}}",
+                "queryType": "randomWalk",
+                "refId": "A"
+              },
+              {
+                "exemplar": true,
+                "expr": "sum(increase(flink_taskmanager_job_task_operator_numRecordsIn{namespace=\"$namespace\", job_name=\"$job_name\", task_name=~\".*Aggregator.*\", operator_name=~\".*Aggregator.*\"}[1m]))",
+                "hide": false,
+                "interval": "60",
+                "legendFormat": "SUM",
+                "queryType": "randomWalk",
+                "refId": "B"
+              }
+            ],
+            "thresholds": [],
+            "timeFrom": null,
+            "timeRegions": [],
+            "timeShift": null,
+            "title": "Aggregator Total Volume",
+            "tooltip": {
+              "shared": true,
+              "sort": 0,
+              "value_type": "individual"
+            },
+            "type": "graph",
+            "xaxis": {
+              "buckets": null,
+              "mode": "time",
+              "name": null,
+              "show": true,
+              "values": []
+            },
+            "yaxes": [
+              {
+                "$$hashKey": "object:155",
+                "format": "short",
+                "label": "RPM",
+                "logBase": 1,
+                "max": null,
+                "min": "0",
+                "show": true
+              },
+              {
+                "$$hashKey": "object:156",
+                "format": "short",
+                "label": null,
+                "logBase": 1,
+                "max": null,
+                "min": null,
+                "show": true
+              }
+            ],
+            "yaxis": {
+              "align": false,
+              "alignLevel": null
+            }
+          },
+          {
+            "aliasColors": {},
+            "bars": false,
+            "dashLength": 10,
+            "dashes": false,
+            "datasource": {
+              "type": "prometheus",
+              "uid": "-FPV4La7z"
+            },
+            "fieldConfig": {
+              "defaults": {},
+              "overrides": []
+            },
+            "fill": 0,
+            "fillGradient": 0,
+            "gridPos": {
+              "h": 9,
+              "w": 12,
+              "x": 12,
+              "y": 29
+            },
+            "hiddenSeries": false,
+            "id": 17,
+            "legend": {
+              "alignAsTable": true,
+              "avg": false,
+              "current": true,
+              "max": false,
+              "min": false,
+              "rightSide": true,
+              "show": true,
+              "total": false,
+              "values": true
+            },
+            "lines": true,
+            "linewidth": 2,
+            "maxDataPoints": 1360,
+            "nullPointMode": "null",
+            "options": {
+              "alertThreshold": true
+            },
+            "percentage": false,
+            "pluginVersion": "7.5.17",
+            "pointradius": 2,
+            "points": false,
+            "renderer": "flot",
+            "seriesOverrides": [
+              {
+                "$$hashKey": "object:5879",
+                "alias": "/.*/",
+                "yaxis": 2
+              }
+            ],
+            "spaceLength": 10,
+            "stack": false,
+            "steppedLine": false,
+            "targets": [
+              {
+                "exemplar": true,
+                "expr": "(time() * 1000 - (flink_taskmanager_job_task_operator_currentOutputWatermark{namespace=\"$namespace\", job_name=\"$job_name\", task_name=~\".*Aggregator.*\", operator_name=~\".*Aggregator.*\"} > 0)) > 0",
+                "format": "time_series",
+                "hide": false,
+                "instant": false,
+                "interval": "60",
+                "intervalFactor": 1,
+                "legendFormat": "{{operator_name}}_{{subtask_index}}",
+                "queryType": "randomWalk",
+                "refId": "B"
+              }
+            ],
+            "thresholds": [],
+            "timeFrom": null,
+            "timeRegions": [],
+            "timeShift": null,
+            "title": "Aggregator Watermark Lag",
+            "tooltip": {
+              "shared": true,
+              "sort": 0,
+              "value_type": "individual"
+            },
+            "type": "graph",
+            "xaxis": {
+              "buckets": null,
+              "mode": "time",
+              "name": null,
+              "show": true,
+              "values": []
+            },
+            "yaxes": [
+              {
+                "$$hashKey": "object:309",
+                "format": "ms",
+                "label": null,
+                "logBase": 1,
+                "max": null,
+                "min": null,
+                "show": false
+              },
+              {
+                "$$hashKey": "object:310",
+                "format": "ms",
+                "label": null,
+                "logBase": 1,
+                "max": null,
+                "min": null,
+                "show": true
+              }
+            ],
+            "yaxis": {
+              "align": false,
+              "alignLevel": null
+            }
+          },
+          {
+            "aliasColors": {},
+            "bars": true,
+            "dashLength": 10,
+            "dashes": false,
+            "datasource": {
+              "type": "prometheus",
+              "uid": "-FPV4La7z"
+            },
+            "fieldConfig": {
+              "defaults": {},
+              "overrides": []
+            },
+            "fill": 1,
+            "fillGradient": 0,
+            "gridPos": {
+              "h": 9,
+              "w": 12,
+              "x": 0,
+              "y": 38
+            },
+            "hiddenSeries": false,
+            "id": 25,
+            "legend": {
+              "alignAsTable": true,
+              "avg": false,
+              "current": true,
+              "max": false,
+              "min": false,
+              "rightSide": true,
+              "show": true,
+              "sort": "total",
+              "sortDesc": true,
+              "total": true,
+              "values": true
+            },
+            "lines": true,
+            "linewidth": 1,
+            "maxDataPoints": 1360,
+            "nullPointMode": "null",
+            "options": {
+              "alertThreshold": true
+            },
+            "percentage": false,
+            "pluginVersion": "7.5.17",
+            "pointradius": 2,
+            "points": false,
+            "renderer": "flot",
+            "seriesOverrides": [
+              {
+                "$$hashKey": "object:4424",
+                "alias": "SUM",
+                "bars": false,
+                "lines": true,
+                "stack": false
+              }
+            ],
+            "spaceLength": 10,
+            "stack": true,
+            "steppedLine": false,
+            "targets": [
+              {
+                "exemplar": true,
+                "expr": "increase(flink_taskmanager_job_task_operator_numRecordsIn{namespace=\"$namespace\", job_name=\"$job_name\", task_name=~\".*FeatureWriter.*\", operator_name=~\".*FeatureWriter.*\"}[1m])",
+                "interval": "60",
+                "legendFormat": "{{operator_name}}_{{subtask_index}}",
+                "queryType": "randomWalk",
+                "refId": "A"
+              },
+              {
+                "exemplar": true,
+                "expr": "sum(increase(flink_taskmanager_job_task_operator_numRecordsIn{namespace=\"$namespace\", job_name=\"$job_name\", task_name=~\".*FeatureWriter.*\", operator_name=~\".*FeatureWriter.*\"}[1m]))",
+                "hide": false,
+                "interval": "60",
+                "legendFormat": "SUM",
+                "queryType": "randomWalk",
+                "refId": "B"
+              }
+            ],
+            "thresholds": [],
+            "timeFrom": null,
+            "timeRegions": [],
+            "timeShift": null,
+            "title": "FeatureWriter Total Volume",
+            "tooltip": {
+              "shared": true,
+              "sort": 0,
+              "value_type": "individual"
+            },
+            "type": "graph",
+            "xaxis": {
+              "buckets": null,
+              "mode": "time",
+              "name": null,
+              "show": true,
+              "values": []
+            },
+            "yaxes": [
+              {
+                "$$hashKey": "object:155",
+                "format": "short",
+                "label": "RPM",
+                "logBase": 1,
+                "max": null,
+                "min": "0",
+                "show": true
+              },
+              {
+                "$$hashKey": "object:156",
+                "format": "short",
+                "label": null,
+                "logBase": 1,
+                "max": null,
+                "min": null,
+                "show": true
+              }
+            ],
+            "yaxis": {
+              "align": false,
+              "alignLevel": null
+            }
+          },
+          {
+            "aliasColors": {},
+            "bars": false,
+            "dashLength": 10,
+            "dashes": false,
+            "datasource": {
+              "type": "prometheus",
+              "uid": "-FPV4La7z"
+            },
+            "fieldConfig": {
+              "defaults": {},
+              "overrides": []
+            },
+            "fill": 0,
+            "fillGradient": 0,
+            "gridPos": {
+              "h": 9,
+              "w": 12,
+              "x": 12,
+              "y": 38
+            },
+            "hiddenSeries": false,
+            "id": 26,
+            "legend": {
+              "alignAsTable": true,
+              "avg": false,
+              "current": true,
+              "max": false,
+              "min": false,
+              "rightSide": true,
+              "show": true,
+              "total": false,
+              "values": true
+            },
+            "lines": true,
+            "linewidth": 2,
+            "maxDataPoints": 1360,
+            "nullPointMode": "null",
+            "options": {
+              "alertThreshold": true
+            },
+            "percentage": false,
+            "pluginVersion": "7.5.17",
+            "pointradius": 2,
+            "points": false,
+            "renderer": "flot",
+            "seriesOverrides": [
+              {
+                "$$hashKey": "object:5969",
+                "alias": "/.*/",
+                "yaxis": 2
+              }
+            ],
+            "spaceLength": 10,
+            "stack": false,
+            "steppedLine": false,
+            "targets": [
+              {
+                "exemplar": true,
+                "expr": "(time() * 1000 - (flink_taskmanager_job_task_operator_currentOutputWatermark{namespace=\"$namespace\", job_name=\"$job_name\", task_name=~\".*FeatureWriter.*\", operator_name=~\".*FeatureWriter.*\"} > 0)) > 0",
+                "format": "time_series",
+                "hide": false,
+                "instant": false,
+                "interval": "60",
+                "intervalFactor": 1,
+                "legendFormat": "{{operator_name}}_{{subtask_index}}",
+                "queryType": "randomWalk",
+                "refId": "B"
+              }
+            ],
+            "thresholds": [],
+            "timeFrom": null,
+            "timeRegions": [],
+            "timeShift": null,
+            "title": "FeatureWriter Watermark Lag",
+            "tooltip": {
+              "shared": true,
+              "sort": 0,
+              "value_type": "individual"
+            },
+            "type": "graph",
+            "xaxis": {
+              "buckets": null,
+              "mode": "time",
+              "name": null,
+              "show": true,
+              "values": []
+            },
+            "yaxes": [
+              {
+                "$$hashKey": "object:309",
+                "format": "ms",
+                "label": null,
+                "logBase": 1,
+                "max": null,
+                "min": null,
+                "show": false
+              },
+              {
+                "$$hashKey": "object:310",
+                "format": "ms",
+                "label": null,
+                "logBase": 1,
+                "max": null,
+                "min": null,
+                "show": true
+              }
+            ],
+            "yaxis": {
+              "align": false,
+              "alignLevel": null
+            }
+          },
+          {
+            "aliasColors": {},
+            "bars": true,
+            "dashLength": 10,
+            "dashes": false,
+            "datasource": {
+              "type": "prometheus",
+              "uid": "-FPV4La7z"
+            },
+            "fieldConfig": {
+              "defaults": {},
+              "overrides": []
+            },
+            "fill": 1,
+            "fillGradient": 0,
+            "gridPos": {
+              "h": 9,
+              "w": 12,
+              "x": 0,
+              "y": 47
+            },
+            "hiddenSeries": false,
+            "id": 31,
+            "legend": {
+              "alignAsTable": true,
+              "avg": false,
+              "current": true,
+              "max": false,
+              "min": false,
+              "rightSide": true,
+              "show": true,
+              "sort": "total",
+              "sortDesc": true,
+              "total": true,
+              "values": true
+            },
+            "lines": true,
+            "linewidth": 1,
+            "maxDataPoints": 1360,
+            "nullPointMode": "null",
+            "options": {
+              "alertThreshold": true
+            },
+            "percentage": false,
+            "pluginVersion": "7.5.17",
+            "pointradius": 2,
+            "points": false,
+            "renderer": "flot",
+            "seriesOverrides": [
+              {
+                "$$hashKey": "object:4519",
+                "alias": "SUM",
+                "bars": false,
+                "lines": true,
+                "stack": false
+              }
+            ],
+            "spaceLength": 10,
+            "stack": true,
+            "steppedLine": false,
+            "targets": [
+              {
+                "exemplar": true,
+                "expr": "increase(flink_taskmanager_job_task_operator_numRecordsIn{namespace=\"$namespace\", job_name=\"$job_name\", task_name=~\".*StateWriter.*\", operator_name=~\".*StateWriter.*\"}[1m])",
+                "interval": "60",
+                "legendFormat": "{{operator_name}}_{{subtask_index}}",
+                "queryType": "randomWalk",
+                "refId": "A"
+              },
+              {
+                "exemplar": true,
+                "expr": "sum(increase(flink_taskmanager_job_task_operator_numRecordsIn{namespace=\"$namespace\", job_name=\"$job_name\", task_name=~\".*StateWriter.*\", operator_name=~\".*StateWriter.*\"}[1m]))",
+                "hide": false,
+                "interval": "60",
+                "legendFormat": "SUM",
+                "queryType": "randomWalk",
+                "refId": "B"
+              }
+            ],
+            "thresholds": [],
+            "timeFrom": null,
+            "timeRegions": [],
+            "timeShift": null,
+            "title": "StateWriter Total Volume",
+            "tooltip": {
+              "shared": true,
+              "sort": 0,
+              "value_type": "individual"
+            },
+            "type": "graph",
+            "xaxis": {
+              "buckets": null,
+              "mode": "time",
+              "name": null,
+              "show": true,
+              "values": []
+            },
+            "yaxes": [
+              {
+                "$$hashKey": "object:155",
+                "format": "short",
+                "label": "RPM",
+                "logBase": 1,
+                "max": null,
+                "min": "0",
+                "show": true
+              },
+              {
+                "$$hashKey": "object:156",
+                "format": "short",
+                "label": null,
+                "logBase": 1,
+                "max": null,
+                "min": null,
+                "show": true
+              }
+            ],
+            "yaxis": {
+              "align": false,
+              "alignLevel": null
+            }
+          },
+          {
+            "aliasColors": {},
+            "bars": false,
+            "dashLength": 10,
+            "dashes": false,
+            "datasource": {
+              "type": "prometheus",
+              "uid": "-FPV4La7z"
+            },
+            "fieldConfig": {
+              "defaults": {},
+              "overrides": []
+            },
+            "fill": 0,
+            "fillGradient": 0,
+            "gridPos": {
+              "h": 9,
+              "w": 12,
+              "x": 12,
+              "y": 47
+            },
+            "hiddenSeries": false,
+            "id": 32,
+            "legend": {
+              "alignAsTable": true,
+              "avg": false,
+              "current": true,
+              "max": false,
+              "min": false,
+              "rightSide": true,
+              "show": true,
+              "total": false,
+              "values": true
+            },
+            "lines": true,
+            "linewidth": 2,
+            "maxDataPoints": 1360,
+            "nullPointMode": "null",
+            "options": {
+              "alertThreshold": true
+            },
+            "percentage": false,
+            "pluginVersion": "7.5.17",
+            "pointradius": 2,
+            "points": false,
+            "renderer": "flot",
+            "seriesOverrides": [
+              {
+                "$$hashKey": "object:5969",
+                "alias": "/.*/",
+                "yaxis": 2
+              }
+            ],
+            "spaceLength": 10,
+            "stack": false,
+            "steppedLine": false,
+            "targets": [
+              {
+                "exemplar": true,
+                "expr": "(time() * 1000 - (flink_taskmanager_job_task_operator_currentOutputWatermark{namespace=\"$namespace\", job_name=\"$job_name\", task_name=~\".*StateWriter.*\", operator_name=~\".*StateWriter.*\"} > 0)) > 0",
+                "format": "time_series",
+                "hide": false,
+                "instant": false,
+                "interval": "60",
+                "intervalFactor": 1,
+                "legendFormat": "{{operator_name}}_{{subtask_index}}",
+                "queryType": "randomWalk",
+                "refId": "B"
+              }
+            ],
+            "thresholds": [],
+            "timeFrom": null,
+            "timeRegions": [],
+            "timeShift": null,
+            "title": "StateWriter Watermark Lag",
+            "tooltip": {
+              "shared": true,
+              "sort": 0,
+              "value_type": "individual"
+            },
+            "type": "graph",
+            "xaxis": {
+              "buckets": null,
+              "mode": "time",
+              "name": null,
+              "show": true,
+              "values": []
+            },
+            "yaxes": [
+              {
+                "$$hashKey": "object:309",
+                "format": "ms",
+                "label": null,
+                "logBase": 1,
+                "max": null,
+                "min": null,
+                "show": false
+              },
+              {
+                "$$hashKey": "object:310",
+                "format": "ms",
+                "label": null,
+                "logBase": 1,
+                "max": null,
+                "min": null,
+                "show": true
+              }
+            ],
+            "yaxis": {
+              "align": false,
+              "alignLevel": null
+            }
+          }
+        ],
+        "title": "Pipeline",
+        "type": "row"
+      },
+      {
+        "collapsed": true,
+        "datasource": null,
+        "gridPos": {
+          "h": 1,
+          "w": 24,
+          "x": 0,
+          "y": 2
+        },
+        "id": 15,
+        "maxDataPoints": 1360,
+        "panels": [
+          {
+            "aliasColors": {},
+            "bars": true,
+            "dashLength": 10,
+            "dashes": false,
+            "datasource": {
+              "type": "prometheus",
+              "uid": "-FPV4La7z"
+            },
+            "fieldConfig": {
+              "defaults": {},
+              "overrides": []
+            },
+            "fill": 1,
+            "fillGradient": 0,
+            "gridPos": {
+              "h": 8,
+              "w": 12,
+              "x": 0,
+              "y": 3
+            },
+            "hiddenSeries": false,
+            "id": 29,
+            "legend": {
+              "alignAsTable": true,
+              "avg": false,
+              "current": true,
+              "max": true,
+              "min": false,
+              "rightSide": true,
+              "show": true,
+              "total": true,
+              "values": true
+            },
+            "lines": true,
+            "linewidth": 1,
+            "maxDataPoints": 1360,
+            "nullPointMode": "null",
+            "options": {
+              "alertThreshold": true
+            },
+            "percentage": false,
+            "pluginVersion": "7.5.17",
+            "pointradius": 2,
+            "points": false,
+            "renderer": "flot",
+            "seriesOverrides": [],
+            "spaceLength": 10,
+            "stack": true,
+            "steppedLine": false,
+            "targets": [
+              {
+                "exemplar": true,
+                "expr": "sum(increase(flink_taskmanager_job_task_operator_circuitBreakerSuccessLatencyMilliseconds_FeatureWriter_count{namespace=\"$namespace\", job_name=\"$job_name\"}[1m]))",
+                "hide": false,
+                "interval": "60",
+                "legendFormat": "success",
+                "refId": "A"
+              },
+              {
+                "exemplar": true,
+                "expr": "sum(increase(flink_taskmanager_job_task_operator_circuitBreakerFailureLatencyMilliseconds_FeatureWriter_count{namespace=\"$namespace\", job_name=\"$job_name\"}[1m]))",
+                "hide": false,
+                "interval": "60",
+                "legendFormat": "failure",
+                "refId": "B"
+              }
+            ],
+            "thresholds": [],
+            "timeFrom": null,
+            "timeRegions": [],
+            "timeShift": null,
+            "title": "FeatureWriter Volume",
+            "tooltip": {
+              "shared": true,
+              "sort": 0,
+              "value_type": "individual"
+            },
+            "type": "graph",
+            "xaxis": {
+              "buckets": null,
+              "mode": "time",
+              "name": null,
+              "show": true,
+              "values": []
+            },
+            "yaxes": [
+              {
+                "$$hashKey": "object:4935",
+                "format": "short",
+                "label": "RPM",
+                "logBase": 1,
+                "max": null,
+                "min": "0",
+                "show": true
+              },
+              {
+                "$$hashKey": "object:4936",
+                "format": "reqps",
+                "label": null,
+                "logBase": 1,
+                "max": null,
+                "min": null,
+                "show": true
+              }
+            ],
+            "yaxis": {
+              "align": false,
+              "alignLevel": null
+            }
+          },
+          {
+            "aliasColors": {},
+            "bars": false,
+            "dashLength": 10,
+            "dashes": false,
+            "datasource": {
+              "type": "prometheus",
+              "uid": "-FPV4La7z"
+            },
+            "fieldConfig": {
+              "defaults": {},
+              "overrides": []
+            },
+            "fill": 1,
+            "fillGradient": 0,
+            "gridPos": {
+              "h": 8,
+              "w": 12,
+              "x": 12,
+              "y": 3
+            },
+            "hiddenSeries": false,
+            "id": 30,
+            "legend": {
+              "alignAsTable": true,
+              "avg": false,
+              "current": true,
+              "max": false,
+              "min": false,
+              "rightSide": true,
+              "show": true,
+              "total": false,
+              "values": true
+            },
+            "lines": true,
+            "linewidth": 1,
+            "maxDataPoints": 1360,
+            "nullPointMode": "null",
+            "options": {
+              "alertThreshold": true
+            },
+            "percentage": false,
+            "pluginVersion": "7.5.17",
+            "pointradius": 2,
+            "points": false,
+            "renderer": "flot",
+            "seriesOverrides": [],
+            "spaceLength": 10,
+            "stack": false,
+            "steppedLine": false,
+            "targets": [
+              {
+                "exemplar": true,
+                "expr": "avg(flink_taskmanager_job_task_operator_circuitBreakerSuccessLatencyMilliseconds_FeatureWriter{namespace=\"$namespace\", job_name=\"$job_name\", quantile=\"0.75\"}[1m])",
+                "interval": "60",
+                "legendFormat": "success-p75",
+                "queryType": "randomWalk",
+                "refId": "A"
+              },
+              {
+                "exemplar": true,
+                "expr": "avg(flink_taskmanager_job_task_operator_circuitBreakerSuccessLatencyMilliseconds_FeatureWriter{namespace=\"$namespace\", job_name=\"$job_name\", quantile=\"0.95\"}[1m])",
+                "interval": "60",
+                "legendFormat": "success-p95",
+                "queryType": "randomWalk",
+                "refId": "B"
+              },
+              {
+                "exemplar": true,
+                "expr": "avg(flink_taskmanager_job_task_operator_circuitBreakerSuccessLatencyMilliseconds_FeatureWriter{namespace=\"$namespace\", job_name=\"$job_name\", quantile=\"0.99\"}[1m])",
+                "interval": "60",
+                "legendFormat": "success-p99",
+                "queryType": "randomWalk",
+                "refId": "C"
+              },
+              {
+                "exemplar": true,
+                "expr": "avg(flink_taskmanager_job_task_operator_circuitBreakerFailureLatencyMilliseconds_FeatureWriter{namespace=\"$namespace\", job_name=\"$job_name\", quantile=\"0.75\"}[1m])",
+                "hide": true,
+                "interval": "60",
+                "legendFormat": "failure-p75",
+                "queryType": "randomWalk",
+                "refId": "D"
+              },
+              {
+                "exemplar": true,
+                "expr": "avg(flink_taskmanager_job_task_operator_circuitBreakerFailureLatencyMilliseconds_FeatureWriter{namespace=\"$namespace\", job_name=\"$job_name\", quantile=\"0.95\"}[1m])",
+                "hide": true,
+                "interval": "60",
+                "legendFormat": "failure-p95",
+                "queryType": "randomWalk",
+                "refId": "E"
+              },
+              {
+                "exemplar": true,
+                "expr": "avg(flink_taskmanager_job_task_operator_circuitBreakerFailureLatencyMilliseconds_FeatureWriter{namespace=\"$namespace\", job_name=\"$job_name\", quantile=\"0.99\"}[1m])",
+                "hide": true,
+                "interval": "60",
+                "legendFormat": "failure-p99",
+                "queryType": "randomWalk",
+                "refId": "F"
+              }
+            ],
+            "thresholds": [],
+            "timeFrom": null,
+            "timeRegions": [],
+            "timeShift": null,
+            "title": "FeatureWriter Latency",
+            "tooltip": {
+              "shared": true,
+              "sort": 0,
+              "value_type": "individual"
+            },
+            "type": "graph",
+            "xaxis": {
+              "buckets": null,
+              "mode": "time",
+              "name": null,
+              "show": true,
+              "values": []
+            },
+            "yaxes": [
+              {
+                "$$hashKey": "object:4935",
+                "format": "ms",
+                "label": null,
+                "logBase": 1,
+                "max": null,
+                "min": null,
+                "show": true
+              },
+              {
+                "$$hashKey": "object:4936",
+                "format": "Time",
+                "label": null,
+                "logBase": 1,
+                "max": null,
+                "min": null,
+                "show": true
+              }
+            ],
+            "yaxis": {
+              "align": false,
+              "alignLevel": null
+            }
+          },
+          {
+            "aliasColors": {},
+            "bars": true,
+            "dashLength": 10,
+            "dashes": false,
+            "datasource": {
+              "type": "prometheus",
+              "uid": "-FPV4La7z"
+            },
+            "fieldConfig": {
+              "defaults": {},
+              "overrides": []
+            },
+            "fill": 1,
+            "fillGradient": 0,
+            "gridPos": {
+              "h": 8,
+              "w": 12,
+              "x": 0,
+              "y": 11
+            },
+            "hiddenSeries": false,
+            "id": 20,
+            "legend": {
+              "alignAsTable": true,
+              "avg": false,
+              "current": true,
+              "max": true,
+              "min": false,
+              "rightSide": true,
+              "show": true,
+              "total": true,
+              "values": true
+            },
+            "lines": true,
+            "linewidth": 1,
+            "maxDataPoints": 1360,
+            "nullPointMode": "null",
+            "options": {
+              "alertThreshold": true
+            },
+            "percentage": false,
+            "pluginVersion": "7.5.17",
+            "pointradius": 2,
+            "points": false,
+            "renderer": "flot",
+            "seriesOverrides": [],
+            "spaceLength": 10,
+            "stack": true,
+            "steppedLine": false,
+            "targets": [
+              {
+                "exemplar": true,
+                "expr": "sum(increase(flink_taskmanager_job_task_operator_circuitBreakerSuccessLatencyMilliseconds_StateReader_count{namespace=\"$namespace\", job_name=\"$job_name\"}[1m]))",
+                "hide": false,
+                "interval": "60",
+                "legendFormat": "success",
+                "refId": "A"
+              },
+              {
+                "exemplar": true,
+                "expr": "sum(increase(flink_taskmanager_job_task_operator_circuitBreakerFailureLatencyMilliseconds_StateReader_count{namespace=\"$namespace\", job_name=\"$job_name\"}[1m]))",
+                "hide": false,
+                "interval": "60",
+                "legendFormat": "failure",
+                "refId": "B"
+              }
+            ],
+            "thresholds": [],
+            "timeFrom": null,
+            "timeRegions": [],
+            "timeShift": null,
+            "title": "StateReader Volume",
+            "tooltip": {
+              "shared": true,
+              "sort": 0,
+              "value_type": "individual"
+            },
+            "type": "graph",
+            "xaxis": {
+              "buckets": null,
+              "mode": "time",
+              "name": null,
+              "show": true,
+              "values": []
+            },
+            "yaxes": [
+              {
+                "$$hashKey": "object:4935",
+                "format": "short",
+                "label": "RPM",
+                "logBase": 1,
+                "max": null,
+                "min": "0",
+                "show": true
+              },
+              {
+                "$$hashKey": "object:4936",
+                "format": "reqps",
+                "label": null,
+                "logBase": 1,
+                "max": null,
+                "min": null,
+                "show": true
+              }
+            ],
+            "yaxis": {
+              "align": false,
+              "alignLevel": null
+            }
+          },
+          {
+            "aliasColors": {},
+            "bars": false,
+            "dashLength": 10,
+            "dashes": false,
+            "datasource": {
+              "type": "prometheus",
+              "uid": "-FPV4La7z"
+            },
+            "fieldConfig": {
+              "defaults": {},
+              "overrides": []
+            },
+            "fill": 1,
+            "fillGradient": 0,
+            "gridPos": {
+              "h": 8,
+              "w": 12,
+              "x": 12,
+              "y": 11
+            },
+            "hiddenSeries": false,
+            "id": 19,
+            "legend": {
+              "alignAsTable": true,
+              "avg": false,
+              "current": true,
+              "max": false,
+              "min": false,
+              "rightSide": true,
+              "show": true,
+              "total": false,
+              "values": true
+            },
+            "lines": true,
+            "linewidth": 1,
+            "maxDataPoints": 1360,
+            "nullPointMode": "null",
+            "options": {
+              "alertThreshold": true
+            },
+            "percentage": false,
+            "pluginVersion": "7.5.17",
+            "pointradius": 2,
+            "points": false,
+            "renderer": "flot",
+            "seriesOverrides": [],
+            "spaceLength": 10,
+            "stack": false,
+            "steppedLine": false,
+            "targets": [
+              {
+                "exemplar": true,
+                "expr": "avg(flink_taskmanager_job_task_operator_circuitBreakerSuccessLatencyMilliseconds_StateReader{namespace=\"$namespace\", job_name=\"$job_name\", quantile=\"0.75\"}[1m])",
+                "interval": "60",
+                "legendFormat": "success-p75",
+                "queryType": "randomWalk",
+                "refId": "A"
+              },
+              {
+                "exemplar": true,
+                "expr": "avg(flink_taskmanager_job_task_operator_circuitBreakerSuccessLatencyMilliseconds_StateReader{namespace=\"$namespace\", job_name=\"$job_name\", quantile=\"0.95\"}[1m])",
+                "interval": "60",
+                "legendFormat": "success-p95",
+                "queryType": "randomWalk",
+                "refId": "B"
+              },
+              {
+                "exemplar": true,
+                "expr": "avg(flink_taskmanager_job_task_operator_circuitBreakerSuccessLatencyMilliseconds_StateReader{namespace=\"$namespace\", job_name=\"$job_name\", quantile=\"0.99\"}[1m])",
+                "interval": "60",
+                "legendFormat": "success-p99",
+                "queryType": "randomWalk",
+                "refId": "C"
+              },
+              {
+                "exemplar": true,
+                "expr": "avg(flink_taskmanager_job_task_operator_circuitBreakerFailureLatencyMilliseconds_StateReader{namespace=\"$namespace\", job_name=\"$job_name\", quantile=\"0.75\"}[1m])",
+                "hide": true,
+                "interval": "60",
+                "legendFormat": "failure-p75",
+                "queryType": "randomWalk",
+                "refId": "D"
+              },
+              {
+                "exemplar": true,
+                "expr": "avg(flink_taskmanager_job_task_operator_circuitBreakerFailureLatencyMilliseconds_StateReader{namespace=\"$namespace\", job_name=\"$job_name\", quantile=\"0.95\"}[1m])",
+                "hide": true,
+                "interval": "60",
+                "legendFormat": "failure-p95",
+                "queryType": "randomWalk",
+                "refId": "E"
+              },
+              {
+                "exemplar": true,
+                "expr": "avg(flink_taskmanager_job_task_operator_circuitBreakerFailureLatencyMilliseconds_StateReader{namespace=\"$namespace\", job_name=\"$job_name\", quantile=\"0.99\"}[1m])",
+                "hide": true,
+                "interval": "60",
+                "legendFormat": "failure-p99",
+                "queryType": "randomWalk",
+                "refId": "F"
+              }
+            ],
+            "thresholds": [],
+            "timeFrom": null,
+            "timeRegions": [],
+            "timeShift": null,
+            "title": "StateReader Latency",
+            "tooltip": {
+              "shared": true,
+              "sort": 0,
+              "value_type": "individual"
+            },
+            "type": "graph",
+            "xaxis": {
+              "buckets": null,
+              "mode": "time",
+              "name": null,
+              "show": true,
+              "values": []
+            },
+            "yaxes": [
+              {
+                "$$hashKey": "object:4935",
+                "format": "ms",
+                "label": null,
+                "logBase": 1,
+                "max": null,
+                "min": null,
+                "show": true
+              },
+              {
+                "$$hashKey": "object:4936",
+                "format": "Time",
+                "label": null,
+                "logBase": 1,
+                "max": null,
+                "min": null,
+                "show": true
+              }
+            ],
+            "yaxis": {
+              "align": false,
+              "alignLevel": null
+            }
+          },
+          {
+            "aliasColors": {},
+            "bars": true,
+            "dashLength": 10,
+            "dashes": false,
+            "datasource": {
+              "type": "prometheus",
+              "uid": "-FPV4La7z"
+            },
+            "fieldConfig": {
+              "defaults": {},
+              "overrides": []
+            },
+            "fill": 1,
+            "fillGradient": 0,
+            "gridPos": {
+              "h": 8,
+              "w": 12,
+              "x": 0,
+              "y": 19
+            },
+            "hiddenSeries": false,
+            "id": 27,
+            "legend": {
+              "alignAsTable": true,
+              "avg": false,
+              "current": true,
+              "max": true,
+              "min": false,
+              "rightSide": true,
+              "show": true,
+              "sort": "total",
+              "sortDesc": true,
+              "total": true,
+              "values": true
+            },
+            "lines": true,
+            "linewidth": 1,
+            "maxDataPoints": 1360,
+            "nullPointMode": "null",
+            "options": {
+              "alertThreshold": true
+            },
+            "percentage": false,
+            "pluginVersion": "7.5.17",
+            "pointradius": 2,
+            "points": false,
+            "renderer": "flot",
+            "seriesOverrides": [],
+            "spaceLength": 10,
+            "stack": true,
+            "steppedLine": false,
+            "targets": [
+              {
+                "exemplar": true,
+                "expr": "sum(increase(flink_taskmanager_job_task_operator_circuitBreakerSuccessLatencyMilliseconds_StateWriter_count{namespace=\"$namespace\", job_name=\"$job_name\"}[1m]))",
+                "hide": false,
+                "interval": "60",
+                "legendFormat": "success",
+                "refId": "A"
+              },
+              {
+                "exemplar": true,
+                "expr": "sum(increase(flink_taskmanager_job_task_operator_circuitBreakerFailureLatencyMilliseconds_StateWriter_count{namespace=\"$namespace\", job_name=\"$job_name\"}[1m]))",
+                "hide": false,
+                "interval": "60",
+                "legendFormat": "failure",
+                "refId": "B"
+              }
+            ],
+            "thresholds": [],
+            "timeFrom": null,
+            "timeRegions": [],
+            "timeShift": null,
+            "title": "StateWriter Volume",
+            "tooltip": {
+              "shared": true,
+              "sort": 0,
+              "value_type": "individual"
+            },
+            "type": "graph",
+            "xaxis": {
+              "buckets": null,
+              "mode": "time",
+              "name": null,
+              "show": true,
+              "values": []
+            },
+            "yaxes": [
+              {
+                "$$hashKey": "object:4935",
+                "format": "short",
+                "label": "RPM",
+                "logBase": 1,
+                "max": null,
+                "min": "0",
+                "show": true
+              },
+              {
+                "$$hashKey": "object:4936",
+                "format": "reqps",
+                "label": null,
+                "logBase": 1,
+                "max": null,
+                "min": null,
+                "show": true
+              }
+            ],
+            "yaxis": {
+              "align": false,
+              "alignLevel": null
+            }
+          },
+          {
+            "aliasColors": {},
+            "bars": false,
+            "dashLength": 10,
+            "dashes": false,
+            "datasource": {
+              "type": "prometheus",
+              "uid": "-FPV4La7z"
+            },
+            "fieldConfig": {
+              "defaults": {},
+              "overrides": []
+            },
+            "fill": 1,
+            "fillGradient": 0,
+            "gridPos": {
+              "h": 8,
+              "w": 12,
+              "x": 12,
+              "y": 19
+            },
+            "hiddenSeries": false,
+            "id": 28,
+            "legend": {
+              "alignAsTable": true,
+              "avg": false,
+              "current": true,
+              "max": false,
+              "min": false,
+              "rightSide": true,
+              "show": true,
+              "total": false,
+              "values": true
+            },
+            "lines": true,
+            "linewidth": 1,
+            "maxDataPoints": 1360,
+            "nullPointMode": "null",
+            "options": {
+              "alertThreshold": true
+            },
+            "percentage": false,
+            "pluginVersion": "7.5.17",
+            "pointradius": 2,
+            "points": false,
+            "renderer": "flot",
+            "seriesOverrides": [],
+            "spaceLength": 10,
+            "stack": false,
+            "steppedLine": false,
+            "targets": [
+              {
+                "exemplar": true,
+                "expr": "avg(flink_taskmanager_job_task_operator_circuitBreakerSuccessLatencyMilliseconds_StateWriter{namespace=\"$namespace\", job_name=\"$job_name\", quantile=\"0.75\"}[1m])",
+                "interval": "60",
+                "legendFormat": "success-p75",
+                "queryType": "randomWalk",
+                "refId": "A"
+              },
+              {
+                "exemplar": true,
+                "expr": "avg(flink_taskmanager_job_task_operator_circuitBreakerSuccessLatencyMilliseconds_StateWriter{namespace=\"$namespace\", job_name=\"$job_name\", quantile=\"0.95\"}[1m])",
+                "interval": "60",
+                "legendFormat": "success-p95",
+                "queryType": "randomWalk",
+                "refId": "B"
+              },
+              {
+                "exemplar": true,
+                "expr": "avg(flink_taskmanager_job_task_operator_circuitBreakerSuccessLatencyMilliseconds_StateWriter{namespace=\"$namespace\", job_name=\"$job_name\", quantile=\"0.99\"}[1m])",
+                "interval": "60",
+                "legendFormat": "success-p99",
+                "queryType": "randomWalk",
+                "refId": "C"
+              },
+              {
+                "exemplar": true,
+                "expr": "avg(flink_taskmanager_job_task_operator_circuitBreakerFailureLatencyMilliseconds_StateWriter{namespace=\"$namespace\", job_name=\"$job_name\", quantile=\"0.75\"}[1m])",
+                "hide": true,
+                "interval": "60",
+                "legendFormat": "failure-p75",
+                "queryType": "randomWalk",
+                "refId": "D"
+              },
+              {
+                "exemplar": true,
+                "expr": "avg(flink_taskmanager_job_task_operator_circuitBreakerFailureLatencyMilliseconds_StateWriter{namespace=\"$namespace\", job_name=\"$job_name\", quantile=\"0.95\"}[1m])",
+                "hide": true,
+                "interval": "60",
+                "legendFormat": "failure-p95",
+                "queryType": "randomWalk",
+                "refId": "E"
+              },
+              {
+                "exemplar": true,
+                "expr": "avg(flink_taskmanager_job_task_operator_circuitBreakerFailureLatencyMilliseconds_StateWriter{namespace=\"$namespace\", job_name=\"$job_name\", quantile=\"0.99\"}[1m])",
+                "hide": true,
+                "interval": "60",
+                "legendFormat": "failure-p99",
+                "queryType": "randomWalk",
+                "refId": "F"
+              }
+            ],
+            "thresholds": [],
+            "timeFrom": null,
+            "timeRegions": [],
+            "timeShift": null,
+            "title": "StateWriter Latency",
+            "tooltip": {
+              "shared": true,
+              "sort": 0,
+              "value_type": "individual"
+            },
+            "type": "graph",
+            "xaxis": {
+              "buckets": null,
+              "mode": "time",
+              "name": null,
+              "show": true,
+              "values": []
+            },
+            "yaxes": [
+              {
+                "$$hashKey": "object:4935",
+                "format": "ms",
+                "label": null,
+                "logBase": 1,
+                "max": null,
+                "min": null,
+                "show": true
+              },
+              {
+                "$$hashKey": "object:4936",
+                "format": "Time",
+                "label": null,
+                "logBase": 1,
+                "max": null,
+                "min": null,
+                "show": true
+              }
+            ],
+            "yaxis": {
+              "align": false,
+              "alignLevel": null
+            }
+          }
+        ],
+        "title": "External IO",
+        "type": "row"
+      }
+    ],
+    "refresh": "",
+    "schemaVersion": 27,
+    "style": "dark",
+    "tags": [],
+    "templating": {
+      "list": [
+        {
+          "allValue": null,
+          "current": {
+            "selected": false,
+            "text": "personalisation",
+            "value": "personalisation"
+          },
+          "datasource": {
+            "type": "prometheus",
+            "uid": "-FPV4La7z"
+          },
+          "definition": "label_values(kube_namespace_created, namespace)",
+          "description": null,
+          "error": null,
+          "hide": 0,
+          "includeAll": false,
+          "label": null,
+          "multi": false,
+          "name": "namespace",
+          "options": [],
+          "query": {
+            "query": "label_values(kube_namespace_created, namespace)",
+            "refId": "thanos-namespace-Variable-Query"
+          },
+          "refresh": 1,
+          "regex": "/(flink-.*|personalisation)/",
+          "skipUrlSync": false,
+          "sort": 0,
+          "tagValuesQuery": "",
+          "tags": [],
+          "tagsQuery": "",
+          "type": "query",
+          "useTags": false
+        },
+        {
+          "allValue": null,
+          "current": {
+            "selected": false,
+            "text": "watching_history_non_feed_prod",
+            "value": "watching_history_non_feed_prod"
+          },
+          "datasource": {
+            "type": "prometheus",
+            "uid": "-FPV4La7z"
+          },
+          "definition": "label_values(flink_jobmanager_job_numRestarts{host=~\"reco.*_flink_jobmanager\"}, job_name)",
+          "description": null,
+          "error": null,
+          "hide": 0,
+          "includeAll": false,
+          "label": null,
+          "multi": false,
+          "name": "job_name",
+          "options": [],
+          "query": {
+            "query": "label_values(flink_jobmanager_job_numRestarts{host=~\"reco.*_flink_jobmanager\"}, job_name)",
+            "refId": "StandardVariableQuery"
+          },
+          "refresh": 2,
+          "regex": "",
+          "skipUrlSync": false,
+          "sort": 0,
+          "tagValuesQuery": "",
+          "tags": [],
+          "tagsQuery": "",
+          "type": "query",
+          "useTags": false
+        },
+        {
+          "allValue": null,
+          "current": {
+            "selected": false,
+            "text": "WatchedVideoEvent",
+            "value": "WatchedVideoEvent"
+          },
+          "description": "",
+          "error": null,
+          "hide": 0,
+          "includeAll": false,
+          "label": null,
+          "multi": false,
+          "name": "event_name",
+          "options": [
+            {
+              "selected": true,
+              "text": "WatchedVideoEvent",
+              "value": "WatchedVideoEvent"
+            },
+            {
+              "selected": false,
+              "text": "ParsedTrayViewedEvent",
+              "value": "ParsedTrayViewedEvent"
+            },
+            {
+              "selected": false,
+              "text": "TrayViewedEvent",
+              "value": "TrayViewedEvent"
+            },
+            {
+              "selected": false,
+              "text": "ContentClickedEvent",
+              "value": "ContentClickedEvent"
+            },
+            {
+              "selected": false,
+              "text": "AddedToWatchlistEvent",
+              "value": "AddedToWatchlistEvent"
+            },
+            {
+              "selected": false,
+              "text": "RemovedFromWatchlistEvent",
+              "value": "RemovedFromWatchlistEvent"
+            },
+            {
+              "selected": false,
+              "text": "PaywallClickEvent",
+              "value": "PaywallClickEvent"
+            },
+            {
+              "selected": false,
+              "text": "PaywallClickEvent",
+              "value": "PaywallClickEvent"
+            },
+            {
+              "selected": false,
+              "text": "UserIdentifyEvent",
+              "value": "UserIdentifyEvent"
+            },
+            {
+              "selected": false,
+              "text": "GetInstalledAppsEvent",
+              "value": "GetInstalledAppsEvent"
+            },
+            {
+              "selected": false,
+              "text": "ParsedGetInstalledAppsEvent",
+              "value": "ParsedGetInstalledAppsEvent"
+            }
+          ],
+          "query": "WatchedVideoEvent,ParsedTrayViewedEvent,TrayViewedEvent,ContentClickedEvent,AddedToWatchlistEvent,RemovedFromWatchlistEvent,PaywallClickEvent,PaywallClickEvent,UserIdentifyEvent,GetInstalledAppsEvent,ParsedGetInstalledAppsEvent",
+          "skipUrlSync": false,
+          "type": "custom"
+        }
+      ]
+    },
+    "time": {
+      "from": "now-15m",
+      "to": "now"
+    },
+    "timepicker": {},
+    "timezone": "",
+    "title": "Personalisation / Flink / Associative Aggregation",
+    "uid": "6naALaU7k",
+    "version": 1
+  },
+  "folderUid": "c2ab6eb8-5670-49a2-a829-76201c7e16bf",
+  "overwrite": true
+}

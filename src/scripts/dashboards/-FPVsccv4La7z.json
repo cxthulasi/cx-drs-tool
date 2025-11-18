@@ -1,0 +1,930 @@
+{
+  "dashboard": {
+    "annotations": {
+      "list": [
+        {
+          "builtIn": 1,
+          "datasource": {
+            "type": "grafana",
+            "uid": "-- Grafana --"
+          },
+          "enable": true,
+          "hide": true,
+          "iconColor": "rgba(0, 211, 255, 1)",
+          "name": "Annotations & Alerts",
+          "target": {
+            "limit": 100,
+            "matchAny": false,
+            "tags": [],
+            "type": "dashboard"
+          },
+          "type": "dashboard"
+        }
+      ]
+    },
+    "editable": true,
+    "fiscalYearStartMonth": 0,
+    "graphTooltip": 0,
+    "links": [],
+    "liveNow": false,
+    "maxDataPoints": 3000,
+    "panels": [
+      {
+        "collapsed": false,
+        "gridPos": {
+          "h": 1,
+          "w": 24,
+          "x": 0,
+          "y": 0
+        },
+        "id": 30,
+        "maxDataPoints": 3000,
+        "panels": [],
+        "title": "Demo",
+        "type": "row"
+      },
+      {
+        "datasource": {
+          "type": "datasource",
+          "uid": "-FPV4La7z"
+        },
+        "gridPos": {
+          "h": 5,
+          "w": 12,
+          "x": 0,
+          "y": 1
+        },
+        "id": 34,
+        "maxDataPoints": 3000,
+        "options": {
+          "code": {
+            "language": "plaintext",
+            "showLineNumbers": false,
+            "showMiniMap": false
+          },
+          "content": "```\n- promql: 'sum2 without (instance, pod, pod_name) (http_server_requests_seconds_count{}[1m])'\n  as: http_server_requests_seconds_without_instance_and_pod_and_pod_name_lau_count\n  cluster_id: b290d3f4-3464-466f-ab8b-da902620aea7\n```",
+          "mode": "markdown"
+        },
+        "pluginVersion": "9.3.2",
+        "title": "stragg definition",
+        "type": "text"
+      },
+      {
+        "datasource": {
+          "type": "datasource",
+          "uid": "-FPV4La7z"
+        },
+        "gridPos": {
+          "h": 5,
+          "w": 12,
+          "x": 12,
+          "y": 1
+        },
+        "id": 33,
+        "maxDataPoints": 3000,
+        "options": {
+          "code": {
+            "language": "plaintext",
+            "showLineNumbers": false,
+            "showMiniMap": false
+          },
+          "content": "```\n- promql: 'sum2 by (service, pod, pod_name, le) (http_server_requests_seconds_bucket{}[1m])'\n  as: http_server_requests_seconds_with_service_and_pod_and_pod_name_lau_bucket\n  cluster_id: b290d3f4-3464-466f-ab8b-da902620aea7\n```",
+          "mode": "markdown"
+        },
+        "pluginVersion": "9.3.2",
+        "title": "stragg definition",
+        "type": "text"
+      },
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "-FPV4La7z"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "drawStyle": "line",
+              "fillOpacity": 0,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "lineInterpolation": "linear",
+              "lineWidth": 1,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 6
+        },
+        "id": 24,
+        "maxDataPoints": 3000,
+        "options": {
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "tooltip": {
+            "mode": "single",
+            "sort": "none"
+          }
+        },
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "-FPV4La7z"
+            },
+            "editorMode": "code",
+            "expr": "sum by (le) (increase(http_server_requests_seconds_without_instance_and_pod_and_pod_name_lau_bucket\n{service=~'.*messenger.*', le=~\"0.1|0.04|0.02\", source_cluster=\"hs-eks-prod4-api-apse1\"}))",
+            "interval": "30",
+            "legendFormat": "stragg_{{le}}",
+            "range": true,
+            "refId": "stragg"
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "-FPV4La7z"
+            },
+            "editorMode": "code",
+            "expr": "sum by (le) (increase(sum without (instance, pod, pod_name)(http_server_requests_seconds_bucket\n{ service=~'.*messenger.*', le=~\"0.1|0.04|0.02\",source_cluster=\"hs-eks-prod4-api-apse1\"})))",
+            "hide": false,
+            "interval": "30",
+            "legendFormat": "raw_{{le}}",
+            "range": true,
+            "refId": "raw"
+          }
+        ],
+        "title": "Without pod: actual vs stragg",
+        "type": "timeseries"
+      },
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "-FPV4La7z"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "drawStyle": "line",
+              "fillOpacity": 0,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "lineInterpolation": "linear",
+              "lineWidth": 1,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 12,
+          "y": 6
+        },
+        "id": 31,
+        "maxDataPoints": 3000,
+        "options": {
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "tooltip": {
+            "mode": "single",
+            "sort": "none"
+          }
+        },
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "-FPV4La7z"
+            },
+            "editorMode": "code",
+            "expr": "sum by (le) (increase(http_server_requests_seconds_with_service_and_pod_and_pod_name_lau_bucket\n{service=~'.*messenger.*', pod=~\".*\",le=~\"0.1|0.04|0.02\"}))",
+            "interval": "30",
+            "legendFormat": "stragg_{{le}}",
+            "range": true,
+            "refId": "stragg"
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "-FPV4La7z"
+            },
+            "editorMode": "code",
+            "expr": "sum by (le) (increase(sum by (instance, pod, pod_name, le)(http_server_requests_seconds_bucket\n{ service=~'.*messenger.*', le=~\"0.1|0.04|0.02\",source_cluster=\"hs-eks-prod4-api-apse1\"})))",
+            "hide": false,
+            "interval": "30",
+            "legendFormat": "raw_{{le}}",
+            "range": true,
+            "refId": "raw"
+          }
+        ],
+        "title": "With pod: actual vs stragg",
+        "type": "timeseries"
+      },
+      {
+        "collapsed": false,
+        "gridPos": {
+          "h": 1,
+          "w": 24,
+          "x": 0,
+          "y": 14
+        },
+        "id": 20,
+        "maxDataPoints": 3000,
+        "panels": [],
+        "title": "Stream-aggr accuracy",
+        "type": "row"
+      },
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "-FPV4La7z"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "drawStyle": "line",
+              "fillOpacity": 0,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "lineInterpolation": "linear",
+              "lineWidth": 1,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 7,
+          "w": 8,
+          "x": 0,
+          "y": 15
+        },
+        "id": 23,
+        "maxDataPoints": 3000,
+        "options": {
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "tooltip": {
+            "mode": "single",
+            "sort": "none"
+          }
+        },
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "-FPV4La7z"
+            },
+            "editorMode": "code",
+            "expr": "(\n    sum (increase(http_server_requests_seconds_without_instance_and_pod_and_pod_name_bucket\n{uri=~'/messenger/api/v1/:country/notification/:event|in-prod-hspay-messenger-scheduler-ingestion-queue|/health|/metrics', source_cluster=~'hs-eks-prod4-api-apse1', service=~'.*messenger.*', le=\"+Inf\", l9shard=\"10.50.156.58\", datacenter=\"sgp\"}))\n)\n-\n\n(\n    sum (increase(sum without (instance, pod, pod_name)(http_server_requests_seconds_bucket\n{uri=~'/messenger/api/v1/:country/notification/:event|in-prod-hspay-messenger-scheduler-ingestion-queue|/health|/metrics', source_cluster=~'hs-eks-prod4-api-apse1', service=~'.*messenger.*', le=\"+Inf\", datacenter=\"sgp\"})))\n)",
+            "hide": false,
+            "interval": "30",
+            "legendFormat": "agg_{{le}}",
+            "range": true,
+            "refId": "agg"
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "-FPV4La7z"
+            },
+            "editorMode": "code",
+            "expr": "(\n    sum (increase(http_server_requests_seconds_without_instance_and_pod_and_pod_name_bucket\n{uri=~'/messenger/api/v1/:country/notification/:event|in-prod-hspay-messenger-scheduler-ingestion-queue|/health|/metrics', source_cluster=~'hs-eks-prod4-api-apse1', service=~'.*messenger.*', le=\"+Inf\", l9shard=\"10.50.156.58\"}))\n)\n",
+            "hide": true,
+            "interval": "30",
+            "legendFormat": "agg_{{le}}",
+            "range": true,
+            "refId": "A"
+          }
+        ],
+        "title": "LAU - RAW (histogram INF)",
+        "type": "timeseries"
+      },
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "-FPV4La7z"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "drawStyle": "line",
+              "fillOpacity": 0,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "lineInterpolation": "linear",
+              "lineWidth": 1,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "log": 10,
+                "type": "log"
+              },
+              "showPoints": "auto",
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            },
+            "unit": "none"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 7,
+          "w": 7,
+          "x": 8,
+          "y": 15
+        },
+        "id": 38,
+        "maxDataPoints": 3000,
+        "options": {
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "tooltip": {
+            "mode": "single",
+            "sort": "none"
+          }
+        },
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "-FPV4La7z"
+            },
+            "editorMode": "code",
+            "expr": "(\n    sum (increase(http_server_requests_seconds_without_instance_and_pod_and_pod_name_sum\n{source_cluster=~'hs-eks-prod4-api-apse1',l9shard=\"10.50.156.58\"}))\n)\n-\n\n(\n    sum (increase(sum without (instance, pod, pod_name)(http_server_requests_seconds_sum\n{source_cluster=~'hs-eks-prod4-api-apse1'})))\n)",
+            "hide": false,
+            "interval": "30",
+            "legendFormat": "agg_{{le}}",
+            "range": true,
+            "refId": "agg"
+          }
+        ],
+        "title": "LAU - RAW (sum)",
+        "type": "timeseries"
+      },
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "-FPV4La7z"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "drawStyle": "line",
+              "fillOpacity": 0,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "lineInterpolation": "linear",
+              "lineWidth": 1,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 7,
+          "w": 8,
+          "x": 15,
+          "y": 15
+        },
+        "id": 39,
+        "maxDataPoints": 3000,
+        "options": {
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "tooltip": {
+            "mode": "single",
+            "sort": "none"
+          }
+        },
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "-FPV4La7z"
+            },
+            "editorMode": "code",
+            "expr": "(\n    sum (increase(http_server_requests_seconds_without_instance_and_pod_and_pod_name_count\n{uri=~'/messenger/api/v1/:country/notification/:event|in-prod-hspay-messenger-scheduler-ingestion-queue|/health|/metrics', source_cluster=~'hs-eks-prod4-api-apse1', service=~'.*messenger.*', l9shard=\"10.50.156.58\", datacenter=\"sgp\"}))\n)\n-\n\n(\n    sum (increase(sum without (instance, pod, pod_name)(http_server_requests_seconds_count\n{uri=~'/messenger/api/v1/:country/notification/:event|in-prod-hspay-messenger-scheduler-ingestion-queue|/health|/metrics', source_cluster=~'hs-eks-prod4-api-apse1', service=~'.*messenger.*', datacenter=\"sgp\"})))\n)",
+            "interval": "30",
+            "legendFormat": "agg_{{le}}",
+            "range": true,
+            "refId": "agg"
+          }
+        ],
+        "title": "LAU - RAW count",
+        "type": "timeseries"
+      },
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "-FPV4La7z"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "drawStyle": "line",
+              "fillOpacity": 0,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "lineInterpolation": "linear",
+              "lineWidth": 1,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 7,
+          "w": 8,
+          "x": 0,
+          "y": 22
+        },
+        "id": 41,
+        "maxDataPoints": 3000,
+        "options": {
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "tooltip": {
+            "mode": "single",
+            "sort": "none"
+          }
+        },
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "-FPV4La7z"
+            },
+            "editorMode": "code",
+            "expr": "(\n    sum (increase(sum without (instance, pod, pod_name)(http_server_requests_seconds_bucket\n{uri=~'/messenger/api/v1/:country/notification/:event|in-prod-hspay-messenger-scheduler-ingestion-queue|/health|/metrics', source_cluster=~'hs-eks-prod4-api-apse1', service=~'.*messenger.*', le=\"+Inf\", datacenter=\"sgp\"})))\n)",
+            "interval": "30",
+            "legendFormat": "agg_{{le}}",
+            "range": true,
+            "refId": "agg"
+          }
+        ],
+        "title": "RAW (INF)",
+        "type": "timeseries"
+      },
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "-FPV4La7z"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "drawStyle": "line",
+              "fillOpacity": 0,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "lineInterpolation": "linear",
+              "lineWidth": 1,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            },
+            "unit": "none"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 7,
+          "w": 7,
+          "x": 8,
+          "y": 22
+        },
+        "id": 42,
+        "maxDataPoints": 3000,
+        "options": {
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "tooltip": {
+            "mode": "single",
+            "sort": "none"
+          }
+        },
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "-FPV4La7z"
+            },
+            "editorMode": "code",
+            "expr": "(\n    sum (increase(sum without (instance, pod, pod_name)(http_server_requests_seconds_sum\n{uri=~'/messenger/api/v1/:country/notification/:event|in-prod-hspay-messenger-scheduler-ingestion-queue|/health|/metrics', source_cluster=~'hs-eks-prod4-api-apse1', service=~'.*messenger.*', datacenter=\"sgp\"})))\n)",
+            "hide": false,
+            "interval": "30",
+            "legendFormat": "agg_{{le}}",
+            "range": true,
+            "refId": "agg"
+          }
+        ],
+        "title": "RAW (sum)",
+        "type": "timeseries"
+      },
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "-FPV4La7z"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "drawStyle": "line",
+              "fillOpacity": 0,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "lineInterpolation": "linear",
+              "lineWidth": 1,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 7,
+          "w": 8,
+          "x": 15,
+          "y": 22
+        },
+        "id": 40,
+        "maxDataPoints": 3000,
+        "options": {
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "tooltip": {
+            "mode": "single",
+            "sort": "none"
+          }
+        },
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "-FPV4La7z"
+            },
+            "editorMode": "code",
+            "expr": "(\n    sum (increase(sum without (instance, pod, pod_name)(http_server_requests_seconds_count\n{uri=~'/messenger/api/v1/:country/notification/:event|in-prod-hspay-messenger-scheduler-ingestion-queue|/health|/metrics', source_cluster=~'hs-eks-prod4-api-apse1', service=~'.*messenger.*', datacenter=\"sgp\"})))\n)",
+            "interval": "30",
+            "legendFormat": "agg_{{le}}",
+            "range": true,
+            "refId": "agg"
+          }
+        ],
+        "title": "RAW count",
+        "type": "timeseries"
+      }
+    ],
+    "refresh": false,
+    "schemaVersion": 37,
+    "style": "dark",
+    "tags": [],
+    "templating": {
+      "list": []
+    },
+    "time": {
+      "from": "now-1h",
+      "to": "now"
+    },
+    "timepicker": {},
+    "timezone": "utc",
+    "title": "Copy - Debugging Stream Aggregation",
+    "uid": "-FPVsccv4La7z",
+    "version": 1,
+    "weekStart": ""
+  },
+  "folderUid": "d4480be7-99b5-4c30-85ad-a79f79c08ce9",
+  "overwrite": true
+}

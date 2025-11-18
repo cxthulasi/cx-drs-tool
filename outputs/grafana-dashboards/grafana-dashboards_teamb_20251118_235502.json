@@ -1,0 +1,27 @@
+{
+  "timestamp": "2025-11-18T23:55:02.541918",
+  "service": "grafana-dashboards",
+  "team": "teamb",
+  "resources": [
+    {
+      "uid": "general",
+      "title": "General",
+      "url": "/grafana/dashboards/f/general/general",
+      "hasAcl": false,
+      "canSave": true,
+      "canEdit": true,
+      "canAdmin": false,
+      "canDelete": false,
+      "version": 1,
+      "overwrite": true,
+      "_resource_type": "folder",
+      "_uid": "general",
+      "_title": "General",
+      "_source_file": "generated_general_folder"
+    }
+  ],
+  "count": 1,
+  "resource_identifiers": [
+    "general"
+  ]
+}

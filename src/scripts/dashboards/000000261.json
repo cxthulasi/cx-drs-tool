@@ -1,0 +1,1338 @@
+{
+  "dashboard": {
+    "annotations": {
+      "enable": false,
+      "list": [
+        {
+          "builtIn": 1,
+          "datasource": null,
+          "enable": true,
+          "hide": true,
+          "iconColor": "rgba(0, 211, 255, 1)",
+          "name": "Annotations & Alerts",
+          "type": "dashboard"
+        }
+      ]
+    },
+    "description": "Metrics was extracted from jmx-exporter that reads JMX data from JVM based applications and exposes it via HTTP in a simple text format that Prometheus understand and can scrape. This dashboard was built for Zookeeper 3.5 version deployment in Kubernetes. You can select metrics based on Pod Instance, Namespace, Application name and Cluster. This dashboard gives cross cluster zookeeper nodes information. It provides Quorum Size, Number of Followers, Member Type information, Healthcheck, Zookeeper metrics and JVM metics. ",
+    "editable": true,
+    "gnetId": 9969,
+    "graphTooltip": 1,
+    "iteration": 1572861898810,
+    "links": [],
+    "maxDataPoints": 1360,
+    "panels": [
+      {
+        "collapsed": true,
+        "gridPos": {
+          "h": 1,
+          "w": 24,
+          "x": 0,
+          "y": 0
+        },
+        "id": 48,
+        "maxDataPoints": 1360,
+        "panels": [],
+        "title": "Status",
+        "type": "row"
+      },
+      {
+        "cacheTimeout": null,
+        "colorBackground": false,
+        "colorValue": false,
+        "colors": [
+          "#299c46",
+          "rgba(237, 129, 40, 0.89)",
+          "#d44a3a"
+        ],
+        "datasource": {
+          "type": "prometheus",
+          "uid": "-FPV4La7z"
+        },
+        "description": "Quorum formed by zk nodes",
+        "format": "none",
+        "gauge": {
+          "maxValue": 100,
+          "minValue": 0,
+          "show": false,
+          "thresholdLabels": false,
+          "thresholdMarkers": true
+        },
+        "gridPos": {
+          "h": 5,
+          "w": 3,
+          "x": 0,
+          "y": 1
+        },
+        "id": 50,
+        "interval": "60",
+        "links": [],
+        "mappingType": 1,
+        "mappingTypes": [
+          {
+            "name": "value to text",
+            "value": 1
+          },
+          {
+            "name": "range to text",
+            "value": 2
+          }
+        ],
+        "maxDataPoints": 100,
+        "nullPointMode": "connected",
+        "nullText": null,
+        "postfix": "",
+        "postfixFontSize": "50%",
+        "prefix": "",
+        "prefixFontSize": "50%",
+        "rangeMaps": [
+          {
+            "from": "null",
+            "text": "N/A",
+            "to": "null"
+          }
+        ],
+        "sparkline": {
+          "fillColor": "rgba(31, 118, 189, 0.18)",
+          "full": false,
+          "lineColor": "rgb(31, 120, 193)",
+          "show": false
+        },
+        "tableColumn": "",
+        "targets": [
+          {
+            "WOW": [
+              {
+                "checked": false,
+                "label": "-1W",
+                "offset": 604800000
+              },
+              {
+                "checked": false,
+                "label": "-2W",
+                "offset": 1209600000
+              },
+              {
+                "checked": false,
+                "label": "-3W",
+                "offset": 1814400000
+              }
+            ],
+            "aggregator": "COUNT",
+            "dataNames": [],
+            "dataTableColumns": [],
+            "dataType": "METRICS",
+            "dimensions": [],
+            "expr": "avg(zookeeper_QuorumSize{namespace=\"$namespace\"})",
+            "format": "time_series",
+            "funcBy": "",
+            "funcByType": "dimension",
+            "groupByDimensions": [],
+            "groupByValues": [],
+            "intervalFactor": 1,
+            "legendFormat": "",
+            "refId": "A",
+            "search": [],
+            "values": []
+          }
+        ],
+        "thresholds": "",
+        "title": "Quorum Size",
+        "transparent": true,
+        "type": "singlestat",
+        "valueFontSize": "80%",
+        "valueMaps": [
+          {
+            "op": "=",
+            "text": "N/A",
+            "value": "null"
+          }
+        ],
+        "valueName": "avg"
+      },
+      {
+        "cacheTimeout": null,
+        "colorBackground": false,
+        "colorValue": false,
+        "colors": [
+          "#299c46",
+          "rgba(237, 129, 40, 0.89)",
+          "#d44a3a"
+        ],
+        "datasource": {
+          "type": "prometheus",
+          "uid": "-FPV4La7z"
+        },
+        "description": "number of followers within the ensemble. You can deduce the number of servers from the MBeam Quorum Size.",
+        "format": "none",
+        "gauge": {
+          "maxValue": 100,
+          "minValue": 0,
+          "show": false,
+          "thresholdLabels": false,
+          "thresholdMarkers": true
+        },
+        "gridPos": {
+          "h": 5,
+          "w": 3,
+          "x": 3,
+          "y": 1
+        },
+        "id": 51,
+        "interval": "60",
+        "links": [],
+        "mappingType": 1,
+        "mappingTypes": [
+          {
+            "name": "value to text",
+            "value": 1
+          },
+          {
+            "name": "range to text",
+            "value": 2
+          }
+        ],
+        "maxDataPoints": 100,
+        "nullPointMode": "connected",
+        "nullText": null,
+        "postfix": "",
+        "postfixFontSize": "50%",
+        "prefix": "",
+        "prefixFontSize": "50%",
+        "rangeMaps": [
+          {
+            "from": "null",
+            "text": "N/A",
+            "to": "null"
+          }
+        ],
+        "sparkline": {
+          "fillColor": "rgba(31, 118, 189, 0.18)",
+          "full": false,
+          "lineColor": "rgb(31, 120, 193)",
+          "show": false
+        },
+        "tableColumn": "",
+        "targets": [
+          {
+            "WOW": [
+              {
+                "checked": false,
+                "label": "-1W",
+                "offset": 604800000
+              },
+              {
+                "checked": false,
+                "label": "-2W",
+                "offset": 1209600000
+              },
+              {
+                "checked": false,
+                "label": "-3W",
+                "offset": 1814400000
+              }
+            ],
+            "aggregator": "COUNT",
+            "dataNames": [],
+            "dataTableColumns": [],
+            "dataType": "METRICS",
+            "dimensions": [],
+            "expr": "avg(zookeeper_QuorumSize{namespace=\"$namespace\"}) -1 ",
+            "format": "time_series",
+            "funcBy": "",
+            "funcByType": "dimension",
+            "groupByDimensions": [],
+            "groupByValues": [],
+            "intervalFactor": 1,
+            "refId": "A",
+            "search": [],
+            "values": []
+          }
+        ],
+        "thresholds": "",
+        "title": "Followers",
+        "transparent": true,
+        "type": "singlestat",
+        "valueFontSize": "80%",
+        "valueMaps": [
+          {
+            "op": "=",
+            "text": "N/A",
+            "value": "null"
+          }
+        ],
+        "valueName": "avg"
+      },
+      {
+        "cacheTimeout": null,
+        "columns": [],
+        "datasource": {
+          "type": "prometheus",
+          "uid": "-FPV4La7z"
+        },
+        "description": "Leader otrFollowers",
+        "fontSize": "100%",
+        "gridPos": {
+          "h": 5,
+          "w": 18,
+          "x": 6,
+          "y": 1
+        },
+        "id": 55,
+        "links": [],
+        "maxDataPoints": 1360,
+        "pageSize": null,
+        "repeat": "namespace",
+        "repeatDirection": "h",
+        "scroll": true,
+        "showHeader": true,
+        "sort": {
+          "col": 0,
+          "desc": true
+        },
+        "styles": [
+          {
+            "alias": "Member Type",
+            "colorMode": null,
+            "colors": [
+              "rgba(245, 54, 54, 0.9)",
+              "rgba(237, 129, 40, 0.89)",
+              "rgba(50, 172, 45, 0.97)"
+            ],
+            "dateFormat": "YYYY-MM-DD HH:mm:ss",
+            "decimals": 2,
+            "mappingType": 1,
+            "pattern": "memberType",
+            "thresholds": [],
+            "type": "string",
+            "unit": "short"
+          },
+          {
+            "alias": "Pod",
+            "colorMode": null,
+            "colors": [
+              "rgba(245, 54, 54, 0.9)",
+              "rgba(237, 129, 40, 0.89)",
+              "rgba(50, 172, 45, 0.97)"
+            ],
+            "decimals": 2,
+            "pattern": "pod",
+            "thresholds": [],
+            "type": "string",
+            "unit": "short"
+          },
+          {
+            "alias": "",
+            "colorMode": null,
+            "colors": [
+              "rgba(245, 54, 54, 0.9)",
+              "rgba(237, 129, 40, 0.89)",
+              "rgba(50, 172, 45, 0.97)"
+            ],
+            "dateFormat": "YYYY-MM-DD HH:mm:ss",
+            "decimals": 2,
+            "mappingType": 1,
+            "pattern": "Time",
+            "thresholds": [],
+            "type": "hidden",
+            "unit": "short"
+          },
+          {
+            "alias": "",
+            "colorMode": null,
+            "colors": [
+              "rgba(245, 54, 54, 0.9)",
+              "rgba(237, 129, 40, 0.89)",
+              "rgba(50, 172, 45, 0.97)"
+            ],
+            "dateFormat": "YYYY-MM-DD HH:mm:ss",
+            "decimals": 2,
+            "mappingType": 1,
+            "pattern": "__name__",
+            "thresholds": [],
+            "type": "hidden",
+            "unit": "short"
+          },
+          {
+            "alias": "",
+            "colorMode": null,
+            "colors": [
+              "rgba(245, 54, 54, 0.9)",
+              "rgba(237, 129, 40, 0.89)",
+              "rgba(50, 172, 45, 0.97)"
+            ],
+            "dateFormat": "YYYY-MM-DD HH:mm:ss",
+            "decimals": 2,
+            "mappingType": 1,
+            "pattern": "cluster",
+            "thresholds": [],
+            "type": "hidden",
+            "unit": "short"
+          },
+          {
+            "alias": "",
+            "colorMode": null,
+            "colors": [
+              "rgba(245, 54, 54, 0.9)",
+              "rgba(237, 129, 40, 0.89)",
+              "rgba(50, 172, 45, 0.97)"
+            ],
+            "dateFormat": "YYYY-MM-DD HH:mm:ss",
+            "decimals": 2,
+            "mappingType": 1,
+            "pattern": "endpoint",
+            "thresholds": [],
+            "type": "hidden",
+            "unit": "short"
+          },
+          {
+            "alias": "",
+            "colorMode": null,
+            "colors": [
+              "rgba(245, 54, 54, 0.9)",
+              "rgba(237, 129, 40, 0.89)",
+              "rgba(50, 172, 45, 0.97)"
+            ],
+            "dateFormat": "YYYY-MM-DD HH:mm:ss",
+            "decimals": 2,
+            "mappingType": 1,
+            "pattern": "instance",
+            "thresholds": [],
+            "type": "hidden",
+            "unit": "short"
+          },
+          {
+            "alias": "",
+            "colorMode": null,
+            "colors": [
+              "rgba(245, 54, 54, 0.9)",
+              "rgba(237, 129, 40, 0.89)",
+              "rgba(50, 172, 45, 0.97)"
+            ],
+            "dateFormat": "YYYY-MM-DD HH:mm:ss",
+            "decimals": 2,
+            "mappingType": 1,
+            "pattern": "/grafana||job||namespace||prometheus/",
+            "thresholds": [],
+            "type": "hidden",
+            "unit": "short"
+          }
+        ],
+        "targets": [
+          {
+            "WOW": [
+              {
+                "checked": false,
+                "label": "-1W",
+                "offset": 604800000
+              },
+              {
+                "checked": false,
+                "label": "-2W",
+                "offset": 1209600000
+              },
+              {
+                "checked": false,
+                "label": "-3W",
+                "offset": 1814400000
+              }
+            ],
+            "aggregator": "COUNT",
+            "dataNames": [],
+            "dataTableColumns": [],
+            "dataType": "METRICS",
+            "dimensions": [],
+            "expr": "zookeeper_AvgRequestLatency{namespace=\"$namespace\"}",
+            "format": "table",
+            "funcBy": "",
+            "funcByType": "dimension",
+            "groupByDimensions": [],
+            "groupByValues": [],
+            "instant": true,
+            "interval": "60",
+            "intervalFactor": 1,
+            "legendFormat": "",
+            "refId": "A",
+            "search": [],
+            "values": []
+          }
+        ],
+        "timeFrom": null,
+        "timeShift": null,
+        "title": "Zookeeper Member Type",
+        "transform": "table",
+        "transparent": true,
+        "type": "table"
+      },
+      {
+        "aliasColors": {},
+        "annotate": {
+          "enable": false
+        },
+        "bars": false,
+        "dashLength": 10,
+        "dashes": false,
+        "datasource": {
+          "type": "prometheus",
+          "uid": "-FPV4La7z"
+        },
+        "description": "the length of a single tick, which is the basic time unit used by ZooKeeper, as measured in milliseconds. It is used to regulate heartbeats, and timeouts. For example, the minimum session timeout will be two ticks.",
+        "fill": 0,
+        "grid": {
+          "max": null,
+          "min": null
+        },
+        "gridPos": {
+          "h": 5,
+          "w": 24,
+          "x": 0,
+          "y": 6
+        },
+        "height": "160px",
+        "hideTimeOverride": false,
+        "id": 56,
+        "interactive": true,
+        "legend": {
+          "alignAsTable": true,
+          "avg": false,
+          "current": false,
+          "hideEmpty": true,
+          "hideZero": true,
+          "max": false,
+          "min": false,
+          "rightSide": true,
+          "show": true,
+          "sideWidth": null,
+          "total": false,
+          "values": false
+        },
+        "legend_counts": true,
+        "lines": true,
+        "linewidth": 5,
+        "links": [],
+        "maxDataPoints": 1360,
+        "nullPointMode": "null",
+        "options": false,
+        "paceLength": 10,
+        "percentage": false,
+        "pointradius": 5,
+        "points": false,
+        "renderer": "flot",
+        "resolution": 100,
+        "scale": 1,
+        "seriesOverrides": [],
+        "spaceLength": 10,
+        "spyable": true,
+        "stack": false,
+        "steppedLine": false,
+        "targets": [
+          {
+            "expr": "avg(zookeeper_TickTime{namespace=\"$namespace\"}) by (pod)",
+            "format": "time_series",
+            "intervalFactor": 2,
+            "legendFormat": "{{pod}}",
+            "refId": "A",
+            "target": "aliasByNode(zookeeper.cluster.$cluster.zookeeper.$zookeeper_hosts.zookeeper.AvgRequestLatency, 4, 6)"
+          }
+        ],
+        "thresholds": [],
+        "timeFrom": null,
+        "timeRegions": [],
+        "timeShift": null,
+        "timezone": "browser",
+        "title": "Health Check (Ticktime)",
+        "tooltip": {
+          "msResolution": true,
+          "query_as_alias": true,
+          "shared": true,
+          "sort": 0,
+          "value_type": "individual"
+        },
+        "transparent": true,
+        "type": "graph",
+        "xaxis": {
+          "buckets": null,
+          "mode": "time",
+          "name": null,
+          "show": true,
+          "values": []
+        },
+        "yaxes": [
+          {
+            "decimals": null,
+            "format": "short",
+            "label": "ticks",
+            "logBase": 1,
+            "max": null,
+            "min": 0,
+            "show": true
+          },
+          {
+            "format": "short",
+            "logBase": 1,
+            "max": null,
+            "min": null,
+            "show": false
+          }
+        ],
+        "yaxis": {
+          "align": false,
+          "alignLevel": null
+        },
+        "zerofill": true
+      },
+      {
+        "collapsed": true,
+        "gridPos": {
+          "h": 1,
+          "w": 24,
+          "x": 0,
+          "y": 11
+        },
+        "id": 44,
+        "maxDataPoints": 1360,
+        "panels": [],
+        "repeat": null,
+        "title": "Zookeeper",
+        "type": "row"
+      },
+      {
+        "aliasColors": {},
+        "annotate": {
+          "enable": false
+        },
+        "bars": false,
+        "dashLength": 10,
+        "dashes": false,
+        "datasource": {
+          "type": "prometheus",
+          "uid": "-FPV4La7z"
+        },
+        "fill": 0,
+        "grid": {
+          "max": null,
+          "min": null
+        },
+        "gridPos": {
+          "h": 4,
+          "w": 12,
+          "x": 0,
+          "y": 12
+        },
+        "height": "160px",
+        "id": 34,
+        "interactive": true,
+        "legend": {
+          "alignAsTable": false,
+          "avg": false,
+          "current": false,
+          "hideEmpty": true,
+          "hideZero": true,
+          "max": false,
+          "min": false,
+          "rightSide": false,
+          "show": true,
+          "total": false,
+          "values": false
+        },
+        "legend_counts": true,
+        "lines": true,
+        "linewidth": 1,
+        "links": [],
+        "maxDataPoints": 1360,
+        "nullPointMode": "null",
+        "options": false,
+        "paceLength": 10,
+        "percentage": false,
+        "pointradius": 5,
+        "points": false,
+        "renderer": "flot",
+        "resolution": 100,
+        "scale": 1,
+        "seriesOverrides": [],
+        "spaceLength": 10,
+        "spyable": true,
+        "stack": false,
+        "steppedLine": false,
+        "targets": [
+          {
+            "expr": "zookeeper_AvgRequestLatency{namespace=\"$namespace\"}",
+            "format": "time_series",
+            "intervalFactor": 2,
+            "legendFormat": "{{pod}}",
+            "refId": "A",
+            "target": "aliasByNode(zookeeper.cluster.$cluster.zookeeper.$zookeeper_hosts.zookeeper.AvgRequestLatency, 4, 6)"
+          }
+        ],
+        "thresholds": [],
+        "timeFrom": null,
+        "timeRegions": [],
+        "timeShift": null,
+        "timezone": "browser",
+        "title": "Avg Request Latency",
+        "tooltip": {
+          "msResolution": true,
+          "query_as_alias": true,
+          "shared": true,
+          "sort": 0,
+          "value_type": "individual"
+        },
+        "type": "graph",
+        "xaxis": {
+          "buckets": null,
+          "mode": "time",
+          "name": null,
+          "show": true,
+          "values": []
+        },
+        "yaxes": [
+          {
+            "format": "short",
+            "label": "ticks",
+            "logBase": 1,
+            "max": null,
+            "min": 0,
+            "show": true
+          },
+          {
+            "format": "short",
+            "logBase": 1,
+            "max": null,
+            "min": null,
+            "show": false
+          }
+        ],
+        "yaxis": {
+          "align": false,
+          "alignLevel": null
+        },
+        "zerofill": true
+      },
+      {
+        "aliasColors": {},
+        "annotate": {
+          "enable": false
+        },
+        "bars": false,
+        "dashLength": 10,
+        "dashes": false,
+        "datasource": {
+          "type": "prometheus",
+          "uid": "-FPV4La7z"
+        },
+        "fill": 0,
+        "grid": {
+          "max": null,
+          "min": null
+        },
+        "gridPos": {
+          "h": 4,
+          "w": 12,
+          "x": 12,
+          "y": 12
+        },
+        "height": "160px",
+        "id": 42,
+        "interactive": true,
+        "legend": {
+          "alignAsTable": false,
+          "avg": false,
+          "current": false,
+          "hideEmpty": true,
+          "hideZero": true,
+          "max": false,
+          "min": false,
+          "rightSide": false,
+          "show": true,
+          "total": false,
+          "values": false
+        },
+        "legend_counts": true,
+        "lines": true,
+        "linewidth": 1,
+        "links": [],
+        "maxDataPoints": 1360,
+        "nullPointMode": "null",
+        "options": false,
+        "paceLength": 10,
+        "percentage": false,
+        "pointradius": 5,
+        "points": false,
+        "renderer": "flot",
+        "resolution": 100,
+        "scale": 1,
+        "seriesOverrides": [],
+        "spaceLength": 10,
+        "spyable": true,
+        "stack": false,
+        "steppedLine": false,
+        "targets": [
+          {
+            "expr": "zookeeper_InMemoryDataTree_NodeCount{namespace=\"$namespace\"}",
+            "format": "time_series",
+            "intervalFactor": 2,
+            "legendFormat": "{{pod}}",
+            "refId": "A",
+            "target": "aliasByNode(zookeeper.cluster.$cluster.zookeeper.$zookeeper_hosts.zookeeper.OutstandingRequests, 4, 6)"
+          }
+        ],
+        "thresholds": [],
+        "timeFrom": null,
+        "timeRegions": [],
+        "timeShift": null,
+        "timezone": "browser",
+        "title": "Znodes count",
+        "tooltip": {
+          "msResolution": true,
+          "query_as_alias": true,
+          "shared": true,
+          "sort": 0,
+          "value_type": "individual"
+        },
+        "type": "graph",
+        "xaxis": {
+          "buckets": null,
+          "mode": "time",
+          "name": null,
+          "show": true,
+          "values": []
+        },
+        "yaxes": [
+          {
+            "format": "short",
+            "logBase": 1,
+            "max": null,
+            "min": 0,
+            "show": true
+          },
+          {
+            "format": "short",
+            "logBase": 1,
+            "max": null,
+            "min": null,
+            "show": false
+          }
+        ],
+        "yaxis": {
+          "align": false,
+          "alignLevel": null
+        },
+        "zerofill": true
+      },
+      {
+        "aliasColors": {},
+        "annotate": {
+          "enable": false
+        },
+        "bars": false,
+        "dashLength": 10,
+        "dashes": false,
+        "datasource": {
+          "type": "prometheus",
+          "uid": "-FPV4La7z"
+        },
+        "fill": 0,
+        "grid": {
+          "max": null,
+          "min": null
+        },
+        "gridPos": {
+          "h": 4,
+          "w": 12,
+          "x": 0,
+          "y": 16
+        },
+        "height": "160px",
+        "id": 6,
+        "interactive": true,
+        "legend": {
+          "alignAsTable": false,
+          "avg": false,
+          "current": false,
+          "hideEmpty": true,
+          "hideZero": true,
+          "max": false,
+          "min": false,
+          "rightSide": false,
+          "show": true,
+          "total": false,
+          "values": false
+        },
+        "legend_counts": true,
+        "lines": true,
+        "linewidth": 1,
+        "links": [],
+        "maxDataPoints": 1360,
+        "nullPointMode": "null",
+        "options": false,
+        "paceLength": 10,
+        "percentage": false,
+        "pointradius": 5,
+        "points": false,
+        "renderer": "flot",
+        "resolution": 100,
+        "scale": 1,
+        "seriesOverrides": [
+          {
+            "alias": "/MaxClientCnxnsPerHost/",
+            "color": "#890F02",
+            "fill": 0,
+            "legend": false
+          }
+        ],
+        "spaceLength": 10,
+        "spyable": true,
+        "stack": false,
+        "steppedLine": false,
+        "targets": [
+          {
+            "expr": "zookeeper_NumAliveConnections{namespace=\"$namespace\"}",
+            "format": "time_series",
+            "intervalFactor": 2,
+            "legendFormat": "{{pod}}",
+            "refId": "A",
+            "target": "aliasByNode(zookeeper.cluster.$cluster.zookeeper.$zookeeper_hosts.zookeeper.NumAliveConnections, 4, 6)"
+          }
+        ],
+        "thresholds": [],
+        "timeFrom": null,
+        "timeRegions": [],
+        "timeShift": null,
+        "timezone": "browser",
+        "title": "Connections",
+        "tooltip": {
+          "msResolution": true,
+          "query_as_alias": true,
+          "shared": true,
+          "sort": 0,
+          "value_type": "individual"
+        },
+        "type": "graph",
+        "xaxis": {
+          "buckets": null,
+          "mode": "time",
+          "name": null,
+          "show": true,
+          "values": []
+        },
+        "yaxes": [
+          {
+            "format": "short",
+            "logBase": 1,
+            "max": null,
+            "min": 0,
+            "show": true
+          },
+          {
+            "format": "short",
+            "logBase": 1,
+            "max": null,
+            "min": null,
+            "show": false
+          }
+        ],
+        "yaxis": {
+          "align": false,
+          "alignLevel": null
+        },
+        "zerofill": true
+      },
+      {
+        "aliasColors": {},
+        "annotate": {
+          "enable": false
+        },
+        "bars": false,
+        "dashLength": 10,
+        "dashes": false,
+        "datasource": {
+          "type": "prometheus",
+          "uid": "-FPV4La7z"
+        },
+        "fill": 0,
+        "grid": {
+          "max": null,
+          "min": null
+        },
+        "gridPos": {
+          "h": 4,
+          "w": 12,
+          "x": 12,
+          "y": 16
+        },
+        "height": "160px",
+        "id": 41,
+        "interactive": true,
+        "legend": {
+          "alignAsTable": false,
+          "avg": false,
+          "current": false,
+          "max": false,
+          "min": false,
+          "rightSide": false,
+          "show": true,
+          "total": false,
+          "values": false
+        },
+        "legend_counts": true,
+        "lines": true,
+        "linewidth": 1,
+        "links": [],
+        "maxDataPoints": 1360,
+        "nullPointMode": "null",
+        "options": false,
+        "paceLength": 10,
+        "percentage": false,
+        "pointradius": 5,
+        "points": false,
+        "renderer": "flot",
+        "resolution": 100,
+        "scale": 1,
+        "seriesOverrides": [],
+        "spaceLength": 10,
+        "spyable": true,
+        "stack": false,
+        "steppedLine": false,
+        "targets": [
+          {
+            "expr": "zookeeper_PendingRevalidationCount{namespace=\"$namespace\"}",
+            "format": "time_series",
+            "intervalFactor": 2,
+            "legendFormat": "{{pod}}",
+            "refId": "A",
+            "target": "aliasByNode(zookeeper.cluster.$cluster.zookeeper.$zookeeper_hosts.zookeeper.OutstandingRequests, 4, 6)"
+          }
+        ],
+        "thresholds": [],
+        "timeFrom": null,
+        "timeRegions": [],
+        "timeShift": null,
+        "timezone": "browser",
+        "title": "Pending session revalidations",
+        "tooltip": {
+          "msResolution": true,
+          "query_as_alias": true,
+          "shared": true,
+          "sort": 0,
+          "value_type": "individual"
+        },
+        "type": "graph",
+        "xaxis": {
+          "buckets": null,
+          "mode": "time",
+          "name": null,
+          "show": true,
+          "values": []
+        },
+        "yaxes": [
+          {
+            "format": "short",
+            "logBase": 1,
+            "max": null,
+            "min": 0,
+            "show": true
+          },
+          {
+            "format": "short",
+            "logBase": 1,
+            "max": null,
+            "min": null,
+            "show": false
+          }
+        ],
+        "yaxis": {
+          "align": false,
+          "alignLevel": null
+        },
+        "zerofill": true
+      },
+      {
+        "aliasColors": {},
+        "annotate": {
+          "enable": false
+        },
+        "bars": false,
+        "dashLength": 10,
+        "dashes": false,
+        "datasource": {
+          "type": "prometheus",
+          "uid": "-FPV4La7z"
+        },
+        "fill": 0,
+        "grid": {
+          "max": null,
+          "min": null
+        },
+        "gridPos": {
+          "h": 4,
+          "w": 12,
+          "x": 0,
+          "y": 20
+        },
+        "height": "160px",
+        "id": 35,
+        "interactive": true,
+        "legend": {
+          "alignAsTable": false,
+          "avg": false,
+          "current": false,
+          "hideEmpty": true,
+          "hideZero": true,
+          "max": false,
+          "min": false,
+          "rightSide": false,
+          "show": true,
+          "total": false,
+          "values": false
+        },
+        "legend_counts": true,
+        "lines": true,
+        "linewidth": 1,
+        "links": [],
+        "maxDataPoints": 1360,
+        "nullPointMode": "null",
+        "options": false,
+        "paceLength": 10,
+        "percentage": false,
+        "pointradius": 5,
+        "points": false,
+        "renderer": "flot",
+        "resolution": 100,
+        "scale": 1,
+        "seriesOverrides": [],
+        "spaceLength": 10,
+        "spyable": true,
+        "stack": false,
+        "steppedLine": false,
+        "targets": [
+          {
+            "expr": "zookeeper_OutstandingRequests{namespace=\"$namespace\"}",
+            "format": "time_series",
+            "intervalFactor": 2,
+            "legendFormat": "{{ pod }}",
+            "refId": "A",
+            "target": "aliasByNode(zookeeper.cluster.$cluster.zookeeper.$zookeeper_hosts.zookeeper.OutstandingRequests, 4, 6)"
+          }
+        ],
+        "thresholds": [],
+        "timeFrom": null,
+        "timeRegions": [],
+        "timeShift": null,
+        "timezone": "browser",
+        "title": "Outstanding Requests",
+        "tooltip": {
+          "msResolution": true,
+          "query_as_alias": true,
+          "shared": true,
+          "sort": 0,
+          "value_type": "individual"
+        },
+        "type": "graph",
+        "xaxis": {
+          "buckets": null,
+          "mode": "time",
+          "name": null,
+          "show": true,
+          "values": []
+        },
+        "yaxes": [
+          {
+            "format": "short",
+            "logBase": 1,
+            "max": null,
+            "min": 0,
+            "show": true
+          },
+          {
+            "format": "short",
+            "logBase": 1,
+            "max": null,
+            "min": null,
+            "show": false
+          }
+        ],
+        "yaxis": {
+          "align": false,
+          "alignLevel": null
+        },
+        "zerofill": true
+      },
+      {
+        "aliasColors": {},
+        "annotate": {
+          "enable": false
+        },
+        "bars": false,
+        "dashLength": 10,
+        "dashes": false,
+        "datasource": {
+          "type": "prometheus",
+          "uid": "-FPV4La7z"
+        },
+        "fill": 0,
+        "grid": {
+          "max": null,
+          "min": null
+        },
+        "gridPos": {
+          "h": 4,
+          "w": 12,
+          "x": 12,
+          "y": 20
+        },
+        "height": "160px",
+        "id": 43,
+        "interactive": true,
+        "legend": {
+          "alignAsTable": false,
+          "avg": false,
+          "current": false,
+          "max": false,
+          "min": false,
+          "rightSide": false,
+          "show": true,
+          "total": false,
+          "values": false
+        },
+        "legend_counts": true,
+        "lines": true,
+        "linewidth": 1,
+        "links": [],
+        "maxDataPoints": 1360,
+        "nullPointMode": "null",
+        "options": false,
+        "paceLength": 10,
+        "percentage": false,
+        "pointradius": 5,
+        "points": false,
+        "renderer": "flot",
+        "resolution": 100,
+        "scale": 1,
+        "seriesOverrides": [],
+        "spaceLength": 10,
+        "spyable": true,
+        "stack": false,
+        "steppedLine": false,
+        "targets": [
+          {
+            "expr": "zookeeper_InMemoryDataTree_WatchCount{namespace=\"$namespace\"}",
+            "format": "time_series",
+            "intervalFactor": 2,
+            "legendFormat": "{{pod}}",
+            "refId": "A",
+            "target": "aliasByNode(zookeeper.cluster.$cluster.zookeeper.$zookeeper_hosts.zookeeper.OutstandingRequests, 4, 6)"
+          }
+        ],
+        "thresholds": [],
+        "timeFrom": null,
+        "timeRegions": [],
+        "timeShift": null,
+        "timezone": "browser",
+        "title": "Watch count",
+        "tooltip": {
+          "msResolution": true,
+          "query_as_alias": true,
+          "shared": true,
+          "sort": 0,
+          "value_type": "individual"
+        },
+        "type": "graph",
+        "xaxis": {
+          "buckets": null,
+          "mode": "time",
+          "name": null,
+          "show": true,
+          "values": []
+        },
+        "yaxes": [
+          {
+            "format": "short",
+            "logBase": 1,
+            "max": null,
+            "min": 0,
+            "show": true
+          },
+          {
+            "format": "short",
+            "logBase": 1,
+            "max": null,
+            "min": null,
+            "show": false
+          }
+        ],
+        "yaxis": {
+          "align": false,
+          "alignLevel": null
+        },
+        "zerofill": true
+      }
+    ],
+    "refresh": false,
+    "schemaVersion": 18,
+    "style": "light",
+    "tags": [],
+    "templating": {
+      "list": [
+        {
+          "allValue": null,
+          "datasource": {
+            "type": "prometheus",
+            "uid": "-FPV4La7z"
+          },
+          "definition": "label_values(kube_namespace_labels, namespace)",
+          "hide": 0,
+          "includeAll": false,
+          "label": "Namespace",
+          "multi": false,
+          "name": "namespace",
+          "options": [],
+          "query": "label_values(kube_namespace_labels, namespace)",
+          "refresh": 1,
+          "regex": "",
+          "skipUrlSync": false,
+          "sort": 0,
+          "tagValuesQuery": "",
+          "tags": [],
+          "tagsQuery": "",
+          "type": "query",
+          "useTags": false
+        }
+      ]
+    },
+    "time": {
+      "from": "now-5m",
+      "to": "now"
+    },
+    "timepicker": {
+      "collapse": false,
+      "enable": true,
+      "notice": false,
+      "now": true,
+      "refresh_intervals": [
+        "1m",
+        "5m",
+        "1h",
+        "1d"
+      ],
+      "status": "Stable",
+      "time_options": [
+        "5m",
+        "15m",
+        "1h",
+        "6h",
+        "12h",
+        "24h",
+        "2d",
+        "7d",
+        "30d"
+      ],
+      "type": "timepicker"
+    },
+    "timezone": "utc",
+    "title": "Zookeeper Dashboard",
+    "uid": "000000261",
+    "version": 1
+  },
+  "folderUid": "c2ab6eb8-5670-49a2-a829-76201c7e16bf",
+  "overwrite": true
+}

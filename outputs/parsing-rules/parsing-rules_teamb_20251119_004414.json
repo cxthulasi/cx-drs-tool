@@ -1,0 +1,2987 @@
+{
+  "timestamp": "2025-11-19T00:44:14.483929",
+  "service": "parsing-rules",
+  "team": "teamb",
+  "resources": [
+    {
+      "id": "fae13b46-bbde-4e02-bcc5-d96d3c4397de",
+      "name": "k8s Opentelemetry parsing",
+      "description": "k8s Opentelemetry extension pack",
+      "creator": "k8s Opentelemetry extension pack",
+      "enabled": true,
+      "hidden": false,
+      "ruleMatchers": [],
+      "ruleSubgroups": [
+        {
+          "id": "17f41825-fa7d-4a51-8967-7ee0f0171464",
+          "rules": [
+            {
+              "id": "a620589d-1629-446c-9f9a-de403bd8280f",
+              "name": "Stringify logRecord",
+              "description": "",
+              "sourceField": "text.logRecord",
+              "parameters": {
+                "jsonStringifyParameters": {
+                  "destinationField": "text.logRecord_tmp",
+                  "deleteSource": true
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 1
+        },
+        {
+          "id": "584ff409-b500-43ec-b27a-4a65bf4701cd",
+          "rules": [
+            {
+              "id": "7eb46864-9591-41b5-ae52-8ea37077b1dd",
+              "name": "Parse json logRecord_tmp",
+              "description": "",
+              "sourceField": "text.logRecord_tmp",
+              "parameters": {
+                "jsonParseParameters": {
+                  "destinationField": "text",
+                  "deleteSource": true,
+                  "escapedValue": null,
+                  "overrideDest": false
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 2
+        },
+        {
+          "id": "cb821a12-ebe4-45cb-a1af-7b2910efa8b7",
+          "rules": [
+            {
+              "id": "55edd6df-b9ee-4d4f-8edf-f50b6054a8b9",
+              "name": "Parse json body",
+              "description": "",
+              "sourceField": "text.body",
+              "parameters": {
+                "jsonParseParameters": {
+                  "destinationField": "text",
+                  "deleteSource": true,
+                  "escapedValue": null,
+                  "overrideDest": false
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 3
+        },
+        {
+          "id": "f5686adf-d076-40ad-a9a4-b96d9c255552",
+          "rules": [
+            {
+              "id": "56aad079-c8b9-4658-8359-1c3623d052ef",
+              "name": "map deprecatedLastTimestamp, eventTime as datetime fields",
+              "description": "",
+              "sourceField": "text",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "text",
+                  "replaceNewVal": "\"${1}_custom_timestamp\":\"",
+                  "rule": "\"(deprecatedLastTimestamp|eventTime)\":\""
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 4
+        },
+        {
+          "id": "dd0f3ef4-3680-48c0-b71f-d91adef7303c",
+          "rules": [
+            {
+              "id": "787dcc61-c9a6-49cb-9fdd-483fee3a8768",
+              "name": "fix mapping exception for infra collector empty f:annotations",
+              "description": "",
+              "sourceField": "text",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "text",
+                  "replaceNewVal": "${1}\"f:workflow\":{",
+                  "rule": "(\"f:annotations\":\\{.*?)\"\\.\":\\{"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 5
+        },
+        {
+          "id": "d1d82bd9-b730-4305-ad2a-39d9a589ed22",
+          "rules": [
+            {
+              "id": "d611b944-59d3-4959-9997-b50f0e41a9ab",
+              "name": "Parse common logs from k8s containers",
+              "description": "This rule parses containers: kube-apiserver, kube-controller-manager, kube-proxy, kube-scheduler, storage-provisioner.",
+              "sourceField": "text",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "text",
+                  "replaceNewVal": "\"level\":\"$level\",\"timestamp\":\"$timestamp\",\"caller\":\"$caller\",\"message\":\"$message\"",
+                  "rule": "\"body\":\"(?P<level>[A-Z])(?P<timestamp>\\d{4} \\d{2}:\\d{2}:\\d{2}\\.\\d+)\\s*1 (?P<caller>[^\\]]+)\\] (?P<message>(?:\\\\\"|[^\"])+?)(?:\\\\n)?\""
+                }
+              },
+              "enabled": true,
+              "order": 1
+            },
+            {
+              "id": "9650ce6b-3247-4e19-95b3-8a5f18c81273",
+              "name": "Replace body with kvPairs when body is a kv pairs message starts with time",
+              "description": "",
+              "sourceField": "text",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "text",
+                  "replaceNewVal": "\"kvPairs\":\"${1}\"",
+                  "rule": "\"body\":\"(time=\\\\\"(?:\\\\\"|[^\"])+?)(?:\\\\n)?\""
+                }
+              },
+              "enabled": true,
+              "order": 2
+            },
+            {
+              "id": "2f8938fe-c840-43db-b3f9-bc6573df3ef6",
+              "name": "Replace body with kvPairs when body is a kv pairs message starts with ts",
+              "description": "",
+              "sourceField": "text",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "text",
+                  "replaceNewVal": "\"kvPairs\":\"${1}\"",
+                  "rule": "\"body\":\"(ts=\\d{4}(?:\\\\\"|[^\"])+?)(?:\\\\n)?\""
+                }
+              },
+              "enabled": true,
+              "order": 3
+            },
+            {
+              "id": "092f9487-5938-49af-bff3-f718e69e3c5a",
+              "name": "Replace body with kvPairs when body is a kv pairs message starts with level",
+              "description": "",
+              "sourceField": "text",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "text",
+                  "replaceNewVal": "\"kvPairs\":\"${1}\"",
+                  "rule": "\"body\":\"(level=(?:\\\\\"|[^\"])+?)(?:\\\\n)?\""
+                }
+              },
+              "enabled": true,
+              "order": 4
+            }
+          ],
+          "enabled": true,
+          "order": 6
+        },
+        {
+          "id": "9641133b-d803-4272-9d9b-de1b49dbf2a4",
+          "rules": [
+            {
+              "id": "708a163f-af2f-450f-a04c-79778a9233e2",
+              "name": "Extract msg from kvPairs",
+              "description": "",
+              "sourceField": "text.kvPairs",
+              "parameters": {
+                "extractParameters": {
+                  "rule": "msg=\\\\\"(?P<msg>(?:\\\\\\\\\"|[^\"])+)\\\\\""
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 7
+        },
+        {
+          "id": "39fbeca4-eb80-4072-86a0-ab2010051337",
+          "rules": [
+            {
+              "id": "fce17968-169c-492d-99ba-8a00d3e46b2f",
+              "name": "Remove msg from kvPairs",
+              "description": "",
+              "sourceField": "text.kvPairs",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "text.kvPairs",
+                  "replaceNewVal": "",
+                  "rule": "\\s+msg=\\\\\"(?P<msg>(?:\\\\\\\\\"|[^\"])+)\\\\\""
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 8
+        },
+        {
+          "id": "f3f2faab-f7ff-4aca-b23f-677763dbb9f1",
+          "rules": [
+            {
+              "id": "e09c5bf3-c7ed-478d-b872-037652f3defd",
+              "name": "Extract query from kvPairs",
+              "description": "",
+              "sourceField": "text.kvPairs",
+              "parameters": {
+                "extractParameters": {
+                  "rule": "query=\\\\\"(?P<query>(?:\\\\\\\\\"|[^\"])+)\\\\\""
+                }
+              },
+              "enabled": true,
+              "order": 1
+            },
+            {
+              "id": "a28d3174-dacc-4de9-843b-ac50fe4264b6",
+              "name": "Extract query from kvPairs when kvPairs also had msg in it along with query",
+              "description": "",
+              "sourceField": "text.kvPairs",
+              "parameters": {
+                "extractParameters": {
+                  "rule": "query=\\\\\\\\\\\\\"(?P<query>(?:\\\\\\\\\\\\\\\\\"|[^\"])+)\\\\\\\\\\\\\""
+                }
+              },
+              "enabled": true,
+              "order": 2
+            }
+          ],
+          "enabled": true,
+          "order": 9
+        },
+        {
+          "id": "0c32db24-08b0-4cf3-95c4-d51df0006864",
+          "rules": [
+            {
+              "id": "9551acfa-0667-4605-b05a-ce6d71efd0c1",
+              "name": "remove query from kvPairs",
+              "description": "",
+              "sourceField": "text.kvPairs",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "text.kvPairs",
+                  "replaceNewVal": "",
+                  "rule": "\\s+query=\\\\\"(?P<query>(?:\\\\\\\\\"|[^\"])+)\\\\\""
+                }
+              },
+              "enabled": true,
+              "order": 1
+            },
+            {
+              "id": "cf3d7b33-be82-474b-86d3-31a62f19fe01",
+              "name": "remove query from kvPairs when kvPairs also had msg in it along with query",
+              "description": "",
+              "sourceField": "text.kvPairs",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "text.kvPairs",
+                  "replaceNewVal": "",
+                  "rule": "\\s+query=\\\\\\\\\\\\\"(?P<query>(?:\\\\\\\\\\\\\\\\\"|[^\"])+)\\\\\\\\\\\\\""
+                }
+              },
+              "enabled": true,
+              "order": 2
+            }
+          ],
+          "enabled": true,
+          "order": 10
+        },
+        {
+          "id": "89a5f022-1279-40cb-aef3-dfe68aa4c4c2",
+          "rules": [
+            {
+              "id": "b13e6859-855f-4455-912a-3d16de0f4647",
+              "name": "prepare all the rest of the fields in a kvPairs field that had both msg and query",
+              "description": "",
+              "sourceField": "text.kvPairs",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "text.kvPairs",
+                  "replaceNewVal": "\u00a7${1}\u00a7:\u00a7${2}\u00a7",
+                  "rule": "([\\w\\.\\-\\_]+)=\\\\{7}\"((?:\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\+\"|[^\"])+)\\\\{7}\""
+                }
+              },
+              "enabled": true,
+              "order": 1
+            },
+            {
+              "id": "34264a6b-2a46-457a-8cff-6dd8846a248d",
+              "name": "prepare all the rest of the fields in a kvPairs field that had either msg or query",
+              "description": "",
+              "sourceField": "text.kvPairs",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "text.kvPairs",
+                  "replaceNewVal": "\u00a7${1}\u00a7:\u00a7${2}\u00a7",
+                  "rule": "([\\w\\.\\-\\_]+)=\\\\{3}\"((?:\\\\\\\\\\\\\\\\+\"|[^\"])+)\\\\{3}\""
+                }
+              },
+              "enabled": true,
+              "order": 2
+            }
+          ],
+          "enabled": true,
+          "order": 11
+        },
+        {
+          "id": "dbd646b5-f3d0-4f82-afae-d1e59fe94282",
+          "rules": [
+            {
+              "id": "6410a64c-6ee0-4d8d-b2f4-0b78fff124a0",
+              "name": "remove all double quotes if they have more than one consecutive backslash prior to them for kvPairs that had both msg and query",
+              "description": "",
+              "sourceField": "text.kvPairs",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "text.kvPairs",
+                  "replaceNewVal": "",
+                  "rule": "\\\\{15,}\""
+                }
+              },
+              "enabled": true,
+              "order": 1
+            },
+            {
+              "id": "5d8dd040-58df-4045-8174-96a982e15293",
+              "name": "remove all double quotes if they have more than one consecutive backslash prior to them for kvPairs that had either msg or query",
+              "description": "",
+              "sourceField": "text.kvPairs",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "text.kvPairs",
+                  "replaceNewVal": "",
+                  "rule": "\\\\{7,}\""
+                }
+              },
+              "enabled": true,
+              "order": 2
+            },
+            {
+              "id": "262ec9b8-e4eb-4c06-91ea-a7f2cc4b728c",
+              "name": "remove all double quotes if they have more than one consecutive backslash prior to them for kvPairs that had no msg or query",
+              "description": "",
+              "sourceField": "text.kvPairs",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "text.kvPairs",
+                  "replaceNewVal": "",
+                  "rule": "\\\\{3,}\""
+                }
+              },
+              "enabled": true,
+              "order": 3
+            }
+          ],
+          "enabled": true,
+          "order": 12
+        },
+        {
+          "id": "47fe24f1-8484-4139-ac00-ab069ac0f21c",
+          "rules": [
+            {
+              "id": "1e7ad1a9-ee65-4fb2-9f27-4ba7bf7dc993",
+              "name": "Replace all remaining occurrences of double quotes with their corresponding backslash with \u00a7",
+              "description": "",
+              "sourceField": "text.kvPairs",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "text.kvPairs",
+                  "replaceNewVal": "\u00a7",
+                  "rule": "\\\\+\""
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 13
+        },
+        {
+          "id": "4f639329-f90e-493e-8c3f-1e86b5bfeeac",
+          "rules": [
+            {
+              "id": "4ee14f47-6ab4-4595-8fa2-3b1005aaa4f4",
+              "name": "wrap the keys of the key/val pairs with \u00a7 wrapping the value with \u00a7",
+              "description": "",
+              "sourceField": "text.kvPairs",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "text.kvPairs",
+                  "replaceNewVal": "\u00a7${1}\u00a7:\u00a7${2}\u00a7",
+                  "rule": "([\\w\\.\\-]+)=\\xA7([^\\xA7]*)\\xA7"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 14
+        },
+        {
+          "id": "735d83c9-1bfb-412c-a996-8842717e4cb7",
+          "rules": [
+            {
+              "id": "add15e15-e429-4825-b048-ffab563df105",
+              "name": "Adding to the rest of key/val pairs \u00a7 before and after the keys and values",
+              "description": "",
+              "sourceField": "text.kvPairs",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "text.kvPairs",
+                  "replaceNewVal": "\u00a7${1}\u00a7:\u00a7${2}\u00a7",
+                  "rule": "([\\w\\.\\-\\_]+)=((?:$|[^ ])*)(?: |$)"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 15
+        },
+        {
+          "id": "aae539d3-6e7f-4480-afd2-f35ffb88494a",
+          "rules": [
+            {
+              "id": "d4a3c0e7-ac6f-4bf8-8a4d-ef72425a3c0b",
+              "name": "Adding commas between key/val pairs",
+              "description": "",
+              "sourceField": "text.kvPairs",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "text.kvPairs",
+                  "replaceNewVal": "${1}:${2},",
+                  "rule": "(\\xA7[^\\xA7]*\\xA7):(\\xA7[^\\xA7]*\\xA7)"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 16
+        },
+        {
+          "id": "06633ea4-e8a1-4b54-84b0-d70ca059c1d3",
+          "rules": [
+            {
+              "id": "f3a01b7d-7235-4596-a8d9-dfa45617e2f5",
+              "name": "Remove last comma before jsonizing kvPairs field",
+              "description": "",
+              "sourceField": "text.kvPairs",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "text.kvPairs",
+                  "replaceNewVal": "{$1}",
+                  "rule": "(.*),"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 17
+        },
+        {
+          "id": "e9476fe1-7937-4711-b2c0-a76d93252606",
+          "rules": [
+            {
+              "id": "9ecd84f4-0c04-47d5-a813-6665bd2343b5",
+              "name": "Replacing \u00a7 with \" to jsonize kvPairs in order to get a valid JSON",
+              "description": "",
+              "sourceField": "text.kvPairs",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "text.kvPairs",
+                  "replaceNewVal": "\"",
+                  "rule": "\\xA7"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 18
+        },
+        {
+          "id": "1931bdf3-ae1f-4af4-b551-9db84d2998ed",
+          "rules": [
+            {
+              "id": "6544ce71-3c50-46c7-abb3-9a679eee0647",
+              "name": "reformat kvPairs field back to an escaped JSON string format",
+              "description": "",
+              "sourceField": "text.kvPairs",
+              "parameters": {
+                "jsonStringifyParameters": {
+                  "destinationField": "text.kvPairs_tmp",
+                  "deleteSource": true
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 19
+        },
+        {
+          "id": "3a50b516-c3fe-4dfc-a085-24fa1e455663",
+          "rules": [
+            {
+              "id": "66c4bdbc-1093-4ce4-b406-144605b03cc0",
+              "name": "Parse kvPairs_tmp as JSON to root",
+              "description": "",
+              "sourceField": "text.kvPairs_tmp",
+              "parameters": {
+                "jsonParseParameters": {
+                  "destinationField": "text",
+                  "deleteSource": true,
+                  "escapedValue": null,
+                  "overrideDest": false
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 20
+        }
+      ],
+      "order": 1
+    },
+    {
+      "id": "c6385a8e-bfba-4d70-93e8-d79d3fca2ccd",
+      "name": "Db Snapshot Made Public (Security)",
+      "description": "",
+      "creator": "AWS-Application",
+      "enabled": true,
+      "hidden": false,
+      "ruleMatchers": [],
+      "ruleSubgroups": [
+        {
+          "id": "a88ea6d2-fa2e-4319-9375-3758cb1323e4",
+          "rules": [
+            {
+              "id": "9415068a-df99-4551-a2d5-24a013dab48f",
+              "name": "DB snapshot made public ",
+              "description": "",
+              "sourceField": "text",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "text",
+                  "replaceNewVal": "\"db_snapshot_made_public\":\"true\"$1",
+                  "rule": "\"dBSnapshotAttributes\"\\s*:\\s*\\[\\s*\\{\\s*\"attributeName\"\\s*:\\s*\"restore\"\\s*,\\s*\"attributeValues\"\\s*:\\s*\\[\\s*\"all\"\\s*\\]\\s*\\}\\s*\\]"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 1
+        }
+      ],
+      "order": 2
+    },
+    {
+      "id": "4ec86403-96d5-494a-9991-52a3df2286ee",
+      "name": "Data Normalization - GitHub (Security)",
+      "description": "",
+      "creator": "GitHub",
+      "enabled": true,
+      "hidden": false,
+      "ruleMatchers": [],
+      "ruleSubgroups": [
+        {
+          "id": "44992cb4-b2dd-466a-aca2-1ffc8766857b",
+          "rules": [
+            {
+              "id": "3da916f7-efff-4d49-849e-826d5658b360",
+              "name": "Event Name",
+              "description": "",
+              "sourceField": "text.github.action",
+              "parameters": {
+                "parseParameters": {
+                  "destinationField": "text.cx_security",
+                  "rule": "(?P<event_name>.*)"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 1
+        },
+        {
+          "id": "f4cb7154-ae63-431e-a300-2325fdd84998",
+          "rules": [
+            {
+              "id": "f47144b0-642b-4043-ba9a-023d865dcaee",
+              "name": "User Name",
+              "description": "",
+              "sourceField": "text.github.sender.login",
+              "parameters": {
+                "parseParameters": {
+                  "destinationField": "text.cx_security",
+                  "rule": "(?P<username>.*)"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 2
+        },
+        {
+          "id": "1ddfaf33-4026-4efc-8b1e-9dad9a9250fa",
+          "rules": [
+            {
+              "id": "78f96d69-1578-4ff0-bcf0-2469f537ae36",
+              "name": "Source",
+              "description": "",
+              "sourceField": "text",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "text",
+                  "replaceNewVal": "$1\"source\":\"GitHub\",\"service\":\"GitHub\",$2",
+                  "rule": "(.*\"cx_security\":{)(.*)"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 3
+        }
+      ],
+      "order": 3
+    },
+    {
+      "id": "677f1ede-bb2c-4e22-8de7-66ddd0c0ae48",
+      "name": "AWS CloudTrail - max fields - stringifying fields (Security)",
+      "description": "",
+      "creator": "AWS CloudTrail - Security Extension",
+      "enabled": true,
+      "hidden": false,
+      "ruleMatchers": [],
+      "ruleSubgroups": [
+        {
+          "id": "3454dbd1-4b5d-45f6-b553-ba43853698bf",
+          "rules": [
+            {
+              "id": "d0973de6-608f-4634-bbe7-9480e005c1d5",
+              "name": "tlsDetails",
+              "description": "",
+              "sourceField": "text.tlsDetails",
+              "parameters": {
+                "jsonStringifyParameters": {
+                  "destinationField": "text.tlsDetails_str",
+                  "deleteSource": true
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 1
+        },
+        {
+          "id": "e2adf2ae-9abd-4074-a3c1-6339bc8598a9",
+          "rules": [
+            {
+              "id": "906568b9-7105-474f-ac59-d252172338c7",
+              "name": "resources",
+              "description": "",
+              "sourceField": "text.resources",
+              "parameters": {
+                "jsonStringifyParameters": {
+                  "destinationField": "text.resources_str",
+                  "deleteSource": true
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 2
+        },
+        {
+          "id": "e798edef-b518-4a40-9937-4cd3eedc7923",
+          "rules": [
+            {
+              "id": "b80c9b60-6555-43e9-a84a-916ed193ade9",
+              "name": "requestParameters.actions",
+              "description": "",
+              "sourceField": "text.requestParameters.actions",
+              "parameters": {
+                "jsonStringifyParameters": {
+                  "destinationField": "text.requestParameters.actions_str",
+                  "deleteSource": true
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 3
+        },
+        {
+          "id": "f3f192cd-7f94-4ad0-94f3-2db99715c7a5",
+          "rules": [
+            {
+              "id": "844ee47c-f5d7-404b-bda2-c4a5529e7f1a",
+              "name": "requestParameters.conditions",
+              "description": "",
+              "sourceField": "text.requestParameters.conditions",
+              "parameters": {
+                "jsonStringifyParameters": {
+                  "destinationField": "text.requestParameters.conditions_str",
+                  "deleteSource": true
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 4
+        },
+        {
+          "id": "e40a971d-0676-4973-94fd-361e7657e2f5",
+          "rules": [
+            {
+              "id": "e4e97de5-e63b-4fbd-95e5-1024de91260e",
+              "name": "requestParameters.ipPermissions.items",
+              "description": "",
+              "sourceField": "text.requestParameters.ipPermissions.items",
+              "parameters": {
+                "jsonStringifyParameters": {
+                  "destinationField": "text.requestParameters.ipPermissions.items_str",
+                  "deleteSource": true
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 5
+        },
+        {
+          "id": "ba6668b0-b0a6-4bc1-8b24-f15e63b46bf5",
+          "rules": [
+            {
+              "id": "64320f04-2e9a-40f9-a574-cd117763932a",
+              "name": "requestParameters.tags",
+              "description": "",
+              "sourceField": "text.requestParameters.tags",
+              "parameters": {
+                "jsonStringifyParameters": {
+                  "destinationField": "text.requestParameters.tags_str",
+                  "deleteSource": true
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 6
+        },
+        {
+          "id": "284604e0-2d2d-45ea-8f0c-d6c0884122ff",
+          "rules": [
+            {
+              "id": "2fc9e90c-ae78-4249-8b89-6767c64e5eb3",
+              "name": "responseElements.policy.tags",
+              "description": "",
+              "sourceField": "text.responseElements.policy.tags",
+              "parameters": {
+                "jsonStringifyParameters": {
+                  "destinationField": "text.responseElements.policy.tags_str",
+                  "deleteSource": true
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 7
+        },
+        {
+          "id": "86c73b6a-22c4-4bce-a10d-2b133ef9c9b3",
+          "rules": [
+            {
+              "id": "5aa5d573-cd47-4cc9-b5e1-ca32adcc1d1e",
+              "name": "responseElements.loadBalancers",
+              "description": "",
+              "sourceField": "text.responseElements.loadBalancers",
+              "parameters": {
+                "jsonStringifyParameters": {
+                  "destinationField": "text.responseElements.loadBalancers_str",
+                  "deleteSource": true
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 8
+        },
+        {
+          "id": "9a098281-cb02-47eb-8c59-472be2c75093",
+          "rules": [
+            {
+              "id": "f636bcc6-ef4d-4f29-bf99-e1e3c06a95f8",
+              "name": "responseElements.rules",
+              "description": "",
+              "sourceField": "text.responseElements.rules",
+              "parameters": {
+                "jsonStringifyParameters": {
+                  "destinationField": "text.responseElements.rules_str",
+                  "deleteSource": true
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 9
+        },
+        {
+          "id": "c0ecf993-67e6-4a15-ad7b-90fbf3ca298d",
+          "rules": [
+            {
+              "id": "5efb3501-60a3-4eac-9778-8de8678d3ac3",
+              "name": "responseElements.instancesSet.items",
+              "description": "",
+              "sourceField": "text.responseElements.instancesSet.items",
+              "parameters": {
+                "jsonStringifyParameters": {
+                  "destinationField": "text.responseElements.instancesSet.items_str",
+                  "deleteSource": true
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 10
+        },
+        {
+          "id": "db330f7d-4056-481a-a80d-b127f974d536",
+          "rules": [
+            {
+              "id": "6c26e955-c7d0-4c2f-aca9-171d78277877",
+              "name": "responseObject.metadata.managedFields",
+              "description": "",
+              "sourceField": "text.responseObject.metadata.managedFields",
+              "parameters": {
+                "jsonStringifyParameters": {
+                  "destinationField": "text.responseObject.metadata.managedFields_str",
+                  "deleteSource": true
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 11
+        }
+      ],
+      "order": 4
+    },
+    {
+      "id": "bec58c07-9acd-4174-9a5b-3fdcd05ce42a",
+      "name": "Data Normalization - GuardDuty (Security)",
+      "description": "",
+      "creator": "STAa",
+      "enabled": true,
+      "hidden": false,
+      "ruleMatchers": [
+        {
+          "applicationName": {
+            "value": "074157727657"
+          }
+        },
+        {
+          "subsystemName": {
+            "value": "adservice"
+          }
+        }
+      ],
+      "ruleSubgroups": [
+        {
+          "id": "3614efaa-bdb5-4c5d-a6e4-cd0e8cbb54d7",
+          "rules": [
+            {
+              "id": "1ba4e4da-a8d7-45f0-a03d-323464d6005e",
+              "name": "Event Name",
+              "description": "",
+              "sourceField": "text.detail.type",
+              "parameters": {
+                "parseParameters": {
+                  "destinationField": "text.cx_security",
+                  "rule": "(?P<event_name>.*)"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 1
+        },
+        {
+          "id": "d3ef23d3-b99c-452e-9092-66d82bddcfba",
+          "rules": [
+            {
+              "id": "7194f088-3eab-4626-b0ef-0654e4cb1414",
+              "name": "Resource",
+              "description": "",
+              "sourceField": "text.detail.resource.instancedetails.instanceid",
+              "parameters": {
+                "parseParameters": {
+                  "destinationField": "text.cx_security",
+                  "rule": "(?P<resource>.*)"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 2
+        },
+        {
+          "id": "248090fb-bb7a-4c6f-9e6b-408e51b06a55",
+          "rules": [
+            {
+              "id": "8259531a-5008-4682-93e0-c34d6aa6fabd",
+              "name": "Source Host Name",
+              "description": "",
+              "sourceField": "text.detail.resource.instanceDetails.networkInterfaces.privateDnsName",
+              "parameters": {
+                "parseParameters": {
+                  "destinationField": "text.cx_security",
+                  "rule": "(?P<source_hostname>.*)"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 3
+        },
+        {
+          "id": "e5ef9b9a-37ae-46bf-977b-79d7511b477f",
+          "rules": [
+            {
+              "id": "df48d132-37c3-4219-9bd0-1b9403035202",
+              "name": "Source IP",
+              "description": "",
+              "sourceField": "text.detail.resource.instanceDetails.networkInterfaces.privateIpAddress",
+              "parameters": {
+                "parseParameters": {
+                  "destinationField": "text.cx_security",
+                  "rule": "(?P<source_ip>.*)"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 4
+        },
+        {
+          "id": "07743e8e-7e82-4137-bde7-06d7656ba337",
+          "rules": [
+            {
+              "id": "6423c376-e5b0-4f1e-ae05-e66bbe8e54dc",
+              "name": "Source",
+              "description": "",
+              "sourceField": "text",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "text",
+                  "replaceNewVal": "$1\"source\":\"AWS\",\"service\":\"GuardDuty\",$2",
+                  "rule": "(.*\"cx_security\":{)(.*)"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 5
+        }
+      ],
+      "order": 5
+    },
+    {
+      "id": "63ca3f69-5385-4537-8fbd-e1c5d2b657a2",
+      "name": "Data Normalization - CrowdStrike (Security).",
+      "description": ".",
+      "creator": "bot@coralogix.com",
+      "enabled": true,
+      "hidden": false,
+      "ruleMatchers": [
+        {
+          "applicationName": {
+            "value": "app-demo"
+          }
+        },
+        {
+          "subsystemName": {
+            "value": "audit-logs"
+          }
+        }
+      ],
+      "ruleSubgroups": [
+        {
+          "id": "eb0d948c-ef4f-433c-a115-c8cab904a7a6",
+          "rules": [
+            {
+              "id": "e8265e68-2d31-4200-b016-b8db4b2534c3",
+              "name": "Email",
+              "description": "",
+              "sourceField": "text.event.UserId",
+              "parameters": {
+                "parseParameters": {
+                  "destinationField": "text.cx_security",
+                  "rule": "(?P<email>.*)"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 1
+        },
+        {
+          "id": "c66fe3c1-e914-48fa-9710-ea1db6b7fc13",
+          "rules": [
+            {
+              "id": "ee12284d-863a-41f1-af9c-baa75d2ab006",
+              "name": "Event Name",
+              "description": "",
+              "sourceField": "text.metadata.eventType",
+              "parameters": {
+                "parseParameters": {
+                  "destinationField": "text.cx_security",
+                  "rule": "(?P<event_name>.*)"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 2
+        },
+        {
+          "id": "afb01b66-1856-4104-ac76-63b8e06e3c2b",
+          "rules": [
+            {
+              "id": "1840d2d1-b340-4d75-8bf7-15d16d04de8f",
+              "name": "Source IP",
+              "description": "",
+              "sourceField": "text.event.UserIp",
+              "parameters": {
+                "parseParameters": {
+                  "destinationField": "text.cx_security",
+                  "rule": "(?P<source_ip>.*)"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 3
+        },
+        {
+          "id": "ba97a9b7-dba8-48b3-b029-d7b2b0b34e00",
+          "rules": [
+            {
+              "id": "6e7b2da3-554a-4421-b782-37b6141f53db",
+              "name": "Source",
+              "description": "",
+              "sourceField": "text",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "text",
+                  "replaceNewVal": "$1\"source\":\"CrowdStrike\",\"service\":\"CrowdStrike\",$2",
+                  "rule": "(.*\"cx_security\":{)(.*)"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 4
+        }
+      ],
+      "order": 6
+    },
+    {
+      "id": "88a9aafd-cd8f-4e97-ab7c-663f40bc2426",
+      "name": "AWS CloudTrail - AMI Made Public (Security)",
+      "description": "",
+      "creator": "AWS-Application",
+      "enabled": true,
+      "hidden": false,
+      "ruleMatchers": [],
+      "ruleSubgroups": [
+        {
+          "id": "fdc8725b-a32e-4842-9a76-1d0fecae80cb",
+          "rules": [
+            {
+              "id": "4ffbfe54-35fe-45f7-b087-2a8a85b12a0c",
+              "name": "Array converter",
+              "description": "creates a new object called \"group_all\" with the value of \"true\" when exists to be detected by the corresponding alert",
+              "sourceField": "text",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "text",
+                  "replaceNewVal": "\"ami_made_public\":\"true\"$1",
+                  "rule": "\"launchPermission\"\\s*:\\s*\\{\\s*\"add\"\\s*:\\s*\\{\\s*\"items\"\\s*:\\s*\\[\\s*\\{\\s*\"group\"\\s*:\\s*\"all\"\\s*\\}\\s*\\]\\s*\\}\\s*\\}"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 1
+        }
+      ],
+      "order": 7
+    },
+    {
+      "id": "552afbe1-4496-4a8a-aeaf-ab928dda3609",
+      "name": "Data Normalization - CloudTrail (Security)",
+      "description": "",
+      "creator": "CloudTrail",
+      "enabled": true,
+      "hidden": false,
+      "ruleMatchers": [],
+      "ruleSubgroups": [
+        {
+          "id": "53ea0c2c-4381-442c-83d6-99a06ba3c14b",
+          "rules": [
+            {
+              "id": "88678f7c-8393-4e85-9b20-23529c8a0963",
+              "name": "Event Name",
+              "description": "",
+              "sourceField": "text.eventName",
+              "parameters": {
+                "parseParameters": {
+                  "destinationField": "text.cx_security",
+                  "rule": "(?P<event_name>.*)"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 1
+        },
+        {
+          "id": "b0b7513f-4e52-4780-a83e-c419ed196358",
+          "rules": [
+            {
+              "id": "2066efb9-5f38-49c1-b97a-b4ad87493cf1",
+              "name": "Resource",
+              "description": "",
+              "sourceField": "text.userIdentity.sessionContext.sessionIssuer.arn",
+              "parameters": {
+                "parseParameters": {
+                  "destinationField": "text.cx_security",
+                  "rule": "(?P<resource>.*)"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 2
+        },
+        {
+          "id": "4726cef5-9ed5-4de8-b6d7-8a313e717813",
+          "rules": [
+            {
+              "id": "e98a3ece-5ac2-4d39-8191-a2445c435a64",
+              "name": "Source IP",
+              "description": "",
+              "sourceField": "text.sourceIPAddress",
+              "parameters": {
+                "parseParameters": {
+                  "destinationField": "text.cx_security",
+                  "rule": "(?P<source_ip>.*)"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 3
+        },
+        {
+          "id": "ecc7a402-9371-49ef-880c-395df5f341b1",
+          "rules": [
+            {
+              "id": "81819d13-532e-474a-b1a4-fbcce0e68b01",
+              "name": "User Name",
+              "description": "",
+              "sourceField": "text.userIdentity.sessionContext.sessionIssuer.userName",
+              "parameters": {
+                "parseParameters": {
+                  "destinationField": "text.cx_security",
+                  "rule": "(?P<username>.*)"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 4
+        },
+        {
+          "id": "d7c963d9-a1ee-473c-9452-00e28c4be7c9",
+          "rules": [
+            {
+              "id": "ec913458-bb55-4608-8625-5ea5b1acae83",
+              "name": "Source",
+              "description": "",
+              "sourceField": "text",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "text",
+                  "replaceNewVal": "$1\"source\":\"AWS\",\"service\":\"CloudTrail\",$2",
+                  "rule": "(.*\"cx_security\":{)(.*)"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 5
+        }
+      ],
+      "order": 8
+    },
+    {
+      "id": "0de568d1-8436-4bdb-976f-86024ca958fc",
+      "name": "k8s Opentelemetry parsing",
+      "description": "k8s Opentelemetry extension pack",
+      "creator": "jasvinder.atwal@coralogix.com",
+      "enabled": true,
+      "hidden": false,
+      "ruleMatchers": [],
+      "ruleSubgroups": [
+        {
+          "id": "d0db1ffd-0ba4-43d9-a66d-3c94f79217c4",
+          "rules": [
+            {
+              "id": "7f7a5ed3-b9a3-4a75-b5b0-deb06812c8c5",
+              "name": "Stringify logRecord",
+              "description": "",
+              "sourceField": "text.logRecord",
+              "parameters": {
+                "jsonStringifyParameters": {
+                  "destinationField": "text.logRecord_tmp",
+                  "deleteSource": true
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 1
+        },
+        {
+          "id": "60c87557-b222-40d4-87d6-dca89b2275e2",
+          "rules": [
+            {
+              "id": "21b4aa5c-227c-4c67-ba93-856e799a3947",
+              "name": "Parse json logRecord_tmp",
+              "description": "",
+              "sourceField": "text.logRecord_tmp",
+              "parameters": {
+                "jsonParseParameters": {
+                  "destinationField": "text",
+                  "deleteSource": true,
+                  "escapedValue": null,
+                  "overrideDest": false
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 2
+        },
+        {
+          "id": "0333b2af-0aae-4613-ab86-6f2aa75518e6",
+          "rules": [
+            {
+              "id": "0db76cc3-d598-41f7-b75f-ca96edbb89cc",
+              "name": "Stringify body",
+              "description": "",
+              "sourceField": "text.body",
+              "parameters": {
+                "jsonStringifyParameters": {
+                  "destinationField": "text.body_tmp",
+                  "deleteSource": true
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 3
+        },
+        {
+          "id": "6c41a0a8-5502-4e8f-944b-7a7f1371a490",
+          "rules": [
+            {
+              "id": "4904d3ab-be9e-4101-b0cf-4a94b8e24d97",
+              "name": "Parse json body",
+              "description": "",
+              "sourceField": "text.body",
+              "parameters": {
+                "jsonParseParameters": {
+                  "destinationField": "text",
+                  "deleteSource": true,
+                  "escapedValue": null,
+                  "overrideDest": false
+                }
+              },
+              "enabled": true,
+              "order": 1
+            },
+            {
+              "id": "ef027907-405e-4e8f-b561-a5da0edc4097",
+              "name": "Parse json body_tmp",
+              "description": "",
+              "sourceField": "text.body_tmp",
+              "parameters": {
+                "jsonParseParameters": {
+                  "destinationField": "text",
+                  "deleteSource": true,
+                  "escapedValue": null,
+                  "overrideDest": false
+                }
+              },
+              "enabled": true,
+              "order": 2
+            }
+          ],
+          "enabled": true,
+          "order": 4
+        },
+        {
+          "id": "fed1c507-83b6-4082-be61-a098956e87db",
+          "rules": [
+            {
+              "id": "21312678-1a89-4987-9509-21cd8e41cb66",
+              "name": "Replacing all dots within field names with underscores",
+              "description": "",
+              "sourceField": "text",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "text",
+                  "replaceNewVal": "\"${1}_${2}_${3}_${4}_${5}_${6}_${7}_${8}_${9}_${10}\":",
+                  "rule": "\"([a-zA-Z\\d\\_]+)\\.([a-zA-Z\\d\\_]+)(?:\\.([a-zA-Z\\d\\_]+))?(?:\\.([a-zA-Z\\d\\_]+))?(?:\\.([a-zA-Z\\d\\_]+))?(?:\\.([a-zA-Z\\d\\_]+))?(?:\\.([a-zA-Z\\d\\_]+))?(?:\\.([a-zA-Z\\d\\_]+))?(?:\\.([a-zA-Z\\d\\_]+))?(?:\\.([a-zA-Z\\d\\_]+))?\":"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 5
+        },
+        {
+          "id": "e3c1b443-aff0-4da2-bebe-bfa05842921b",
+          "rules": [
+            {
+              "id": "b01d511a-b4d4-4f22-8498-c502b870c48f",
+              "name": "Remove trailing underscores",
+              "description": "",
+              "sourceField": "text",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "text",
+                  "replaceNewVal": "\"$1\":",
+                  "rule": "\"([^\"]+?)\\_+\":"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 6
+        },
+        {
+          "id": "c5ad3a71-ab06-49ad-bdcd-a891cf0649da",
+          "rules": [
+            {
+              "id": "948effef-793f-49af-95ea-d5275f0b5005",
+              "name": "map deprecatedLastTimestamp, eventTime as datetime fields",
+              "description": "",
+              "sourceField": "text",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "text",
+                  "replaceNewVal": "\"${1}_custom_timestamp\":\"",
+                  "rule": "\"(deprecatedLastTimestamp|eventTime)\":\""
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 7
+        },
+        {
+          "id": "8f91f1d5-376a-4aaf-88a4-53f052a51752",
+          "rules": [
+            {
+              "id": "fe8e0a66-ad31-480e-8c93-b14eedbbff80",
+              "name": "fix mapping exception for infra collector empty f:annotations",
+              "description": "",
+              "sourceField": "text",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "text",
+                  "replaceNewVal": "${1}\"f:workflow\":{",
+                  "rule": "(\"f:annotations\":\\{.*?)\"\\.\":\\{"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 8
+        },
+        {
+          "id": "9b41951e-9069-4c4e-b36c-40a11f3fda09",
+          "rules": [
+            {
+              "id": "4470c625-1af3-4ecf-8ae3-8749acc03e7e",
+              "name": "Parse common logs from k8s containers",
+              "description": "This rule parses containers: kube-apiserver, kube-controller-manager, kube-proxy, kube-scheduler, storage-provisioner.",
+              "sourceField": "text",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "text",
+                  "replaceNewVal": "\"level\":\"$level\",\"timestamp\":\"$timestamp\",\"caller\":\"$caller\",\"message\":\"$message\"",
+                  "rule": "\"body\":\"(?P<level>[A-Z])(?P<timestamp>\\d{4} \\d{2}:\\d{2}:\\d{2}\\.\\d+)\\s*1 (?P<caller>[^\\]]+)\\] (?P<message>(?:\\\\\"|[^\"])+?)(?:\\\\n)?\""
+                }
+              },
+              "enabled": true,
+              "order": 1
+            },
+            {
+              "id": "1d0660c5-6da7-428d-81a2-5bacf0816526",
+              "name": "Replace body with kvPairs when body is a kv pairs message starts with time",
+              "description": "",
+              "sourceField": "text",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "text",
+                  "replaceNewVal": "\"kvPairs\":\"${1}\"",
+                  "rule": "\"body\":\"(time=\\\\\"(?:\\\\\"|[^\"])+?)(?:\\\\n)?\""
+                }
+              },
+              "enabled": true,
+              "order": 2
+            },
+            {
+              "id": "b6751fb5-fa61-42eb-8618-6417a53c2c66",
+              "name": "Replace body with kvPairs when body is a kv pairs message starts with ts",
+              "description": "",
+              "sourceField": "text",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "text",
+                  "replaceNewVal": "\"kvPairs\":\"${1}\"",
+                  "rule": "\"body\":\"(ts=\\d{4}(?:\\\\\"|[^\"])+?)(?:\\\\n)?\""
+                }
+              },
+              "enabled": true,
+              "order": 3
+            }
+          ],
+          "enabled": true,
+          "order": 9
+        },
+        {
+          "id": "32e9f17e-d073-47ed-a8e2-f04f1e1d8f74",
+          "rules": [
+            {
+              "id": "ea41bea0-f9ae-4bea-9e53-ab459b1e9eb9",
+              "name": "Extract msg from kvPairs",
+              "description": "",
+              "sourceField": "text.kvPairs",
+              "parameters": {
+                "extractParameters": {
+                  "rule": "msg=\\\\\"(?P<msg>(?:\\\\\\\\\"|[^\"])+)\\\\\""
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 10
+        },
+        {
+          "id": "9660d4a1-c11e-4aea-a13c-fafdac536104",
+          "rules": [
+            {
+              "id": "5976b7a2-8977-488e-a1a1-781c5f3d7dcf",
+              "name": "Remove msg from kvPairs",
+              "description": "",
+              "sourceField": "text.kvPairs",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "text.kvPairs",
+                  "replaceNewVal": "",
+                  "rule": "\\smsg=\\\\\"(?P<msg>(?:\\\\\\\\\"|[^\"])+)\\\\\""
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 11
+        },
+        {
+          "id": "9342fa4c-ad90-4e33-aa44-a609bd022a8f",
+          "rules": [
+            {
+              "id": "77c4fdd6-3884-4408-a4cf-2ad4058587be",
+              "name": "Jsonizing key/vals when val is enclosed with double quotes",
+              "description": "",
+              "sourceField": "text.kvPairs",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "text.kvPairs",
+                  "replaceNewVal": "\u00a7$1\u00a7:\u00a7$2\u00a7,",
+                  "rule": "([\\w\\.\\-]+)=\\\\\\\\\\\\\"((?:\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"|[^\"])+)\\\\\\\\\\\\\""
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 12
+        },
+        {
+          "id": "243d2766-6db7-4352-abf0-d559dd0980f1",
+          "rules": [
+            {
+              "id": "a2d4e56f-b8ad-4be4-900f-f31f4b0155a5",
+              "name": "Remove any remaining backslashes followed by double quotes",
+              "description": "",
+              "sourceField": "text.kvPairs",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "text.kvPairs",
+                  "replaceNewVal": "",
+                  "rule": "\\\\+\""
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 13
+        },
+        {
+          "id": "b63e1d69-9aed-4847-beea-bb708208dc2e",
+          "rules": [
+            {
+              "id": "97fe43c1-040d-4307-a946-597bae8e1711",
+              "name": "Jsonizing rest of key/vals",
+              "description": "",
+              "sourceField": "text.kvPairs",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "text.kvPairs",
+                  "replaceNewVal": "\u00a7$1\u00a7:\u00a7$2\u00a7,",
+                  "rule": "([\\w\\.\\-]+)=((?:$|[^ \\xA7])+)?(?: |$)"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 14
+        },
+        {
+          "id": "b784b2b4-9793-4173-b027-ea4075b7054c",
+          "rules": [
+            {
+              "id": "d6f97f3a-eafc-4ea5-8d02-edcaf4d67d2c",
+              "name": "Removing last Comma and wrapping with curly brackets",
+              "description": "",
+              "sourceField": "text.kvPairs",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "text.kvPairs",
+                  "replaceNewVal": "{$1}",
+                  "rule": "(.*),"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 15
+        },
+        {
+          "id": "805206f8-9438-4c9a-bd9f-0a6db31ff514",
+          "rules": [
+            {
+              "id": "1dfc8ac7-942b-4cfe-88c0-79b9c41939fd",
+              "name": "Replacing \u00a7 with double quotes in order to get a valid JSON",
+              "description": "",
+              "sourceField": "text.kvPairs",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "text.kvPairs",
+                  "replaceNewVal": "\"",
+                  "rule": "\\xA7"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 16
+        },
+        {
+          "id": "04a51d97-7167-49f3-ad3a-d4397eb6e7d2",
+          "rules": [
+            {
+              "id": "0ebdf3ff-f9ed-4846-a5ad-1dedbc04d0c2",
+              "name": "reformat kvPairs field back to an escaped JSON string format",
+              "description": "",
+              "sourceField": "text.kvPairs",
+              "parameters": {
+                "jsonStringifyParameters": {
+                  "destinationField": "text.kvPairs_tmp",
+                  "deleteSource": true
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 17
+        },
+        {
+          "id": "636b6f18-73cd-44e1-9868-5e1a014bf430",
+          "rules": [
+            {
+              "id": "4bdbf18a-a781-43ec-9768-1aac33069eb2",
+              "name": "Parse kvPairs_tmp as JSON to root",
+              "description": "",
+              "sourceField": "text.kvPairs_tmp",
+              "parameters": {
+                "jsonParseParameters": {
+                  "destinationField": "text",
+                  "deleteSource": true,
+                  "escapedValue": null,
+                  "overrideDest": false
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 18
+        },
+        {
+          "id": "26995d2f-614f-41ab-9255-9d64d7be0c9d",
+          "rules": [
+            {
+              "id": "071724f3-be53-428d-82b7-340275d086b8",
+              "name": "Extract json.trace_id ",
+              "description": "{\"observedTimeUnixNano\":1744818871177174088,\"resource\":{\"attributes\":{\"k8s_pod_name\":\"frontend-69d989d8dd-tnwxc\",\"k8s_container_restart_count\":\"0\",\"k8s_pod_uid\":\"4fea94df-ac83-45af-ac5d-078a76365c38\",\"k8s_container_name\":\"server\",\"k8s_namespace_name\":\"default\",\"k8s_cluster_name\":\"onlineboutique\",\"cx_otel_integration_name\":\"coralogix-integration-helm\",\"k8s_deployment_name\":\"frontend\",\"k8s_node_name\":\"ip-172-31-14-14.us-east-2.compute.internal\",\"host_name\":\"ip-172-31-14-14.us-east-2.compute.internal\",\"os_type\":\"linux\",\"host_id\":\"i-09f3a61cd39f3ae71\",\"cloud_provider\":\"aws\",\"cloud_platform\":\"aws_ec2\",\"cloud_region\":\"us-east-2\",\"cloud_account_id\":\"074157727657\",\"cloud_availability_zone\":\"us-east-2a\",\"host_image_id\":\"ami-02b2ce7c83227ce13\",\"host_type\":\"t3.large\"}},\"timeUnixNano\":1744818871043095596,\"scope\":{\"attributes\":{}},\"resourceSchemaUrl\":\"https:\\/\\/opentelemetry.io\\/schemas\\/1.6.1\",\"json\":{\"http_req_ip_geoip\":{\"ip\":\"158.46.145.28\",\"ip_ipaddr\":\"158.46.145.28\",\"location_geopoint\":{\"lat\":52.2299,\"lon\":21.0093},\"continent_name\":\"Europe\",\"country_name\":\"Poland\",\"city_name\":\"Warsaw\",\"postal_code\":\"00-510\",\"is_local\":false,\"asn\":{\"number\":\"59729\",\"organization\":\"Green Floid LLC\"}},\"http_req_id\":\"713a8831-2aec-4670-8fb9-7bae628307b8\",\"http_req_ip\":\"158.46.145.28\",\"http_req_method\":\"GET\",\"http_req_path\":\"\\/cart\",\"session\":\"a1548467-f87d-499e-b1cf-78829da93a54\",\"severity\":\"debug\",\"span_id\":\"3e67b3e9962fcd8c\",\"timestamp\":\"2025-04-16T15:54:31.042989207Z\",\"trace_id\":\"4cd3da495f7e8399a941900b950b7bd9\"},\"attributes\":{\"log_file_path\":\"\\/var\\/log\\/pods\\/default_frontend-69d989d8dd-tnwxc_4fea94df-ac83-45af-ac5d-078a76365c38\\/server\\/0.log\",\"log_iostream\":\"stdout\",\"logtag\":\"F\",\"time\":\"2025-04-16T15:54:31.043095596Z\"}}",
+              "sourceField": "text",
+              "parameters": {
+                "extractParameters": {
+                  "rule": "\"json\":\\{.*?\"trace_id\":\"(?P<trace_id>[^\"]+)\""
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 19
+        }
+      ],
+      "order": 9
+    },
+    {
+      "id": "3708e21c-5163-4c63-a4f5-4d7a021538da",
+      "name": "AWS status rules",
+      "description": "",
+      "creator": "bot@coralogix.com",
+      "enabled": true,
+      "hidden": false,
+      "ruleMatchers": [
+        {
+          "subsystemName": {
+            "value": "aws-status"
+          }
+        }
+      ],
+      "ruleSubgroups": [
+        {
+          "id": "92d38db8-c05c-4720-bb01-3ee0c9cf4fb3",
+          "rules": [
+            {
+              "id": "24c6c347-f8d2-47d4-8dab-7ef117fe762f",
+              "name": "Replace \"resolved\" messages level to INFO",
+              "description": "",
+              "sourceField": "text.aws.title",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "severity",
+                  "replaceNewVal": "INFO",
+                  "rule": "RESOLVED"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 1
+        }
+      ],
+      "order": 10
+    },
+    {
+      "id": "1a538960-a823-46e3-91a5-a162396cc6e7",
+      "name": "Cloudtrail rules",
+      "description": "Cloudtrail extension pack",
+      "creator": "Cloudtrail extension pack",
+      "enabled": true,
+      "hidden": false,
+      "ruleMatchers": [],
+      "ruleSubgroups": [
+        {
+          "id": "9200d0e2-5105-4fa3-99ae-b6a10d37d168",
+          "rules": [
+            {
+              "id": "ee2a76e9-3e26-4aba-b6da-35be4f2a060b",
+              "name": "Replace Cloudtrail log severity to error if errorMessage exists",
+              "description": "",
+              "sourceField": "text.errorMessage",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "severity",
+                  "replaceNewVal": "ERROR",
+                  "rule": ".*"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 1
+        }
+      ],
+      "order": 11
+    },
+    {
+      "id": "565bce78-64c3-4fc4-94bd-a601f7890555",
+      "name": "Replace AWS host name with host ip - For metrics correlation",
+      "description": "Hey You - Adi Golan here please DO NOT DELETE this rule - Thanks! :)",
+      "creator": "bot@coralogix.com",
+      "enabled": true,
+      "hidden": false,
+      "ruleMatchers": [],
+      "ruleSubgroups": [
+        {
+          "id": "57c6c7a6-6b15-40bb-b56d-da7cca6f508c",
+          "rules": [
+            {
+              "id": "545643aa-cb2e-484e-9028-04b90d6cb4bb",
+              "name": "replace host with the host ip solely",
+              "description": "{\"cloud\":{\"account\":{\"id\":\"074157727657\"},\"availability_zone\":\"us-east-2a\",\"image\":{\"id\":\"ami-07b50b966251fda6e\"},\"instance\":{\"id\":\"i-0f7afac2798217d04\"},\"machine\":{\"type\":\"t3.large\"},\"provider\":\"aws\",\"region\":\"us-east-2\",\"service\":{\"name\":\"EC2\"}},\"kubernetes\":{\"container\":{\"id\":\"dd6e99a9c3900e93bf2744fc03925544481e0d8f1a8df84aa1c68f45f888de95\",\"name\":\"server\"},\"deployment\":{\"name\":\"frontend\"},\"namespace\":\"default\",\"namespace_labels\":{\"kubernetes_io/metadata_name\":\"default\"},\"namespace_uid\":\"21a7e2d9-7da6-4a74-97f7-d04a7dbbb77a\",\"node\":{\"hostname\":\"ip-172-31-2-79.us-east-2.compute.internal\",\"labels\":{\"beta_kubernetes_io/arch\":\"amd64\",\"beta_kubernetes_io/instance-type\":\"t3.large\",\"beta_kubernetes_io/os\":\"linux\",\"eks_amazonaws_com/capacityType\":\"ON_DEMAND\",\"eks_amazonaws_com/nodegroup\":\"chen-eks2-nodes\",\"eks_amazonaws_com/nodegroup-image\":\"ami-07b50b966251fda6e\",\"failure-domain_beta_kubernetes_io/region\":\"us-east-2\",\"failure-domain_beta_kubernetes_io/zone\":\"us-east-2a\",\"k8s_io/cloud-provider-aws\":\"5ae15d428da2ffa3cd3bbc9149af8ce1\",\"kubernetes_io/arch\":\"amd64\",\"kubernetes_io/hostname\":\"ip-172-31-2-79.us-east-2.compute.internal\",\"kubernetes_io/os\":\"linux\",\"node_kubernetes_io/instance-type\":\"t3.large\",\"topology_kubernetes_io/region\":\"us-east-2\",\"topology_kubernetes_io/zone\":\"us-east-2a\"},\"name\":\"ip-172-31-2-79.us-east-2.compute.internal\",\"uid\":\"5a512b89-9f46-416c-874e-9572c0b38ecc\"},\"pod\":{\"ip\":\"172.31.3.40\",\"labels\":{\"app\":\"frontend\",\"pod-template-hash\":\"69d989d8dd\"},\"name\":\"frontend-69d989d8dd-lbnrg\",\"uid\":\"c19d2ea0-be65-4886-8b4d-df814c967f0b\"},\"replicaset\":{\"name\":\"frontend-69d989d8dd\"}},\"cluster_name\":\"cluster.local\",\"@timestamp\":\"2023-08-21T20:32:47.713Z\",\"host\":\"ip-172-31-2-79.us-east-2.compute.internal\",\"beat\":{\"hostname\":\"ip-172-31-2-79.us-east-2.compute.internal\"},\"@version\":\"1\",\"json\":{\"http_req_ip_geoip\":{\"ip\":\"34.206.39.153\",\"ip_ipaddr\":\"34.206.39.153\",\"location_geopoint\":{\"lat\":39.0469,\"lon\":-77.4903},\"continent_name\":\"North America\",\"country_name\":\"United States\",\"city_name\":\"Ashburn\",\"postal_code\":\"20149\"},\"http_req_id\":\"92313d79-b665-47eb-a0d4-7a08c7dec302\",\"http_req_ip\":\"34.206.39.153\",\"http_req_method\":\"POST\",\"http_req_path\":\"/cart\",\"http_resp_bytes\":0,\"http_resp_status\":302,\"http_resp_took_ms\":4,\"session\":\"097733bc-6386-475e-bfbc-6ada1a96e9be\",\"severity\":\"debug\",\"span_id\":\"4cf425fb8ed181d7\",\"timestamp\":\"2023-08-21T20:32:47.713652989Z\",\"trace_id\":\"f76998ff4a582250107c6a44e35ac47f\"},\"message\":\"request POST /cart completed with status: 302. requestID: 92313d79-b665-47eb-a0d4-7a08c7dec302\",\"tags\":[\"beats_input_codec_plain_applied\"]}",
+              "sourceField": "text",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "text",
+                  "replaceNewVal": "\"host\":\"${1}.${2}.${3}.${4}\"",
+                  "rule": "\"host\":\"ip\\-(\\d{1,3})\\-(\\d{1,3})\\-(\\d{1,3})\\-(\\d{1,3})\\.[^\"]+\""
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 1
+        }
+      ],
+      "order": 12
+    },
+    {
+      "id": "ae8ad39e-f926-42ca-a50b-7b6f2cf47db7",
+      "name": "PII - Mask Email addresses",
+      "description": "",
+      "creator": "bot@coralogix.com",
+      "enabled": true,
+      "hidden": false,
+      "ruleMatchers": [
+        {
+          "applicationName": {
+            "value": "statuspage"
+          }
+        }
+      ],
+      "ruleSubgroups": [
+        {
+          "id": "c7efaf55-339a-45c6-9062-60dab6c098c3",
+          "rules": [
+            {
+              "id": "719119c1-20cc-49b9-b128-54efbd333eef",
+              "name": "Mask Email addresses",
+              "description": "{\"log\":\"Error on adding subscription.\",\"type\":\"we1-prd-portal-slices-product\",\"Msg_obj\":{\"Data\":{\"Arguments\":{\"SubscriptionRequest\":{\"CultureCode\":\"en-US\",\"SubscriberId\":\"test_email@gmail.com\",\"Topics\":[{\"DeliveryChannels\":[{\"Address\":\"test_email@gmail.com\",\"Platform\":\"Email\",\"Source\":\"10003_nibis_email\"}],\"Specification\":{\"CountryId\":\"165\",\"ProductId\":\"15756113\",\"Scale\":\"750\",\"Size\":\"27\"},\"TypeId\":\"BackInStock\"}]}},\"Class\":\"Farfetch.Web.Slices.Product.Infrastructure.CrossCutting.Resilience.Clients.MarketingApi.ResilientSubscriptionsClient\",\"ConnectionId\":\"0HMQQJHR59PJ8\",\"Exception\":{\"ApplicationErrors\":[{\"Code\":\"500\",\"DeveloperMessage\":\"Operation canceled\",\"Exception\":{\"InnerException\":{\"InnerException\":{\"Message\":\"Operation canceled\",\"Type\":\"SocketException\"},\"Message\":\"Unable to read data from the transport connection: Operation canceled.\",\"Source\":\"System.Net.Sockets\",\"Type\":\"IOException\"},\"Message\":\"The operation was canceled.\",\"Source\":\"System.Net.Http\",\"Type\":\"TaskCanceledException\"},\"Message\":\"The operation was canceled.\"}],\"Message\":\"ApplicationErrorException containing a TaskCanceledException was thrown with error code 500.\",\"Source\":\"Farfetch.Framework.API.Client.HttpClient\",\"StackTrace\":\"   at Farfetch.Framework.API.Client.HttpClient.HttpClientConnection.ExecuteAsync(HttpMethod method, Uri uri, Object body, HttpHeader[] headers, CancellationToken cancellationToken)\\n   at Farfetch.Framework.API.Client.HttpClient.HttpClientConnection.PostAsync[TRequestBody](ApiRequest`1 request, CancellationToken cancellationToken)\\n   at Farfetch.MktApi.Client.SDK.Implementations.SubscriptionClient.AddSubscriptionAsync(SubscriptionRequest subscription, CancellationToken cancellationToken)\\n   at Polly.AsyncPolicy.<>c__DisplayClass40_0.<<ImplementationAsync>b__0>d.MoveNext()\\n--- End of stack trace from previous location ---\\n   at Polly.CircuitBreaker.AsyncCircuitBreakerPolicy.<>c__DisplayClass8_0`1.<<ImplementationAsync>b__0>d.MoveNext()\\n--- End of stack trace from previous location ---\\n   at Polly.CircuitBreaker.AsyncCircuitBreakerEngine.ImplementationAsync[TResult](Func`3 action, Context context, CancellationToken cancellationToken, Boolean continueOnCapturedContext, ExceptionPredicates shouldHandleExceptionPredicates, ResultPredicates`1 shouldHandleResultPredicates, ICircuitController`1 breakerController)\\n   at Polly.CircuitBreaker.AsyncCircuitBreakerPolicy.ImplementationAsync[TResult](Func`3 action, Context context, CancellationToken cancellationToken, Boolean continueOnCapturedContext)\\n   at Polly.AsyncPolicy.ExecuteAsync(Func`3 action, Context context, CancellationToken cancellationToken, Boolean continueOnCapturedContext)\\n   at Polly.Wrap.AsyncPolicyWrapEngine.<>c__DisplayClass4_0.<<ImplementationAsync>b__0>d.MoveNext()\\n--- End of stack trace from previous location ---\\n   at Polly.AsyncPolicy.<>c__DisplayClass40_0.<<ImplementationAsync>b__0>d.MoveNext()\\n--- End of stack trace from previous location ---\\n   at Farfetch.Framework.Resilience.Policies.CustomPolicies.Engines.AsyncOffloadEngine.ExecuteAsync[TResult](Func`3 action, Context context, ConcurrentDictionary`2 circuitBreakerEvents, Boolean continueOnCapturedContext, CancellationToken cancellationToken)\\n   at Farfetch.Framework.Resilience.Policies.CustomPolicies.AsyncOffloadPolicy.ImplementationAsync[TResult](Func`3 action, Context context, CancellationToken cancellationToken, Boolean continueOnCapturedContext)\\n   at Polly.AsyncPolicy.ExecuteAsync(Func`3 action, Context context, CancellationToken cancellationToken, Boolean continueOnCapturedContext)\\n   at Polly.Wrap.AsyncPolicyWrapEngine.ImplementationAsync(Func`3 action, Context context, CancellationToken cancellationToken, Boolean continueOnCapturedContext, IAsyncPolicy outerPolicy, IAsyncPolicy innerPolicy)\\n   at Polly.AsyncPolicy.ExecuteAsync(Func`3 action, Context context, CancellationToken cancellationToken, Boolean continueOnCapturedContext)\\n   at Polly.Wrap.AsyncPolicyWrapEngine.<>c__DisplayClass4_0.<<ImplementationAsync>b__0>d.MoveNext()\\n--- End of stack trace from previous location ---\\n   at Polly.AsyncPolicy.<>c__DisplayClass40_0.<<ImplementationAsync>b__0>d.MoveNext()\\n--- End of stack trace from previous location ---\\n   at Polly.Timeout.AsyncTimeoutEngine.ImplementationAsync[TResult](Func`3 action, Context context, CancellationToken cancellationToken, Func`2 timeoutProvider, TimeoutStrategy timeoutStrategy, Func`5 onTimeoutAsync, Boolean continueOnCapturedContext)\\n   at Polly.Timeout.AsyncTimeoutEngine.ImplementationAsync[TResult](Func`3 action, Context context, CancellationToken cancellationToken, Func`2 timeoutProvider, TimeoutStrategy timeoutStrategy, Func`5 onTimeoutAsync, Boolean continueOnCapturedContext)\\n   at Polly.AsyncPolicy.ExecuteAsync(Func`3 action, Context context, CancellationToken cancellationToken, Boolean continueOnCapturedContext)\\n   at Polly.Wrap.AsyncPolicyWrapEngine.ImplementationAsync(Func`3 action, Context context, CancellationToken cancellationToken, Boolean continueOnCapturedContext, IAsyncPolicy outerPolicy, IAsyncPolicy innerPolicy)\\n   at Polly.AsyncPolicy.ExecuteAsync(Func`3 action, Context context, CancellationToken cancellationToken, Boolean continueOnCapturedContext)\\n   at Farfetch.Web.Slices.Product.Infrastructure.CrossCutting.Resilience.Clients.MarketingApi.ResilientSubscriptionsClient.AddSubscriptionAsync(SubscriptionRequest subscription, CancellationToken cancellationToken) in /source/src/Infrastructure.CrossCutting.Resilience/Clients/MarketingApi/ResilientSubscriptionsClient.cs:line 42\",\"Type\":\"ApplicationErrorException\"},\"Headers\":{\"User-Agent\":\"experience-web-gateway/1.0.23139.317\",\"X-Geo-Subfolder\":\"/pt\",\"X-History-Root-Category\":\"women\",\"X-Is-Bot\":\"false\",\"X-Known-Root-Categories\":\"\\\"{\\\\u0022beauty\\\\u0022:141257,\\\\u0022kids\\\\u0022:141260,\\\\u0022men\\\\u0022:141259,\\\\u0022women\\\\u0022:141258}\\\"\",\"X-Subfolder\":\"/pt\",\"X-Tenant-Id\":\"10000\",\"X-User-Agent\":\"Mozilla/5.0 (iPhone; CPU iPhone OS 16_4_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/20E252 [FBAN/FBIOS;FBDV/iPhone14,2;FBMD/iPhone;FBSN/iOS;FBSV/16.4.1;FBSS/3;FBID/phone;FBLC/pt_PT;FBOP/5]\",\"X-User-Correlation-Id\":\"6fc3fb3e-0a08-4787-af5d-c280bad73b93\",\"x-bct\":\"168885\"},\"LogType\":\"ExternalRequest\",\"Method\":\"AddSubscriptionAsync\",\"ParentId\":\"5a554e25951d7fa3\",\"RawUrl\":\"http://portal-slices-product-we1.customer.net:9059/graphql/\",\"RequestId\":\"0HMQQJHR59PJ8:00000002\",\"RequestPath\":\"/graphql/\",\"Service\":\"marketing-core-api\",\"SpanId\":\"6a837306180d85e8\",\"TraceId\":\"000000000000000036ffd3d2d9abb486\"},\"Message\":\"Error on adding subscription.\"},\"Timestamp\":\"2023-05-22T08:52:07.3771285Z\",\"stream\":\"stdout\",\"host\":\"aks-pstdspot2-26760775-vmss0001zr\",\"@version\":\"1\",\"HostName\":\"portal-slices-product-557d947474-p2rv5\",\"EventSeverity\":\"Warning\",\"kafka_topic\":\"p2_t0_app_log\",\"datacenter\":\"we1\",\"kubernetes_pod_name\":\"portal-slices-product-557d947474-p2rv5\",\"ActId\":\"963f7019-d866-4a20-9aa2-f886616629e6\",\"Thread\":\"21\",\"kubernetes_namespace_name\":\"portal-slices\",\"kubernetes_docker_id\":\"6b9575e2857338d11a0fcfe7b684c05645d655ae2ea0a921385e82ca0a344eb4\",\"_p\":\"F\",\"@timestamp\":\"2023-05-22T08:52:07.377Z\",\"stage\":\"stable\",\"kubernetes_container_hash\":\"artifacts-we1.customer.net/docker-stable/customer/portal-slices-product@sha256:dfe52ca9c25bec6537d5f5ac2cf291c7a2b32b262e162671cc916adfb8208fa5\",\"kubernetes_pod_id\":\"4e69cb06-ac70-413a-ac68-3251dd259e2b\",\"kubernetes_container_name\":\"portal-slices-product\",\"time\":\"2023-05-22T08:52:07.377552964Z\",\"kubernetes_host\":\"aks-pstdspot2-26760775-vmss0001zr\",\"fields\":{\"boundary\":\"slices\",\"clusterName\":\"we1-prd-portal-std-1\",\"dc\":\"we1\",\"environment\":\"prd\",\"fqdn\":\"aks-pstdspot2-26760775-vmss0001zr\",\"full_name\":\"portal-slices-product\",\"minion_id\":\"aks-pstdspot2-26760775-vmss0001zr\",\"name\":\"product\",\"platform\":\"portal\",\"tags\":\"json\",\"tier\":\"0\"},\"kubernetes_container_image\":\"artifacts-we1.customer.net/docker-stable/customer/portal-slices-product:1.0.23139.489\"}",
+              "sourceField": "text",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "text",
+                  "replaceNewVal": "XXXXXXXXXX@XXXXXXX",
+                  "rule": "(?P<email_address>([\\d\\w\\.\\-\\_]+)@([\\d\\w]+)\\.([\\w]+))"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 1
+        }
+      ],
+      "order": 13
+    },
+    {
+      "id": "a52ef25d-59ba-4978-901d-7d0a841b7296",
+      "name": "PII - Block Payment Details",
+      "description": "",
+      "creator": "bot@coralogix.com",
+      "enabled": false,
+      "hidden": false,
+      "ruleMatchers": [
+        {
+          "subsystemName": {
+            "value": "paymentservice"
+          }
+        }
+      ],
+      "ruleSubgroups": [
+        {
+          "id": "9188cc6d-7a1d-4250-9688-0e94c22aa052",
+          "rules": [
+            {
+              "id": "662f33bb-5fc6-4494-9b9e-99ee65b9dfee",
+              "name": "Block payment invocation log",
+              "description": "",
+              "sourceField": "text",
+              "parameters": {
+                "blockParameters": {
+                  "keepBlockedLogs": false,
+                  "rule": "PaymentService#Charge invoked"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 1
+        }
+      ],
+      "order": 14
+    },
+    {
+      "id": "db0681da-d181-4794-a27a-f6b822c2138a",
+      "name": "Parse payment info",
+      "description": "",
+      "creator": "bot@coralogix.com",
+      "enabled": true,
+      "hidden": false,
+      "ruleMatchers": [
+        {
+          "subsystemName": {
+            "value": "paymentservice"
+          }
+        }
+      ],
+      "ruleSubgroups": [
+        {
+          "id": "41d87f64-7957-45ac-90cc-8b99125e77b5",
+          "rules": [
+            {
+              "id": "c151ae02-47a9-4c3a-8874-36cf83350b31",
+              "name": "Parse payment info",
+              "description": "",
+              "sourceField": "text",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "text",
+                  "replaceNewVal": "\"pay_transaction\":{\"cc\":\"$1\",\"currency\":\"$2\",\"amount\":\"$3\"}",
+                  "rule": "\"message\"\\s*:\\s*\"Transaction processed:\\s*(?P<cc>\\w+)\\s*ending\\s*\\d+\\s*Amount:\\s*(?P<currency>[A-Z]+)(?P<amount>[\\d\\.]+)\""
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 1
+        }
+      ],
+      "order": 15
+    },
+    {
+      "id": "d64b0c07-6e31-47c8-94f1-a9f346c79486",
+      "name": "Default Subsystem - Demo - Parsing",
+      "description": "Hey You - Adi Golan here please DO NOT DELETE this rule - Thanks! :)",
+      "creator": "bot@coralogix.com",
+      "enabled": true,
+      "hidden": false,
+      "ruleMatchers": [
+        {
+          "applicationName": {
+            "value": "default"
+          }
+        },
+        {
+          "subsystemName": {
+            "value": "frontend"
+          }
+        },
+        {
+          "subsystemName": {
+            "value": "checkoutservice"
+          }
+        },
+        {
+          "subsystemName": {
+            "value": "recommendationservice"
+          }
+        }
+      ],
+      "ruleSubgroups": [
+        {
+          "id": "1d1be4dd-bff3-416c-a0f0-507b2294fc54",
+          "rules": [
+            {
+              "id": "d1782bc6-14c0-4582-9551-5140f8e0bed1",
+              "name": "Delete original message",
+              "description": "",
+              "sourceField": "text",
+              "parameters": {
+                "removeFieldsParameters": {
+                  "fields": [
+                    "message"
+                  ]
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 1
+        },
+        {
+          "id": "4f056fb4-1fd7-4d18-b8eb-2ab0c12bd288",
+          "rules": [
+            {
+              "id": "abaefe40-c3e9-41e3-90c6-24f60e5b7f9d",
+              "name": "Extract Message from json.message",
+              "description": "",
+              "sourceField": "text.json.message",
+              "parameters": {
+                "extractParameters": {
+                  "rule": "(?P<message>.+)"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 2
+        },
+        {
+          "id": "cfcdfc81-7bab-49d5-86ce-0fae5618d516",
+          "rules": [
+            {
+              "id": "e2fcaae2-505b-48f7-8b75-2f5ec6a7f64f",
+              "name": "Delete json.message",
+              "description": "",
+              "sourceField": "text",
+              "parameters": {
+                "removeFieldsParameters": {
+                  "fields": [
+                    "json.message"
+                  ]
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 3
+        }
+      ],
+      "order": 16
+    },
+    {
+      "id": "e626a446-4935-40a7-ad93-f186f3130e0b",
+      "name": "Frontend Service Parsing Rules",
+      "description": "Created by George P for Demo Flow - Please do not delete",
+      "creator": "george.boddey@coralogix.com",
+      "enabled": false,
+      "hidden": false,
+      "ruleMatchers": [
+        {
+          "applicationName": {
+            "value": "default"
+          }
+        },
+        {
+          "subsystemName": {
+            "value": "frontend"
+          }
+        }
+      ],
+      "ruleSubgroups": [
+        {
+          "id": "a2964aec-82ed-414b-8240-5cad3a2bd9c7",
+          "rules": [
+            {
+              "id": "4e6e0366-7a99-4c95-82e5-2b5fc3127dd2",
+              "name": "Filter logs where JSON already exists - step 1",
+              "description": "{\"product_id_enriched\":{\"product_desc\":\"This lightweight hairdryer has 3 heat and speed settings. It's perfect for travel.\",\"product_name\":\"Hairdryer\",\"price_in_currency\":\"24\",\"product_img\":\"https://www.coralogix-demo.net/static/img/products/hairdryer.jpg\",\"currency\":\"USD\",\"category\":\"hair\"},\"json\":{\"http_req_ip_geoip\":{\"ip\":\"91.214.87.74\",\"ip_ipaddr\":\"91.214.87.74\",\"location_geopoint\":{\"lat\":50.5182,\"lon\":30.8041},\"continent_name\":\"Europe\",\"country_name\":\"Ukraine\",\"city_name\":\"Brovary\",\"postal_code\":\"07400\"},\"http_req_id\":\"eb42c8a5-1a7c-4174-acac-43ba70ede542\",\"http_req_ip\":\"91.214.87.74\",\"http_req_method\":\"GET\",\"http_req_path\":\"/product\",\"http_resp_bytes\":7893,\"http_resp_status\":200,\"http_resp_took_ms\":1180,\"session\":\"141329a7-ee0e-4c36-be93-ec85aca25dce\",\"severity\":\"debug\",\"span_id\":\"2af19aadfd800015\",\"timestamp\":\"2024-01-12T11:13:46.18049654Z\",\"trace_id\":\"ffde5d9a8da0e54d776d385c97e6a114\"},\"@timestamp\":\"2024-01-12T11:13:46.180Z\",\"@version\":\"1\",\"beat\":{\"hostname\":\"ip-172-31-4-242.us-east-2.compute.internal\"},\"cloud\":{\"account\":{\"id\":\"074157727657\"},\"availability_zone\":\"us-east-2a\",\"image\":{\"id\":\"ami-07b50b966251fda6e\"},\"instance\":{\"id\":\"i-02084e96d21517df8\"},\"machine\":{\"type\":\"t3.large\"},\"provider\":\"aws\",\"region\":\"us-east-2\",\"service\":{\"name\":\"EC2\"}},\"cluster_name\":\"cluster.local\",\"host\":\"172.31.4.242\",\"kubernetes\":{\"container\":{\"id\":\"27f46be207970279dbda825cdcea0ed0ef0a724d6ed8c41f33db3b207e845a54\",\"name\":\"server\"},\"deployment\":{\"name\":\"frontend\"},\"namespace\":\"default\",\"namespace_labels\":{\"kubernetes_io/metadata_name\":\"default\"},\"namespace_uid\":\"21a7e2d9-7da6-4a74-97f7-d04a7dbbb77a\",\"node\":{\"hostname\":\"ip-172-31-4-242.us-east-2.compute.internal\",\"labels\":{\"beta_kubernetes_io/arch\":\"amd64\",\"beta_kubernetes_io/instance-type\":\"t3.large\",\"beta_kubernetes_io/os\":\"linux\",\"eks_amazonaws_com/capacityType\":\"ON_DEMAND\",\"eks_amazonaws_com/nodegroup\":\"chen-eks2-nodes\",\"eks_amazonaws_com/nodegroup-image\":\"ami-07b50b966251fda6e\",\"failure-domain_beta_kubernetes_io/region\":\"us-east-2\",\"failure-domain_beta_kubernetes_io/zone\":\"us-east-2a\",\"k8s_io/cloud-provider-aws\":\"5ae15d428da2ffa3cd3bbc9149af8ce1\",\"kubernetes_io/arch\":\"amd64\",\"kubernetes_io/hostname\":\"ip-172-31-4-242.us-east-2.compute.internal\",\"kubernetes_io/os\":\"linux\",\"node_kubernetes_io/instance-type\":\"t3.large\",\"topology_kubernetes_io/region\":\"us-east-2\",\"topology_kubernetes_io/zone\":\"us-east-2a\"},\"name\":\"ip-172-31-4-242.us-east-2.compute.internal\",\"uid\":\"c027d669-c71e-443c-b6d3-6be6b5b7e1ca\"},\"pod\":{\"ip\":\"172.31.2.154\",\"labels\":{\"app\":\"frontend\",\"pod-template-hash\":\"69d989d8dd\"},\"name\":\"frontend-69d989d8dd-msq9g\",\"uid\":\"b0008d6f-730a-43e3-a4f8-b35b1670980d\"},\"replicaset\":{\"name\":\"frontend-69d989d8dd\"}},\"message\":\"request GET /product/2ZYFJ3GM2N completed with status: 200. requestID: eb42c8a5-1a7c-4174-acac-43ba70ede542\",\"product_id\":\"2ZYFJ3GM2N\",\"tags\":[\"beats_input_codec_plain_applied\"]}\n\n{\"json\":{\"http_req_ip_geoip\":{\"ip\":\"147.237.70.107\",\"ip_ipaddr\":\"147.237.70.107\",\"location_geopoint\":{\"lat\":31.5,\"lon\":34.75},\"continent_name\":\"Asia\",\"country_name\":\"Israel\",\"city_name\":null,\"postal_code\":null},\"http_req_id\":\"98b82456-1094-4523-961a-42a7c8b2e0c8\",\"http_req_ip\":\"147.237.70.107\",\"http_req_method\":\"POST\",\"http_req_path\":\"/cart/checkout\",\"session\":\"25b3ccb7-1cb5-4765-8ea6-5db7307c1bd0\",\"severity\":\"debug\",\"span_id\":\"63524cdcf612ccb9\",\"timestamp\":\"2024-01-12T11:13:45.447175815Z\",\"trace_id\":\"e1e43f802a679c21f9d66c42add6ec95\"},\"@timestamp\":\"2024-01-12T11:13:45.448Z\",\"@version\":\"1\",\"beat\":{\"hostname\":\"ip-172-31-4-242.us-east-2.compute.internal\"},\"cloud\":{\"account\":{\"id\":\"074157727657\"},\"availability_zone\":\"us-east-2a\",\"image\":{\"id\":\"ami-07b50b966251fda6e\"},\"instance\":{\"id\":\"i-02084e96d21517df8\"},\"machine\":{\"type\":\"t3.large\"},\"provider\":\"aws\",\"region\":\"us-east-2\",\"service\":{\"name\":\"EC2\"}},\"cluster_name\":\"cluster.local\",\"host\":\"172.31.4.242\",\"kubernetes\":{\"container\":{\"id\":\"27f46be207970279dbda825cdcea0ed0ef0a724d6ed8c41f33db3b207e845a54\",\"name\":\"server\"},\"deployment\":{\"name\":\"frontend\"},\"namespace\":\"default\",\"namespace_labels\":{\"kubernetes_io/metadata_name\":\"default\"},\"namespace_uid\":\"21a7e2d9-7da6-4a74-97f7-d04a7dbbb77a\",\"node\":{\"hostname\":\"ip-172-31-4-242.us-east-2.compute.internal\",\"labels\":{\"beta_kubernetes_io/arch\":\"amd64\",\"beta_kubernetes_io/instance-type\":\"t3.large\",\"beta_kubernetes_io/os\":\"linux\",\"eks_amazonaws_com/capacityType\":\"ON_DEMAND\",\"eks_amazonaws_com/nodegroup\":\"chen-eks2-nodes\",\"eks_amazonaws_com/nodegroup-image\":\"ami-07b50b966251fda6e\",\"failure-domain_beta_kubernetes_io/region\":\"us-east-2\",\"failure-domain_beta_kubernetes_io/zone\":\"us-east-2a\",\"k8s_io/cloud-provider-aws\":\"5ae15d428da2ffa3cd3bbc9149af8ce1\",\"kubernetes_io/arch\":\"amd64\",\"kubernetes_io/hostname\":\"ip-172-31-4-242.us-east-2.compute.internal\",\"kubernetes_io/os\":\"linux\",\"node_kubernetes_io/instance-type\":\"t3.large\",\"topology_kubernetes_io/region\":\"us-east-2\",\"topology_kubernetes_io/zone\":\"us-east-2a\"},\"name\":\"ip-172-31-4-242.us-east-2.compute.internal\",\"uid\":\"c027d669-c71e-443c-b6d3-6be6b5b7e1ca\"},\"pod\":{\"ip\":\"172.31.2.154\",\"labels\":{\"app\":\"frontend\",\"pod-template-hash\":\"69d989d8dd\"},\"name\":\"frontend-69d989d8dd-msq9g\",\"uid\":\"b0008d6f-730a-43e3-a4f8-b35b1670980d\"},\"replicaset\":{\"name\":\"frontend-69d989d8dd\"}},\"message\":\"request POST /cart/checkout started. requestID: 98b82456-1094-4523-961a-42a7c8b2e0c8\",\"tags\":[\"beats_input_codec_plain_applied\"]}",
+              "sourceField": "text",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "text",
+                  "replaceNewVal": "\"json1\":{",
+                  "rule": "\\\"json\\\"\\:\\{"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 1
+        },
+        {
+          "id": "1c6bc86f-fd37-4955-b34b-923c8baf76d6",
+          "rules": [
+            {
+              "id": "c83ba7c6-0ffc-49d7-aeb0-a782718e3978",
+              "name": "Filter logs where JSON already exists - step 2",
+              "description": "{\"json\":{\"http_req_ip_geoip\":{\"ip\":\"147.237.70.107\",\"ip_ipaddr\":\"147.237.70.107\",\"location_geopoint\":{\"lat\":31.5,\"lon\":34.75},\"continent_name\":\"Asia\",\"country_name\":\"Israel\",\"city_name\":null,\"postal_code\":null},\"http_req_id\":\"98b82456-1094-4523-961a-42a7c8b2e0c8\",\"http_req_ip\":\"147.237.70.107\",\"http_req_method\":\"POST\",\"http_req_path\":\"/cart/checkout\",\"session\":\"25b3ccb7-1cb5-4765-8ea6-5db7307c1bd0\",\"severity\":\"debug\",\"span_id\":\"63524cdcf612ccb9\",\"timestamp\":\"2024-01-12T11:13:45.447175815Z\",\"trace_id\":\"e1e43f802a679c21f9d66c42add6ec95\"},\"@timestamp\":\"2024-01-12T11:13:45.448Z\",\"@version\":\"1\",\"beat\":{\"hostname\":\"ip-172-31-4-242.us-east-2.compute.internal\"},\"cloud\":{\"account\":{\"id\":\"074157727657\"},\"availability_zone\":\"us-east-2a\",\"image\":{\"id\":\"ami-07b50b966251fda6e\"},\"instance\":{\"id\":\"i-02084e96d21517df8\"},\"machine\":{\"type\":\"t3.large\"},\"provider\":\"aws\",\"region\":\"us-east-2\",\"service\":{\"name\":\"EC2\"}},\"cluster_name\":\"cluster.local\",\"host\":\"172.31.4.242\",\"kubernetes\":{\"container\":{\"id\":\"27f46be207970279dbda825cdcea0ed0ef0a724d6ed8c41f33db3b207e845a54\",\"name\":\"server\"},\"deployment\":{\"name\":\"frontend\"},\"namespace\":\"default\",\"namespace_labels\":{\"kubernetes_io/metadata_name\":\"default\"},\"namespace_uid\":\"21a7e2d9-7da6-4a74-97f7-d04a7dbbb77a\",\"node\":{\"hostname\":\"ip-172-31-4-242.us-east-2.compute.internal\",\"labels\":{\"beta_kubernetes_io/arch\":\"amd64\",\"beta_kubernetes_io/instance-type\":\"t3.large\",\"beta_kubernetes_io/os\":\"linux\",\"eks_amazonaws_com/capacityType\":\"ON_DEMAND\",\"eks_amazonaws_com/nodegroup\":\"chen-eks2-nodes\",\"eks_amazonaws_com/nodegroup-image\":\"ami-07b50b966251fda6e\",\"failure-domain_beta_kubernetes_io/region\":\"us-east-2\",\"failure-domain_beta_kubernetes_io/zone\":\"us-east-2a\",\"k8s_io/cloud-provider-aws\":\"5ae15d428da2ffa3cd3bbc9149af8ce1\",\"kubernetes_io/arch\":\"amd64\",\"kubernetes_io/hostname\":\"ip-172-31-4-242.us-east-2.compute.internal\",\"kubernetes_io/os\":\"linux\",\"node_kubernetes_io/instance-type\":\"t3.large\",\"topology_kubernetes_io/region\":\"us-east-2\",\"topology_kubernetes_io/zone\":\"us-east-2a\"},\"name\":\"ip-172-31-4-242.us-east-2.compute.internal\",\"uid\":\"c027d669-c71e-443c-b6d3-6be6b5b7e1ca\"},\"pod\":{\"ip\":\"172.31.2.154\",\"labels\":{\"app\":\"frontend\",\"pod-template-hash\":\"69d989d8dd\"},\"name\":\"frontend-69d989d8dd-msq9g\",\"uid\":\"b0008d6f-730a-43e3-a4f8-b35b1670980d\"},\"replicaset\":{\"name\":\"frontend-69d989d8dd\"}},\"message\":\"request POST /cart/checkout started. requestID: 98b82456-1094-4523-961a-42a7c8b2e0c8\",\"tags\":[\"beats_input_codec_plain_applied\"]}",
+              "sourceField": "text",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "text",
+                  "replaceNewVal": "\"json\":{",
+                  "rule": "\\\"json1\\\"\\:\\{"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            },
+            {
+              "id": "1d02594d-f3ce-45c8-a027-f848f42b3c12",
+              "name": "Nest fields under JSON if not already nested v1",
+              "description": "{\"resource\":{\"attributes\":{\"cloud.account.id\":\"074157727657\",\"cloud.availability_zone\":\"us-east-2c\",\"cloud.platform\":\"aws_ec2\",\"cloud.provider\":\"aws\",\"cloud.region\":\"us-east-2\",\"cx.otel_integration.name\":\"coralogix-integration-helm\",\"host.id\":\"i-0b423258572c23bf6\",\"host.image.id\":\"ami-07b50b966251fda6e\",\"host.name\":\"ip-172-31-43-38.us-east-2.compute.internal\",\"host.type\":\"t3.large\",\"k8s.cluster.name\":\"onlineboutique\",\"k8s.container.name\":\"server\",\"k8s.container.restart_count\":\"0\",\"k8s.deployment.name\":\"frontend\",\"k8s.namespace.name\":\"default\",\"k8s.node.name\":\"ip-172-31-43-38.us-east-2.compute.internal\",\"k8s.pod.name\":\"frontend-69d989d8dd-7qc7q\",\"k8s.pod.uid\":\"144393ed-680f-4ed3-9354-f3e33871b009\",\"os.type\":\"linux\"}},\"resourceSchemaUrl\":\"https://opentelemetry.io/schemas/1.6.1\",\"scope\":{\"attributes\":{}},\"attributes\":{\"log.file.path\":\"/var/log/pods/default_frontend-69d989d8dd-7qc7q_144393ed-680f-4ed3-9354-f3e33871b009/server/0.log\",\"log.iostream\":\"stdout\",\"time\":\"2024-01-05T13:57:43.456577052Z\"},\"observedTimeUnixNano\":1704463063650460200,\"timeUnixNano\":1704463063456577000,\"http_req_id\":\"042f4b7f-1cf2-4946-a4c5-bcfe938580fa\",\"http_req_ip\":\"172.217.18.110\",\"http_req_method\":\"POST\",\"http_req_path\":\"/cart\",\"session\":\"82daafa1-0fe7-443e-b9aa-92063354954c\",\"severity\":\"debug\",\"span_id\":\"3661a7f017c4b32b\",\"timestamp\":\"2024-01-05T13:57:43.456319372Z\",\"trace_id\":\"ece78d03cd5e60160c3a7af539bf13ab\"}",
+              "sourceField": "text",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "text",
+                  "replaceNewVal": "$beginning\"json\":{\"http_req_id\":\"$http_req_id\",\"http_req_ip\":\"$http_req_ip\",\"http_req_method\":\"$http_req_method\",\"http_req_path\":\"$http_req_path\",\"session\":\"$session\",\"severity\":\"$severity\",\"span_id\":\"$span_id\",\"timestamp\":\"$timestamp\",\"trace_id\":\"$trace_id\"}}",
+                  "rule": "(?P<beginning>.*)\\\"http_req_id\\\"\\:\\\"(?P<http_req_id>[\\w\\-]+)\\\"\\,\\\"http_req_ip\\\"\\:\\\"(?P<http_req_ip>\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3})\\\"\\,\\\"http_req_method\\\"\\:\\\"(?P<http_req_method>[\\w]+)\\\"\\,\\\"http_req_path\\\"\\:\\\"(?P<http_req_path>[\\/\\w]+)\\\"\\,\\\"session\\\"\\:\\\"(?P<session>[\\w\\-]+)\\\"\\,\\\"severity\\\"\\:\\\"(?P<severity>[\\w]+)\\\"\\,\\\"span_id\\\"\\:\\\"(?P<span_id>[\\w]+)\\\"\\,\\\"timestamp\\\"\\:\\\"(?P<timestamp>\\d{4}\\-\\d{2}\\-\\d{2}T\\d{2}\\:\\d{2}\\:\\d{2}\\.\\d{1,10}Z)\\\"\\,\\\"trace_id\\\"\\:\\\"(?P<trace_id>[\\w]+)\\\"\\}"
+                }
+              },
+              "enabled": true,
+              "order": 2
+            },
+            {
+              "id": "6676ecf2-6465-4509-9eab-21fd29932c66",
+              "name": "Nest fields under JSON if not already nested v2",
+              "description": "{\"resource\":{\"attributes\":{\"cloud.account.id\":\"074157727657\",\"cloud.availability_zone\":\"us-east-2b\",\"cloud.platform\":\"aws_ec2\",\"cloud.provider\":\"aws\",\"cloud.region\":\"us-east-2\",\"cx.otel_integration.name\":\"coralogix-integration-helm\",\"host.id\":\"i-0a5b27e90b547603f\",\"host.image.id\":\"ami-07b50b966251fda6e\",\"host.name\":\"ip-172-31-30-194.us-east-2.compute.internal\",\"host.type\":\"t3.large\",\"k8s.cluster.name\":\"onlineboutique\",\"k8s.container.name\":\"server\",\"k8s.container.restart_count\":\"0\",\"k8s.deployment.name\":\"frontend\",\"k8s.namespace.name\":\"default\",\"k8s.node.name\":\"ip-172-31-30-194.us-east-2.compute.internal\",\"k8s.pod.name\":\"frontend-69d989d8dd-fvxbh\",\"k8s.pod.uid\":\"93174814-bcbd-46ef-803d-423995ae8c20\",\"os.type\":\"linux\"}},\"resourceSchemaUrl\":\"https://opentelemetry.io/schemas/1.6.1\",\"scope\":{\"attributes\":{}},\"attributes\":{\"log.file.path\":\"/var/log/pods/default_frontend-69d989d8dd-fvxbh_93174814-bcbd-46ef-803d-423995ae8c20/server/0.log\",\"log.iostream\":\"stdout\",\"time\":\"2024-01-05T13:57:43.780503549Z\"},\"observedTimeUnixNano\":1704463063948296400,\"timeUnixNano\":1704463063780503600,\"http_req_id\":\"646b6167-9fdc-4057-88e9-c74db871128f\",\"http_req_ip\":\"157.131.72.157\",\"http_req_method\":\"GET\",\"http_req_path\":\"/product/LS4PSXUNUM\",\"http_resp_bytes\":7983,\"http_resp_status\":200,\"http_resp_took_ms\":32,\"session\":\"f8112775-873c-4860-a2fa-780ac9eb40fb\",\"severity\":\"debug\",\"span_id\":\"c93746ea2fa9d733\",\"timestamp\":\"2024-01-05T13:57:43.780204274Z\",\"trace_id\":\"f040cc8be8a9609e7f186675293fe6ff\"}",
+              "sourceField": "text",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "text",
+                  "replaceNewVal": "$beginning\"json\":{\"http_req_id\":\"$http_req_id\",\"http_req_ip\":\"$http_req_ip\",\"http_req_method\":\"$http_req_method\",\"http_req_path\":\"$http_req_path\",\"http_resp_bytes\":\"$http_resp_bytes\",\"http_resp_status\":\"$http_resp_status\",\"http_resp_took_ms\":\"$http_resp_took_ms\",\"session\":\"$session\",\"severity\":\"$severity\",\"span_id\":\"$span_id\",\"timestamp\":\"$timestamp\",\"trace_id\":\"$trace_id\"}}",
+                  "rule": "(?P<beginning>.*)\\\"http_req_id\\\"\\:\\\"(?P<http_req_id>[\\w\\-]+)\\\"\\,\\\"http_req_ip\\\"\\:\\\"(?P<http_req_ip>\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3})\\\"\\,\\\"http_req_method\\\"\\:\\\"(?P<http_req_method>[\\w]+)\\\"\\,\\\"http_req_path\\\"\\:\\\"(?P<http_req_path>[\\/\\w]+)\\\"\\,\"http_resp_bytes\":(?P<http_resp_bytes>\\d{1,8})\\,\"http_resp_status\":(?P<http_resp_status>\\d{1,3})\\,\"http_resp_took_ms\":(?P<http_resp_took_ms>\\d{1,3})\\,\\\"session\\\"\\:\\\"(?P<session>[\\w\\-]+)\\\"\\,\\\"severity\\\"\\:\\\"(?P<severity>[\\w]+)\\\"\\,\\\"span_id\\\"\\:\\\"(?P<span_id>[\\w]+)\\\"\\,\\\"timestamp\\\"\\:\\\"(?P<timestamp>\\d{4}\\-\\d{2}\\-\\d{2}T\\d{2}\\:\\d{2}\\:\\d{2}\\.\\d{1,10}Z)\\\"\\,\\\"trace_id\\\"\\:\\\"(?P<trace_id>[\\w]+)\\\"\\}"
+                }
+              },
+              "enabled": true,
+              "order": 3
+            }
+          ],
+          "enabled": true,
+          "order": 2
+        }
+      ],
+      "order": 17
+    },
+    {
+      "id": "f361c830-9eca-4ad3-b68d-7e071df47add",
+      "name": "Parse frontend product info",
+      "description": "",
+      "creator": "george.pickers@coralogix.com",
+      "enabled": true,
+      "hidden": false,
+      "ruleMatchers": [
+        {
+          "applicationName": {
+            "value": "default"
+          }
+        },
+        {
+          "subsystemName": {
+            "value": "frontend"
+          }
+        }
+      ],
+      "ruleSubgroups": [
+        {
+          "id": "6e1a9866-5800-415a-8d2c-0b03a624fac9",
+          "rules": [
+            {
+              "id": "a8a576b1-0bc0-444f-aebb-65e8ac4750c3",
+              "name": "Extract product ID",
+              "description": "",
+              "sourceField": "text",
+              "parameters": {
+                "extractParameters": {
+                  "rule": "(json.*?){.*?http.req.path.*?product.*?(?P<product_id>\\w+)"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 1
+        },
+        {
+          "id": "6dae4528-c7b4-45b6-8b11-67d973baadc6",
+          "rules": [
+            {
+              "id": "79c6ccb7-0a62-4570-8e9d-73941aa0e6d3",
+              "name": "Delete product id from request path",
+              "description": "",
+              "sourceField": "text",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "text",
+                  "replaceNewVal": "$1",
+                  "rule": "(json.*?{.*?http.req.path.*?product)(?P<product_id>.*?\\w+)"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 2
+        }
+      ],
+      "order": 18
+    },
+    {
+      "id": "c3be08b1-af54-4605-95c1-61d0734a4797",
+      "name": "OB - Error to Message",
+      "description": "",
+      "creator": "bot@coralogix.com",
+      "enabled": true,
+      "hidden": false,
+      "ruleMatchers": [
+        {
+          "applicationName": {
+            "value": "default"
+          }
+        }
+      ],
+      "ruleSubgroups": [
+        {
+          "id": "7bea9cb0-5b67-4b3b-845d-52c28725a289",
+          "rules": [
+            {
+              "id": "522afe66-af2f-4150-82fc-0fffcf3e946f",
+              "name": "error -> message",
+              "description": "",
+              "sourceField": "text.error",
+              "parameters": {
+                "extractParameters": {
+                  "rule": "(?P<message>.*)"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 1
+        }
+      ],
+      "order": 19
+    },
+    {
+      "id": "45b12e61-7ff3-4993-8724-dceb463b0545",
+      "name": "Product stats",
+      "description": "",
+      "creator": "bot@coralogix.com",
+      "enabled": true,
+      "hidden": false,
+      "ruleMatchers": [
+        {
+          "applicationName": {
+            "value": "default"
+          }
+        },
+        {
+          "subsystemName": {
+            "value": "loadgenerator"
+          }
+        }
+      ],
+      "ruleSubgroups": [
+        {
+          "id": "cdf594e2-29ec-4b91-88e2-8137e421c34b",
+          "rules": [
+            {
+              "id": "8f76fc24-c23e-42cc-a4e4-303262485ea1",
+              "name": "Parse stats fields",
+              "description": "{\"cloud\":{\"machine\":{\"type\":\"t3.large\"},\"availability_zone\":\"us-east-2a\",\"service\":{\"name\":\"EC2\"},\"account\":{\"id\":\"074157727657\"},\"region\":\"us-east-2\",\"image\":{\"id\":\"ami-07b50b966251fda6e\"},\"provider\":\"aws\",\"instance\":{\"id\":\"i-0f7afac2798217d04\"}},\"kubernetes\":{\"container\":{\"id\":\"f656936403a86d996f50bbd349cb4a1da83678cb9b633af526abe46d8b7556e4\",\"name\":\"main\"},\"pod\":{\"labels\":{\"app\":\"loadgenerator\",\"pod-template-hash\":\"589648f87f\"},\"ip\":\"172.31.4.1\",\"name\":\"loadgenerator-589648f87f-46n6p\"},\"namespace\":\"default\",\"node\":{\"labels\":{\"kubernetes_io/hostname\":\"ip-172-31-2-79.us-east-2.compute.internal\",\"topology_kubernetes_io/region\":\"us-east-2\",\"eks_amazonaws_com/nodegroup\":\"chen-eks2-nodes\",\"topology_kubernetes_io/zone\":\"us-east-2a\",\"node_kubernetes_io/instance-type\":\"t3.large\",\"beta_kubernetes_io/instance-type\":\"t3.large\",\"kubernetes_io/os\":\"linux\",\"eks_amazonaws_com/capacityType\":\"ON_DEMAND\",\"beta_kubernetes_io/os\":\"linux\",\"failure-domain_beta_kubernetes_io/region\":\"us-east-2\",\"failure-domain_beta_kubernetes_io/zone\":\"us-east-2a\",\"eks_amazonaws_com/nodegroup-image\":\"ami-07b50b966251fda6e\",\"beta_kubernetes_io/arch\":\"amd64\",\"kubernetes_io/arch\":\"amd64\"},\"hostname\":\"ip-172-31-2-79.us-east-2.compute.internal\",\"name\":\"ip-172-31-2-79.us-east-2.compute.internal\"},\"deployment\":{\"name\":\"loadgenerator\"}},\"cluster_name\":\"cluster.local\",\"@timestamp\":\"2021-08-26T21:52:06.589Z\",\"host\":\"ip-172-31-2-79.us-east-2.compute.internal\",\"beat\":{\"hostname\":\"ip-172-31-2-79.us-east-2.compute.internal\"},\"@version\":\"1\",\"message\":\" GET /product/1YMWWN1N4O 1181 16(1.35%) | 28 3 1729 15 | 0.10 0.00\",\"tags\":[\"kubernetes\",\"containers\",\"beats_input_codec_plain_applied\"]}\n\n{\"cloud\":{\"machine\":{\"type\":\"t3.large\"},\"account\":{\"id\":\"074157727657\"},\"provider\":\"aws\",\"availability_zone\":\"us-east-2a\",\"region\":\"us-east-2\",\"image\":{\"id\":\"ami-07b50b966251fda6e\"},\"service\":{\"name\":\"EC2\"},\"instance\":{\"id\":\"i-0f7afac2798217d04\"}},\"kubernetes\":{\"container\":{\"id\":\"f656936403a86d996f50bbd349cb4a1da83678cb9b633af526abe46d8b7556e4\",\"name\":\"main\"},\"pod\":{\"labels\":{\"app\":\"loadgenerator\",\"pod-template-hash\":\"589648f87f\"},\"ip\":\"172.31.4.1\",\"name\":\"loadgenerator-589648f87f-46n6p\"},\"namespace\":\"default\",\"deployment\":{\"name\":\"loadgenerator\"},\"node\":{\"labels\":{\"kubernetes_io/hostname\":\"ip-172-31-2-79.us-east-2.compute.internal\",\"topology_kubernetes_io/region\":\"us-east-2\",\"eks_amazonaws_com/nodegroup\":\"chen-eks2-nodes\",\"topology_kubernetes_io/zone\":\"us-east-2a\",\"node_kubernetes_io/instance-type\":\"t3.large\",\"beta_kubernetes_io/instance-type\":\"t3.large\",\"eks_amazonaws_com/capacityType\":\"ON_DEMAND\",\"beta_kubernetes_io/os\":\"linux\",\"kubernetes_io/os\":\"linux\",\"failure-domain_beta_kubernetes_io/region\":\"us-east-2\",\"failure-domain_beta_kubernetes_io/zone\":\"us-east-2a\",\"eks_amazonaws_com/nodegroup-image\":\"ami-07b50b966251fda6e\",\"beta_kubernetes_io/arch\":\"amd64\",\"kubernetes_io/arch\":\"amd64\"},\"hostname\":\"ip-172-31-2-79.us-east-2.compute.internal\",\"name\":\"ip-172-31-2-79.us-east-2.compute.internal\"}},\"cluster_name\":\"cluster.local\",\"@timestamp\":\"2021-08-26T22:30:12.743Z\",\"host\":\"ip-172-31-2-79.us-east-2.compute.internal\",\"beat\":{\"hostname\":\"ip-172-31-2-79.us-east-2.compute.internal\"},\"@version\":\"1\",\"message\":\" POST /setCurrency 2045 33(1.61%) | 40 5 1890 21 | 0.50 0.00\",\"tags\":[\"kubernetes\",\"containers\",\"beats_input_codec_plain_applied\"]}\n\n{\"cloud\":{\"machine\":{\"type\":\"t3.large\"},\"availability_zone\":\"us-east-2a\",\"service\":{\"name\":\"EC2\"},\"account\":{\"id\":\"074157727657\"},\"provider\":\"aws\",\"image\":{\"id\":\"ami-07b50b966251fda6e\"},\"region\":\"us-east-2\",\"instance\":{\"id\":\"i-0f7afac2798217d04\"}},\"kubernetes\":{\"container\":{\"id\":\"f656936403a86d996f50bbd349cb4a1da83678cb9b633af526abe46d8b7556e4\",\"name\":\"main\"},\"pod\":{\"labels\":{\"app\":\"loadgenerator\",\"pod-template-hash\":\"589648f87f\"},\"ip\":\"172.31.4.1\",\"name\":\"loadgenerator-589648f87f-46n6p\"},\"namespace\":\"default\",\"deployment\":{\"name\":\"loadgenerator\"},\"node\":{\"labels\":{\"kubernetes_io/hostname\":\"ip-172-31-2-79.us-east-2.compute.internal\",\"topology_kubernetes_io/region\":\"us-east-2\",\"eks_amazonaws_com/nodegroup\":\"chen-eks2-nodes\",\"topology_kubernetes_io/zone\":\"us-east-2a\",\"node_kubernetes_io/instance-type\":\"t3.large\",\"beta_kubernetes_io/instance-type\":\"t3.large\",\"kubernetes_io/os\":\"linux\",\"beta_kubernetes_io/os\":\"linux\",\"eks_amazonaws_com/capacityType\":\"ON_DEMAND\",\"failure-domain_beta_kubernetes_io/region\":\"us-east-2\",\"failure-domain_beta_kubernetes_io/zone\":\"us-east-2a\",\"eks_amazonaws_com/nodegroup-image\":\"ami-07b50b966251fda6e\",\"beta_kubernetes_io/arch\":\"amd64\",\"kubernetes_io/arch\":\"amd64\"},\"hostname\":\"ip-172-31-2-79.us-east-2.compute.internal\",\"name\":\"ip-172-31-2-79.us-east-2.compute.internal\"}},\"cluster_name\":\"cluster.local\",\"@timestamp\":\"2021-08-26T23:13:35.546Z\",\"host\":\"ip-172-31-2-79.us-east-2.compute.internal\",\"beat\":{\"hostname\":\"ip-172-31-2-79.us-east-2.compute.internal\"},\"@version\":\"1\",\"message\":\" GET /product/6E92ZMYYFZ 1923 21(1.09%) | 28 3 1671 15 | 0.00 0.00\",\"tags\":[\"kubernetes\",\"containers\",\"beats_input_codec_plain_applied\"]}\n",
+              "sourceField": "text",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "text",
+                  "replaceNewVal": "stats\":{\"method\":\"$1\",\"endpoint\":\"$2\",\"product\":\"$3\",\"success\":\"$4\",\"failure\":\"$5\",\"prct_failure\":\"$6\",\"avg\":\"$7\",\"min\":\"$8\",\"max\":\"$9\",\"mid\":\"$10\",\"requests_rate\":\"$11\",\"failures_rate\":\"$12\"}",
+                  "rule": "message\"\\s*:\"\\s*(?P<method>\\w+)\\s*(?P<endpoint>[^\\s\\\\]+)(?:\\\\/)?(?P<product_no>\\w*)\\s*(?P<successs>\\d+)\\s*(?P<failure>\\d+)\\((?P<prct_failure>[\\d\\.]+)%\\)\\s*\\|\\s*(?P<avg>\\d+)\\s*(?P<min>\\d+)\\s*(?P<max>\\d+)\\s*(?P<mid>\\d+)\\s*\\|\\s*(?P<requests_rate>[\\d\\.]+)\\s*(?P<failures_rate>[\\d\\.]+)\""
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 1
+        }
+      ],
+      "order": 20
+    },
+    {
+      "id": "200b25e2-686a-4202-b04c-48ef624bb2bc",
+      "name": "Extract service from cx.metadata",
+      "description": "",
+      "creator": "bot@coralogix.com",
+      "enabled": true,
+      "hidden": false,
+      "ruleMatchers": [
+        {
+          "applicationName": {
+            "value": "074157727657"
+          }
+        }
+      ],
+      "ruleSubgroups": [
+        {
+          "id": "77e877d6-260f-4349-ab5a-477861f153ec",
+          "rules": [
+            {
+              "id": "94f8cf09-ba62-4da0-9680-54bbdfd7240e",
+              "name": "Extract faas_name into cx_metadata.service_name",
+              "description": "{\"platform_event_type\":\"report\",\"cx_metadata\":{\"cloud_account_id\":\"074157727657\",\"cloud_provider\":\"aws\",\"cloud_region\":\"eu-west-1\",\"faas_execution\":\"e1065026-d775-4bd9-ae53-99032e367c79\",\"faas_id\":\"arn:aws:lambda:eu-west-1:074157727657:function:cll-lambda-python-2:$LATEST\",\"faas_instance_cx_id\":\"2d6b859b1e5ed7e415774a1c17d6cd35\",\"faas_name\":\"cll-lambda-python-2\",\"span_id\":\"a851dc681f9b1358\",\"tags\":{\"project\":\"coralogix-lambda-lab\"},\"trace_id\":\"2194edc1974a58d39628b739c9ba8a6b\"},\"event\":{\"error_type\":null,\"metrics\":{\"billed_duration_ms\":1311,\"duration_ms\":1310.858,\"init_duration_ms\":null,\"max_memory_used_mb\":118,\"memory_size_mb\":128,\"produced_bytes\":0,\"restore_duration_ms\":null},\"request_id\":\"e1065026-d775-4bd9-ae53-99032e367c79\",\"status\":\"success\"}}",
+              "sourceField": "text",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "text",
+                  "replaceNewVal": "$start\"faas_name\":\"$service_name\"$end,\"service\":\"$service_name\"}",
+                  "rule": "(?P<start>.*)\"faas_name\":\"(?P<service_name>[^\"]*)\"(?P<end>.*)}"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 1
+        }
+      ],
+      "order": 21
+    },
+    {
+      "id": "21a6e8a9-676c-4072-8237-24aad050c2b2",
+      "name": "Parse AWS-ELB",
+      "description": "Parse logs generated from AWS Classic Load Balancer (ELB)",
+      "creator": "bot@coralogix.com",
+      "enabled": true,
+      "hidden": false,
+      "ruleMatchers": [
+        {
+          "applicationName": {
+            "value": "aws-elb"
+          }
+        },
+        {
+          "subsystemName": {
+            "value": "customers-elb"
+          }
+        }
+      ],
+      "ruleSubgroups": [
+        {
+          "id": "c6070f89-528e-45b5-b199-e26bcc7f2d43",
+          "rules": [
+            {
+              "id": "fb42c5f7-9872-46a0-9f06-17d2a9ad02e6",
+              "name": "Parse AWS-ELB Logs",
+              "description": "{\"message\":\"2022-10-04T15:42:14.780568Z prod 146.225.200.106:443 - -1 -1 -1 504 504 4942 4942 \\\"GET https://learningcatalytics.com:443/questions/856776/item_versions HTTP/1.0\\\" \\\"Mozilla/5.0 (Windows NT 6.1) AppleWebKit/536.2 (KHTML, like Gecko) Chrome/60.0.808.0 Safari/536.2\\\" ECDHE-RSA-AES128-GCM-SHA256 TLSv1.2\"}\n\n{\"message\":\"2022-10-04T15:41:58.780568Z prod 86.95.52.184:443 - -1 -1 -1 504 504 5041 5041 \\\"GET https://learningcatalytics.com:443courses/285528/modules HTTP/1.0\\\" \\\"Mozilla/5.0 (Windows 98; Win 9x 4.90; ky-KG; rv:1.9.1.20) Gecko/2020-07-10 09:07:16 Firefox/3.6.3\\\" ECDHE-RSA-AES128-GCM-SHA256 TLSv1.2\"}",
+              "sourceField": "text",
+              "parameters": {
+                "parseParameters": {
+                  "destinationField": "text",
+                  "rule": "message\\\"\\:\\\"(?P<timestamp>\\d{4}\\-\\d{2}\\-[0-9]{2}T\\d{2}\\:\\d{2}\\:\\d{2}\\.\\d+Z)\\s*(?P<elb_name>[\\w\\-]+)\\s*(?P<client_ip>\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3})\\:(?P<client_port>\\d+)\\s*(?P<target_ip>(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}|\\-))(\\:(?P<target_port>\\d+))?\\s*(?P<request_processing_time>[\\-\\d\\.]+)\\s*(?P<target_processing_time>[\\-\\d\\.]+)\\s*(?P<response_processing_time>[\\-\\d\\.]+)\\s*(?P<elb_status_code>\\d{3})\\s*(?P<target_status_code>\\d{3})\\s*(?P<received_bytes>\\d+)\\s*(?P<sent_bytes>\\d+)\\s*(\\\\)?\\\"(?P<request_verb>[a-zA-Z]+|-)\\s*(?P<request_uri>[^\\s*]+)\\s*(?P<request_protocol>[^\\\"]+)\\\"\\s*(\\\\)?\\\"(\\s*)?(?P<user_agent>[^\\\"]+)\\\"\\s*(?P<tls_cipher>[\\w\\-]+)\\s*(?P<tls_protocol>[\\w\\.]+)"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 1
+        },
+        {
+          "id": "a381ad18-6d3d-49ae-9953-6140837616ec",
+          "rules": [
+            {
+              "id": "53a956a3-6999-4810-8bc4-aa917b47e0aa",
+              "name": "Extract Timestamp from AWS-ELB Logs",
+              "description": "2022-10-04T15:58:34.780568Z",
+              "sourceField": "text.timestamp",
+              "parameters": {
+                "extractTimestampParameters": {
+                  "standard": "FORMAT_STANDARD_STRFTIME_OR_UNSPECIFIED",
+                  "format": "%Y-%m-%dT%H:%M:%S.%fZ"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 2
+        }
+      ],
+      "order": 22
+    },
+    {
+      "id": "33ee110a-7e21-4c57-9538-b1fda48ee4ab",
+      "name": "Windows - rename host",
+      "description": "",
+      "creator": "bot@coralogix.com",
+      "enabled": true,
+      "hidden": false,
+      "ruleMatchers": [
+        {
+          "applicationName": {
+            "value": "windows_logs"
+          }
+        }
+      ],
+      "ruleSubgroups": [
+        {
+          "id": "53b4485f-63b8-4d12-b1bc-a0d27bf4ef98",
+          "rules": [
+            {
+              "id": "ae898bd9-b14b-42cc-a699-5fde810d5f64",
+              "name": "Rename host",
+              "description": "{\"@timestamp\":\"2021-11-02T00:14:26.379Z\",\"event\":{\"code\":4625,\"created\":\"2021-11-02T00:14:27.912Z\",\"outcome\":\"failure\",\"action\":\"Logon\",\"provider\":\"Microsoft-Windows-Security-Auditing\",\"kind\":\"event\"},\"tags\":[\"beats_input_codec_plain_applied\"],\"agent\":{\"ephemeral_id\":\"075c16b2-19a2-41fa-a024-644958b4a4c7\",\"type\":\"winlogbeat\",\"name\":\"EC2AMAZ-CIFBMR8\",\"hostname\":\"EC2AMAZ-CIFBMR8\",\"id\":\"ea08b7e2-c1b6-4031-9ce6-f5c4b04ac45f\",\"version\":\"7.10.1\"},\"message\":\"An account failed to log on.\\n\\nSubject:\\n\\tSecurity ID:\\t\\tS-1-0-0\\n\\tAccount Name:\\t\\t-\\n\\tAccount Domain:\\t\\t-\\n\\tLogon ID:\\t\\t0x0\\n\\nLogon Type:\\t\\t\\t3\\n\\nAccount For Which Logon Failed:\\n\\tSecurity ID:\\t\\tS-1-0-0\\n\\tAccount Name:\\t\\tADMINISTRATOR\\n\\tAccount Domain:\\t\\t\\n\\nFailure Information:\\n\\tFailure Reason:\\t\\tUnknown user name or bad password.\\n\\tStatus:\\t\\t\\t0xC000006D\\n\\tSub Status:\\t\\t0xC000006A\\n\\nProcess Information:\\n\\tCaller Process ID:\\t0x0\\n\\tCaller Process Name:\\t-\\n\\nNetwork Information:\\n\\tWorkstation Name:\\t-\\n\\tSource Network Address:\\t27.72.30.223\\n\\tSource Port:\\t\\t0\\n\\nDetailed Authentication Information:\\n\\tLogon Process:\\t\\tNtLmSsp \\n\\tAuthentication Package:\\tNTLM\\n\\tTransited Services:\\t-\\n\\tPackage Name (NTLM only):\\t-\\n\\tKey Length:\\t\\t0\\n\\nThis event is generated when a logon request fails. It is generated on the computer where access was attempted.\\n\\nThe Subject fields indicate the account on the local system which requested the logon. This is most commonly a service such as the Server service, or a local process such as Winlogon.exe or Services.exe.\\n\\nThe Logon Type field indicates the kind of logon that was requested. The most common types are 2 (interactive) and 3 (network).\\n\\nThe Process Information fields indicate which account and process on the system requested the logon.\\n\\nThe Network Information fields indicate where a remote logon request originated. Workstation name is not always available and may be left blank in some cases.\\n\\nThe authentication information fields provide detailed information about this specific logon request.\\n\\t- Transited services indicate which intermediate services have participated in this logon request.\\n\\t- Package name indicates which sub-protocol was used among the NTLM protocols.\\n\\t- Key length indicates the length of the generated session key. This will be 0 if no session key was requested.\",\"@version\":\"1\",\"host\":{\"name\":\"EC2AMAZ-CIFBMR8\"},\"ecs\":{\"version\":\"1.5.0\"},\"winlog\":{\"channel\":\"Security\",\"event_id\":4625,\"process\":{\"pid\":716,\"thread\":{\"id\":4108}},\"opcode\":\"Info\",\"event_data\":{\"SubjectUserName\":\"-\",\"SubStatus\":\"0xc000006a\",\"TransmittedServices\":\"-\",\"SubjectLogonId\":\"0x0\",\"SubjectUserSid\":\"S-1-0-0\",\"Status\":\"0xc000006d\",\"IpPort\":\"0\",\"IpAddress\":\"27.72.30.223\",\"FailureReason\":\"%%2313\",\"ProcessName\":\"-\",\"LmPackageName\":\"-\",\"TargetUserName\":\"ADMINISTRATOR\",\"TargetUserSid\":\"S-1-0-0\",\"ProcessId\":\"0x0\",\"KeyLength\":\"0\",\"LogonProcessName\":\"NtLmSsp \",\"SubjectDomainName\":\"-\",\"AuthenticationPackageName\":\"NTLM\",\"LogonType\":\"3\",\"WorkstationName\":\"-\"},\"keywords\":[\"Audit Failure\"],\"task\":\"Logon\",\"record_id\":16734626,\"provider_name\":\"Microsoft-Windows-Security-Auditing\",\"api\":\"wineventlog\",\"computer_name\":\"EC2AMAZ-CIFBMR8\",\"provider_guid\":\"{54849625-5478-4994-A5BA-3E3B0328C30D}\",\"activity_id\":\"{92522A8E-F43F-0000-B42A-52923FF4D601}\"},\"log\":{\"level\":\"information\"}}",
+              "sourceField": "text",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "text",
+                  "replaceNewVal": "\"host_windows\":{",
+                  "rule": "\"host\"\\s*:{"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 1
+        }
+      ],
+      "order": 23
+    },
+    {
+      "id": "01973864-f502-4ba7-a13e-9ce25a358352",
+      "name": "Parse prometheus-server logs",
+      "description": "",
+      "creator": "bot@coralogix.com",
+      "enabled": true,
+      "hidden": false,
+      "ruleMatchers": [
+        {
+          "applicationName": {
+            "value": "prometheus"
+          }
+        },
+        {
+          "subsystemName": {
+            "value": "prometheus-server"
+          }
+        }
+      ],
+      "ruleSubgroups": [
+        {
+          "id": "df563ac8-b768-49cb-8861-2b7e09b5ef56",
+          "rules": [
+            {
+              "id": "fbfb1597-cf4b-48c4-a3f9-366fe71db9c8",
+              "name": "Parse prometheus-server logs #1",
+              "description": "{\"cloud\":{\"instance\":{\"id\":\"i-0b423258572c23bf6\"},\"provider\":\"aws\",\"availability_zone\":\"us-east-2c\",\"service\":{\"name\":\"EC2\"},\"account\":{\"id\":\"074157727657\"},\"region\":\"us-east-2\",\"machine\":{\"type\":\"t3.large\"},\"image\":{\"id\":\"ami-07b50b966251fda6e\"}},\"kubernetes\":{\"node\":{},\"pod\":{\"name\":\"prometheus-server-5556c6584f-d8xjj\",\"ip\":\"172.31.36.235\"},\"namespace\":\"prometheus\",\"deployment\":{\"name\":\"prometheus-server\"}},\"cluster_name\":\"cluster.local\",\"@timestamp\":\"2022-08-30T22:49:53.600Z\",\"host\":\"172.31.43.38\",\"beat\":{\"hostname\":\"ip-172-31-43-38.us-east-2.compute.internal\"},\"@version\":\"1\",\"message\":\"level=info ts=2022-08-30T22:49:53.599Z caller=notifier.go:601 component=notifier msg=\\\"Stopping notification manager...\\\"\",\"tags\":[\"beats_input_codec_plain_applied\"]}\n\n{\"cloud\":{\"instance\":{\"id\":\"i-0b423258572c23bf6\"},\"service\":{\"name\":\"EC2\"},\"provider\":\"aws\",\"availability_zone\":\"us-east-2c\",\"account\":{\"id\":\"074157727657\"},\"region\":\"us-east-2\",\"machine\":{\"type\":\"t3.large\"},\"image\":{\"id\":\"ami-07b50b966251fda6e\"}},\"kubernetes\":{\"node\":{},\"pod\":{\"name\":\"prometheus-server-5556c6584f-d8xjj\",\"ip\":\"172.31.36.235\"},\"namespace\":\"prometheus\",\"deployment\":{\"name\":\"prometheus-server\"}},\"cluster_name\":\"cluster.local\",\"@timestamp\":\"2022-08-30T22:49:53.600Z\",\"host\":\"172.31.43.38\",\"beat\":{\"hostname\":\"ip-172-31-43-38.us-east-2.compute.internal\"},\"@version\":\"1\",\"message\":\"level=info ts=2022-08-30T22:49:53.599Z caller=main.go:664 msg=\\\"Scrape discovery manager stopped\\\"\",\"tags\":[\"beats_input_codec_plain_applied\"]}\n\n{\"cloud\":{\"instance\":{\"id\":\"i-0b423258572c23bf6\"},\"provider\":\"aws\",\"availability_zone\":\"us-east-2c\",\"service\":{\"name\":\"EC2\"},\"account\":{\"id\":\"074157727657\"},\"region\":\"us-east-2\",\"machine\":{\"type\":\"t3.large\"},\"image\":{\"id\":\"ami-07b50b966251fda6e\"}},\"kubernetes\":{\"node\":{},\"pod\":{\"name\":\"prometheus-server-5556c6584f-d8xjj\",\"ip\":\"172.31.36.235\"},\"deployment\":{\"name\":\"prometheus-server\"},\"namespace\":\"prometheus\"},\"cluster_name\":\"cluster.local\",\"@timestamp\":\"2022-08-30T22:49:53.600Z\",\"host\":\"172.31.43.38\",\"beat\":{\"hostname\":\"ip-172-31-43-38.us-east-2.compute.internal\"},\"@version\":\"1\",\"message\":\"level=error ts=2022-08-30T22:49:53.600Z caller=main.go:881 err=\\\"opening storage failed: lock DB directory: resource temporarily unavailable\\\"\",\"tags\":[\"beats_input_codec_plain_applied\"]}\n\n{\"cloud\":{\"instance\":{\"id\":\"i-0b423258572c23bf6\"},\"provider\":\"aws\",\"availability_zone\":\"us-east-2c\",\"service\":{\"name\":\"EC2\"},\"account\":{\"id\":\"074157727657\"},\"region\":\"us-east-2\",\"machine\":{\"type\":\"t3.large\"},\"image\":{\"id\":\"ami-07b50b966251fda6e\"}},\"kubernetes\":{\"node\":{},\"pod\":{\"name\":\"prometheus-server-5556c6584f-d8xjj\",\"ip\":\"172.31.36.235\"},\"namespace\":\"prometheus\",\"deployment\":{\"name\":\"prometheus-server\"}},\"cluster_name\":\"cluster.local\",\"@timestamp\":\"2022-08-30T22:55:03.838Z\",\"host\":\"172.31.43.38\",\"beat\":{\"hostname\":\"ip-172-31-43-38.us-east-2.compute.internal\"},\"@version\":\"1\",\"message\":\"level=info ts=2022-08-30T22:55:03.838Z caller=repair.go:57 component=tsdb msg=\\\"Found healthy block\\\" mint=1661875200263 maxt=1661882400000 ulid=01GBR2017JBF14WHDTVGHH3HYA\",\"tags\":[\"beats_input_codec_plain_applied\"]}",
+              "sourceField": "text",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "text",
+                  "replaceNewVal": "\"level\":\"$level\",\"timestamp\":\"$timestamp\",\"caller\":\"$caller\",\"component\":\"$component\",\"message\":\"$message\",\"mint\":\"$mint\",\"maxt\":\"$maxt\",\"ulid\":\"$ulid\"",
+                  "rule": "\"message\":\"level=(?P<level>[A-z]+) ts=(?P<timestamp>[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{3}Z) caller=(?P<caller>[^ ]+)(?: component=([^ ]+))? (?:msg|err)=\\\\\"(?P<message>[^\"]+)\\\\\"(?: mint=(?P<mint>[0-9]+) maxt=(?P<maxt>[0-9]+) ulid=(?P<ulid>[0-9A-Z]+))?\""
+                }
+              },
+              "enabled": true,
+              "order": 1
+            },
+            {
+              "id": "e3247ca6-dcae-4006-807f-68064d80ccb7",
+              "name": "Parse prometheus-server logs #2",
+              "description": "{\"cloud\":{\"instance\":{\"id\":\"i-0b423258572c23bf6\"},\"provider\":\"aws\",\"availability_zone\":\"us-east-2c\",\"service\":{\"name\":\"EC2\"},\"account\":{\"id\":\"074157727657\"},\"region\":\"us-east-2\",\"machine\":{\"type\":\"t3.large\"},\"image\":{\"id\":\"ami-07b50b966251fda6e\"}},\"kubernetes\":{\"node\":{},\"pod\":{\"name\":\"prometheus-server-5556c6584f-d8xjj\",\"ip\":\"172.31.36.235\"},\"namespace\":\"prometheus\",\"deployment\":{\"name\":\"prometheus-server\"}},\"cluster_name\":\"cluster.local\",\"@timestamp\":\"2022-08-30T23:15:28.719Z\",\"host\":\"172.31.43.38\",\"beat\":{\"hostname\":\"ip-172-31-43-38.us-east-2.compute.internal\"},\"@version\":\"1\",\"message\":\"level=info ts=2022-08-30T23:15:28.719Z caller=tls_config.go:191 component=web msg=\\\"TLS is disabled.\\\" http2=false\",\"tags\":[\"beats_input_codec_plain_applied\"]}",
+              "sourceField": "text",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "text",
+                  "replaceNewVal": "\"level\":\"$level\",\"timestamp\":\"$timestamp\",\"caller\":\"$caller\",\"component\":\"$component\",\"message\":\"$message\",\"http2\":\"$http2\"",
+                  "rule": "\"message\":\"level=(?P<level>[A-z]+) ts=(?P<timestamp>[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{3}Z) caller=(?P<caller>[^ ]+) component=(?P<component>[^ ]+) msg=\\\\\"(?P<message>[^\"]+)\\\\\" http2=(?P<http2>[a-z]+)\""
+                }
+              },
+              "enabled": true,
+              "order": 2
+            },
+            {
+              "id": "8cb98110-8eac-4630-bfff-35ecebf0e005",
+              "name": "Parse prometheus-server logs #3",
+              "description": "{\"cloud\":{\"instance\":{\"id\":\"i-0b423258572c23bf6\"},\"provider\":\"aws\",\"availability_zone\":\"us-east-2c\",\"service\":{\"name\":\"EC2\"},\"account\":{\"id\":\"074157727657\"},\"region\":\"us-east-2\",\"machine\":{\"type\":\"t3.large\"},\"image\":{\"id\":\"ami-07b50b966251fda6e\"}},\"kubernetes\":{\"node\":{},\"pod\":{\"name\":\"prometheus-server-5556c6584f-d8xjj\",\"ip\":\"172.31.36.235\"},\"namespace\":\"prometheus\",\"deployment\":{\"name\":\"prometheus-server\"}},\"cluster_name\":\"cluster.local\",\"@timestamp\":\"2022-08-30T23:15:28.719Z\",\"host\":\"172.31.43.38\",\"beat\":{\"hostname\":\"ip-172-31-43-38.us-east-2.compute.internal\"},\"@version\":\"1\",\"message\":\"level=info ts=2022-08-30T23:15:28.717Z caller=manager.go:944 component=\\\"rule manager\\\" msg=\\\"Rule manager stopped\\\"\",\"tags\":[\"beats_input_codec_plain_applied\"]}",
+              "sourceField": "text",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "text",
+                  "replaceNewVal": "\"level\":\"$level\",\"timestamp\":\"$timestamp\",\"caller\":\"$caller\",\"component\":\"$component\",\"message\":\"$message\"",
+                  "rule": "\"message\":\"level=(?P<level>[A-z]+) ts=(?P<timestamp>[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{3}Z) caller=(?P<caller>[^ ]+) component=\\\\\"(?P<component>[^\"]+)\\\\\" msg=\\\\\"(?P<message>[^\"]+)\\\\\"\""
+                }
+              },
+              "enabled": true,
+              "order": 3
+            },
+            {
+              "id": "1a51acf0-db93-4a82-a601-fafe45b61273",
+              "name": "Parse prometheus-server logs #4",
+              "description": "{\"cloud\":{\"instance\":{\"id\":\"i-0b423258572c23bf6\"},\"service\":{\"name\":\"EC2\"},\"provider\":\"aws\",\"availability_zone\":\"us-east-2c\",\"account\":{\"id\":\"074157727657\"},\"region\":\"us-east-2\",\"machine\":{\"type\":\"t3.large\"},\"image\":{\"id\":\"ami-07b50b966251fda6e\"}},\"kubernetes\":{\"node\":{},\"pod\":{\"name\":\"prometheus-server-5556c6584f-d8xjj\",\"ip\":\"172.31.36.235\"},\"namespace\":\"prometheus\",\"deployment\":{\"name\":\"prometheus-server\"}},\"cluster_name\":\"cluster.local\",\"@timestamp\":\"2022-08-30T23:25:46.815Z\",\"host\":\"172.31.43.38\",\"beat\":{\"hostname\":\"ip-172-31-43-38.us-east-2.compute.internal\"},\"@version\":\"1\",\"message\":\"level=info ts=2022-08-30T23:25:46.815Z caller=web.go:540 component=web msg=\\\"Start listening for connections\\\" address=0.0.0.0:9090\",\"tags\":[\"beats_input_codec_plain_applied\"]}",
+              "sourceField": "text",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "text",
+                  "replaceNewVal": "\"level\":\"$level\",\"timestamp\":\"$timestamp\",\"caller\":\"$caller\",\"component\":\"$component\",\"message\":\"$message\",\"address\":\"$address\"",
+                  "rule": "\"message\":\"level=(?P<level>[A-z]+) ts=(?P<timestamp>[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{3}Z) caller=(?P<caller>[^ ]+) component=(?P<component>[^ ]+) msg=\\\\\"(?P<message>[^\"]+)\\\\\" address=(?P<address>[0-9\\.:]+)\""
+                }
+              },
+              "enabled": true,
+              "order": 4
+            }
+          ],
+          "enabled": true,
+          "order": 1
+        },
+        {
+          "id": "36985c1c-f364-41be-b357-51581a57affd",
+          "rules": [
+            {
+              "id": "9c27a108-211e-4c0e-846d-188a048ac0d3",
+              "name": "extract level to Coralogix severity",
+              "description": "",
+              "sourceField": "text",
+              "parameters": {
+                "jsonExtractParameters": {
+                  "destinationFieldType": "DESTINATION_FIELD_SEVERITY",
+                  "rule": "level",
+                  "destinationFieldText": null
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 2
+        },
+        {
+          "id": "827d7b5b-92ae-4491-ae70-577a981db454",
+          "rules": [
+            {
+              "id": "7623950e-74a4-475a-9ae0-c5e66d5d89fa",
+              "name": "remove empty field1",
+              "description": "",
+              "sourceField": "text",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "text",
+                  "replaceNewVal": "",
+                  "rule": "\"[^\"]+\":\"\","
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 3
+        },
+        {
+          "id": "dcae9e02-b274-4316-bb2b-7c24d7b8772a",
+          "rules": [
+            {
+              "id": "4ed8ef40-eff2-4a8d-acce-fc761685cc30",
+              "name": "remove empty field2",
+              "description": "",
+              "sourceField": "text",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "text",
+                  "replaceNewVal": "",
+                  "rule": ",\"[^\"]+\":\"\""
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 4
+        }
+      ],
+      "order": 24
+    },
+    {
+      "id": "7d3557f1-b7dc-4550-a66c-0b32f960fb0c",
+      "name": "Severity Rules",
+      "description": "",
+      "creator": "george.pickers@coralogix.com",
+      "enabled": true,
+      "hidden": false,
+      "ruleMatchers": [],
+      "ruleSubgroups": [
+        {
+          "id": "43c6c657-3b69-4c4b-ba0d-c2745467876a",
+          "rules": [
+            {
+              "id": "88a67572-da44-4e70-b6ec-3ccbb3685897",
+              "name": "Extract Severity from AWS-ELB Status Code",
+              "description": "{\"client_addr\":\"225.44.33.12\",\"client_port\":\"443\",\"elb\":\"prod\",\"elb_status_code\":\"504\",\"recieved_bytes\":\"4997\",\"request\":\"GET https://learningcatalytics.com:443/list HTTP/1.0\\\\\",\"request_processing_time\":\"-1\",\"response_processing_time\":\"-1\",\"sent_bytes\":\"4997\",\"ssl_cipher\":\"ECDHE-RSA-AES128-GCM-SHA256\",\"ssl_protocol\":\"TLSv1.2\",\"target_addr\":\"-\",\"target_processing_time\":\"-1\",\"target_status_code\":\"504\",\"timestamp\":\"2022-05-25T04:33:47.120274Z\",\"user_agent\":\"Mozilla/5.0 (X11; Linux i686; rv:1.9.5.20) Gecko/2012-01-05 11:36:56 Firefox/3.8\\\\\"}",
+              "sourceField": "text",
+              "parameters": {
+                "jsonExtractParameters": {
+                  "destinationFieldType": "DESTINATION_FIELD_SEVERITY",
+                  "rule": "elb_status_code",
+                  "destinationFieldText": null
+                }
+              },
+              "enabled": true,
+              "order": 1
+            },
+            {
+              "id": "828be9e2-5635-4383-aded-20946886f483",
+              "name": "Extract severity from json.http_resp_status",
+              "description": "{\"cloud\":{\"machine\":{\"type\":\"t3.large\"},\"provider\":\"aws\",\"availability_zone\":\"us-east-2a\",\"service\":{\"name\":\"EC2\"},\"region\":\"us-east-2\",\"account\":{\"id\":\"074157727657\"},\"image\":{\"id\":\"ami-07b50b966251fda6e\"},\"instance\":{\"id\":\"i-0f7afac2798217d04\"}},\"kubernetes\":{\"container\":{\"id\":\"83b5eabd340b092e44f97e6a0add04a45f8b2408daad162d1b1e4ff4901e9312\",\"name\":\"server\"},\"pod\":{\"labels\":{\"app\":\"frontend\",\"pod-template-hash\":\"b85fc47d4\"},\"ip\":\"172.31.13.168\",\"name\":\"frontend-b85fc47d4-z8vb5\"},\"namespace\":\"default\",\"node\":{\"labels\":{\"kubernetes_io/hostname\":\"ip-172-31-2-79.us-east-2.compute.internal\",\"topology_kubernetes_io/region\":\"us-east-2\",\"eks_amazonaws_com/nodegroup\":\"chen-eks2-nodes\",\"topology_kubernetes_io/zone\":\"us-east-2a\",\"node_kubernetes_io/instance-type\":\"t3.large\",\"beta_kubernetes_io/instance-type\":\"t3.large\",\"kubernetes_io/os\":\"linux\",\"beta_kubernetes_io/os\":\"linux\",\"eks_amazonaws_com/capacityType\":\"ON_DEMAND\",\"failure-domain_beta_kubernetes_io/region\":\"us-east-2\",\"failure-domain_beta_kubernetes_io/zone\":\"us-east-2a\",\"eks_amazonaws_com/nodegroup-image\":\"ami-07b50b966251fda6e\",\"beta_kubernetes_io/arch\":\"amd64\",\"kubernetes_io/arch\":\"amd64\"},\"hostname\":\"ip-172-31-2-79.us-east-2.compute.internal\",\"name\":\"ip-172-31-2-79.us-east-2.compute.internal\"},\"deployment\":{\"name\":\"frontend\"}},\"cluster_name\":\"cluster.local\",\"inner_json\":{\"severity\":\"debug\",\"timestamp\":\"2021-08-27T23:54:32.487194427Z\",\"http_req_id\":\"231de558-b0d3-40ee-a5e9-674b52e8f987\",\"http_req_method\":\"GET\",\"http_req_path\":\"/cart\",\"http_resp_bytes\":16822,\"http_resp_status\":200,\"http_resp_took_ms\":47,\"message\":\"request complete\",\"session\":\"25740e19-1bcc-4ea4-b5f3-eaacffddbaa1\"},\"@timestamp\":\"2021-08-27T23:54:32.488Z\",\"host\":\"ip-172-31-2-79.us-east-2.compute.internal\",\"beat\":{\"hostname\":\"ip-172-31-2-79.us-east-2.compute.internal\"},\"@version\":\"1\",\"tags\":[\"kubernetes\",\"containers\",\"beats_input_codec_plain_applied\"]}\n",
+              "sourceField": "text",
+              "parameters": {
+                "extractParameters": {
+                  "rule": "json.*?http_resp_status\\\\\"\\s*:.*?(?P<severity>\\d{3})"
+                }
+              },
+              "enabled": false,
+              "order": 2
+            },
+            {
+              "id": "79f6037d-1d11-424d-9979-837956f9840b",
+              "name": "Set status 2/3xx logs to INFO",
+              "description": "",
+              "sourceField": "text.json.http_resp_status",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "severity",
+                  "replaceNewVal": "INFO",
+                  "rule": "(2|3)\\d\\d"
+                }
+              },
+              "enabled": false,
+              "order": 3
+            },
+            {
+              "id": "2019cfdb-80c7-4064-a7f8-826b5ed9e1dc",
+              "name": "Request started/completed -> INFO",
+              "description": "",
+              "sourceField": "text.message",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "text",
+                  "replaceNewVal": "INFO",
+                  "rule": ".*?(started|completed).*"
+                }
+              },
+              "enabled": false,
+              "order": 4
+            },
+            {
+              "id": "c1792351-06de-464a-b26a-113872afad60",
+              "name": "Extract severity from json.severity",
+              "description": "",
+              "sourceField": "text",
+              "parameters": {
+                "jsonExtractParameters": {
+                  "destinationFieldType": "DESTINATION_FIELD_SEVERITY",
+                  "rule": "json.severity",
+                  "destinationFieldText": null
+                }
+              },
+              "enabled": true,
+              "order": 5
+            }
+          ],
+          "enabled": true,
+          "order": 1
+        },
+        {
+          "id": "33f0e7b4-1136-4334-a112-ac7e5f444c5f",
+          "rules": [
+            {
+              "id": "d8a29f23-1c8c-42fc-a3d6-e90d681a461e",
+              "name": "Extract severity from json.http_resp_status",
+              "description": "",
+              "sourceField": "text",
+              "parameters": {
+                "jsonExtractParameters": {
+                  "destinationFieldType": "DESTINATION_FIELD_SEVERITY",
+                  "rule": "json.http_resp_status",
+                  "destinationFieldText": null
+                }
+              },
+              "enabled": true,
+              "order": 1
+            },
+            {
+              "id": "405e43bf-d239-450e-9947-0c20eeb8c25e",
+              "name": "Severity Rule",
+              "description": "Look for default severity text",
+              "sourceField": "text",
+              "parameters": {
+                "extractParameters": {
+                  "rule": "\\b(?P<severity>DEBUG|TRACE|INFO|WARN|ERROR|FATAL|EXCEPTION|[Dd]ebug|[Tt]race|[Ii]nfo|[Ww]arn|[Ee]rror|[Ff]atal|[Ee]xception)\\b"
+                }
+              },
+              "enabled": true,
+              "order": 2
+            }
+          ],
+          "enabled": true,
+          "order": 2
+        }
+      ],
+      "order": 25
+    },
+    {
+      "id": "895a07b0-f30f-4412-b268-000762862247",
+      "name": "kube",
+      "description": "Fix odd fields causing parsing to fail",
+      "creator": "david.bott+boutique@coralogix.com",
+      "enabled": true,
+      "hidden": false,
+      "ruleMatchers": [
+        {
+          "applicationName": {
+            "value": "kube-system"
+          }
+        },
+        {
+          "subsystemName": {
+            "value": "kube-apiserver-audit"
+          }
+        }
+      ],
+      "ruleSubgroups": [
+        {
+          "id": "95c7dfde-bc95-4923-a4bf-068f44ce62a8",
+          "rules": [
+            {
+              "id": "d54eb660-8de2-4566-81cd-c4f15587822a",
+              "name": "Remove field called \".\"",
+              "description": "\n{\ntext:{\"stage\":\"ResponseComplete\",\"requestURI\":\"/apis/authorization.k8s.io/v1/subjectaccessreviews\",\"requestObject\":{\"kind\":\"SubjectAccessReview\",\"apiVersion\":\"authorization.k8s.io/v1\",\"metadata\":{\"creationTimestamp\":null},\"spec\":{\"resourceAttributes\":{\"verb\":\"get\",\"version\":\"v1\",\"resource\":\"nodes\",\"subresource\":\"metrics\",\"name\":\"ip-172-31-43-38.us-east-2.compute.internal\"},\"user\":\"system:serviceaccount:monitoring24:coralogix-opentelemetry-collector\",\"groups\":[\"system:serviceaccounts\",\"system:serviceaccounts:monitoring24\",\"system:authenticated\"],\"extra\":{\"authentication.kubernetes.io/pod-name\":[\"coralogix-opentelemetry-collector-8497849d4-9bmvl\"],\"authentication.kubernetes.io/pod-uid\":[\"1bd6c1e0-5d2c-4d85-9a3b-1e3c838e3dc1\"]},\"uid\":\"3772d3fb-8c4e-4af6-be48-924e91cfe7d4\"},\"status\":{\"allowed\":false}},\"auditID\":\"25b68412-42de-4d04-a755-dbe91e10bf98\",\"objectRef\":{\"resource\":\"subjectaccessreviews\",\"apiGroup\":\"authorization.k8s.io\",\"apiVersion\":\"v1\"},\"userAgent\":\"kubelet/v1.21.2 (linux/amd64) kubernetes/3d33787\",\"sourceIPs\":[\"18.118.132.47\"],\"responseStatus\":{\"metadata\":{},\"code\":201},\"responseObject\":{\"kind\":\"SubjectAccessReview\",\"apiVersion\":\"authorization.k8s.io/v1\",\"metadata\":{\"creationTimestamp\":null,\"managedFields\":[{\"manager\":\"kubelet\",\"operation\":\"Update\",\"apiVersion\":\"authorization.k8s.io/v1\",\"time\":\"2024-10-10T15:39:56Z\",\"fieldsType\":\"FieldsV1\",\"fieldsV1\":{\"f:spec\":{\"f:extra\":{\".\":{},\"f:authentication.kubernetes.io/pod-name\":{},\"f:authentication.kubernetes.io/pod-uid\":{}},\"f:groups\":{},\"f:resourceAttributes\":{\".\":{},\"f:name\":{},\"f:resource\":{},\"f:subresource\":{},\"f:verb\":{},\"f:version\":{}},\"f:uid\":{},\"f:user\":{}}}}]},\"spec\":{\"resourceAttributes\":{\"verb\":\"get\",\"version\":\"v1\",\"resource\":\"nodes\",\"subresource\":\"metrics\",\"name\":\"ip-172-31-43-38.us-east-2.compute.internal\"},\"user\":\"system:serviceaccount:monitoring24:coralogix-opentelemetry-collector\",\"groups\":[\"system:serviceaccounts\",\"system:serviceaccounts:monitoring24\",\"system:authenticated\"],\"extra\":{\"authentication.kubernetes.io/pod-name\":[\"coralogix-opentelemetry-collector-8497849d4-9bmvl\"],\"authentication.kubernetes.io/pod-uid\":[\"1bd6c1e0-5d2c-4d85-9a3b-1e3c838e3dc1\"]},\"uid\":\"3772d3fb-8c4e-4af6-be48-924e91cfe7d4\"},\"status\":{\"allowed\":true,\"reason\":\"RBAC: allowed by ClusterRoleBinding \\\"coralogix-opentelemetry-collector\\\" of ClusterRole \\\"coralogix-opentelemetry-collector\\\" to ServiceAccount \\\"coralogix-opentelemetry-collector/monitoring24\\\"\"}},\"user\":{\"username\":\"system:node:ip-172-31-43-38.us-east-2.compute.internal\",\"uid\":\"aws-iam-authenticator:074157727657:AROARCRBFD6U5I6XD6RHO\",\"groups\":[\"system:bootstrappers\",\"system:nodes\",\"system:authenticated\"],\"extra\":{\"accessKeyId\":[\"ASIARCRBFD6UYC7YIWNE\"],\"arn\":[\"arn:aws:sts::074157727657:assumed-role/eks-nodes/i-0b423258572c23bf6\"],\"canonicalArn\":[\"arn:aws:iam::074157727657:role/eks-nodes\"],\"principalId\":[\"AROARCRBFD6U5I6XD6RHO\"],\"sessionName\":[\"i-0b423258572c23bf6\"],\"sigs.k8s.io/aws-iam-authenticator/principalId\":[\"AROARCRBFD6U5I6XD6RHO\"]}},\"level\":\"RequestResponse\",\"annotations\":{\"authorization.k8s.io/decision\":\"allow\",\"authorization.k8s.io/reason\":\"\"},\"stageTimestamp\":\"2024-10-10T15:39:56.576301Z\",\"requestReceivedTimestamp\":\"2024-10-10T15:39:56.573475Z\",\"verb\":\"create\",\"kind\":\"Event\",\"apiVersion\":\"audit.k8s.io/v1\"}\n}",
+              "sourceField": "text",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "text",
+                  "replaceNewVal": " ",
+                  "rule": "\\\"\\.\\\"\\:\\{\\}\\,"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 1
+        },
+        {
+          "id": "b6c4ccb9-d2c2-4274-b511-18afdd49a065",
+          "rules": [
+            {
+              "id": "9bea8579-e950-4dae-9b58-6c69e75226fc",
+              "name": "Rename status to statusObject",
+              "description": "{\ntext:{\"stage\":\"ResponseComplete\",\"requestURI\":\"/apis/authorization.k8s.io/v1/subjectaccessreviews\",\"requestObject\":{\"kind\":\"SubjectAccessReview\",\"apiVersion\":\"authorization.k8s.io/v1\",\"metadata\":{\"creationTimestamp\":null},\"spec\":{\"resourceAttributes\":{\"verb\":\"get\",\"version\":\"v1\",\"resource\":\"nodes\",\"subresource\":\"metrics\",\"name\":\"ip-172-31-43-38.us-east-2.compute.internal\"},\"user\":\"system:serviceaccount:monitoring24:coralogix-opentelemetry-collector\",\"groups\":[\"system:serviceaccounts\",\"system:serviceaccounts:monitoring24\",\"system:authenticated\"],\"extra\":{\"authentication.kubernetes.io/pod-name\":[\"coralogix-opentelemetry-collector-8497849d4-9bmvl\"],\"authentication.kubernetes.io/pod-uid\":[\"1bd6c1e0-5d2c-4d85-9a3b-1e3c838e3dc1\"]},\"uid\":\"3772d3fb-8c4e-4af6-be48-924e91cfe7d4\"},\"status\":{\"allowed\":false}},\"auditID\":\"25b68412-42de-4d04-a755-dbe91e10bf98\",\"objectRef\":{\"resource\":\"subjectaccessreviews\",\"apiGroup\":\"authorization.k8s.io\",\"apiVersion\":\"v1\"},\"userAgent\":\"kubelet/v1.21.2 (linux/amd64) kubernetes/3d33787\",\"sourceIPs\":[\"18.118.132.47\"],\"responseStatus\":{\"metadata\":{},\"code\":201},\"responseObject\":{\"kind\":\"SubjectAccessReview\",\"apiVersion\":\"authorization.k8s.io/v1\",\"metadata\":{\"creationTimestamp\":null,\"managedFields\":[{\"manager\":\"kubelet\",\"operation\":\"Update\",\"apiVersion\":\"authorization.k8s.io/v1\",\"time\":\"2024-10-10T15:39:56Z\",\"fieldsType\":\"FieldsV1\",\"fieldsV1\":{\"f:spec\":{\"f:extra\":{ \"f:authentication.kubernetes.io/pod-name\":{},\"f:authentication.kubernetes.io/pod-uid\":{}},\"f:groups\":{},\"f:resourceAttributes\":{ \"f:name\":{},\"f:resource\":{},\"f:subresource\":{},\"f:verb\":{},\"f:version\":{}},\"f:uid\":{},\"f:user\":{}}}}]},\"spec\":{\"resourceAttributes\":{\"verb\":\"get\",\"version\":\"v1\",\"resource\":\"nodes\",\"subresource\":\"metrics\",\"name\":\"ip-172-31-43-38.us-east-2.compute.internal\"},\"user\":\"system:serviceaccount:monitoring24:coralogix-opentelemetry-collector\",\"groups\":[\"system:serviceaccounts\",\"system:serviceaccounts:monitoring24\",\"system:authenticated\"],\"extra\":{\"authentication.kubernetes.io/pod-name\":[\"coralogix-opentelemetry-collector-8497849d4-9bmvl\"],\"authentication.kubernetes.io/pod-uid\":[\"1bd6c1e0-5d2c-4d85-9a3b-1e3c838e3dc1\"]},\"uid\":\"3772d3fb-8c4e-4af6-be48-924e91cfe7d4\"},\"status\":{\"allowed\":true,\"reason\":\"RBAC: allowed by ClusterRoleBinding \\\"coralogix-opentelemetry-collector\\\" of ClusterRole \\\"coralogix-opentelemetry-collector\\\" to ServiceAccount \\\"coralogix-opentelemetry-collector/monitoring24\\\"\"}},\"user\":{\"username\":\"system:node:ip-172-31-43-38.us-east-2.compute.internal\",\"uid\":\"aws-iam-authenticator:074157727657:AROARCRBFD6U5I6XD6RHO\",\"groups\":[\"system:bootstrappers\",\"system:nodes\",\"system:authenticated\"],\"extra\":{\"accessKeyId\":[\"ASIARCRBFD6UYC7YIWNE\"],\"arn\":[\"arn:aws:sts::074157727657:assumed-role/eks-nodes/i-0b423258572c23bf6\"],\"canonicalArn\":[\"arn:aws:iam::074157727657:role/eks-nodes\"],\"principalId\":[\"AROARCRBFD6U5I6XD6RHO\"],\"sessionName\":[\"i-0b423258572c23bf6\"],\"sigs.k8s.io/aws-iam-authenticator/principalId\":[\"AROARCRBFD6U5I6XD6RHO\"]}},\"level\":\"RequestResponse\",\"annotations\":{\"authorization.k8s.io/decision\":\"allow\",\"authorization.k8s.io/reason\":\"\"},\"stageTimestamp\":\"2024-10-10T15:39:56.576301Z\",\"requestReceivedTimestamp\":\"2024-10-10T15:39:56.573475Z\",\"verb\":\"create\",\"kind\":\"Event\",\"apiVersion\":\"audit.k8s.io/v1\"}\n}",
+              "sourceField": "text",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "text",
+                  "replaceNewVal": "\"statusObject\":{",
+                  "rule": "\"status\"\\s*?:\\s*?\\{"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 2
+        },
+        {
+          "id": "d207be96-1591-4aad-aea4-732cba3a44f1",
+          "rules": [
+            {
+              "id": "6c5db5e8-7cdf-40c1-afdc-3e6213be66dd",
+              "name": "app abuse",
+              "description": "There's a field called \"app\" which is just text, and many of type \"app.kubernetes.io/<xxx>\" which are also text, but the dot notation makes it think app is an object. Rename \"app\" since it's rarely there\n\"labels\":{\n\"app\":\"cartservice\",\n\"pod-template-hash\":\"5df6bd977\"\n}",
+              "sourceField": "text",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "text",
+                  "replaceNewVal": "\"application\":",
+                  "rule": "\"app\"\\s*:"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 3
+        }
+      ],
+      "order": 26
+    },
+    {
+      "id": "3b582c5e-bf6e-4393-a887-116fce14909d",
+      "name": "Extract http method and response code",
+      "description": "",
+      "creator": "support@coralogix.com",
+      "enabled": true,
+      "hidden": false,
+      "ruleMatchers": [],
+      "ruleSubgroups": [
+        {
+          "id": "03f01b87-d6c9-4695-9b32-aac359c1dba7",
+          "rules": [
+            {
+              "id": "d9e3fcb2-a7b3-4642-a11c-02547ebada1a",
+              "name": "method and response",
+              "description": "",
+              "sourceField": "text.body",
+              "parameters": {
+                "extractParameters": {
+                  "rule": "\"(?P<method>[A-Z]+) [^\"]+\" (?P<status_code>\\d{3})\n"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 1
+        }
+      ],
+      "order": 27
+    },
+    {
+      "id": "00474d9b-d329-4fb9-8112-acd7e95a313e",
+      "name": "ruben rule to remove",
+      "description": "",
+      "creator": "bot@coralogix.com",
+      "enabled": true,
+      "hidden": false,
+      "ruleMatchers": [
+        {
+          "applicationName": {
+            "value": "statuspage"
+          }
+        },
+        {
+          "subsystemName": {
+            "value": "coralogix-ebpf-profiler"
+          }
+        },
+        {
+          "severity": {
+            "value": "VALUE_DEBUG_OR_UNSPECIFIED"
+          }
+        }
+      ],
+      "ruleSubgroups": [
+        {
+          "id": "c36feb67-dea4-48cb-9ef4-74f6d6b79bc6",
+          "rules": [
+            {
+              "id": "f2dddf67-a501-473c-a2e8-845e60d45e5e",
+              "name": "aasdasd",
+              "description": "",
+              "sourceField": "text",
+              "parameters": {
+                "removeFieldsParameters": {
+                  "fields": [
+                    "requestParameters.encryptionContext.aws:lambda:FunctionArn"
+                  ]
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 1
+        }
+      ],
+      "order": 28
+    }
+  ],
+  "count": 28,
+  "resource_identifiers": [
+    "fae13b46-bbde-4e02-bcc5-d96d3c4397de",
+    "c6385a8e-bfba-4d70-93e8-d79d3fca2ccd",
+    "4ec86403-96d5-494a-9991-52a3df2286ee",
+    "677f1ede-bb2c-4e22-8de7-66ddd0c0ae48",
+    "bec58c07-9acd-4174-9a5b-3fdcd05ce42a",
+    "63ca3f69-5385-4537-8fbd-e1c5d2b657a2",
+    "88a9aafd-cd8f-4e97-ab7c-663f40bc2426",
+    "552afbe1-4496-4a8a-aeaf-ab928dda3609",
+    "0de568d1-8436-4bdb-976f-86024ca958fc",
+    "3708e21c-5163-4c63-a4f5-4d7a021538da",
+    "1a538960-a823-46e3-91a5-a162396cc6e7",
+    "565bce78-64c3-4fc4-94bd-a601f7890555",
+    "ae8ad39e-f926-42ca-a50b-7b6f2cf47db7",
+    "a52ef25d-59ba-4978-901d-7d0a841b7296",
+    "db0681da-d181-4794-a27a-f6b822c2138a",
+    "d64b0c07-6e31-47c8-94f1-a9f346c79486",
+    "e626a446-4935-40a7-ad93-f186f3130e0b",
+    "f361c830-9eca-4ad3-b68d-7e071df47add",
+    "c3be08b1-af54-4605-95c1-61d0734a4797",
+    "45b12e61-7ff3-4993-8724-dceb463b0545",
+    "200b25e2-686a-4202-b04c-48ef624bb2bc",
+    "21a6e8a9-676c-4072-8237-24aad050c2b2",
+    "33ee110a-7e21-4c57-9538-b1fda48ee4ab",
+    "01973864-f502-4ba7-a13e-9ce25a358352",
+    "7d3557f1-b7dc-4550-a66c-0b32f960fb0c",
+    "895a07b0-f30f-4412-b268-000762862247",
+    "3b582c5e-bf6e-4393-a887-116fce14909d",
+    "00474d9b-d329-4fb9-8112-acd7e95a313e"
+  ]
+}

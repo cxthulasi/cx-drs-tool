@@ -1,0 +1,4317 @@
+{
+  "version_id": "v_20251119_003931",
+  "timestamp": "2025-11-19T00:39:31.703934",
+  "service": "views",
+  "version_type": "pre_migration",
+  "teama": {
+    "count": 122,
+    "resources": [
+      {
+        "id": 9394,
+        "name": "Logs and Metrics",
+        "searchQuery": {
+          "query": "resource.attributes.k8s_pod_name:\"accounts-bdf2b02c-bb8f-4ef0-93ee-d35f1effcb75\"",
+          "syntaxType": "SYNTAX_TYPE_LUCENE"
+        },
+        "timeSelection": {
+          "quickSelection": {
+            "caption": "Last 6 hours",
+            "seconds": 21600
+          }
+        },
+        "filters": {
+          "filters": [
+            {
+              "name": "applicationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "subsystemName",
+              "selectedValues": {}
+            },
+            {
+              "name": "operationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "serviceName",
+              "selectedValues": {}
+            },
+            {
+              "name": "severity",
+              "selectedValues": {}
+            }
+          ]
+        },
+        "isCompactMode": false,
+        "viewType": "VIEW_TYPE_ARCHIVE_LOGS"
+      },
+      {
+        "id": 10485,
+        "name": "FrontendTrace By Action (Sri)",
+        "searchQuery": {
+          "query": "",
+          "syntaxType": "SYNTAX_TYPE_LUCENE"
+        },
+        "timeSelection": {
+          "customSelection": {
+            "fromTime": "2022-08-10T00:12:09.121Z",
+            "toTime": "2022-08-10T00:27:09.121Z"
+          }
+        },
+        "filters": {
+          "filters": [
+            {
+              "name": "applicationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "subsystemName",
+              "selectedValues": {}
+            },
+            {
+              "name": "severity",
+              "selectedValues": {
+                "1": true,
+                "2": true,
+                "3": true,
+                "4": true,
+                "5": true,
+                "6": true
+              }
+            }
+          ]
+        },
+        "isCompactMode": false,
+        "viewType": "VIEW_TYPE_UNSPECIFIED"
+      },
+      {
+        "id": 29386,
+        "name": "Traces by Action",
+        "searchQuery": {
+          "query": "",
+          "syntaxType": "SYNTAX_TYPE_LUCENE"
+        },
+        "timeSelection": {
+          "customSelection": {
+            "fromTime": "2025-11-17T19:09:30.973Z",
+            "toTime": "2025-11-18T19:09:30.973Z"
+          }
+        },
+        "filters": {
+          "filters": []
+        },
+        "isCompactMode": false,
+        "viewType": "VIEW_TYPE_UNSPECIFIED"
+      },
+      {
+        "id": 46097,
+        "name": "Traces",
+        "searchQuery": {
+          "query": "test",
+          "syntaxType": "SYNTAX_TYPE_LUCENE"
+        },
+        "timeSelection": {
+          "customSelection": {
+            "fromTime": "2023-12-13T07:18:28.894Z",
+            "toTime": "2023-12-13T07:33:28.894Z"
+          }
+        },
+        "filters": {
+          "filters": [
+            {
+              "name": "applicationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "subsystemName",
+              "selectedValues": {
+                "management-events": true
+              }
+            },
+            {
+              "name": "severity",
+              "selectedValues": {
+                "1": true,
+                "2": true,
+                "3": true,
+                "4": true,
+                "5": true,
+                "6": true
+              }
+            }
+          ]
+        },
+        "folderId": "8b9ddc23-8f12-4916-8fdb-a6ec4a90d7a9",
+        "isCompactMode": false,
+        "viewType": "VIEW_TYPE_UNSPECIFIED"
+      },
+      {
+        "id": 55421,
+        "name": "Filtered view - Tele",
+        "searchQuery": {
+          "query": "kubernetes.pod.ip:\"172.31.30.160\" AND kubernetes.node.labels.eks_amazonaws_com\\/nodegroup:\"chen-eks2-nodes\"",
+          "syntaxType": "SYNTAX_TYPE_LUCENE"
+        },
+        "timeSelection": {
+          "quickSelection": {
+            "caption": "Last 24 hours",
+            "seconds": 86400
+          }
+        },
+        "filters": {
+          "filters": [
+            {
+              "name": "applicationName",
+              "selectedValues": {
+                "default": true
+              }
+            },
+            {
+              "name": "subsystemName",
+              "selectedValues": {
+                "frontend": true
+              }
+            },
+            {
+              "name": "severity",
+              "selectedValues": {
+                "5": true,
+                "6": true
+              }
+            },
+            {
+              "name": "kubernetes.pod.ip",
+              "selectedValues": {}
+            }
+          ]
+        },
+        "isCompactMode": false,
+        "viewType": "VIEW_TYPE_UNSPECIFIED"
+      },
+      {
+        "id": 56717,
+        "name": "Pankit - Percentiles and Errors View",
+        "searchQuery": {
+          "query": "",
+          "syntaxType": "SYNTAX_TYPE_LUCENE"
+        },
+        "timeSelection": {
+          "customSelection": {
+            "fromTime": "2023-04-03T10:44:33.557Z",
+            "toTime": "2023-04-03T10:59:33.557Z"
+          }
+        },
+        "filters": {
+          "filters": [
+            {
+              "name": "applicationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "subsystemName",
+              "selectedValues": {}
+            },
+            {
+              "name": "severity",
+              "selectedValues": {
+                "1": true,
+                "2": true,
+                "3": true,
+                "4": true,
+                "5": true,
+                "6": true
+              }
+            }
+          ]
+        },
+        "isCompactMode": false,
+        "viewType": "VIEW_TYPE_UNSPECIFIED"
+      },
+      {
+        "id": 57930,
+        "name": "Default traces",
+        "searchQuery": {
+          "query": "",
+          "syntaxType": "SYNTAX_TYPE_LUCENE"
+        },
+        "timeSelection": {
+          "customSelection": {
+            "fromTime": "2023-07-14T13:31:21.209Z",
+            "toTime": "2023-07-14T13:46:21.209Z"
+          }
+        },
+        "filters": {
+          "filters": [
+            {
+              "name": "applicationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "subsystemName",
+              "selectedValues": {}
+            },
+            {
+              "name": "severity",
+              "selectedValues": {
+                "1": true,
+                "2": true,
+                "3": true,
+                "4": true,
+                "5": true,
+                "6": true
+              }
+            }
+          ]
+        },
+        "folderId": "8b9ddc23-8f12-4916-8fdb-a6ec4a90d7a9",
+        "isCompactMode": false,
+        "viewType": "VIEW_TYPE_UNSPECIFIED"
+      },
+      {
+        "id": 58706,
+        "name": "DataPrime - Revenue",
+        "searchQuery": {
+          "query": "source logs\n| filter product_id_enriched.category != null\n| filter $l.applicationname == 'default' && $l.subsystemname == 'frontend'\n| groupby product_id_enriched.category as product_category aggregate  `${sum(product_id_enriched.price_in_currency:num)}` as total_price",
+          "syntaxType": "SYNTAX_TYPE_DATAPRIME"
+        },
+        "timeSelection": {
+          "quickSelection": {
+            "caption": "Last 12 hours",
+            "seconds": 43200
+          }
+        },
+        "filters": {
+          "filters": [
+            {
+              "name": "applicationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "subsystemName",
+              "selectedValues": {}
+            },
+            {
+              "name": "severity",
+              "selectedValues": {
+                "1": true,
+                "2": true,
+                "3": true,
+                "4": true,
+                "5": true,
+                "6": true
+              }
+            }
+          ]
+        },
+        "folderId": "5a5860c3-60e4-43ac-b101-22e5a617a8b6",
+        "isCompactMode": false,
+        "viewType": "VIEW_TYPE_ARCHIVE_LOGS"
+      },
+      {
+        "id": 58707,
+        "name": "DataPrime - Enrich",
+        "searchQuery": {
+          "query": "enrich product_id into product_details using product_details |\nfilter $d.product_id != null",
+          "syntaxType": "SYNTAX_TYPE_DATAPRIME"
+        },
+        "timeSelection": {
+          "quickSelection": {
+            "caption": "Last 15 minutes",
+            "seconds": 900
+          }
+        },
+        "filters": {
+          "filters": [
+            {
+              "name": "applicationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "subsystemName",
+              "selectedValues": {}
+            },
+            {
+              "name": "severity",
+              "selectedValues": {
+                "1": true,
+                "2": true,
+                "3": true,
+                "4": true,
+                "5": true,
+                "6": true
+              }
+            }
+          ]
+        },
+        "folderId": "5a5860c3-60e4-43ac-b101-22e5a617a8b6",
+        "isCompactMode": false,
+        "viewType": "VIEW_TYPE_ARCHIVE_LOGS"
+      },
+      {
+        "id": 58719,
+        "name": "DataPrime - Enrich and Calculate",
+        "searchQuery": {
+          "query": "# Get the logs for last 8 hours\r\nsource logs last 8h\r\n# Filter for 'frontend'subsystem where http resp isn't null\r\n| filter $l.subsystemname == 'frontend'\r\n| filter $d.http_resp_status != null\r\n# Group http responses with a nice name, count # of logs and count # of logs only for last 2H\r\n| groupby $d.http_resp_status as http_response aggregate count() as response_count, count_if($m.timestamp<now() && $m.timestamp> now()-2h) as last_2H\r\n# Sort by response_count greatest to least\r\n| orderby response_count desc",
+          "syntaxType": "SYNTAX_TYPE_DATAPRIME"
+        },
+        "timeSelection": {
+          "quickSelection": {
+            "caption": "Last 1 hour",
+            "seconds": 3600
+          }
+        },
+        "filters": {
+          "filters": [
+            {
+              "name": "applicationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "subsystemName",
+              "selectedValues": {}
+            },
+            {
+              "name": "severity",
+              "selectedValues": {
+                "1": true,
+                "2": true,
+                "3": true,
+                "4": true,
+                "5": true,
+                "6": true
+              }
+            }
+          ]
+        },
+        "folderId": "5a5860c3-60e4-43ac-b101-22e5a617a8b6",
+        "isCompactMode": false,
+        "viewType": "VIEW_TYPE_LOGS"
+      },
+      {
+        "id": 58720,
+        "name": "DataPrime - Error Status Count",
+        "searchQuery": {
+          "query": "",
+          "syntaxType": "SYNTAX_TYPE_LUCENE"
+        },
+        "timeSelection": {
+          "quickSelection": {
+            "caption": "Last 2 Days",
+            "seconds": 172800
+          }
+        },
+        "filters": {
+          "filters": [
+            {
+              "name": "applicationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "subsystemName",
+              "selectedValues": {}
+            },
+            {
+              "name": "severity",
+              "selectedValues": {
+                "1": true,
+                "2": true,
+                "3": true,
+                "4": true,
+                "5": true,
+                "6": true
+              }
+            }
+          ]
+        },
+        "folderId": "5a5860c3-60e4-43ac-b101-22e5a617a8b6",
+        "isCompactMode": false,
+        "viewType": "VIEW_TYPE_LOGS"
+      },
+      {
+        "id": 58722,
+        "name": "DataPrime - RUM Order by Error Desc",
+        "searchQuery": {
+          "query": "",
+          "syntaxType": "SYNTAX_TYPE_LUCENE"
+        },
+        "timeSelection": {
+          "quickSelection": {
+            "caption": "Last 24 hours",
+            "seconds": 86400
+          }
+        },
+        "filters": {
+          "filters": [
+            {
+              "name": "applicationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "subsystemName",
+              "selectedValues": {
+                "cx_rum": true
+              }
+            },
+            {
+              "name": "severity",
+              "selectedValues": {
+                "1": true,
+                "2": true,
+                "3": true,
+                "4": true,
+                "5": true,
+                "6": true
+              }
+            }
+          ]
+        },
+        "folderId": "5a5860c3-60e4-43ac-b101-22e5a617a8b6",
+        "isCompactMode": false,
+        "viewType": "VIEW_TYPE_UNSPECIFIED"
+      },
+      {
+        "id": 58723,
+        "name": "DataPrime - RUM redact email and error count",
+        "searchQuery": {
+          "query": "",
+          "syntaxType": "SYNTAX_TYPE_LUCENE"
+        },
+        "timeSelection": {
+          "quickSelection": {
+            "caption": "Last 24 hours",
+            "seconds": 86400
+          }
+        },
+        "filters": {
+          "filters": [
+            {
+              "name": "applicationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "subsystemName",
+              "selectedValues": {
+                "cx_rum": true
+              }
+            },
+            {
+              "name": "severity",
+              "selectedValues": {
+                "1": true,
+                "2": true,
+                "3": true,
+                "4": true,
+                "5": true,
+                "6": true
+              }
+            }
+          ]
+        },
+        "folderId": "5a5860c3-60e4-43ac-b101-22e5a617a8b6",
+        "isCompactMode": false,
+        "viewType": "VIEW_TYPE_UNSPECIFIED"
+      },
+      {
+        "id": 58819,
+        "name": "DataPrime - Case Statement",
+        "searchQuery": {
+          "query": "",
+          "syntaxType": "SYNTAX_TYPE_LUCENE"
+        },
+        "timeSelection": {
+          "quickSelection": {
+            "caption": "Last 15 minutes",
+            "seconds": 900
+          }
+        },
+        "filters": {
+          "filters": [
+            {
+              "name": "applicationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "subsystemName",
+              "selectedValues": {}
+            },
+            {
+              "name": "severity",
+              "selectedValues": {
+                "1": true,
+                "2": true,
+                "3": true,
+                "4": true,
+                "5": true,
+                "6": true
+              }
+            }
+          ]
+        },
+        "isCompactMode": false,
+        "viewType": "VIEW_TYPE_ARCHIVE_LOGS"
+      },
+      {
+        "id": 58958,
+        "name": "Frontend - Errors by Country",
+        "searchQuery": {
+          "query": "json.http_req_ip_geoip.country_name:\"Sweden\"",
+          "syntaxType": "SYNTAX_TYPE_LUCENE"
+        },
+        "timeSelection": {
+          "quickSelection": {
+            "caption": "Last 24 hours",
+            "seconds": 86400
+          }
+        },
+        "filters": {
+          "filters": [
+            {
+              "name": "applicationName",
+              "selectedValues": {
+                "default": true
+              }
+            },
+            {
+              "name": "subsystemName",
+              "selectedValues": {
+                "frontend": true
+              }
+            },
+            {
+              "name": "severity",
+              "selectedValues": {
+                "error": true
+              }
+            },
+            {
+              "name": "json.http_req_ip_geoip.country_name",
+              "selectedValues": {}
+            }
+          ]
+        },
+        "isCompactMode": false,
+        "viewType": "VIEW_TYPE_ARCHIVE_LOGS"
+      },
+      {
+        "id": 59188,
+        "name": "DataPrime - Avg Span Duration",
+        "searchQuery": {
+          "query": "",
+          "syntaxType": "SYNTAX_TYPE_LUCENE"
+        },
+        "timeSelection": {
+          "quickSelection": {
+            "caption": "Last 15 minutes",
+            "seconds": 900
+          }
+        },
+        "filters": {
+          "filters": [
+            {
+              "name": "applicationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "subsystemName",
+              "selectedValues": {}
+            },
+            {
+              "name": "severity",
+              "selectedValues": {}
+            }
+          ]
+        },
+        "isCompactMode": false,
+        "viewType": "VIEW_TYPE_UNSPECIFIED"
+      },
+      {
+        "id": 59241,
+        "name": "Credit invalid",
+        "searchQuery": {
+          "query": "message:\"Credit card info is invalid\"",
+          "syntaxType": "SYNTAX_TYPE_LUCENE"
+        },
+        "timeSelection": {
+          "quickSelection": {
+            "caption": "Last 24 hours",
+            "seconds": 86400
+          }
+        },
+        "filters": {
+          "filters": [
+            {
+              "name": "applicationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "subsystemName",
+              "selectedValues": {}
+            },
+            {
+              "name": "severity",
+              "selectedValues": {
+                "5": true
+              }
+            },
+            {
+              "name": "cloud.region",
+              "selectedValues": {}
+            }
+          ]
+        },
+        "isCompactMode": false,
+        "viewType": "VIEW_TYPE_UNSPECIFIED"
+      },
+      {
+        "id": 59845,
+        "name": "frontend Error Logs",
+        "searchQuery": {
+          "query": "_exists_:\"cloud.provider\" OR cloud.service.name:\"EC2\"",
+          "syntaxType": "SYNTAX_TYPE_LUCENE"
+        },
+        "timeSelection": {
+          "quickSelection": {
+            "caption": "Last 15 minutes",
+            "seconds": 900
+          }
+        },
+        "filters": {
+          "filters": [
+            {
+              "name": "applicationName",
+              "selectedValues": {
+                "default": true
+              }
+            },
+            {
+              "name": "subsystemName",
+              "selectedValues": {
+                "frontend": true
+              }
+            },
+            {
+              "name": "operationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "serviceName",
+              "selectedValues": {}
+            },
+            {
+              "name": "severity",
+              "selectedValues": {
+                "5": true
+              }
+            },
+            {
+              "name": "kubernetes.namespace",
+              "selectedValues": {
+                "default": true
+              }
+            },
+            {
+              "name": "cloud.service.name",
+              "selectedValues": {
+                "ec2": true
+              }
+            },
+            {
+              "name": "kubernetes.pod.labels.app",
+              "selectedValues": {
+                "frontend": true
+              }
+            }
+          ]
+        },
+        "isCompactMode": false,
+        "viewType": "VIEW_TYPE_LOGS"
+      },
+      {
+        "id": 59978,
+        "name": "GenAI - City List",
+        "searchQuery": {
+          "query": "",
+          "syntaxType": "SYNTAX_TYPE_LUCENE"
+        },
+        "timeSelection": {
+          "quickSelection": {
+            "caption": "Last 1 hour",
+            "seconds": 3600
+          }
+        },
+        "filters": {
+          "filters": [
+            {
+              "name": "applicationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "subsystemName",
+              "selectedValues": {}
+            },
+            {
+              "name": "operationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "serviceName",
+              "selectedValues": {}
+            },
+            {
+              "name": "severity",
+              "selectedValues": {}
+            }
+          ]
+        },
+        "isCompactMode": false,
+        "viewType": "VIEW_TYPE_LOGS"
+      },
+      {
+        "id": 59986,
+        "name": "frontend-template-debug",
+        "searchQuery": {
+          "query": "",
+          "syntaxType": "SYNTAX_TYPE_LUCENE"
+        },
+        "timeSelection": {
+          "quickSelection": {
+            "caption": "Last 15 minutes",
+            "seconds": 900
+          }
+        },
+        "filters": {
+          "filters": [
+            {
+              "name": "applicationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "subsystemName",
+              "selectedValues": {
+                "frontend": true
+              }
+            },
+            {
+              "name": "operationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "serviceName",
+              "selectedValues": {}
+            },
+            {
+              "name": "severity",
+              "selectedValues": {}
+            },
+            {
+              "name": "trace_id",
+              "selectedValues": {}
+            }
+          ]
+        },
+        "isCompactMode": false,
+        "viewType": "VIEW_TYPE_LOGS"
+      },
+      {
+        "id": 74456,
+        "name": "shuki-failed to charge card",
+        "searchQuery": {
+          "query": "_exists_:message AND message:\"desc = failed to charge card\\:\"",
+          "syntaxType": "SYNTAX_TYPE_LUCENE"
+        },
+        "timeSelection": {
+          "quickSelection": {
+            "caption": "Last 7 Days",
+            "seconds": 604800
+          }
+        },
+        "filters": {
+          "filters": [
+            {
+              "name": "applicationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "subsystemName",
+              "selectedValues": {
+                "frontend": true
+              }
+            },
+            {
+              "name": "operationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "serviceName",
+              "selectedValues": {}
+            },
+            {
+              "name": "severity",
+              "selectedValues": {
+                "5": true,
+                "6": true
+              }
+            },
+            {
+              "name": "kubernetes.node.labels.eks_amazonaws_com/nodegroup-image",
+              "selectedValues": {}
+            }
+          ]
+        },
+        "isCompactMode": false,
+        "viewType": "VIEW_TYPE_LOGS"
+      },
+      {
+        "id": 78890,
+        "name": "Shaynis",
+        "searchQuery": {
+          "query": "",
+          "syntaxType": "SYNTAX_TYPE_LUCENE"
+        },
+        "timeSelection": {
+          "quickSelection": {
+            "caption": "Last 15 minutes",
+            "seconds": 900
+          }
+        },
+        "filters": {
+          "filters": [
+            {
+              "name": "applicationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "subsystemName",
+              "selectedValues": {}
+            },
+            {
+              "name": "operationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "serviceName",
+              "selectedValues": {}
+            },
+            {
+              "name": "severity",
+              "selectedValues": {}
+            }
+          ]
+        },
+        "isCompactMode": false,
+        "viewType": "VIEW_TYPE_LOGS"
+      },
+      {
+        "id": 81910,
+        "name": "AWS - Resource, Region",
+        "searchQuery": {
+          "query": "",
+          "syntaxType": "SYNTAX_TYPE_LUCENE"
+        },
+        "timeSelection": {
+          "quickSelection": {
+            "caption": "Last 15 minutes",
+            "seconds": 900
+          }
+        },
+        "filters": {
+          "filters": [
+            {
+              "name": "applicationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "subsystemName",
+              "selectedValues": {}
+            },
+            {
+              "name": "operationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "serviceName",
+              "selectedValues": {}
+            },
+            {
+              "name": "severity",
+              "selectedValues": {}
+            }
+          ]
+        },
+        "folderId": "5a5860c3-60e4-43ac-b101-22e5a617a8b6",
+        "isCompactMode": false,
+        "viewType": "VIEW_TYPE_LOGS"
+      },
+      {
+        "id": 83117,
+        "name": "mateusz_test",
+        "searchQuery": {
+          "query": "",
+          "syntaxType": "SYNTAX_TYPE_LUCENE"
+        },
+        "timeSelection": {
+          "customSelection": {
+            "fromTime": "2024-12-16T13:28:32.078Z",
+            "toTime": "2024-12-16T15:28:32.078Z"
+          }
+        },
+        "filters": {
+          "filters": [
+            {
+              "name": "applicationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "subsystemName",
+              "selectedValues": {
+                "frontend": true
+              }
+            },
+            {
+              "name": "operationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "serviceName",
+              "selectedValues": {}
+            },
+            {
+              "name": "severity",
+              "selectedValues": {}
+            }
+          ]
+        },
+        "isCompactMode": false,
+        "viewType": "VIEW_TYPE_LOGS"
+      },
+      {
+        "id": 83348,
+        "name": "sample-view-iago",
+        "searchQuery": {
+          "query": "",
+          "syntaxType": "SYNTAX_TYPE_LUCENE"
+        },
+        "timeSelection": {
+          "quickSelection": {
+            "caption": "Last 12 hours",
+            "seconds": 43200
+          }
+        },
+        "filters": {
+          "filters": [
+            {
+              "name": "applicationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "subsystemName",
+              "selectedValues": {}
+            },
+            {
+              "name": "operationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "serviceName",
+              "selectedValues": {}
+            },
+            {
+              "name": "severity",
+              "selectedValues": {}
+            }
+          ]
+        },
+        "isCompactMode": false,
+        "viewType": "VIEW_TYPE_LOGS"
+      },
+      {
+        "id": 83679,
+        "name": "DavidTestView",
+        "searchQuery": {
+          "query": "",
+          "syntaxType": "SYNTAX_TYPE_LUCENE"
+        },
+        "timeSelection": {
+          "customSelection": {
+            "fromTime": "2025-11-17T19:09:30.979Z",
+            "toTime": "2025-11-18T19:09:30.979Z"
+          }
+        },
+        "filters": {
+          "filters": []
+        },
+        "isCompactMode": false,
+        "viewType": "VIEW_TYPE_UNSPECIFIED"
+      },
+      {
+        "id": 83680,
+        "name": "nedavidtest",
+        "searchQuery": {
+          "query": "",
+          "syntaxType": "SYNTAX_TYPE_LUCENE"
+        },
+        "timeSelection": {
+          "customSelection": {
+            "fromTime": "2024-11-28T14:35:56.144Z",
+            "toTime": "2024-11-28T14:50:56.144Z"
+          }
+        },
+        "filters": {
+          "filters": [
+            {
+              "name": "applicationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "subsystemName",
+              "selectedValues": {}
+            },
+            {
+              "name": "operationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "serviceName",
+              "selectedValues": {}
+            },
+            {
+              "name": "severity",
+              "selectedValues": {
+                "1": true,
+                "2": true,
+                "3": true
+              }
+            }
+          ]
+        },
+        "isCompactMode": false,
+        "viewType": "VIEW_TYPE_LOGS"
+      },
+      {
+        "id": 83871,
+        "name": "AvivSavedView3",
+        "searchQuery": {
+          "query": "",
+          "syntaxType": "SYNTAX_TYPE_DATAPRIME"
+        },
+        "timeSelection": {
+          "quickSelection": {
+            "caption": "Last 15 minutes",
+            "seconds": 900
+          }
+        },
+        "filters": {
+          "filters": [
+            {
+              "name": "applicationName",
+              "selectedValues": {
+                "kube-system": true
+              }
+            },
+            {
+              "name": "subsystemName",
+              "selectedValues": {}
+            },
+            {
+              "name": "operationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "serviceName",
+              "selectedValues": {}
+            },
+            {
+              "name": "severity",
+              "selectedValues": {}
+            }
+          ]
+        },
+        "folderId": "18053095-0003-4d1e-b57b-35d4e2b04cb3",
+        "isCompactMode": false,
+        "viewType": "VIEW_TYPE_LOGS"
+      },
+      {
+        "id": 83874,
+        "name": "AvivDP_ViewAll_Public",
+        "searchQuery": {
+          "query": "source logs | filter cloud.account.id:num >70",
+          "syntaxType": "SYNTAX_TYPE_DATAPRIME"
+        },
+        "timeSelection": {
+          "quickSelection": {
+            "caption": "Last 15 minutes",
+            "seconds": 900
+          }
+        },
+        "filters": {
+          "filters": [
+            {
+              "name": "applicationName",
+              "selectedValues": {
+                "kube-system": true
+              }
+            },
+            {
+              "name": "subsystemName",
+              "selectedValues": {
+                "coredns": true
+              }
+            },
+            {
+              "name": "operationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "serviceName",
+              "selectedValues": {}
+            },
+            {
+              "name": "severity",
+              "selectedValues": {}
+            }
+          ]
+        },
+        "folderId": "18053095-0003-4d1e-b57b-35d4e2b04cb3",
+        "isCompactMode": false,
+        "viewType": "VIEW_TYPE_ARCHIVE_LOGS"
+      },
+      {
+        "id": 83876,
+        "name": "AvivDemoView",
+        "searchQuery": {
+          "query": "",
+          "syntaxType": "SYNTAX_TYPE_LUCENE"
+        },
+        "timeSelection": {
+          "quickSelection": {
+            "caption": "Last 1 hour",
+            "seconds": 3600
+          }
+        },
+        "filters": {
+          "filters": [
+            {
+              "name": "applicationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "subsystemName",
+              "selectedValues": {}
+            },
+            {
+              "name": "operationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "serviceName",
+              "selectedValues": {}
+            },
+            {
+              "name": "severity",
+              "selectedValues": {}
+            }
+          ]
+        },
+        "isCompactMode": false,
+        "viewType": "VIEW_TYPE_ARCHIVE_LOGS"
+      },
+      {
+        "id": 83885,
+        "name": "RUM data",
+        "searchQuery": {
+          "query": "",
+          "syntaxType": "SYNTAX_TYPE_LUCENE"
+        },
+        "timeSelection": {
+          "quickSelection": {
+            "caption": "Last 6 hours",
+            "seconds": 21600
+          }
+        },
+        "filters": {
+          "filters": [
+            {
+              "name": "applicationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "subsystemName",
+              "selectedValues": {}
+            },
+            {
+              "name": "operationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "serviceName",
+              "selectedValues": {}
+            },
+            {
+              "name": "severity",
+              "selectedValues": {}
+            }
+          ]
+        },
+        "folderId": "34aa4afd-c1a7-4b01-9886-f5903aa3242b",
+        "isCompactMode": false,
+        "viewType": "VIEW_TYPE_LOGS"
+      },
+      {
+        "id": 83886,
+        "name": "Product Enriched",
+        "searchQuery": {
+          "query": "",
+          "syntaxType": "SYNTAX_TYPE_LUCENE"
+        },
+        "timeSelection": {
+          "customSelection": {
+            "fromTime": "2024-12-21T05:34:19.444Z",
+            "toTime": "2024-12-21T11:34:19.443Z"
+          }
+        },
+        "filters": {
+          "filters": [
+            {
+              "name": "applicationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "subsystemName",
+              "selectedValues": {}
+            },
+            {
+              "name": "operationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "serviceName",
+              "selectedValues": {}
+            },
+            {
+              "name": "severity",
+              "selectedValues": {}
+            }
+          ]
+        },
+        "folderId": "34aa4afd-c1a7-4b01-9886-f5903aa3242b",
+        "isCompactMode": false,
+        "viewType": "VIEW_TYPE_LOGS"
+      },
+      {
+        "id": 83887,
+        "name": "1h Log Count",
+        "searchQuery": {
+          "query": "",
+          "syntaxType": "SYNTAX_TYPE_LUCENE"
+        },
+        "timeSelection": {
+          "quickSelection": {
+            "caption": "Last 12 hours",
+            "seconds": 43200
+          }
+        },
+        "filters": {
+          "filters": [
+            {
+              "name": "applicationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "subsystemName",
+              "selectedValues": {}
+            },
+            {
+              "name": "operationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "serviceName",
+              "selectedValues": {}
+            },
+            {
+              "name": "severity",
+              "selectedValues": {}
+            }
+          ]
+        },
+        "folderId": "34aa4afd-c1a7-4b01-9886-f5903aa3242b",
+        "isCompactMode": false,
+        "viewType": "VIEW_TYPE_LOGS"
+      },
+      {
+        "id": 83889,
+        "name": "E2E-FE2BE",
+        "searchQuery": {
+          "query": "",
+          "syntaxType": "SYNTAX_TYPE_LUCENE"
+        },
+        "timeSelection": {
+          "customSelection": {
+            "fromTime": "2025-11-17T19:09:30.982Z",
+            "toTime": "2025-11-18T19:09:30.982Z"
+          }
+        },
+        "filters": {
+          "filters": []
+        },
+        "isCompactMode": false,
+        "viewType": "VIEW_TYPE_UNSPECIFIED"
+      },
+      {
+        "id": 83917,
+        "name": "testsaved",
+        "searchQuery": {
+          "query": "cx_metadata.cloud_account_id:\"074157727657\"",
+          "syntaxType": "SYNTAX_TYPE_LUCENE"
+        },
+        "timeSelection": {
+          "quickSelection": {
+            "caption": "Last 15 minutes",
+            "seconds": 900
+          }
+        },
+        "filters": {
+          "filters": [
+            {
+              "name": "applicationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "subsystemName",
+              "selectedValues": {}
+            },
+            {
+              "name": "operationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "serviceName",
+              "selectedValues": {}
+            },
+            {
+              "name": "severity",
+              "selectedValues": {}
+            }
+          ]
+        },
+        "isCompactMode": false,
+        "viewType": "VIEW_TYPE_ARCHIVE_LOGS"
+      },
+      {
+        "id": 83918,
+        "name": "Errored_apps",
+        "searchQuery": {
+          "query": "",
+          "syntaxType": "SYNTAX_TYPE_LUCENE"
+        },
+        "timeSelection": {
+          "quickSelection": {
+            "caption": "Last 1 hour",
+            "seconds": 3600
+          }
+        },
+        "filters": {
+          "filters": [
+            {
+              "name": "applicationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "subsystemName",
+              "selectedValues": {}
+            },
+            {
+              "name": "operationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "serviceName",
+              "selectedValues": {}
+            },
+            {
+              "name": "severity",
+              "selectedValues": {}
+            }
+          ]
+        },
+        "isCompactMode": false,
+        "viewType": "VIEW_TYPE_LOGS"
+      },
+      {
+        "id": 84011,
+        "name": "marion-test-view",
+        "searchQuery": {
+          "query": "",
+          "syntaxType": "SYNTAX_TYPE_LUCENE"
+        },
+        "timeSelection": {
+          "quickSelection": {
+            "caption": "Last 15 minutes",
+            "seconds": 900
+          }
+        },
+        "filters": {
+          "filters": [
+            {
+              "name": "applicationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "subsystemName",
+              "selectedValues": {}
+            },
+            {
+              "name": "operationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "serviceName",
+              "selectedValues": {}
+            },
+            {
+              "name": "severity",
+              "selectedValues": {}
+            }
+          ]
+        },
+        "isCompactMode": false,
+        "viewType": "VIEW_TYPE_LOGS"
+      },
+      {
+        "id": 84034,
+        "name": "DavidTestView (new)",
+        "searchQuery": {
+          "query": "",
+          "syntaxType": "SYNTAX_TYPE_LUCENE"
+        },
+        "timeSelection": {
+          "quickSelection": {
+            "caption": "Last 15 minutes",
+            "seconds": 900
+          }
+        },
+        "filters": {
+          "filters": [
+            {
+              "name": "applicationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "subsystemName",
+              "selectedValues": {}
+            },
+            {
+              "name": "operationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "serviceName",
+              "selectedValues": {}
+            },
+            {
+              "name": "severity",
+              "selectedValues": {}
+            }
+          ]
+        },
+        "isCompactMode": false,
+        "viewType": "VIEW_TYPE_ARCHIVE_LOGS"
+      },
+      {
+        "id": 84118,
+        "name": "DataPrime - Join example",
+        "searchQuery": {
+          "query": "_exists_:json.trace_id",
+          "syntaxType": "SYNTAX_TYPE_LUCENE"
+        },
+        "timeSelection": {
+          "quickSelection": {
+            "caption": "Last 15 minutes",
+            "seconds": 900
+          }
+        },
+        "filters": {
+          "filters": [
+            {
+              "name": "applicationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "subsystemName",
+              "selectedValues": {}
+            },
+            {
+              "name": "operationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "serviceName",
+              "selectedValues": {}
+            },
+            {
+              "name": "severity",
+              "selectedValues": {}
+            }
+          ]
+        },
+        "folderId": "5a5860c3-60e4-43ac-b101-22e5a617a8b6",
+        "isCompactMode": false,
+        "viewType": "VIEW_TYPE_ARCHIVE_LOGS"
+      },
+      {
+        "id": 84120,
+        "name": "cloud-provider",
+        "searchQuery": {
+          "query": "",
+          "syntaxType": "SYNTAX_TYPE_LUCENE"
+        },
+        "timeSelection": {
+          "quickSelection": {
+            "caption": "Last 15 minutes",
+            "seconds": 900
+          }
+        },
+        "filters": {
+          "filters": [
+            {
+              "name": "applicationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "subsystemName",
+              "selectedValues": {}
+            },
+            {
+              "name": "operationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "serviceName",
+              "selectedValues": {}
+            },
+            {
+              "name": "severity",
+              "selectedValues": {}
+            }
+          ]
+        },
+        "isCompactMode": false,
+        "viewType": "VIEW_TYPE_LOGS"
+      },
+      {
+        "id": 84269,
+        "name": "Understand user environment trends \u2192 See which browsers and OS are most commonly used",
+        "searchQuery": {
+          "query": "",
+          "syntaxType": "SYNTAX_TYPE_LUCENE"
+        },
+        "timeSelection": {
+          "quickSelection": {
+            "caption": "Last 30 minutes",
+            "seconds": 1800
+          }
+        },
+        "filters": {
+          "filters": [
+            {
+              "name": "applicationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "subsystemName",
+              "selectedValues": {}
+            },
+            {
+              "name": "operationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "serviceName",
+              "selectedValues": {}
+            },
+            {
+              "name": "severity",
+              "selectedValues": {}
+            }
+          ]
+        },
+        "folderId": "5a5860c3-60e4-43ac-b101-22e5a617a8b6",
+        "isCompactMode": false,
+        "viewType": "VIEW_TYPE_LOGS"
+      },
+      {
+        "id": 84376,
+        "name": "roman's view",
+        "searchQuery": {
+          "query": "",
+          "syntaxType": "SYNTAX_TYPE_LUCENE"
+        },
+        "timeSelection": {
+          "quickSelection": {
+            "caption": "Last 15 minutes",
+            "seconds": 900
+          }
+        },
+        "filters": {
+          "filters": [
+            {
+              "name": "applicationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "subsystemName",
+              "selectedValues": {}
+            },
+            {
+              "name": "operationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "serviceName",
+              "selectedValues": {}
+            },
+            {
+              "name": "severity",
+              "selectedValues": {}
+            }
+          ]
+        },
+        "isCompactMode": false,
+        "viewType": "VIEW_TYPE_LOGS"
+      },
+      {
+        "id": 84391,
+        "name": "DP1- logs trace ratio",
+        "searchQuery": {
+          "query": "source logs \n| filter json.trace_id != null\n| groupby json.trace_id as Trace agg count() as Logs\n| join (source spans\n    \t   | groupby traceID as Trace agg count() as Spans) using Trace into APM\n| choose Trace, Logs, APM.Spans as Spans, `{round(100*Logs/APM.Spans,2)}%` as Ratio",
+          "syntaxType": "SYNTAX_TYPE_DATAPRIME"
+        },
+        "timeSelection": {
+          "quickSelection": {
+            "caption": "Last 6 hours",
+            "seconds": 21600
+          }
+        },
+        "filters": {
+          "filters": [
+            {
+              "name": "applicationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "subsystemName",
+              "selectedValues": {}
+            },
+            {
+              "name": "operationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "serviceName",
+              "selectedValues": {}
+            },
+            {
+              "name": "severity",
+              "selectedValues": {}
+            }
+          ]
+        },
+        "folderId": "063bc69f-c834-40f1-8daf-d265505324df",
+        "isCompactMode": false,
+        "viewType": "VIEW_TYPE_ARCHIVE_LOGS"
+      },
+      {
+        "id": 84392,
+        "name": "DP2 - error rate",
+        "searchQuery": {
+          "query": "source logs last 6h\n| groupby $l.applicationname as Application, $l.subsystemname as Subsystem agg \n\t\tcount() as Logs, \n\t\tcount_if($m.severity> INFO) as HS_Logs\n| filter HS_Logs > 0\n| create HS_Pct from `{round(100*HS_Logs/Logs,2)}%`\n| orderby HS_Logs desc",
+          "syntaxType": "SYNTAX_TYPE_DATAPRIME"
+        },
+        "timeSelection": {
+          "quickSelection": {
+            "caption": "Last 24 hours",
+            "seconds": 86400
+          }
+        },
+        "filters": {
+          "filters": [
+            {
+              "name": "applicationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "subsystemName",
+              "selectedValues": {}
+            },
+            {
+              "name": "operationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "serviceName",
+              "selectedValues": {}
+            },
+            {
+              "name": "severity",
+              "selectedValues": {}
+            }
+          ]
+        },
+        "folderId": "063bc69f-c834-40f1-8daf-d265505324df",
+        "isCompactMode": false,
+        "viewType": "VIEW_TYPE_ARCHIVE_LOGS"
+      },
+      {
+        "id": 84393,
+        "name": "DP3",
+        "searchQuery": {
+          "query": "source logs last 6h\n| filter cx_rum.longtask_context.duration > 0\n| groupby  case_lessthan {\n    cx_rum.longtask_context.duration:num,\n    101 -> 'Good (0-100)',\n    201 -> 'Med (101-200)',\n    301 -> 'Bad (201-300)',\n    _ -> 'Investigate (301 - *)'} as Range agg count()",
+          "syntaxType": "SYNTAX_TYPE_DATAPRIME"
+        },
+        "timeSelection": {
+          "quickSelection": {
+            "caption": "Last 24 hours",
+            "seconds": 86400
+          }
+        },
+        "filters": {
+          "filters": [
+            {
+              "name": "applicationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "subsystemName",
+              "selectedValues": {}
+            },
+            {
+              "name": "operationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "serviceName",
+              "selectedValues": {}
+            },
+            {
+              "name": "severity",
+              "selectedValues": {}
+            }
+          ]
+        },
+        "folderId": "063bc69f-c834-40f1-8daf-d265505324df",
+        "isCompactMode": false,
+        "viewType": "VIEW_TYPE_ARCHIVE_LOGS"
+      },
+      {
+        "id": 84394,
+        "name": "DP4",
+        "searchQuery": {
+          "query": "source logs last 6h\n| filter cx_metadata.faas_name != null\n| groupby cx_metadata.faas_name as Lambda, cx_metadata.faas_execution as execeution_Id agg \n    count() as Logs, \n    min($m.timestamp) as Start, \n    max($m.timestamp) as End \n| create Duration from End-Start\n| convert Duration:num\n#| groupby Lambda aggregate \n#    round(sum(Duration),2):interval.roundInterval('us') as Sum_Exec, \n#    round(avg(Duration),2):interval.roundInterval('us') as Avg_Exec, \n#    round(percentile(0.95,Duration),2):interval.roundInterval('us') as P95",
+          "syntaxType": "SYNTAX_TYPE_DATAPRIME"
+        },
+        "timeSelection": {
+          "quickSelection": {
+            "caption": "Last 24 hours",
+            "seconds": 86400
+          }
+        },
+        "filters": {
+          "filters": [
+            {
+              "name": "applicationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "subsystemName",
+              "selectedValues": {}
+            },
+            {
+              "name": "operationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "serviceName",
+              "selectedValues": {}
+            },
+            {
+              "name": "severity",
+              "selectedValues": {}
+            }
+          ]
+        },
+        "folderId": "063bc69f-c834-40f1-8daf-d265505324df",
+        "isCompactMode": false,
+        "viewType": "VIEW_TYPE_ARCHIVE_LOGS"
+      },
+      {
+        "id": 84395,
+        "name": "DP5",
+        "searchQuery": {
+          "query": "",
+          "syntaxType": "SYNTAX_TYPE_LUCENE"
+        },
+        "timeSelection": {
+          "quickSelection": {
+            "caption": "Last 6 hours",
+            "seconds": 21600
+          }
+        },
+        "filters": {
+          "filters": [
+            {
+              "name": "applicationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "subsystemName",
+              "selectedValues": {}
+            },
+            {
+              "name": "operationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "serviceName",
+              "selectedValues": {}
+            },
+            {
+              "name": "severity",
+              "selectedValues": {}
+            }
+          ]
+        },
+        "folderId": "063bc69f-c834-40f1-8daf-d265505324df",
+        "isCompactMode": false,
+        "viewType": "VIEW_TYPE_ARCHIVE_LOGS"
+      },
+      {
+        "id": 84396,
+        "name": "DP6 - Error Transactions ",
+        "searchQuery": {
+          "query": "source logs last 6h\n| filter $l.subsystemname == 'paymentservice' \n| filter body ~ 'InvalidCreditCard' || pay_transaction.amount:num > 0\n| create Trans_usd from \n  case_equals {\n        pay_transaction.currency,\n        'USD'   -> pay_transaction.amount:num * 1,\n        'EUR'   -> pay_transaction.amount:num * 1.04,\n        'JPY'   -> pay_transaction.amount:num * 0.0066,\n        'CAD'   -> pay_transaction.amount:num * 0.69}\n| groupby $m.timestamp / 1h as Time aggregate \n        count_if($m.severity != ERROR) as Successfull_Transactions, \n        count_if(body ~ 'InvalidCreditCard') as Err_Transactions,  \n        `${round(sum(Trans_usd),2)}` as Total_Revenue, \n        round(avg(Trans_usd),2) as Avg_Revenue\n| create Lost_Revenue from `${round(Avg_Revenue*Err_Transactions,2)}`\n| orderby Time ",
+          "syntaxType": "SYNTAX_TYPE_DATAPRIME"
+        },
+        "timeSelection": {
+          "quickSelection": {
+            "caption": "Last 24 hours",
+            "seconds": 86400
+          }
+        },
+        "filters": {
+          "filters": [
+            {
+              "name": "applicationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "subsystemName",
+              "selectedValues": {}
+            },
+            {
+              "name": "operationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "serviceName",
+              "selectedValues": {}
+            },
+            {
+              "name": "severity",
+              "selectedValues": {}
+            }
+          ]
+        },
+        "folderId": "063bc69f-c834-40f1-8daf-d265505324df",
+        "isCompactMode": false,
+        "viewType": "VIEW_TYPE_ARCHIVE_LOGS"
+      },
+      {
+        "id": 84397,
+        "name": "DP7 - revenue by card",
+        "searchQuery": {
+          "query": "source logs last 6h\n| filter $l.subsystemname == 'paymentservice' \n| filter pay_transaction.amount:num > 0\n| create Trans_usd from \n  case_equals {\n        pay_transaction.currency,\n        'USD'   -> pay_transaction.amount:num * 1,\n        'EUR'   -> pay_transaction.amount:num * 1.04,\n        'JPY'   -> pay_transaction.amount:num * 0.0066,\n        'CAD'   -> pay_transaction.amount:num * 0.69}\n| groupby $m.timestamp/1h as Time, pay_transaction.cc as Credit_Card agg \n    count() as Transactions, \n    `${round(sum(Trans_usd),2)}` as Total_Revenue,\n    `${round(avg(Trans_usd),2)}` as Avg_Revenue\n| orderby Time",
+          "syntaxType": "SYNTAX_TYPE_DATAPRIME"
+        },
+        "timeSelection": {
+          "quickSelection": {
+            "caption": "Last 24 hours",
+            "seconds": 86400
+          }
+        },
+        "filters": {
+          "filters": [
+            {
+              "name": "applicationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "subsystemName",
+              "selectedValues": {}
+            },
+            {
+              "name": "operationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "serviceName",
+              "selectedValues": {}
+            },
+            {
+              "name": "severity",
+              "selectedValues": {}
+            }
+          ]
+        },
+        "folderId": "063bc69f-c834-40f1-8daf-d265505324df",
+        "isCompactMode": false,
+        "viewType": "VIEW_TYPE_ARCHIVE_LOGS"
+      },
+      {
+        "id": 84398,
+        "name": "DP8",
+        "searchQuery": {
+          "query": "",
+          "syntaxType": "SYNTAX_TYPE_LUCENE"
+        },
+        "timeSelection": {
+          "quickSelection": {
+            "caption": "Last 6 hours",
+            "seconds": 21600
+          }
+        },
+        "filters": {
+          "filters": [
+            {
+              "name": "applicationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "subsystemName",
+              "selectedValues": {}
+            },
+            {
+              "name": "operationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "serviceName",
+              "selectedValues": {}
+            },
+            {
+              "name": "severity",
+              "selectedValues": {}
+            }
+          ]
+        },
+        "folderId": "331c0846-40fc-49b5-b8d6-8d627d1270c0",
+        "isCompactMode": false,
+        "viewType": "VIEW_TYPE_ARCHIVE_LOGS"
+      },
+      {
+        "id": 84427,
+        "name": "test_test",
+        "searchQuery": {
+          "query": "source logs | filter $l.applicationname == 'web-app'",
+          "syntaxType": "SYNTAX_TYPE_DATAPRIME"
+        },
+        "timeSelection": {
+          "customSelection": {
+            "fromTime": "2025-03-04T15:01:33.313Z",
+            "toTime": "2025-03-04T15:16:33.313Z"
+          }
+        },
+        "filters": {
+          "filters": [
+            {
+              "name": "applicationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "subsystemName",
+              "selectedValues": {}
+            },
+            {
+              "name": "operationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "serviceName",
+              "selectedValues": {}
+            },
+            {
+              "name": "severity",
+              "selectedValues": {}
+            }
+          ]
+        },
+        "isCompactMode": false,
+        "viewType": "VIEW_TYPE_LOGS"
+      },
+      {
+        "id": 84487,
+        "name": "Exclude",
+        "searchQuery": {
+          "query": "",
+          "syntaxType": "SYNTAX_TYPE_LUCENE"
+        },
+        "timeSelection": {
+          "quickSelection": {
+            "caption": "Last 5 Days",
+            "seconds": 432000
+          }
+        },
+        "filters": {
+          "filters": [
+            {
+              "name": "applicationName",
+              "selectedValues": {
+                "kube-system": true
+              }
+            },
+            {
+              "name": "subsystemName",
+              "selectedValues": {}
+            },
+            {
+              "name": "operationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "serviceName",
+              "selectedValues": {}
+            },
+            {
+              "name": "severity",
+              "selectedValues": {}
+            }
+          ]
+        },
+        "isCompactMode": false,
+        "viewType": "VIEW_TYPE_ARCHIVE_LOGS"
+      },
+      {
+        "id": 85957,
+        "name": "RUM errors by country",
+        "searchQuery": {
+          "query": "",
+          "syntaxType": "SYNTAX_TYPE_LUCENE"
+        },
+        "timeSelection": {
+          "quickSelection": {
+            "caption": "Last 15 minutes",
+            "seconds": 900
+          }
+        },
+        "filters": {
+          "filters": [
+            {
+              "name": "applicationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "subsystemName",
+              "selectedValues": {}
+            },
+            {
+              "name": "operationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "serviceName",
+              "selectedValues": {}
+            },
+            {
+              "name": "severity",
+              "selectedValues": {
+                "5": true,
+                "6": true
+              }
+            }
+          ]
+        },
+        "folderId": "5a5860c3-60e4-43ac-b101-22e5a617a8b6",
+        "isCompactMode": false,
+        "viewType": "VIEW_TYPE_LOGS"
+      },
+      {
+        "id": 86661,
+        "name": "AvivSavedViewPublic1 ",
+        "searchQuery": {
+          "query": "cloud.image.id:\"ami\\-02b2ce7c83227ce13\"",
+          "syntaxType": "SYNTAX_TYPE_LUCENE"
+        },
+        "timeSelection": {
+          "quickSelection": {
+            "caption": "Last 15 minutes",
+            "seconds": 900
+          }
+        },
+        "filters": {
+          "filters": [
+            {
+              "name": "applicationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "subsystemName",
+              "selectedValues": {}
+            },
+            {
+              "name": "operationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "serviceName",
+              "selectedValues": {}
+            },
+            {
+              "name": "severity",
+              "selectedValues": {}
+            }
+          ]
+        },
+        "folderId": "18053095-0003-4d1e-b57b-35d4e2b04cb3",
+        "isCompactMode": false,
+        "viewType": "VIEW_TYPE_LOGS"
+      },
+      {
+        "id": 86667,
+        "name": "AvivSavedViewPublic1all",
+        "searchQuery": {
+          "query": "cloud.image.id:\"ami\\-02b2ce7c83227ce13\"",
+          "syntaxType": "SYNTAX_TYPE_LUCENE"
+        },
+        "timeSelection": {
+          "quickSelection": {
+            "caption": "Last 15 minutes",
+            "seconds": 900
+          }
+        },
+        "filters": {
+          "filters": [
+            {
+              "name": "applicationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "subsystemName",
+              "selectedValues": {}
+            },
+            {
+              "name": "operationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "serviceName",
+              "selectedValues": {}
+            },
+            {
+              "name": "severity",
+              "selectedValues": {}
+            }
+          ]
+        },
+        "folderId": "18053095-0003-4d1e-b57b-35d4e2b04cb3",
+        "isCompactMode": false,
+        "viewType": "VIEW_TYPE_ARCHIVE_LOGS"
+      },
+      {
+        "id": 86668,
+        "name": "AvivDP_View_Public",
+        "searchQuery": {
+          "query": "source logs | filter cloud.account.id:num >70",
+          "syntaxType": "SYNTAX_TYPE_DATAPRIME"
+        },
+        "timeSelection": {
+          "quickSelection": {
+            "caption": "Last 15 minutes",
+            "seconds": 900
+          }
+        },
+        "filters": {
+          "filters": [
+            {
+              "name": "applicationName",
+              "selectedValues": {
+                "kube-system": true
+              }
+            },
+            {
+              "name": "subsystemName",
+              "selectedValues": {
+                "coredns": true
+              }
+            },
+            {
+              "name": "operationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "serviceName",
+              "selectedValues": {}
+            },
+            {
+              "name": "severity",
+              "selectedValues": {}
+            }
+          ]
+        },
+        "folderId": "18053095-0003-4d1e-b57b-35d4e2b04cb3",
+        "isCompactMode": false,
+        "viewType": "VIEW_TYPE_LOGS"
+      },
+      {
+        "id": 86675,
+        "name": "Aviv_Empty_All_DP_Public",
+        "searchQuery": {
+          "query": "",
+          "syntaxType": "SYNTAX_TYPE_DATAPRIME"
+        },
+        "timeSelection": {
+          "quickSelection": {
+            "caption": "Last 15 minutes",
+            "seconds": 900
+          }
+        },
+        "filters": {
+          "filters": [
+            {
+              "name": "applicationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "subsystemName",
+              "selectedValues": {}
+            },
+            {
+              "name": "operationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "serviceName",
+              "selectedValues": {}
+            },
+            {
+              "name": "severity",
+              "selectedValues": {}
+            }
+          ]
+        },
+        "folderId": "18053095-0003-4d1e-b57b-35d4e2b04cb3",
+        "isCompactMode": false,
+        "viewType": "VIEW_TYPE_ARCHIVE_LOGS"
+      },
+      {
+        "id": 86676,
+        "name": "Aviv_Empty_Freq_DP_Public",
+        "searchQuery": {
+          "query": "",
+          "syntaxType": "SYNTAX_TYPE_DATAPRIME"
+        },
+        "timeSelection": {
+          "quickSelection": {
+            "caption": "Last 15 minutes",
+            "seconds": 900
+          }
+        },
+        "filters": {
+          "filters": [
+            {
+              "name": "applicationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "subsystemName",
+              "selectedValues": {}
+            },
+            {
+              "name": "operationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "serviceName",
+              "selectedValues": {}
+            },
+            {
+              "name": "severity",
+              "selectedValues": {}
+            }
+          ]
+        },
+        "folderId": "18053095-0003-4d1e-b57b-35d4e2b04cb3",
+        "isCompactMode": false,
+        "viewType": "VIEW_TYPE_LOGS"
+      },
+      {
+        "id": 86677,
+        "name": "Aviv_Empty_Freq_Lucene_Public",
+        "searchQuery": {
+          "query": "",
+          "syntaxType": "SYNTAX_TYPE_LUCENE"
+        },
+        "timeSelection": {
+          "quickSelection": {
+            "caption": "Last 15 minutes",
+            "seconds": 900
+          }
+        },
+        "filters": {
+          "filters": [
+            {
+              "name": "applicationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "subsystemName",
+              "selectedValues": {}
+            },
+            {
+              "name": "operationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "serviceName",
+              "selectedValues": {}
+            },
+            {
+              "name": "severity",
+              "selectedValues": {}
+            }
+          ]
+        },
+        "folderId": "18053095-0003-4d1e-b57b-35d4e2b04cb3",
+        "isCompactMode": false,
+        "viewType": "VIEW_TYPE_LOGS"
+      },
+      {
+        "id": 86678,
+        "name": "Aviv_Empty_All_Lucene_Public",
+        "searchQuery": {
+          "query": "",
+          "syntaxType": "SYNTAX_TYPE_LUCENE"
+        },
+        "timeSelection": {
+          "quickSelection": {
+            "caption": "Last 15 minutes",
+            "seconds": 900
+          }
+        },
+        "filters": {
+          "filters": [
+            {
+              "name": "applicationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "subsystemName",
+              "selectedValues": {}
+            },
+            {
+              "name": "operationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "serviceName",
+              "selectedValues": {}
+            },
+            {
+              "name": "severity",
+              "selectedValues": {}
+            }
+          ]
+        },
+        "folderId": "18053095-0003-4d1e-b57b-35d4e2b04cb3",
+        "isCompactMode": false,
+        "viewType": "VIEW_TYPE_ARCHIVE_LOGS"
+      },
+      {
+        "id": 86855,
+        "name": "Vitaly - Today",
+        "searchQuery": {
+          "query": "",
+          "syntaxType": "SYNTAX_TYPE_LUCENE"
+        },
+        "timeSelection": {
+          "customSelection": {
+            "fromTime": "2025-03-26T23:00:00Z",
+            "toTime": "2025-03-27T14:31:54.236Z"
+          }
+        },
+        "filters": {
+          "filters": [
+            {
+              "name": "applicationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "subsystemName",
+              "selectedValues": {}
+            },
+            {
+              "name": "operationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "serviceName",
+              "selectedValues": {}
+            },
+            {
+              "name": "severity",
+              "selectedValues": {
+                "5": true
+              }
+            }
+          ]
+        },
+        "isCompactMode": false,
+        "viewType": "VIEW_TYPE_LOGS"
+      },
+      {
+        "id": 88078,
+        "name": "cx_trace_view",
+        "searchQuery": {
+          "query": "_exists_:trace_id",
+          "syntaxType": "SYNTAX_TYPE_LUCENE"
+        },
+        "timeSelection": {
+          "quickSelection": {
+            "caption": "Last 15 minutes",
+            "seconds": 900
+          }
+        },
+        "filters": {
+          "filters": [
+            {
+              "name": "applicationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "subsystemName",
+              "selectedValues": {
+                "frontend": true
+              }
+            },
+            {
+              "name": "operationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "serviceName",
+              "selectedValues": {}
+            },
+            {
+              "name": "severity",
+              "selectedValues": {}
+            }
+          ]
+        },
+        "isCompactMode": false,
+        "viewType": "VIEW_TYPE_LOGS"
+      },
+      {
+        "id": 88084,
+        "name": "Cedric",
+        "searchQuery": {
+          "query": "json.http_req_ip_geoip.country_name:\"united kingdom\" AND json.http_req_ip_geoip.city_name:\"Wandsworth\"",
+          "syntaxType": "SYNTAX_TYPE_LUCENE"
+        },
+        "timeSelection": {
+          "quickSelection": {
+            "caption": "Last 24 hours",
+            "seconds": 86400
+          }
+        },
+        "filters": {
+          "filters": [
+            {
+              "name": "applicationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "subsystemName",
+              "selectedValues": {}
+            },
+            {
+              "name": "operationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "serviceName",
+              "selectedValues": {}
+            },
+            {
+              "name": "severity",
+              "selectedValues": {
+                "critical": true,
+                "error": true
+              }
+            }
+          ]
+        },
+        "isCompactMode": false,
+        "viewType": "VIEW_TYPE_ARCHIVE_LOGS"
+      },
+      {
+        "id": 88866,
+        "name": "Frontend 1-Line View",
+        "searchQuery": {
+          "query": "",
+          "syntaxType": "SYNTAX_TYPE_LUCENE"
+        },
+        "timeSelection": {
+          "quickSelection": {
+            "caption": "Last 15 minutes",
+            "seconds": 900
+          }
+        },
+        "filters": {
+          "filters": [
+            {
+              "name": "applicationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "subsystemName",
+              "selectedValues": {
+                "frontend": true
+              }
+            },
+            {
+              "name": "operationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "serviceName",
+              "selectedValues": {}
+            },
+            {
+              "name": "severity",
+              "selectedValues": {
+                "critical": true,
+                "error": true
+              }
+            }
+          ]
+        },
+        "isCompactMode": false,
+        "viewType": "VIEW_TYPE_ARCHIVE_LOGS"
+      },
+      {
+        "id": 89021,
+        "name": "test33",
+        "searchQuery": {
+          "query": "coralogix.metadata.applicationName:default AND coralogix.metadata.subsystemName:frontend",
+          "syntaxType": "SYNTAX_TYPE_LUCENE"
+        },
+        "timeSelection": {
+          "customSelection": {
+            "fromTime": "2025-04-09T09:22:27.958Z",
+            "toTime": "2025-04-09T09:37:27.958Z"
+          }
+        },
+        "filters": {
+          "filters": [
+            {
+              "name": "applicationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "subsystemName",
+              "selectedValues": {}
+            },
+            {
+              "name": "operationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "serviceName",
+              "selectedValues": {}
+            },
+            {
+              "name": "severity",
+              "selectedValues": {}
+            }
+          ]
+        },
+        "isCompactMode": false,
+        "viewType": "VIEW_TYPE_LOGS"
+      },
+      {
+        "id": 89338,
+        "name": "Error View - App Logs",
+        "searchQuery": {
+          "query": "json.error:\"could not retrieve product: rpc error: code = NotFound desc = no product with ID OLJCESPRRR\"",
+          "syntaxType": "SYNTAX_TYPE_LUCENE"
+        },
+        "timeSelection": {
+          "quickSelection": {
+            "caption": "Last 15 minutes",
+            "seconds": 900
+          }
+        },
+        "filters": {
+          "filters": [
+            {
+              "name": "applicationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "subsystemName",
+              "selectedValues": {}
+            },
+            {
+              "name": "operationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "serviceName",
+              "selectedValues": {}
+            },
+            {
+              "name": "severity",
+              "selectedValues": {}
+            }
+          ]
+        },
+        "isCompactMode": false,
+        "viewType": "VIEW_TYPE_LOGS"
+      },
+      {
+        "id": 89391,
+        "name": "AvivSavedView3 (copy)",
+        "searchQuery": {
+          "query": "",
+          "syntaxType": "SYNTAX_TYPE_LUCENE"
+        },
+        "timeSelection": {
+          "quickSelection": {
+            "caption": "Last 15 minutes",
+            "seconds": 900
+          }
+        },
+        "filters": {
+          "filters": [
+            {
+              "name": "applicationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "subsystemName",
+              "selectedValues": {}
+            },
+            {
+              "name": "operationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "serviceName",
+              "selectedValues": {}
+            },
+            {
+              "name": "severity",
+              "selectedValues": {}
+            }
+          ]
+        },
+        "isCompactMode": false,
+        "viewType": "VIEW_TYPE_LOGS"
+      },
+      {
+        "id": 89769,
+        "name": "Top 10 average http response time by country",
+        "searchQuery": {
+          "query": "source logs | groupby $d.json.http_req_ip_geoip.country_name aggregate avg($d.json.http_resp_took_ms:num) as avg_response_time_ms | create $d.avg_response_time_s from $d.avg_response_time_ms / 1000 | orderby $d.avg_response_time_s desc | limit 10",
+          "syntaxType": "SYNTAX_TYPE_DATAPRIME"
+        },
+        "timeSelection": {
+          "quickSelection": {
+            "caption": "Last 15 minutes",
+            "seconds": 900
+          }
+        },
+        "filters": {
+          "filters": [
+            {
+              "name": "applicationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "subsystemName",
+              "selectedValues": {}
+            },
+            {
+              "name": "operationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "serviceName",
+              "selectedValues": {}
+            },
+            {
+              "name": "severity",
+              "selectedValues": {}
+            }
+          ]
+        },
+        "folderId": "a022e405-18d4-4753-a094-c3f196183a57",
+        "isCompactMode": false,
+        "viewType": "VIEW_TYPE_ARCHIVE_LOGS"
+      },
+      {
+        "id": 89770,
+        "name": "Prices per Product ID",
+        "searchQuery": {
+          "query": "source logs\n| filter $d ~~ 'frontend'\n| groupby $d.product_id_enriched.category as category aggregate sum($d.product_id_enriched.price_in_currency:number) as total_price\n| orderby $d.total_price desc",
+          "syntaxType": "SYNTAX_TYPE_DATAPRIME"
+        },
+        "timeSelection": {
+          "quickSelection": {
+            "caption": "Last 15 minutes",
+            "seconds": 900
+          }
+        },
+        "filters": {
+          "filters": [
+            {
+              "name": "applicationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "subsystemName",
+              "selectedValues": {}
+            },
+            {
+              "name": "operationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "serviceName",
+              "selectedValues": {}
+            },
+            {
+              "name": "severity",
+              "selectedValues": {}
+            }
+          ]
+        },
+        "folderId": "a022e405-18d4-4753-a094-c3f196183a57",
+        "isCompactMode": false,
+        "viewType": "VIEW_TYPE_ARCHIVE_LOGS"
+      },
+      {
+        "id": 89892,
+        "name": "Server method view",
+        "searchQuery": {
+          "query": "",
+          "syntaxType": "SYNTAX_TYPE_LUCENE"
+        },
+        "timeSelection": {
+          "quickSelection": {
+            "caption": "Last 15 minutes",
+            "seconds": 900
+          }
+        },
+        "filters": {
+          "filters": [
+            {
+              "name": "applicationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "subsystemName",
+              "selectedValues": {}
+            },
+            {
+              "name": "operationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "serviceName",
+              "selectedValues": {}
+            },
+            {
+              "name": "severity",
+              "selectedValues": {}
+            }
+          ]
+        },
+        "isCompactMode": false,
+        "viewType": "VIEW_TYPE_LOGS"
+      },
+      {
+        "id": 89895,
+        "name": "FREQUENT VIEW",
+        "searchQuery": {
+          "query": "source logs  | filter $m.priorityclass != 'low'",
+          "syntaxType": "SYNTAX_TYPE_DATAPRIME"
+        },
+        "timeSelection": {
+          "customSelection": {
+            "fromTime": "2025-04-17T11:57:20.568Z",
+            "toTime": "2025-04-17T12:12:20.568Z"
+          }
+        },
+        "filters": {
+          "filters": [
+            {
+              "name": "applicationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "subsystemName",
+              "selectedValues": {}
+            },
+            {
+              "name": "severity",
+              "selectedValues": {}
+            }
+          ]
+        },
+        "isCompactMode": false,
+        "viewType": "VIEW_TYPE_LOGS"
+      },
+      {
+        "id": 89933,
+        "name": "Top 10 http response time by country",
+        "searchQuery": {
+          "query": "source logs | groupby $d.json.http_req_ip_geoip.country_name aggregate avg($d.json.http_resp_took_ms:num) as avg_response_time_ms \n#| create $d.avg_response_time_s from $d.avg_response_time_ms / 1000 \n| orderby $d.avg_response_time_ms desc | limit 10",
+          "syntaxType": "SYNTAX_TYPE_DATAPRIME"
+        },
+        "timeSelection": {
+          "quickSelection": {
+            "caption": "Last 15 minutes",
+            "seconds": 900
+          }
+        },
+        "filters": {
+          "filters": [
+            {
+              "name": "applicationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "subsystemName",
+              "selectedValues": {}
+            },
+            {
+              "name": "operationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "serviceName",
+              "selectedValues": {}
+            },
+            {
+              "name": "severity",
+              "selectedValues": {}
+            }
+          ]
+        },
+        "folderId": "8d23470d-51d1-483b-a552-cf9315d910ab",
+        "isCompactMode": false,
+        "viewType": "VIEW_TYPE_ARCHIVE_LOGS"
+      },
+      {
+        "id": 89952,
+        "name": "Checkly Tests Status Change Count",
+        "searchQuery": {
+          "query": "source logs\n| filter $d.check_name != null\n| groupby check_id agg count() as test_status_change_count\n| orderby check_id desc",
+          "syntaxType": "SYNTAX_TYPE_DATAPRIME"
+        },
+        "timeSelection": {
+          "quickSelection": {
+            "caption": "Last 24 hours",
+            "seconds": 86400
+          }
+        },
+        "filters": {
+          "filters": [
+            {
+              "name": "applicationName",
+              "selectedValues": {
+                "synthetics": true
+              }
+            },
+            {
+              "name": "subsystemName",
+              "selectedValues": {}
+            },
+            {
+              "name": "operationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "serviceName",
+              "selectedValues": {}
+            },
+            {
+              "name": "severity",
+              "selectedValues": {}
+            }
+          ]
+        },
+        "folderId": "077f1242-7669-4316-b003-2a95ce6a3e27",
+        "isCompactMode": false,
+        "viewType": "VIEW_TYPE_ARCHIVE_LOGS"
+      },
+      {
+        "id": 90021,
+        "name": "Trend Analysis - Product Catagory Purchases",
+        "searchQuery": {
+          "query": "source logs between @'2025-01-01T00:00:00' and @'2025-01-31T23:59:59'\n| groupby $m.timestamp / 1d as time, $d.product_id_enriched.category agg count() as january_purchases_count\n| filter product_id_enriched.category != null\n| join (\n\tsource logs last 31d\n\t| groupby $m.timestamp / 1d as time, $d.product_id_enriched.category agg count() as last_31_days\n\t| filter product_id_enriched.category != null\n\t) using $d.product_id_enriched.category into comparison\n| create difference from (january_purchases_count - comparison.last_31_days)\n| remove comparison.time, comparison.product_id_enriched.category",
+          "syntaxType": "SYNTAX_TYPE_DATAPRIME"
+        },
+        "timeSelection": {
+          "quickSelection": {
+            "caption": "Last 15 minutes",
+            "seconds": 900
+          }
+        },
+        "filters": {
+          "filters": [
+            {
+              "name": "applicationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "subsystemName",
+              "selectedValues": {}
+            },
+            {
+              "name": "operationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "serviceName",
+              "selectedValues": {}
+            },
+            {
+              "name": "severity",
+              "selectedValues": {}
+            }
+          ]
+        },
+        "isCompactMode": false,
+        "viewType": "VIEW_TYPE_ARCHIVE_LOGS"
+      },
+      {
+        "id": 90037,
+        "name": "testpedro",
+        "searchQuery": {
+          "query": "_exists_: message",
+          "syntaxType": "SYNTAX_TYPE_LUCENE"
+        },
+        "timeSelection": {
+          "quickSelection": {
+            "caption": "Last 15 minutes",
+            "seconds": 900
+          }
+        },
+        "filters": {
+          "filters": [
+            {
+              "name": "applicationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "subsystemName",
+              "selectedValues": {}
+            },
+            {
+              "name": "operationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "serviceName",
+              "selectedValues": {}
+            },
+            {
+              "name": "severity",
+              "selectedValues": {}
+            }
+          ]
+        },
+        "isCompactMode": false,
+        "viewType": "VIEW_TYPE_LOGS"
+      },
+      {
+        "id": 90271,
+        "name": "V Shared URL 3 Test ",
+        "searchQuery": {
+          "query": "source logs | filter $m.severity == ERROR",
+          "syntaxType": "SYNTAX_TYPE_DATAPRIME"
+        },
+        "timeSelection": {
+          "quickSelection": {
+            "caption": "Last 6 hours",
+            "seconds": 21600
+          }
+        },
+        "filters": {
+          "filters": [
+            {
+              "name": "applicationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "subsystemName",
+              "selectedValues": {}
+            },
+            {
+              "name": "operationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "serviceName",
+              "selectedValues": {}
+            },
+            {
+              "name": "severity",
+              "selectedValues": {}
+            }
+          ]
+        },
+        "isCompactMode": false,
+        "viewType": "VIEW_TYPE_LOGS"
+      },
+      {
+        "id": 90277,
+        "name": "V Static URL test 6",
+        "searchQuery": {
+          "query": "source logs | groupby cloud.region aggregate sum(if($d.responseStatus.code == 500, 1, 0)) as error_count",
+          "syntaxType": "SYNTAX_TYPE_DATAPRIME"
+        },
+        "timeSelection": {
+          "quickSelection": {
+            "caption": "Last 24 hours",
+            "seconds": 86400
+          }
+        },
+        "filters": {
+          "filters": [
+            {
+              "name": "applicationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "subsystemName",
+              "selectedValues": {}
+            },
+            {
+              "name": "operationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "serviceName",
+              "selectedValues": {}
+            },
+            {
+              "name": "severity",
+              "selectedValues": {}
+            }
+          ]
+        },
+        "isCompactMode": false,
+        "viewType": "VIEW_TYPE_LOGS"
+      },
+      {
+        "id": 90338,
+        "name": "App Error",
+        "searchQuery": {
+          "query": "\"error\"",
+          "syntaxType": "SYNTAX_TYPE_LUCENE"
+        },
+        "timeSelection": {
+          "quickSelection": {
+            "caption": "Last 2 hours",
+            "seconds": 7200
+          }
+        },
+        "filters": {
+          "filters": [
+            {
+              "name": "applicationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "subsystemName",
+              "selectedValues": {}
+            },
+            {
+              "name": "operationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "serviceName",
+              "selectedValues": {}
+            },
+            {
+              "name": "severity",
+              "selectedValues": {}
+            }
+          ]
+        },
+        "isCompactMode": false,
+        "viewType": "VIEW_TYPE_LOGS"
+      },
+      {
+        "id": 90422,
+        "name": "public traces a1",
+        "searchQuery": {
+          "query": "",
+          "syntaxType": "SYNTAX_TYPE_LUCENE"
+        },
+        "timeSelection": {
+          "customSelection": {
+            "fromTime": "2025-11-17T19:09:30.993Z",
+            "toTime": "2025-11-18T19:09:30.993Z"
+          }
+        },
+        "filters": {
+          "filters": []
+        },
+        "isCompactMode": false,
+        "viewType": "VIEW_TYPE_UNSPECIFIED"
+      },
+      {
+        "id": 90425,
+        "name": "traces a2",
+        "searchQuery": {
+          "query": "",
+          "syntaxType": "SYNTAX_TYPE_LUCENE"
+        },
+        "timeSelection": {
+          "customSelection": {
+            "fromTime": "2025-11-17T19:09:30.993Z",
+            "toTime": "2025-11-18T19:09:30.993Z"
+          }
+        },
+        "filters": {
+          "filters": []
+        },
+        "isCompactMode": false,
+        "viewType": "VIEW_TYPE_UNSPECIFIED"
+      },
+      {
+        "id": 90426,
+        "name": "trace a4",
+        "searchQuery": {
+          "query": "",
+          "syntaxType": "SYNTAX_TYPE_LUCENE"
+        },
+        "timeSelection": {
+          "customSelection": {
+            "fromTime": "2025-11-17T19:09:30.993Z",
+            "toTime": "2025-11-18T19:09:30.993Z"
+          }
+        },
+        "filters": {
+          "filters": []
+        },
+        "isCompactMode": false,
+        "viewType": "VIEW_TYPE_UNSPECIFIED"
+      },
+      {
+        "id": 90514,
+        "name": "testpraveen",
+        "searchQuery": {
+          "query": "coralogix.metadata.applicationName:\"kube\\-system\"",
+          "syntaxType": "SYNTAX_TYPE_LUCENE"
+        },
+        "timeSelection": {
+          "quickSelection": {
+            "caption": "Last 1 hour",
+            "seconds": 3600
+          }
+        },
+        "filters": {
+          "filters": [
+            {
+              "name": "applicationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "subsystemName",
+              "selectedValues": {}
+            },
+            {
+              "name": "operationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "serviceName",
+              "selectedValues": {}
+            },
+            {
+              "name": "severity",
+              "selectedValues": {}
+            }
+          ]
+        },
+        "isCompactMode": false,
+        "viewType": "VIEW_TYPE_ARCHIVE_LOGS"
+      },
+      {
+        "id": 90669,
+        "name": "Trace explore DP",
+        "searchQuery": {
+          "query": "",
+          "syntaxType": "SYNTAX_TYPE_LUCENE"
+        },
+        "timeSelection": {
+          "customSelection": {
+            "fromTime": "2025-11-17T19:09:30.993Z",
+            "toTime": "2025-11-18T19:09:30.993Z"
+          }
+        },
+        "filters": {
+          "filters": []
+        },
+        "isCompactMode": false,
+        "viewType": "VIEW_TYPE_UNSPECIFIED"
+      },
+      {
+        "id": 90689,
+        "name": "alert_count",
+        "searchQuery": {
+          "query": "source logs | groupby $d.alert_name aggregate distinct_count($d.alert_name) as unique_alert_count",
+          "syntaxType": "SYNTAX_TYPE_DATAPRIME"
+        },
+        "timeSelection": {
+          "quickSelection": {
+            "caption": "Last 15 minutes",
+            "seconds": 900
+          }
+        },
+        "filters": {
+          "filters": [
+            {
+              "name": "applicationName",
+              "selectedValues": {
+                "coralogix alerts": true
+              }
+            },
+            {
+              "name": "subsystemName",
+              "selectedValues": {}
+            },
+            {
+              "name": "operationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "serviceName",
+              "selectedValues": {}
+            },
+            {
+              "name": "severity",
+              "selectedValues": {}
+            }
+          ]
+        },
+        "isCompactMode": false,
+        "viewType": "VIEW_TYPE_ARCHIVE_LOGS"
+      },
+      {
+        "id": 90730,
+        "name": "test-rahul",
+        "searchQuery": {
+          "query": "errorMessage:\"Request would have succeeded, but DryRun flag is set.\"",
+          "syntaxType": "SYNTAX_TYPE_LUCENE"
+        },
+        "timeSelection": {
+          "quickSelection": {
+            "caption": "Last 15 minutes",
+            "seconds": 900
+          }
+        },
+        "filters": {
+          "filters": [
+            {
+              "name": "applicationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "subsystemName",
+              "selectedValues": {}
+            },
+            {
+              "name": "operationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "serviceName",
+              "selectedValues": {}
+            },
+            {
+              "name": "severity",
+              "selectedValues": {}
+            }
+          ]
+        },
+        "isCompactMode": false,
+        "viewType": "VIEW_TYPE_LOGS"
+      },
+      {
+        "id": 90777,
+        "name": "Frontend Jul10",
+        "searchQuery": {
+          "query": "json.http_req_method:\"\"",
+          "syntaxType": "SYNTAX_TYPE_LUCENE"
+        },
+        "timeSelection": {
+          "quickSelection": {
+            "caption": "Last 24 hours",
+            "seconds": 86400
+          }
+        },
+        "filters": {
+          "filters": [
+            {
+              "name": "applicationName",
+              "selectedValues": {
+                "default": true
+              }
+            },
+            {
+              "name": "subsystemName",
+              "selectedValues": {
+                "frontend": true
+              }
+            },
+            {
+              "name": "operationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "serviceName",
+              "selectedValues": {}
+            },
+            {
+              "name": "severity",
+              "selectedValues": {
+                "5": true,
+                "6": true
+              }
+            }
+          ]
+        },
+        "isCompactMode": false,
+        "viewType": "VIEW_TYPE_ARCHIVE_LOGS"
+      },
+      {
+        "id": 90794,
+        "name": "Investigation checkout service ",
+        "searchQuery": {
+          "query": "(span_id.keyword:\"85d32a1a396a27c3\" OR json.span_id.keyword:\"85d32a1a396a27c3\" OR trace_id.keyword:\"85d32a1a396a27c3\") OR (span_id.keyword:\"9cc81299ee95c5945fa31843c3012331\" OR json.span_id.keyword:\"9cc81299ee95c5945fa31843c3012331\" OR trace_id.keyword:\"9cc81299ee95c5945fa31843c3012331\")",
+          "syntaxType": "SYNTAX_TYPE_LUCENE"
+        },
+        "timeSelection": {
+          "customSelection": {
+            "fromTime": "2025-07-11T10:40:25.363Z",
+            "toTime": "2025-07-11T12:40:26.295Z"
+          }
+        },
+        "filters": {
+          "filters": [
+            {
+              "name": "applicationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "subsystemName",
+              "selectedValues": {}
+            },
+            {
+              "name": "operationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "serviceName",
+              "selectedValues": {}
+            },
+            {
+              "name": "severity",
+              "selectedValues": {
+                "5": true,
+                "6": true
+              }
+            }
+          ]
+        },
+        "isCompactMode": false,
+        "viewType": "VIEW_TYPE_LOGS"
+      },
+      {
+        "id": 91200,
+        "name": "1. Basic filter",
+        "searchQuery": {
+          "query": "# Get the logs\nsource logs\n# Add a filter\n| filter $m.severity == ERROR",
+          "syntaxType": "SYNTAX_TYPE_DATAPRIME"
+        },
+        "timeSelection": {
+          "quickSelection": {
+            "caption": "Last 1 hour",
+            "seconds": 3600
+          }
+        },
+        "filters": {
+          "filters": [
+            {
+              "name": "applicationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "subsystemName",
+              "selectedValues": {}
+            },
+            {
+              "name": "operationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "serviceName",
+              "selectedValues": {}
+            },
+            {
+              "name": "severity",
+              "selectedValues": {}
+            }
+          ]
+        },
+        "folderId": "331c0846-40fc-49b5-b8d6-8d627d1270c0",
+        "isCompactMode": false,
+        "viewType": "VIEW_TYPE_ARCHIVE_LOGS"
+      },
+      {
+        "id": 91201,
+        "name": "2. Timeframe",
+        "searchQuery": {
+          "query": "source logs last 4h\n| filter $m.severity == ERROR\n| filter $l.subsystemname == 'frontend'",
+          "syntaxType": "SYNTAX_TYPE_DATAPRIME"
+        },
+        "timeSelection": {
+          "quickSelection": {
+            "caption": "Last 15 minutes",
+            "seconds": 900
+          }
+        },
+        "filters": {
+          "filters": [
+            {
+              "name": "applicationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "subsystemName",
+              "selectedValues": {}
+            },
+            {
+              "name": "operationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "serviceName",
+              "selectedValues": {}
+            },
+            {
+              "name": "severity",
+              "selectedValues": {}
+            }
+          ]
+        },
+        "folderId": "331c0846-40fc-49b5-b8d6-8d627d1270c0",
+        "isCompactMode": false,
+        "viewType": "VIEW_TYPE_ARCHIVE_LOGS"
+      },
+      {
+        "id": 91202,
+        "name": "3. HTTP Response Count",
+        "searchQuery": {
+          "query": "source logs last 8h\n| filter $l.subsystemname == 'frontend'\n| filter http_resp_status != null\n| groupby http_resp_status as http_response agg count() as count",
+          "syntaxType": "SYNTAX_TYPE_DATAPRIME"
+        },
+        "timeSelection": {
+          "quickSelection": {
+            "caption": "Last 15 minutes",
+            "seconds": 900
+          }
+        },
+        "filters": {
+          "filters": [
+            {
+              "name": "applicationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "subsystemName",
+              "selectedValues": {}
+            },
+            {
+              "name": "operationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "serviceName",
+              "selectedValues": {}
+            },
+            {
+              "name": "severity",
+              "selectedValues": {}
+            }
+          ]
+        },
+        "folderId": "331c0846-40fc-49b5-b8d6-8d627d1270c0",
+        "isCompactMode": false,
+        "viewType": "VIEW_TYPE_ARCHIVE_LOGS"
+      },
+      {
+        "id": 91203,
+        "name": "4. Count_if",
+        "searchQuery": {
+          "query": "source logs last 8h\n| filter $l.subsystemname == 'frontend'\n# Filter out the nulls\n| filter http_resp_status != null\n# Group http responses and name the group + aggregate the counts and name the count\n| groupby http_resp_status as http_response agg count() as count,\n    count_if($m.timestamp < now() && $m.timestamp > now() - 2h) as last_2h\n| orderby count desc",
+          "syntaxType": "SYNTAX_TYPE_DATAPRIME"
+        },
+        "timeSelection": {
+          "quickSelection": {
+            "caption": "Last 15 minutes",
+            "seconds": 900
+          }
+        },
+        "filters": {
+          "filters": [
+            {
+              "name": "applicationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "subsystemName",
+              "selectedValues": {}
+            },
+            {
+              "name": "operationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "serviceName",
+              "selectedValues": {}
+            },
+            {
+              "name": "severity",
+              "selectedValues": {}
+            }
+          ]
+        },
+        "folderId": "331c0846-40fc-49b5-b8d6-8d627d1270c0",
+        "isCompactMode": false,
+        "viewType": "VIEW_TYPE_ARCHIVE_LOGS"
+      },
+      {
+        "id": 91205,
+        "name": "5. High Severity",
+        "searchQuery": {
+          "query": "source logs\n| groupby $l.subsystemname as Subsystem agg \n\t\tcount() as Logs, \n\t\tcount_if($m.severity> INFO) as HS_Logs\n| join (source logs timeshifted -1d\n    | groupby $l.subsystemname as Subsystem agg \n\t\tcount() as Logs, \n\t\tcount_if($m.severity> INFO) as HS_Logs\n    | filter HS_Logs > 0) on left=>$d.Subsystem == right=>$d.Subsystem into Yesterday\n| join (source logs timeshifted -7d\n    | groupby $l.subsystemname as Subsystem agg \n\t\tcount() as Logs, \n\t\tcount_if($m.severity> INFO) as HS_Logs\n    | filter HS_Logs > 0) on left=>$d.Subsystem == right=>$d.Subsystem into LastWeek\n| create HS_Pct from round(HS_Logs*100/Logs,2)\n| create HS_Pct_Yesterday from round(Yesterday.HS_Logs*100/Yesterday.Logs,2)\n| create HS_Pct_LastWeek from round(LastWeek.HS_Logs*100/LastWeek.Logs,2)\n| choose Subsystem, Logs, HS_Pct, HS_Pct_Yesterday, HS_Pct_LastWeek\n| orderby HS_Pct desc",
+          "syntaxType": "SYNTAX_TYPE_DATAPRIME"
+        },
+        "timeSelection": {
+          "quickSelection": {
+            "caption": "Last 6 hours",
+            "seconds": 21600
+          }
+        },
+        "filters": {
+          "filters": [
+            {
+              "name": "applicationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "subsystemName",
+              "selectedValues": {}
+            },
+            {
+              "name": "operationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "serviceName",
+              "selectedValues": {}
+            },
+            {
+              "name": "severity",
+              "selectedValues": {}
+            }
+          ]
+        },
+        "folderId": "331c0846-40fc-49b5-b8d6-8d627d1270c0",
+        "isCompactMode": false,
+        "viewType": "VIEW_TYPE_ARCHIVE_LOGS"
+      },
+      {
+        "id": 91390,
+        "name": "LTest_public",
+        "searchQuery": {
+          "query": "source logs | limit 500",
+          "syntaxType": "SYNTAX_TYPE_DATAPRIME"
+        },
+        "timeSelection": {
+          "customSelection": {
+            "fromTime": "2025-08-31T11:17:40.739Z",
+            "toTime": "2025-08-31T11:32:40.739Z"
+          }
+        },
+        "filters": {
+          "filters": [
+            {
+              "name": "applicationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "subsystemName",
+              "selectedValues": {}
+            },
+            {
+              "name": "operationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "serviceName",
+              "selectedValues": {}
+            },
+            {
+              "name": "severity",
+              "selectedValues": {}
+            }
+          ]
+        },
+        "isCompactMode": false,
+        "viewType": "VIEW_TYPE_LOGS"
+      },
+      {
+        "id": 91453,
+        "name": "ELS_test",
+        "searchQuery": {
+          "query": "source logs | filter $m.severity == ERROR \n| create $d.time_bucket from roundTime($m.timestamp, 5m) \n| groupby $d.time_bucket, $l.subsystemname aggregate count() as $d.log_count",
+          "syntaxType": "SYNTAX_TYPE_DATAPRIME"
+        },
+        "timeSelection": {
+          "quickSelection": {
+            "caption": "Last 12 hours",
+            "seconds": 43200
+          }
+        },
+        "filters": {
+          "filters": [
+            {
+              "name": "applicationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "subsystemName",
+              "selectedValues": {}
+            },
+            {
+              "name": "operationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "serviceName",
+              "selectedValues": {}
+            },
+            {
+              "name": "severity",
+              "selectedValues": {}
+            },
+            {
+              "name": "apiVersion",
+              "selectedValues": {}
+            }
+          ]
+        },
+        "isCompactMode": false,
+        "viewType": "VIEW_TYPE_LOGS"
+      },
+      {
+        "id": 91473,
+        "name": "Span count by service",
+        "searchQuery": {
+          "query": "source spans\n| groupby decodeUuid(traceID) as traceID, $l.serviceName, $l.operationName agg count()\n| join inner (source spans\n        | groupby decodeUuid(traceID) as traceID agg count()\n        ) on left=>$d.traceID == right=>$d.traceID into span_count",
+          "syntaxType": "SYNTAX_TYPE_DATAPRIME"
+        },
+        "timeSelection": {
+          "quickSelection": {
+            "caption": "Last 15 minutes",
+            "seconds": 900
+          }
+        },
+        "filters": {
+          "filters": [
+            {
+              "name": "applicationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "subsystemName",
+              "selectedValues": {}
+            },
+            {
+              "name": "operationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "serviceName",
+              "selectedValues": {}
+            },
+            {
+              "name": "severity",
+              "selectedValues": {}
+            }
+          ]
+        },
+        "isCompactMode": false,
+        "viewType": "VIEW_TYPE_LOGS"
+      },
+      {
+        "id": 91671,
+        "name": "123",
+        "searchQuery": {
+          "query": "123",
+          "syntaxType": "SYNTAX_TYPE_LUCENE"
+        },
+        "timeSelection": {
+          "quickSelection": {
+            "caption": "Last 15 minutes",
+            "seconds": 900
+          }
+        },
+        "filters": {
+          "filters": [
+            {
+              "name": "applicationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "subsystemName",
+              "selectedValues": {}
+            },
+            {
+              "name": "operationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "serviceName",
+              "selectedValues": {}
+            },
+            {
+              "name": "severity",
+              "selectedValues": {}
+            }
+          ]
+        },
+        "isCompactMode": false,
+        "viewType": "VIEW_TYPE_LOGS"
+      },
+      {
+        "id": 91933,
+        "name": "Top 10 http response time by country (copy)",
+        "searchQuery": {
+          "query": "source logs | groupby $d.json.http_req_ip_geoip.country_name aggregate avg($d.json.http_resp_took_ms:num) as avg_response_time_ms \n| orderby $d.avg_response_time_ms desc | limit 10",
+          "syntaxType": "SYNTAX_TYPE_DATAPRIME"
+        },
+        "timeSelection": {
+          "quickSelection": {
+            "caption": "Last 15 minutes",
+            "seconds": 900
+          }
+        },
+        "filters": {
+          "filters": [
+            {
+              "name": "applicationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "subsystemName",
+              "selectedValues": {}
+            },
+            {
+              "name": "operationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "serviceName",
+              "selectedValues": {}
+            },
+            {
+              "name": "severity",
+              "selectedValues": {}
+            }
+          ]
+        },
+        "folderId": "22b6c453-7848-48d4-8a0a-a132d6c07416",
+        "isCompactMode": false,
+        "viewType": "VIEW_TYPE_ARCHIVE_LOGS"
+      },
+      {
+        "id": 91944,
+        "name": "Ori Demo Lucene",
+        "searchQuery": {
+          "query": "resource.attributes.host_name:\"ip\\-172\\-31\\-14\\-194.us\\-east\\-2.compute.internal\"",
+          "syntaxType": "SYNTAX_TYPE_LUCENE"
+        },
+        "timeSelection": {
+          "quickSelection": {
+            "caption": "Last 15 minutes",
+            "seconds": 900
+          }
+        },
+        "filters": {
+          "filters": [
+            {
+              "name": "applicationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "subsystemName",
+              "selectedValues": {}
+            },
+            {
+              "name": "operationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "serviceName",
+              "selectedValues": {}
+            },
+            {
+              "name": "severity",
+              "selectedValues": {}
+            }
+          ]
+        },
+        "folderId": "22b6c453-7848-48d4-8a0a-a132d6c07416",
+        "isCompactMode": false,
+        "viewType": "VIEW_TYPE_LOGS"
+      },
+      {
+        "id": 91946,
+        "name": "Ori Demo DataPrime",
+        "searchQuery": {
+          "query": "source logs\n| filter $d.message ~ 'PaymentService#Charge invoked with request'\n| extract $d.message into $d using regexp(/PaymentService#Charge invoked with request ?(?<payloads>{.*}})/)\n| extract $d.payloads into $d.payloads using jsonobject()\n#| groupby payloads.amount.currency_code agg sum(payloads.amount.units:num) as total_units\n\n",
+          "syntaxType": "SYNTAX_TYPE_DATAPRIME"
+        },
+        "timeSelection": {
+          "quickSelection": {
+            "caption": "Last 15 minutes",
+            "seconds": 900
+          }
+        },
+        "filters": {
+          "filters": [
+            {
+              "name": "applicationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "subsystemName",
+              "selectedValues": {}
+            },
+            {
+              "name": "operationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "serviceName",
+              "selectedValues": {}
+            },
+            {
+              "name": "severity",
+              "selectedValues": {}
+            }
+          ]
+        },
+        "folderId": "22b6c453-7848-48d4-8a0a-a132d6c07416",
+        "isCompactMode": false,
+        "viewType": "VIEW_TYPE_LOGS"
+      },
+      {
+        "id": 91957,
+        "name": "abcabc",
+        "searchQuery": {
+          "query": "coralogix.templateId:\"903e04a2\\-8f3b\\-11f0\\-b70f\\-a62a4f9121c2\" AND product_id_enriched.category:\"accessories\"",
+          "syntaxType": "SYNTAX_TYPE_LUCENE"
+        },
+        "timeSelection": {
+          "quickSelection": {
+            "caption": "Last 24 hours",
+            "seconds": 86400
+          }
+        },
+        "filters": {
+          "filters": [
+            {
+              "name": "applicationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "subsystemName",
+              "selectedValues": {
+                "frontend": true
+              }
+            },
+            {
+              "name": "operationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "serviceName",
+              "selectedValues": {}
+            },
+            {
+              "name": "severity",
+              "selectedValues": {
+                "5": true
+              }
+            }
+          ]
+        },
+        "isCompactMode": false,
+        "viewType": "VIEW_TYPE_LOGS"
+      },
+      {
+        "id": 92006,
+        "name": "Logs view test",
+        "searchQuery": {
+          "query": "source logs\n| filter product_id_enriched.category != null\n| filter $l.applicationname == 'default' && $l.subsystemname == 'frontend'\n| groupby product_id_enriched.category as product_category aggregate  `${sum(product_id_enriched.price_in_currency:num)}` as total_price",
+          "syntaxType": "SYNTAX_TYPE_LUCENE"
+        },
+        "timeSelection": {
+          "quickSelection": {
+            "caption": "Last 1 hour",
+            "seconds": 3600
+          }
+        },
+        "filters": {
+          "filters": [
+            {
+              "name": "applicationName",
+              "selectedValues": {
+                "cs-rest-test1": true,
+                "demo": true
+              }
+            }
+          ]
+        },
+        "isCompactMode": false,
+        "viewType": "VIEW_TYPE_LOGS"
+      },
+      {
+        "id": 92236,
+        "name": "DP ERROR VIEW",
+        "searchQuery": {
+          "query": "// Select * from table_name\n// command 1 | command 2 | ...\nsource logs | filter $m.severity.in(ERROR, CRITICAL)\n| groupby $l.applicationname, $l.subsystemname agg count()\n| sortby _count0 desc",
+          "syntaxType": "SYNTAX_TYPE_DATAPRIME"
+        },
+        "timeSelection": {
+          "quickSelection": {
+            "caption": "Last 15 minutes",
+            "seconds": 900
+          }
+        },
+        "filters": {
+          "filters": [
+            {
+              "name": "applicationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "subsystemName",
+              "selectedValues": {}
+            },
+            {
+              "name": "operationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "serviceName",
+              "selectedValues": {}
+            },
+            {
+              "name": "severity",
+              "selectedValues": {}
+            }
+          ]
+        },
+        "isCompactMode": false,
+        "viewType": "VIEW_TYPE_LOGS"
+      },
+      {
+        "id": "e047b11d-efab-4672-997b-0c405a97eb2e",
+        "name": "Audit Views"
+      },
+      {
+        "id": "18053095-0003-4d1e-b57b-35d4e2b04cb3",
+        "name": "Aviv Views"
+      },
+      {
+        "id": "077f1242-7669-4316-b003-2a95ce6a3e27",
+        "name": "Checkly DP Queries"
+      },
+      {
+        "id": "5a5860c3-60e4-43ac-b101-22e5a617a8b6",
+        "name": "DataPrime Folder"
+      },
+      {
+        "id": "063bc69f-c834-40f1-8daf-d265505324df",
+        "name": "DP Event"
+      },
+      {
+        "id": "7d162e03-9f77-4821-91c0-dba68d470b10",
+        "name": "DP-AI-Evals"
+      },
+      {
+        "id": "34aa4afd-c1a7-4b01-9886-f5903aa3242b",
+        "name": "Ittai's Views"
+      },
+      {
+        "id": "331c0846-40fc-49b5-b8d6-8d627d1270c0",
+        "name": "Jake DataPrime Demos"
+      },
+      {
+        "id": "2b09ee49-f1a5-4f13-99fc-d74f92dad3c6",
+        "name": "Jas"
+      },
+      {
+        "id": "e8f25c47-02da-476c-82a9-b82aed0d8236",
+        "name": "Niv Preset"
+      },
+      {
+        "id": "22b6c453-7848-48d4-8a0a-a132d6c07416",
+        "name": "Ori Training"
+      },
+      {
+        "id": "73bef493-d5e8-4b32-ad5e-9c1bfa80ad4a",
+        "name": "Sam View"
+      },
+      {
+        "id": "5ca05c9b-cec5-4873-b9cd-bef4743d153a",
+        "name": "Shahaf [TSE]"
+      },
+      {
+        "id": "b5537e9d-6af7-4688-9dc1-295f620d09df",
+        "name": "Siddy Views"
+      },
+      {
+        "id": "4def50a1-f91f-42cc-bda1-98c1644062dd",
+        "name": "Test-mz"
+      },
+      {
+        "id": "3af6ae86-b01c-48c3-9813-404dc812269c",
+        "name": "Test-Saved"
+      },
+      {
+        "id": "8b9ddc23-8f12-4916-8fdb-a6ec4a90d7a9",
+        "name": "Tracing"
+      },
+      {
+        "id": "fe298a60-0932-4dc6-a3ec-26b7f65a3ad0",
+        "name": "Veronika Views"
+      },
+      {
+        "id": "a022e405-18d4-4753-a094-c3f196183a57",
+        "name": "workshop Voyado"
+      },
+      {
+        "id": "8d23470d-51d1-483b-a552-cf9315d910ab",
+        "name": "Yulia Demo"
+      }
+    ],
+    "resource_identifiers": [
+      "Logs and Metrics",
+      "FrontendTrace By Action (Sri)",
+      "Traces by Action",
+      "Traces",
+      "Filtered view - Tele",
+      "Pankit - Percentiles and Errors View",
+      "Default traces",
+      "DataPrime - Revenue",
+      "DataPrime - Enrich",
+      "DataPrime - Enrich and Calculate",
+      "DataPrime - Error Status Count",
+      "DataPrime - RUM Order by Error Desc",
+      "DataPrime - RUM redact email and error count",
+      "DataPrime - Case Statement",
+      "Frontend - Errors by Country",
+      "DataPrime - Avg Span Duration",
+      "Credit invalid",
+      "frontend Error Logs",
+      "GenAI - City List",
+      "frontend-template-debug",
+      "shuki-failed to charge card",
+      "Shaynis",
+      "AWS - Resource, Region",
+      "mateusz_test",
+      "sample-view-iago",
+      "DavidTestView",
+      "nedavidtest",
+      "AvivSavedView3",
+      "AvivDP_ViewAll_Public",
+      "AvivDemoView",
+      "RUM data",
+      "Product Enriched",
+      "1h Log Count",
+      "E2E-FE2BE",
+      "testsaved",
+      "Errored_apps",
+      "marion-test-view",
+      "DavidTestView (new)",
+      "DataPrime - Join example",
+      "cloud-provider",
+      "Understand user environment trends \u2192 See which browsers and OS are most commonly used",
+      "roman's view",
+      "DP1- logs trace ratio",
+      "DP2 - error rate",
+      "DP3",
+      "DP4",
+      "DP5",
+      "DP6 - Error Transactions ",
+      "DP7 - revenue by card",
+      "DP8",
+      "test_test",
+      "Exclude",
+      "RUM errors by country",
+      "AvivSavedViewPublic1 ",
+      "AvivSavedViewPublic1all",
+      "AvivDP_View_Public",
+      "Aviv_Empty_All_DP_Public",
+      "Aviv_Empty_Freq_DP_Public",
+      "Aviv_Empty_Freq_Lucene_Public",
+      "Aviv_Empty_All_Lucene_Public",
+      "Vitaly - Today",
+      "cx_trace_view",
+      "Cedric",
+      "Frontend 1-Line View",
+      "test33",
+      "Error View - App Logs",
+      "AvivSavedView3 (copy)",
+      "Top 10 average http response time by country",
+      "Prices per Product ID",
+      "Server method view",
+      "FREQUENT VIEW",
+      "Top 10 http response time by country",
+      "Checkly Tests Status Change Count",
+      "Trend Analysis - Product Catagory Purchases",
+      "testpedro",
+      "V Shared URL 3 Test ",
+      "V Static URL test 6",
+      "App Error",
+      "public traces a1",
+      "traces a2",
+      "trace a4",
+      "testpraveen",
+      "Trace explore DP",
+      "alert_count",
+      "test-rahul",
+      "Frontend Jul10",
+      "Investigation checkout service ",
+      "1. Basic filter",
+      "2. Timeframe",
+      "3. HTTP Response Count",
+      "4. Count_if",
+      "5. High Severity",
+      "LTest_public",
+      "ELS_test",
+      "Span count by service",
+      "123",
+      "Top 10 http response time by country (copy)",
+      "Ori Demo Lucene",
+      "Ori Demo DataPrime",
+      "abcabc",
+      "Logs view test",
+      "DP ERROR VIEW",
+      "Audit Views",
+      "Aviv Views",
+      "Checkly DP Queries",
+      "DataPrime Folder",
+      "DP Event",
+      "DP-AI-Evals",
+      "Ittai's Views",
+      "Jake DataPrime Demos",
+      "Jas",
+      "Niv Preset",
+      "Ori Training",
+      "Sam View",
+      "Shahaf [TSE]",
+      "Siddy Views",
+      "Test-mz",
+      "Test-Saved",
+      "Tracing",
+      "Veronika Views",
+      "workshop Voyado",
+      "Yulia Demo"
+    ]
+  },
+  "teamb": {
+    "count": 2,
+    "resources": [
+      {
+        "id": 109002,
+        "name": "sampleview",
+        "searchQuery": {
+          "query": "body:\"200\"  AND body:\"\\/health\"",
+          "syntaxType": "SYNTAX_TYPE_LUCENE"
+        },
+        "timeSelection": {
+          "quickSelection": {
+            "caption": "Last 15 minutes",
+            "seconds": 900
+          }
+        },
+        "filters": {
+          "filters": [
+            {
+              "name": "applicationName",
+              "selectedValues": {
+                "otel": true
+              }
+            },
+            {
+              "name": "subsystemName",
+              "selectedValues": {}
+            },
+            {
+              "name": "operationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "serviceName",
+              "selectedValues": {}
+            },
+            {
+              "name": "severity",
+              "selectedValues": {
+                "3": true,
+                "4": true
+              }
+            }
+          ]
+        },
+        "isCompactMode": false,
+        "viewType": "VIEW_TYPE_LOGS"
+      },
+      {
+        "id": "7e2fdf23-61a9-4e32-89aa-ef3d2e6e3bcf",
+        "name": "samplefolder"
+      }
+    ],
+    "resource_identifiers": [
+      "sampleview",
+      "samplefolder"
+    ]
+  },
+  "metadata": {
+    "created_by": "version_manager",
+    "purpose": "pre_migration_snapshot"
+  }
+}

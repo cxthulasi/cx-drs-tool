@@ -1,0 +1,471 @@
+{
+  "timestamp": "2025-11-08T02:34:41.580152",
+  "team": "teamb",
+  "count": 9,
+  "events2metrics": [
+    {
+      "id": "1fc44968-842c-4c22-9afb-d66cbb37935c",
+      "name": "cx_service_catalog_apdex_tolerating",
+      "description": "Apdex threshold for  tolerating requests",
+      "createTime": "2025-11-07T21:02:13.000Z",
+      "updateTime": "2025-11-07T21:02:12.000Z",
+      "permutations": {
+        "limit": 30000,
+        "hasExceededLimit": false
+      },
+      "metricLabels": [
+        {
+          "targetLabel": "service",
+          "sourceField": "servicename"
+        }
+      ],
+      "metricFields": [],
+      "type": "E2M_TYPE_SPANS2METRICS",
+      "spansQuery": {
+        "lucene": "(+duration:{500000 TO 2000000] ) AND NOT tags.error: \"true\" AND (tags.span.kind: \"server\" OR tags.span.kind: \"consumer\")",
+        "applicationnameFilters": [],
+        "subsystemnameFilters": [],
+        "actionFilters": [],
+        "serviceFilters": []
+      },
+      "isInternal": false
+    },
+    {
+      "id": "7dfe7f66-90b7-4c6d-adc7-0b2af46e4de0",
+      "name": "cx_serverless_runtime_done",
+      "description": "faas executions",
+      "createTime": "2025-11-07T21:02:12.000Z",
+      "updateTime": "2025-11-07T21:02:11.000Z",
+      "permutations": {
+        "limit": 30000,
+        "hasExceededLimit": false
+      },
+      "metricLabels": [
+        {
+          "targetLabel": "faas_id",
+          "sourceField": "cx_metadata.faas_id"
+        }
+      ],
+      "metricFields": [],
+      "type": "E2M_TYPE_LOGS2METRICS",
+      "logsQuery": {
+        "lucene": "platform_event_type:\"runtime_done\" AND _exists_:cx_metadata.faas_id",
+        "alias": null,
+        "applicationnameFilters": [],
+        "subsystemnameFilters": [],
+        "severityFilters": [
+          "SEVERITY_INFO",
+          "SEVERITY_ERROR"
+        ]
+      },
+      "isInternal": false
+    },
+    {
+      "id": "7ef18228-b04f-4d4e-97b4-6bea65e61496",
+      "name": "cx_db_catalog_apdex_tolerating",
+      "description": "Apdex threshold for  tolerating requests",
+      "createTime": "2025-11-07T21:02:10.000Z",
+      "updateTime": "2025-11-07T21:02:10.000Z",
+      "permutations": {
+        "limit": 30000,
+        "hasExceededLimit": false
+      },
+      "metricLabels": [
+        {
+          "targetLabel": "service",
+          "sourceField": "servicename"
+        },
+        {
+          "targetLabel": "net_peer_name",
+          "sourceField": "tags.net.peer.name"
+        },
+        {
+          "targetLabel": "db_name",
+          "sourceField": "tags.db.name"
+        },
+        {
+          "targetLabel": "db_system",
+          "sourceField": "tags.db.system"
+        }
+      ],
+      "metricFields": [],
+      "type": "E2M_TYPE_SPANS2METRICS",
+      "spansQuery": {
+        "lucene": "(+duration:{500000 TO 2000000] ) AND NOT tags.error: \"true\" AND tags.span.kind: \"client\" AND _exists_: \"tags.db.system\"",
+        "applicationnameFilters": [],
+        "subsystemnameFilters": [],
+        "actionFilters": [],
+        "serviceFilters": []
+      },
+      "isInternal": false
+    },
+    {
+      "id": "854018ef-9381-4fb1-956a-21f51fc0150d",
+      "name": "SourceIP_Event_Count",
+      "description": "Counts events by source IP address",
+      "createTime": "2025-11-07T21:02:06.000Z",
+      "updateTime": "2025-11-07T21:02:06.000Z",
+      "permutations": {
+        "limit": 30000,
+        "hasExceededLimit": false
+      },
+      "metricLabels": [],
+      "metricFields": [],
+      "type": "E2M_TYPE_LOGS2METRICS",
+      "logsQuery": {
+        "lucene": "_exists_:ip",
+        "alias": null,
+        "applicationnameFilters": [],
+        "subsystemnameFilters": [],
+        "severityFilters": [
+          "SEVERITY_INFO"
+        ]
+      },
+      "isInternal": false
+    },
+    {
+      "id": "c677eccf-961c-46d7-aa60-338f6e589806",
+      "name": "cx_metrics",
+      "description": "metrics for lambbda",
+      "createTime": "2025-11-07T20:59:15.000Z",
+      "updateTime": "2025-11-07T20:59:15.000Z",
+      "permutations": {
+        "limit": 30000,
+        "hasExceededLimit": false
+      },
+      "metricLabels": [
+        {
+          "targetLabel": "Duration",
+          "sourceField": "requestParameters.durationSeconds"
+        }
+      ],
+      "metricFields": [
+        {
+          "targetBaseMetricName": "duration",
+          "sourceField": "requestParameters.durationSeconds",
+          "aggregations": [
+            {
+              "enabled": true,
+              "aggType": "AGG_TYPE_AVG",
+              "targetMetricName": "cx_avg"
+            },
+            {
+              "enabled": false,
+              "aggType": "AGG_TYPE_HISTOGRAM",
+              "targetMetricName": "cx_bucket",
+              "histogram": {
+                "buckets": [
+                  0
+                ]
+              }
+            },
+            {
+              "enabled": true,
+              "aggType": "AGG_TYPE_COUNT",
+              "targetMetricName": "cx_count"
+            },
+            {
+              "enabled": true,
+              "aggType": "AGG_TYPE_MAX",
+              "targetMetricName": "cx_max"
+            },
+            {
+              "enabled": true,
+              "aggType": "AGG_TYPE_MIN",
+              "targetMetricName": "cx_min"
+            },
+            {
+              "enabled": true,
+              "aggType": "AGG_TYPE_SUM",
+              "targetMetricName": "cx_sum"
+            },
+            {
+              "enabled": true,
+              "aggType": "AGG_TYPE_SAMPLES",
+              "targetMetricName": "cx_value",
+              "samples": {
+                "sampleType": "SAMPLE_TYPE_MAX"
+              }
+            }
+          ]
+        }
+      ],
+      "type": "E2M_TYPE_LOGS2METRICS",
+      "logsQuery": {
+        "lucene": "",
+        "alias": null,
+        "applicationnameFilters": [
+          "aws"
+        ],
+        "subsystemnameFilters": [
+          "lambda.amazonaws.com"
+        ],
+        "severityFilters": [
+          "SEVERITY_CRITICAL",
+          "SEVERITY_ERROR"
+        ]
+      },
+      "isInternal": false
+    },
+    {
+      "id": "ce1b2891-7a17-493d-847b-da9bbc36ddce",
+      "name": "cx_service_catalog_service_duration",
+      "description": null,
+      "createTime": "2025-11-07T20:59:25.000Z",
+      "updateTime": "2025-11-07T20:59:25.000Z",
+      "permutations": {
+        "limit": 30000,
+        "hasExceededLimit": false
+      },
+      "metricLabels": [
+        {
+          "targetLabel": "service",
+          "sourceField": "servicename"
+        },
+        {
+          "targetLabel": "error",
+          "sourceField": "tags.error"
+        },
+        {
+          "targetLabel": "spanKind",
+          "sourceField": "tags.span.kind"
+        }
+      ],
+      "metricFields": [
+        {
+          "targetBaseMetricName": "cx_service_catalog_service_duration",
+          "sourceField": "duration",
+          "aggregations": [
+            {
+              "enabled": true,
+              "aggType": "AGG_TYPE_AVG",
+              "targetMetricName": "cx_avg"
+            },
+            {
+              "enabled": true,
+              "aggType": "AGG_TYPE_HISTOGRAM",
+              "targetMetricName": "cx_bucket",
+              "histogram": {
+                "buckets": [
+                  1,
+                  2.5,
+                  5,
+                  7.5,
+                  10,
+                  25,
+                  50,
+                  75,
+                  100,
+                  250,
+                  500,
+                  750,
+                  1000,
+                  2500,
+                  5000,
+                  7500,
+                  10000,
+                  25000,
+                  50000,
+                  75000,
+                  100000,
+                  250000,
+                  500000,
+                  750000,
+                  1000000,
+                  2500000,
+                  5000000,
+                  7500000,
+                  10000000
+                ]
+              }
+            },
+            {
+              "enabled": true,
+              "aggType": "AGG_TYPE_COUNT",
+              "targetMetricName": "cx_count"
+            },
+            {
+              "enabled": true,
+              "aggType": "AGG_TYPE_MAX",
+              "targetMetricName": "cx_max"
+            },
+            {
+              "enabled": true,
+              "aggType": "AGG_TYPE_MIN",
+              "targetMetricName": "cx_min"
+            },
+            {
+              "enabled": true,
+              "aggType": "AGG_TYPE_SUM",
+              "targetMetricName": "cx_sum"
+            },
+            {
+              "enabled": true,
+              "aggType": "AGG_TYPE_SAMPLES",
+              "targetMetricName": "cx_value",
+              "samples": {
+                "sampleType": "SAMPLE_TYPE_MAX"
+              }
+            }
+          ]
+        }
+      ],
+      "type": "E2M_TYPE_SPANS2METRICS",
+      "spansQuery": {
+        "lucene": "",
+        "applicationnameFilters": [],
+        "subsystemnameFilters": [],
+        "actionFilters": [],
+        "serviceFilters": []
+      },
+      "isInternal": false
+    },
+    {
+      "id": "cf1d60b3-86e2-4f66-9ed7-a7439d01a35d",
+      "name": "catalogue_latency",
+      "description": "letency for catalog",
+      "createTime": "2025-11-07T21:02:09.000Z",
+      "updateTime": "2025-11-07T21:02:09.000Z",
+      "permutations": {
+        "limit": 30000,
+        "hasExceededLimit": false
+      },
+      "metricLabels": [
+        {
+          "targetLabel": "took",
+          "sourceField": "coralogix.metadata.subsystemName"
+        }
+      ],
+      "metricFields": [
+        {
+          "targetBaseMetricName": "latency",
+          "sourceField": "requestParameters.durationSeconds",
+          "aggregations": [
+            {
+              "enabled": true,
+              "aggType": "AGG_TYPE_AVG",
+              "targetMetricName": "cx_avg"
+            },
+            {
+              "enabled": false,
+              "aggType": "AGG_TYPE_HISTOGRAM",
+              "targetMetricName": "cx_bucket",
+              "histogram": {
+                "buckets": [
+                  0
+                ]
+              }
+            },
+            {
+              "enabled": true,
+              "aggType": "AGG_TYPE_COUNT",
+              "targetMetricName": "cx_count"
+            },
+            {
+              "enabled": true,
+              "aggType": "AGG_TYPE_MAX",
+              "targetMetricName": "cx_max"
+            },
+            {
+              "enabled": true,
+              "aggType": "AGG_TYPE_MIN",
+              "targetMetricName": "cx_min"
+            },
+            {
+              "enabled": true,
+              "aggType": "AGG_TYPE_SUM",
+              "targetMetricName": "cx_sum"
+            },
+            {
+              "enabled": true,
+              "aggType": "AGG_TYPE_SAMPLES",
+              "targetMetricName": "cx_value",
+              "samples": {
+                "sampleType": "SAMPLE_TYPE_MAX"
+              }
+            }
+          ]
+        }
+      ],
+      "type": "E2M_TYPE_LOGS2METRICS",
+      "logsQuery": {
+        "lucene": "_exists_:\"took\"",
+        "alias": null,
+        "applicationnameFilters": [],
+        "subsystemnameFilters": [
+          "catalogue"
+        ],
+        "severityFilters": [
+          "SEVERITY_CRITICAL"
+        ]
+      },
+      "isInternal": false
+    },
+    {
+      "id": "d7f748b8-5536-48cf-b225-d871b952aeec",
+      "name": "cx_service_catalog_apdex_satisfied",
+      "description": "Apdex threshold for  satisfied requests",
+      "createTime": "2025-11-07T21:02:08.000Z",
+      "updateTime": "2025-11-07T21:02:07.000Z",
+      "permutations": {
+        "limit": 30000,
+        "hasExceededLimit": false
+      },
+      "metricLabels": [
+        {
+          "targetLabel": "service",
+          "sourceField": "servicename"
+        }
+      ],
+      "metricFields": [],
+      "type": "E2M_TYPE_SPANS2METRICS",
+      "spansQuery": {
+        "lucene": "(+duration:{* TO 500000] ) AND NOT tags.error: \"true\" AND (tags.span.kind: \"server\" OR tags.span.kind: \"consumer\")",
+        "applicationnameFilters": [],
+        "subsystemnameFilters": [],
+        "actionFilters": [],
+        "serviceFilters": []
+      },
+      "isInternal": false
+    },
+    {
+      "id": "e0860aea-f6fb-4201-9fb0-47756cb22b79",
+      "name": "cx_db_catalog_apdex_satisfied",
+      "description": "Apdex threshold for  satisfied requests",
+      "createTime": "2025-11-07T21:02:05.000Z",
+      "updateTime": "2025-11-07T21:02:05.000Z",
+      "permutations": {
+        "limit": 30000,
+        "hasExceededLimit": false
+      },
+      "metricLabels": [
+        {
+          "targetLabel": "service",
+          "sourceField": "servicename"
+        },
+        {
+          "targetLabel": "net_peer_name",
+          "sourceField": "tags.net.peer.name"
+        },
+        {
+          "targetLabel": "db_name",
+          "sourceField": "tags.db.name"
+        },
+        {
+          "targetLabel": "db_system",
+          "sourceField": "tags.db.system"
+        }
+      ],
+      "metricFields": [],
+      "type": "E2M_TYPE_SPANS2METRICS",
+      "spansQuery": {
+        "lucene": "(+duration:{* TO 500000] ) AND NOT tags.error: \"true\" AND tags.span.kind: \"client\" AND _exists_: \"tags.db.system\"",
+        "applicationnameFilters": [],
+        "subsystemnameFilters": [],
+        "actionFilters": [],
+        "serviceFilters": []
+      },
+      "isInternal": false
+    }
+  ]
+}

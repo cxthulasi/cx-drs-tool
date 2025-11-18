@@ -1,0 +1,2022 @@
+{
+  "timestamp": "2025-11-17T12:49:48.242296",
+  "service": "parsing-rules",
+  "team": "teamb",
+  "resources": [
+    {
+      "id": "aa6d4ebc-0b33-4568-abe4-c4a9b92e4001",
+      "name": "k8s Opentelemetry parsing",
+      "description": "k8s Opentelemetry extension pack",
+      "creator": "k8s Opentelemetry extension pack",
+      "enabled": true,
+      "hidden": false,
+      "ruleMatchers": [],
+      "ruleSubgroups": [
+        {
+          "id": "476a5fa1-95b5-4132-bb3e-2361f5a96c6c",
+          "rules": [
+            {
+              "id": "b8699b6c-e816-4d60-96a2-713124b66da7",
+              "name": "Stringify logRecord",
+              "description": "",
+              "sourceField": "text.logRecord",
+              "parameters": {
+                "jsonStringifyParameters": {
+                  "destinationField": "text.logRecord_tmp",
+                  "deleteSource": true
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 1
+        },
+        {
+          "id": "cf24f29a-0a89-4827-99c8-d77b0187da3b",
+          "rules": [
+            {
+              "id": "6712f324-6bba-46e4-9daa-e8fe31a2a9df",
+              "name": "Parse json logRecord_tmp",
+              "description": "",
+              "sourceField": "text.logRecord_tmp",
+              "parameters": {
+                "jsonParseParameters": {
+                  "destinationField": "text",
+                  "deleteSource": true,
+                  "escapedValue": null,
+                  "overrideDest": false
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 2
+        },
+        {
+          "id": "baa543fa-3592-467b-a011-9571e99ce1fa",
+          "rules": [
+            {
+              "id": "dfddec7b-6b4e-4d18-b62a-686fed696869",
+              "name": "Parse json body",
+              "description": "",
+              "sourceField": "text.body",
+              "parameters": {
+                "jsonParseParameters": {
+                  "destinationField": "text",
+                  "deleteSource": true,
+                  "escapedValue": null,
+                  "overrideDest": false
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 3
+        },
+        {
+          "id": "e2f2a14f-74ba-401e-9c0f-3c509fa0b785",
+          "rules": [
+            {
+              "id": "bf745f81-fef3-4f1b-8b6d-99d1428c628a",
+              "name": "map deprecatedLastTimestamp, eventTime as datetime fields",
+              "description": "",
+              "sourceField": "text",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "text",
+                  "replaceNewVal": "\"${1}_custom_timestamp\":\"",
+                  "rule": "\"(deprecatedLastTimestamp|eventTime)\":\""
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 4
+        },
+        {
+          "id": "0919ebb3-2c37-4de2-8052-71c6dcf77368",
+          "rules": [
+            {
+              "id": "92b223c4-e924-45aa-8ede-02d7c0451f58",
+              "name": "fix mapping exception for infra collector empty f:annotations",
+              "description": "",
+              "sourceField": "text",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "text",
+                  "replaceNewVal": "${1}\"f:workflow\":{",
+                  "rule": "(\"f:annotations\":\\{.*?)\"\\.\":\\{"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 5
+        },
+        {
+          "id": "82f8f2a2-f5ab-42cd-8519-3b829b5da6ff",
+          "rules": [
+            {
+              "id": "d98182e5-b88b-4181-aeb4-5f2aec205a35",
+              "name": "Parse common logs from k8s containers",
+              "description": "This rule parses containers: kube-apiserver, kube-controller-manager, kube-proxy, kube-scheduler, storage-provisioner.",
+              "sourceField": "text",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "text",
+                  "replaceNewVal": "\"level\":\"$level\",\"timestamp\":\"$timestamp\",\"caller\":\"$caller\",\"message\":\"$message\"",
+                  "rule": "\"body\":\"(?P<level>[A-Z])(?P<timestamp>\\d{4} \\d{2}:\\d{2}:\\d{2}\\.\\d+)\\s*1 (?P<caller>[^\\]]+)\\] (?P<message>(?:\\\\\"|[^\"])+?)(?:\\\\n)?\""
+                }
+              },
+              "enabled": true,
+              "order": 1
+            },
+            {
+              "id": "0e7faf71-379d-4081-a6ff-5a07da642d90",
+              "name": "Replace body with kvPairs when body is a kv pairs message starts with time",
+              "description": "",
+              "sourceField": "text",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "text",
+                  "replaceNewVal": "\"kvPairs\":\"${1}\"",
+                  "rule": "\"body\":\"(time=\\\\\"(?:\\\\\"|[^\"])+?)(?:\\\\n)?\""
+                }
+              },
+              "enabled": true,
+              "order": 2
+            },
+            {
+              "id": "34fa3899-3ece-4b18-be22-6d5ea18a9563",
+              "name": "Replace body with kvPairs when body is a kv pairs message starts with ts",
+              "description": "",
+              "sourceField": "text",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "text",
+                  "replaceNewVal": "\"kvPairs\":\"${1}\"",
+                  "rule": "\"body\":\"(ts=\\d{4}(?:\\\\\"|[^\"])+?)(?:\\\\n)?\""
+                }
+              },
+              "enabled": true,
+              "order": 3
+            },
+            {
+              "id": "4984fc57-5854-4333-a33c-1e96e2cea4d9",
+              "name": "Replace body with kvPairs when body is a kv pairs message starts with level",
+              "description": "",
+              "sourceField": "text",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "text",
+                  "replaceNewVal": "\"kvPairs\":\"${1}\"",
+                  "rule": "\"body\":\"(level=(?:\\\\\"|[^\"])+?)(?:\\\\n)?\""
+                }
+              },
+              "enabled": true,
+              "order": 4
+            }
+          ],
+          "enabled": true,
+          "order": 6
+        },
+        {
+          "id": "3f4ec06b-6c5b-4a99-a1ef-348c21548c29",
+          "rules": [
+            {
+              "id": "36ab7439-5ef9-4810-b379-8ca870f70aaf",
+              "name": "Extract msg from kvPairs",
+              "description": "",
+              "sourceField": "text.kvPairs",
+              "parameters": {
+                "extractParameters": {
+                  "rule": "msg=\\\\\"(?P<msg>(?:\\\\\\\\\"|[^\"])+)\\\\\""
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 7
+        },
+        {
+          "id": "0b2d375c-d170-421d-9e3a-4fbd0ae7cca9",
+          "rules": [
+            {
+              "id": "89962253-37f0-4635-87a1-4bfa9d189714",
+              "name": "Remove msg from kvPairs",
+              "description": "",
+              "sourceField": "text.kvPairs",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "text.kvPairs",
+                  "replaceNewVal": "",
+                  "rule": "\\s+msg=\\\\\"(?P<msg>(?:\\\\\\\\\"|[^\"])+)\\\\\""
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 8
+        },
+        {
+          "id": "19547d62-09ed-403c-8dd7-5f8cf756e6f1",
+          "rules": [
+            {
+              "id": "b62198cb-4b44-4cf9-8c94-8b0b18a71186",
+              "name": "Extract query from kvPairs",
+              "description": "",
+              "sourceField": "text.kvPairs",
+              "parameters": {
+                "extractParameters": {
+                  "rule": "query=\\\\\"(?P<query>(?:\\\\\\\\\"|[^\"])+)\\\\\""
+                }
+              },
+              "enabled": true,
+              "order": 1
+            },
+            {
+              "id": "a4b1b67e-d304-48f4-ac13-593150b70cca",
+              "name": "Extract query from kvPairs when kvPairs also had msg in it along with query",
+              "description": "",
+              "sourceField": "text.kvPairs",
+              "parameters": {
+                "extractParameters": {
+                  "rule": "query=\\\\\\\\\\\\\"(?P<query>(?:\\\\\\\\\\\\\\\\\"|[^\"])+)\\\\\\\\\\\\\""
+                }
+              },
+              "enabled": true,
+              "order": 2
+            }
+          ],
+          "enabled": true,
+          "order": 9
+        },
+        {
+          "id": "2a3b4e14-1b8d-48db-8f9f-09582eb8dcfd",
+          "rules": [
+            {
+              "id": "27c98ae1-90e0-424a-9229-a0ec7d44b486",
+              "name": "remove query from kvPairs",
+              "description": "",
+              "sourceField": "text.kvPairs",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "text.kvPairs",
+                  "replaceNewVal": "",
+                  "rule": "\\s+query=\\\\\"(?P<query>(?:\\\\\\\\\"|[^\"])+)\\\\\""
+                }
+              },
+              "enabled": true,
+              "order": 1
+            },
+            {
+              "id": "42e66c6b-2271-410d-b58a-fbb1dc3e6756",
+              "name": "remove query from kvPairs when kvPairs also had msg in it along with query",
+              "description": "",
+              "sourceField": "text.kvPairs",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "text.kvPairs",
+                  "replaceNewVal": "",
+                  "rule": "\\s+query=\\\\\\\\\\\\\"(?P<query>(?:\\\\\\\\\\\\\\\\\"|[^\"])+)\\\\\\\\\\\\\""
+                }
+              },
+              "enabled": true,
+              "order": 2
+            }
+          ],
+          "enabled": true,
+          "order": 10
+        },
+        {
+          "id": "f65198eb-88e4-4312-83f1-14c31efb09a0",
+          "rules": [
+            {
+              "id": "71818fc4-fe35-4ddd-9a9f-3158960d2f09",
+              "name": "prepare all the rest of the fields in a kvPairs field that had both msg and query",
+              "description": "",
+              "sourceField": "text.kvPairs",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "text.kvPairs",
+                  "replaceNewVal": "\u00a7${1}\u00a7:\u00a7${2}\u00a7",
+                  "rule": "([\\w\\.\\-\\_]+)=\\\\{7}\"((?:\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\+\"|[^\"])+)\\\\{7}\""
+                }
+              },
+              "enabled": true,
+              "order": 1
+            },
+            {
+              "id": "07d35cd2-8594-4b46-9018-bb960a52043c",
+              "name": "prepare all the rest of the fields in a kvPairs field that had either msg or query",
+              "description": "",
+              "sourceField": "text.kvPairs",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "text.kvPairs",
+                  "replaceNewVal": "\u00a7${1}\u00a7:\u00a7${2}\u00a7",
+                  "rule": "([\\w\\.\\-\\_]+)=\\\\{3}\"((?:\\\\\\\\\\\\\\\\+\"|[^\"])+)\\\\{3}\""
+                }
+              },
+              "enabled": true,
+              "order": 2
+            }
+          ],
+          "enabled": true,
+          "order": 11
+        },
+        {
+          "id": "ba095a19-9e3e-4205-8734-109d24833341",
+          "rules": [
+            {
+              "id": "94813a7d-04b8-445f-8e06-101d9a4b02e7",
+              "name": "remove all double quotes if they have more than one consecutive backslash prior to them for kvPairs that had both msg and query",
+              "description": "",
+              "sourceField": "text.kvPairs",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "text.kvPairs",
+                  "replaceNewVal": "",
+                  "rule": "\\\\{15,}\""
+                }
+              },
+              "enabled": true,
+              "order": 1
+            },
+            {
+              "id": "41fc4351-80db-4d8d-b0df-d7bb7a130e6e",
+              "name": "remove all double quotes if they have more than one consecutive backslash prior to them for kvPairs that had either msg or query",
+              "description": "",
+              "sourceField": "text.kvPairs",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "text.kvPairs",
+                  "replaceNewVal": "",
+                  "rule": "\\\\{7,}\""
+                }
+              },
+              "enabled": true,
+              "order": 2
+            },
+            {
+              "id": "a522e134-a40c-448f-9499-41a3642bc199",
+              "name": "remove all double quotes if they have more than one consecutive backslash prior to them for kvPairs that had no msg or query",
+              "description": "",
+              "sourceField": "text.kvPairs",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "text.kvPairs",
+                  "replaceNewVal": "",
+                  "rule": "\\\\{3,}\""
+                }
+              },
+              "enabled": true,
+              "order": 3
+            }
+          ],
+          "enabled": true,
+          "order": 12
+        },
+        {
+          "id": "00575bbb-9605-4d9d-82c0-8ecf6c78b040",
+          "rules": [
+            {
+              "id": "60c25494-3470-4715-826d-91cd601688c8",
+              "name": "Replace all remaining occurrences of double quotes with their corresponding backslash with \u00a7",
+              "description": "",
+              "sourceField": "text.kvPairs",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "text.kvPairs",
+                  "replaceNewVal": "\u00a7",
+                  "rule": "\\\\+\""
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 13
+        },
+        {
+          "id": "9e83f6a8-985f-4f41-b4b6-d675f4e0a281",
+          "rules": [
+            {
+              "id": "626cdfd5-4a8c-447e-ac5a-51abf021da4d",
+              "name": "wrap the keys of the key/val pairs with \u00a7 wrapping the value with \u00a7",
+              "description": "",
+              "sourceField": "text.kvPairs",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "text.kvPairs",
+                  "replaceNewVal": "\u00a7${1}\u00a7:\u00a7${2}\u00a7",
+                  "rule": "([\\w\\.\\-]+)=\\xA7([^\\xA7]*)\\xA7"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 14
+        },
+        {
+          "id": "e5a5ea8f-d189-4d48-aab6-8717af2df502",
+          "rules": [
+            {
+              "id": "db3cdd8c-d4a3-4027-8b24-1a1e2a131f43",
+              "name": "Adding to the rest of key/val pairs \u00a7 before and after the keys and values",
+              "description": "",
+              "sourceField": "text.kvPairs",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "text.kvPairs",
+                  "replaceNewVal": "\u00a7${1}\u00a7:\u00a7${2}\u00a7",
+                  "rule": "([\\w\\.\\-\\_]+)=((?:$|[^ ])*)(?: |$)"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 15
+        },
+        {
+          "id": "fbc3d565-a84a-4692-bd06-a4e6a775d9e3",
+          "rules": [
+            {
+              "id": "4b0e604b-2389-422a-adc7-635e5f0b099c",
+              "name": "Adding commas between key/val pairs",
+              "description": "",
+              "sourceField": "text.kvPairs",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "text.kvPairs",
+                  "replaceNewVal": "${1}:${2},",
+                  "rule": "(\\xA7[^\\xA7]*\\xA7):(\\xA7[^\\xA7]*\\xA7)"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 16
+        },
+        {
+          "id": "225ac5cf-a6b4-4b7d-b264-f2f079ff76d3",
+          "rules": [
+            {
+              "id": "5734a9b6-03a2-455f-aa3d-5d4226ad901b",
+              "name": "Remove last comma before jsonizing kvPairs field",
+              "description": "",
+              "sourceField": "text.kvPairs",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "text.kvPairs",
+                  "replaceNewVal": "{$1}",
+                  "rule": "(.*),"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 17
+        },
+        {
+          "id": "db2b6a9b-9013-4b2d-a065-19f688d63648",
+          "rules": [
+            {
+              "id": "49792717-266c-441f-b9cb-05071ffe060a",
+              "name": "Replacing \u00a7 with \" to jsonize kvPairs in order to get a valid JSON",
+              "description": "",
+              "sourceField": "text.kvPairs",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "text.kvPairs",
+                  "replaceNewVal": "\"",
+                  "rule": "\\xA7"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 18
+        },
+        {
+          "id": "69ef51fc-a882-4541-8505-e2392cf1f2b0",
+          "rules": [
+            {
+              "id": "4548a41f-6b7c-49ce-be80-62522ef29d6b",
+              "name": "reformat kvPairs field back to an escaped JSON string format",
+              "description": "",
+              "sourceField": "text.kvPairs",
+              "parameters": {
+                "jsonStringifyParameters": {
+                  "destinationField": "text.kvPairs_tmp",
+                  "deleteSource": true
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 19
+        },
+        {
+          "id": "f1e45fcd-ab6e-4c0e-847e-bab2e0626d98",
+          "rules": [
+            {
+              "id": "66d06611-6eb5-4356-b790-351669486577",
+              "name": "Parse kvPairs_tmp as JSON to root",
+              "description": "",
+              "sourceField": "text.kvPairs_tmp",
+              "parameters": {
+                "jsonParseParameters": {
+                  "destinationField": "text",
+                  "deleteSource": true,
+                  "escapedValue": null,
+                  "overrideDest": false
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 20
+        }
+      ],
+      "order": 1
+    },
+    {
+      "id": "5d6a366c-368e-44b4-b8af-659a7b264af8",
+      "name": "k8s Opentelemetry parsing",
+      "description": "k8s Opentelemetry extension pack",
+      "creator": "k8s Opentelemetry extension pack",
+      "enabled": true,
+      "hidden": false,
+      "ruleMatchers": [],
+      "ruleSubgroups": [
+        {
+          "id": "0e3b08e6-8cf0-4a34-849f-5341aa64a392",
+          "rules": [
+            {
+              "id": "52efe62c-7c2a-4fcf-bde0-96e7eac788fd",
+              "name": "Stringify logRecord",
+              "description": "",
+              "sourceField": "text.logRecord",
+              "parameters": {
+                "jsonStringifyParameters": {
+                  "destinationField": "text.logRecord_tmp",
+                  "deleteSource": true
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 1
+        },
+        {
+          "id": "9c945336-bd27-4edf-a30a-02458f962317",
+          "rules": [
+            {
+              "id": "169ba29a-a7b9-4391-a10d-281634e9e039",
+              "name": "Parse json logRecord_tmp",
+              "description": "",
+              "sourceField": "text.logRecord_tmp",
+              "parameters": {
+                "jsonParseParameters": {
+                  "destinationField": "text",
+                  "deleteSource": true,
+                  "escapedValue": null,
+                  "overrideDest": false
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 2
+        },
+        {
+          "id": "45383656-daa8-41e3-80b0-ae1f815a5a8a",
+          "rules": [
+            {
+              "id": "8b786607-f4f3-43d9-8e11-bfb6fff59b3b",
+              "name": "Stringify body",
+              "description": "",
+              "sourceField": "text.body",
+              "parameters": {
+                "jsonStringifyParameters": {
+                  "destinationField": "text.body_tmp",
+                  "deleteSource": true
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 3
+        },
+        {
+          "id": "78c838ae-3e82-42eb-861d-57efe924172b",
+          "rules": [
+            {
+              "id": "11cc44c0-c7ee-4b39-b909-2d6f12be4b25",
+              "name": "Parse json body",
+              "description": "",
+              "sourceField": "text.body",
+              "parameters": {
+                "jsonParseParameters": {
+                  "destinationField": "text",
+                  "deleteSource": true,
+                  "escapedValue": null,
+                  "overrideDest": false
+                }
+              },
+              "enabled": true,
+              "order": 1
+            },
+            {
+              "id": "a23b557b-13cb-4db8-b232-bee336d264ba",
+              "name": "Parse json body_tmp",
+              "description": "",
+              "sourceField": "text.body_tmp",
+              "parameters": {
+                "jsonParseParameters": {
+                  "destinationField": "text",
+                  "deleteSource": true,
+                  "escapedValue": null,
+                  "overrideDest": false
+                }
+              },
+              "enabled": true,
+              "order": 2
+            }
+          ],
+          "enabled": true,
+          "order": 4
+        },
+        {
+          "id": "31a9234e-e22f-47d7-a09c-b46f4f6f5d11",
+          "rules": [
+            {
+              "id": "0f89cb3e-b278-43a3-83da-6fd2063a52a4",
+              "name": "Replacing all dots within field names with underscores",
+              "description": "",
+              "sourceField": "text",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "text",
+                  "replaceNewVal": "\"${1}_${2}_${3}_${4}_${5}_${6}_${7}_${8}_${9}_${10}\":",
+                  "rule": "\"([a-zA-Z\\d\\_]+)\\.([a-zA-Z\\d\\_]+)(?:\\.([a-zA-Z\\d\\_]+))?(?:\\.([a-zA-Z\\d\\_]+))?(?:\\.([a-zA-Z\\d\\_]+))?(?:\\.([a-zA-Z\\d\\_]+))?(?:\\.([a-zA-Z\\d\\_]+))?(?:\\.([a-zA-Z\\d\\_]+))?(?:\\.([a-zA-Z\\d\\_]+))?(?:\\.([a-zA-Z\\d\\_]+))?\":"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 5
+        },
+        {
+          "id": "7fcc189b-7173-4350-bc49-b0f5707f1deb",
+          "rules": [
+            {
+              "id": "91fd1d62-a3b4-421f-81ac-f871af36e7e9",
+              "name": "Remove trailing underscores",
+              "description": "",
+              "sourceField": "text",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "text",
+                  "replaceNewVal": "\"$1\":",
+                  "rule": "\"([^\"]+?)\\_+\":"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 6
+        },
+        {
+          "id": "7cd6e055-67bd-44d4-a50b-290ad2bbceaa",
+          "rules": [
+            {
+              "id": "211f0268-ce01-44bb-923d-6adbb5824da8",
+              "name": "map deprecatedLastTimestamp, eventTime as datetime fields",
+              "description": "",
+              "sourceField": "text",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "text",
+                  "replaceNewVal": "\"${1}_custom_timestamp\":\"",
+                  "rule": "\"(deprecatedLastTimestamp|eventTime)\":\""
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 7
+        },
+        {
+          "id": "cde836a6-ae35-4663-b7c0-9093bc6b5355",
+          "rules": [
+            {
+              "id": "4c302c94-0d36-425c-9379-cee6b1f6ff5e",
+              "name": "fix mapping exception for infra collector empty f:annotations",
+              "description": "",
+              "sourceField": "text",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "text",
+                  "replaceNewVal": "${1}\"f:workflow\":{",
+                  "rule": "(\"f:annotations\":\\{.*?)\"\\.\":\\{"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 8
+        },
+        {
+          "id": "bd343df7-830e-437d-abb1-00ea3cf2fe35",
+          "rules": [
+            {
+              "id": "07899a24-90c0-4a6d-b392-c06ace316fd5",
+              "name": "Parse common logs from k8s containers",
+              "description": "This rule parses containers: kube-apiserver, kube-controller-manager, kube-proxy, kube-scheduler, storage-provisioner.",
+              "sourceField": "text",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "text",
+                  "replaceNewVal": "\"level\":\"$level\",\"timestamp\":\"$timestamp\",\"caller\":\"$caller\",\"message\":\"$message\"",
+                  "rule": "\"body\":\"(?P<level>[A-Z])(?P<timestamp>\\d{4} \\d{2}:\\d{2}:\\d{2}\\.\\d+)\\s*1 (?P<caller>[^\\]]+)\\] (?P<message>(?:\\\\\"|[^\"])+?)(?:\\\\n)?\""
+                }
+              },
+              "enabled": true,
+              "order": 1
+            },
+            {
+              "id": "93a657dd-eee2-41bd-826d-75d818d3a3e6",
+              "name": "Replace body with kvPairs when body is a kv pairs message starts with time",
+              "description": "",
+              "sourceField": "text",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "text",
+                  "replaceNewVal": "\"kvPairs\":\"${1}\"",
+                  "rule": "\"body\":\"(time=\\\\\"(?:\\\\\"|[^\"])+?)(?:\\\\n)?\""
+                }
+              },
+              "enabled": true,
+              "order": 2
+            },
+            {
+              "id": "7a66c091-872d-4611-8f39-29e463eee8e9",
+              "name": "Replace body with kvPairs when body is a kv pairs message starts with ts",
+              "description": "",
+              "sourceField": "text",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "text",
+                  "replaceNewVal": "\"kvPairs\":\"${1}\"",
+                  "rule": "\"body\":\"(ts=\\d{4}(?:\\\\\"|[^\"])+?)(?:\\\\n)?\""
+                }
+              },
+              "enabled": true,
+              "order": 3
+            }
+          ],
+          "enabled": true,
+          "order": 9
+        },
+        {
+          "id": "f18ab171-67a9-4320-abd6-8e82631df8de",
+          "rules": [
+            {
+              "id": "d3f33464-d50d-4a7b-a90a-453e8219827a",
+              "name": "Extract msg from kvPairs",
+              "description": "",
+              "sourceField": "text.kvPairs",
+              "parameters": {
+                "extractParameters": {
+                  "rule": "msg=\\\\\"(?P<msg>(?:\\\\\\\\\"|[^\"])+)\\\\\""
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 10
+        },
+        {
+          "id": "2054011e-ac13-4c02-81d3-8b05417f44ed",
+          "rules": [
+            {
+              "id": "7d1cb385-2d1c-41ec-a9fc-b5220bc6e215",
+              "name": "Remove msg from kvPairs",
+              "description": "",
+              "sourceField": "text.kvPairs",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "text.kvPairs",
+                  "replaceNewVal": "",
+                  "rule": "\\smsg=\\\\\"(?P<msg>(?:\\\\\\\\\"|[^\"])+)\\\\\""
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 11
+        },
+        {
+          "id": "7b0ca29d-6635-4552-a565-f3551a48d931",
+          "rules": [
+            {
+              "id": "9674bfb1-e395-432d-a991-13068acfb725",
+              "name": "Jsonizing key/vals when val is enclosed with double quotes",
+              "description": "",
+              "sourceField": "text.kvPairs",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "text.kvPairs",
+                  "replaceNewVal": "\u00a7$1\u00a7:\u00a7$2\u00a7,",
+                  "rule": "([\\w\\.\\-]+)=\\\\\\\\\\\\\"((?:\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"|[^\"])+)\\\\\\\\\\\\\""
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 12
+        },
+        {
+          "id": "cd0aa979-e70d-4f53-bffb-09e86f54e69c",
+          "rules": [
+            {
+              "id": "670f4170-a56e-44be-bf0d-919171e3480e",
+              "name": "Remove any remaining backslashes followed by double quotes",
+              "description": "",
+              "sourceField": "text.kvPairs",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "text.kvPairs",
+                  "replaceNewVal": "",
+                  "rule": "\\\\+\""
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 13
+        },
+        {
+          "id": "666d2b9f-fb74-41b9-a5e2-af2096e1793e",
+          "rules": [
+            {
+              "id": "57f07d21-ae7a-4115-9847-f85d313a15f1",
+              "name": "Jsonizing rest of key/vals",
+              "description": "",
+              "sourceField": "text.kvPairs",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "text.kvPairs",
+                  "replaceNewVal": "\u00a7$1\u00a7:\u00a7$2\u00a7,",
+                  "rule": "([\\w\\.\\-]+)=((?:$|[^ \\xA7])+)?(?: |$)"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 14
+        },
+        {
+          "id": "26be2d99-1310-41c2-b25a-7b5a62936e16",
+          "rules": [
+            {
+              "id": "14803207-25c4-43f1-9757-80648c034257",
+              "name": "Removing last Comma and wrapping with curly brackets",
+              "description": "",
+              "sourceField": "text.kvPairs",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "text.kvPairs",
+                  "replaceNewVal": "{$1}",
+                  "rule": "(.*),"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 15
+        },
+        {
+          "id": "46b156bd-b029-4710-97c8-e8bc481ef351",
+          "rules": [
+            {
+              "id": "57cbc528-d4b1-4726-80ef-00e3bd24b043",
+              "name": "Replacing \u00a7 with double quotes in order to get a valid JSON",
+              "description": "",
+              "sourceField": "text.kvPairs",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "text.kvPairs",
+                  "replaceNewVal": "\"",
+                  "rule": "\\xA7"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 16
+        },
+        {
+          "id": "9fa3596a-8e86-4341-a088-c8f8753f2eef",
+          "rules": [
+            {
+              "id": "545c9ee5-0c9a-4089-b343-806081f678b4",
+              "name": "reformat kvPairs field back to an escaped JSON string format",
+              "description": "",
+              "sourceField": "text.kvPairs",
+              "parameters": {
+                "jsonStringifyParameters": {
+                  "destinationField": "text.kvPairs_tmp",
+                  "deleteSource": true
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 17
+        },
+        {
+          "id": "0948d766-9b51-4563-b70e-9376d59bc7c9",
+          "rules": [
+            {
+              "id": "9d345fd5-0d70-4bb1-99c4-13ff06ce1fa7",
+              "name": "Parse kvPairs_tmp as JSON to root",
+              "description": "",
+              "sourceField": "text.kvPairs_tmp",
+              "parameters": {
+                "jsonParseParameters": {
+                  "destinationField": "text",
+                  "deleteSource": true,
+                  "escapedValue": null,
+                  "overrideDest": false
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 18
+        }
+      ],
+      "order": 2
+    },
+    {
+      "id": "e2c13f76-31fa-48ce-ba19-29b5834322c0",
+      "name": "remove fields",
+      "description": "",
+      "creator": "thulasiram.toorpu@coralogix.com",
+      "enabled": false,
+      "hidden": false,
+      "ruleMatchers": [],
+      "ruleSubgroups": [
+        {
+          "id": "c4cc876e-0af4-403d-840b-fe55b73f2a0d",
+          "rules": [
+            {
+              "id": "9e12a50c-ffff-4192-8fd2-a87f032f1f39",
+              "name": "remove fields",
+              "description": "",
+              "sourceField": "text",
+              "parameters": {
+                "removeFieldsParameters": {
+                  "fields": [
+                    "resource.attributes.cloud_provider",
+                    "resource.attributes.cloud_account_id",
+                    "resource.attributes.cloud_availability_zone",
+                    "resource.attributes.cloud_platform"
+                  ]
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 1
+        }
+      ],
+      "order": 3
+    },
+    {
+      "id": "44f3c752-2c45-44b8-b19a-fccd1e9d423e",
+      "name": "Severity Rules",
+      "description": "",
+      "creator": "",
+      "enabled": true,
+      "hidden": false,
+      "ruleMatchers": [],
+      "ruleSubgroups": [
+        {
+          "id": "669da811-b046-4504-8bdf-7a530f9c132c",
+          "rules": [
+            {
+              "id": "5f279801-21f5-4dbb-bbfa-50749386e379",
+              "name": "Severity Rule",
+              "description": "Look for default severity text",
+              "sourceField": "text",
+              "parameters": {
+                "extractParameters": {
+                  "rule": "\\b(?P<severity>DEBUG|TRACE|INFO|WARN|ERROR|FATAL|EXCEPTION|[Dd]ebug|[Tt]race|[Ii]nfo|[Ww]arn|[Ee]rror|[Ff]atal|[Ee]xception)\\b"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 1
+        }
+      ],
+      "order": 4
+    },
+    {
+      "id": "f5c8fd2d-4f53-4493-8858-e736fba8cfbd",
+      "name": "Cloudtrail rules",
+      "description": "Cloudtrail extension pack",
+      "creator": "Cloudtrail extension pack",
+      "enabled": true,
+      "hidden": false,
+      "ruleMatchers": [
+        {
+          "applicationName": {
+            "value": "aws"
+          }
+        },
+        {
+          "subsystemName": {
+            "value": "lambda.amazonaws.com"
+          }
+        }
+      ],
+      "ruleSubgroups": [
+        {
+          "id": "e5f72423-2202-4307-93f6-c122a75b6dbb",
+          "rules": [
+            {
+              "id": "6bd100cd-bbad-476c-80db-31f10925733e",
+              "name": "Replace Cloudtrail log severity to error if errorMessage exists",
+              "description": "",
+              "sourceField": "text.errorMessage",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "severity",
+                  "replaceNewVal": "ERROR",
+                  "rule": ".*"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 1
+        }
+      ],
+      "order": 5
+    },
+    {
+      "id": "72f6fce1-61b6-4eae-afb7-ea2e28bec1b1",
+      "name": "topipaddress",
+      "description": "topipaddress",
+      "creator": "toorfthu@amazon.com",
+      "enabled": true,
+      "hidden": false,
+      "ruleMatchers": [
+        {
+          "applicationName": {
+            "value": "aws"
+          }
+        }
+      ],
+      "ruleSubgroups": [
+        {
+          "id": "4d5be894-0c04-47f6-8c44-8b5d3563a674",
+          "rules": [
+            {
+              "id": "d4a11440-282e-4d72-aa86-dcea61e77463",
+              "name": "critical errors",
+              "description": "",
+              "sourceField": "text",
+              "parameters": {
+                "parseParameters": {
+                  "destinationField": "text",
+                  "rule": "awsRegion(?P<region>(\\S*))\\s.*sourceIPAddress:(?P<IpAddress>(\\S*))\\s.*errorCode:(?P<error_code>(\\S*))"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 1
+        }
+      ],
+      "order": 6
+    },
+    {
+      "id": "7744386a-bfdc-4a8e-aca0-8e65eb6c3876",
+      "name": "refined-parsingrule",
+      "description": "",
+      "creator": "toorfthu@amazon.com",
+      "enabled": true,
+      "hidden": false,
+      "ruleMatchers": [
+        {
+          "applicationName": {
+            "value": "aws"
+          }
+        },
+        {
+          "subsystemName": {
+            "value": "s3.amazonaws.com"
+          }
+        },
+        {
+          "severity": {
+            "value": "VALUE_WARNING"
+          }
+        }
+      ],
+      "ruleSubgroups": [
+        {
+          "id": "85a3d559-f486-4ea2-bf80-e9e7d1e432d1",
+          "rules": [
+            {
+              "id": "920f64b4-bc02-4d6a-a6f3-65fd1e82407d",
+              "name": "useful-extraction",
+              "description": "",
+              "sourceField": "text",
+              "parameters": {
+                "parseParameters": {
+                  "destinationField": "text",
+                  "rule": "\\b(?P<ip>(?:[0-9]{1,3}\\.){3}[0-9]{1,3})\\b"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 1
+        }
+      ],
+      "order": 7
+    },
+    {
+      "id": "f10f9b12-9025-4a06-b05a-b66713d785a0",
+      "name": "Change Severity of Elb logs",
+      "description": "Change Severity of Elb logs",
+      "creator": "thulasiram.toorpu@coralogix.com",
+      "enabled": true,
+      "hidden": false,
+      "ruleMatchers": [],
+      "ruleSubgroups": [
+        {
+          "id": "20d86763-0c74-49e8-b42b-0f8825502545",
+          "rules": [
+            {
+              "id": "29ec951c-9b68-4c9e-8ce6-896b5cbd563d",
+              "name": "Change Severity of Elb logs",
+              "description": "Change Severity of Elb logs",
+              "sourceField": "text",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "severity",
+                  "replaceNewVal": "ERROR",
+                  "rule": ".*(target_status_code|elb_status_code)\":\"[5]\\d{2}\".*"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 1
+        }
+      ],
+      "order": 8
+    },
+    {
+      "id": "f62e666c-d4a0-4de2-9fc6-9d1d9d95e081",
+      "name": "k8s Opentelemetry parsing",
+      "description": "k8s Opentelemetry extension pack",
+      "creator": "k8s Opentelemetry extension pack",
+      "enabled": true,
+      "hidden": false,
+      "ruleMatchers": [],
+      "ruleSubgroups": [
+        {
+          "id": "33a8baf1-c425-4ddc-a028-e5b5f36a890a",
+          "rules": [
+            {
+              "id": "060ccf6f-b610-4ae2-9c91-695fcd715903",
+              "name": "Stringify logRecord",
+              "description": "",
+              "sourceField": "text.logRecord",
+              "parameters": {
+                "jsonStringifyParameters": {
+                  "destinationField": "text.logRecord_tmp",
+                  "deleteSource": true
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 1
+        },
+        {
+          "id": "28930e4a-a84b-43d9-af2c-494d5a731172",
+          "rules": [
+            {
+              "id": "22ff25c2-e579-4f1e-92e1-f1245959c050",
+              "name": "Parse json logRecord_tmp",
+              "description": "",
+              "sourceField": "text.logRecord_tmp",
+              "parameters": {
+                "jsonParseParameters": {
+                  "destinationField": "text",
+                  "deleteSource": true,
+                  "escapedValue": null,
+                  "overrideDest": false
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 2
+        },
+        {
+          "id": "9af7af92-1d56-4469-92b9-89159e1942cd",
+          "rules": [
+            {
+              "id": "d3471f2c-3be4-40b7-a34b-e144feabd3c6",
+              "name": "Stringify body",
+              "description": "",
+              "sourceField": "text.body",
+              "parameters": {
+                "jsonStringifyParameters": {
+                  "destinationField": "text.body_tmp",
+                  "deleteSource": true
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 3
+        },
+        {
+          "id": "84e4e3cf-d139-4116-8e0a-fa42dd50c56e",
+          "rules": [
+            {
+              "id": "ddd1798d-f961-4f3b-96e3-8d3d5f5bd46d",
+              "name": "Parse json body",
+              "description": "",
+              "sourceField": "text.body",
+              "parameters": {
+                "jsonParseParameters": {
+                  "destinationField": "text",
+                  "deleteSource": true,
+                  "escapedValue": null,
+                  "overrideDest": false
+                }
+              },
+              "enabled": true,
+              "order": 1
+            },
+            {
+              "id": "dbde94e7-d4c2-4b19-b7cc-b31d5b626828",
+              "name": "Parse json body_tmp",
+              "description": "",
+              "sourceField": "text.body_tmp",
+              "parameters": {
+                "jsonParseParameters": {
+                  "destinationField": "text",
+                  "deleteSource": true,
+                  "escapedValue": null,
+                  "overrideDest": false
+                }
+              },
+              "enabled": true,
+              "order": 2
+            }
+          ],
+          "enabled": true,
+          "order": 4
+        },
+        {
+          "id": "d2f84b6e-81e4-4260-b44c-7c891cb5b6f9",
+          "rules": [
+            {
+              "id": "7a926553-ed63-4419-91b6-398fe5d1998e",
+              "name": "Replacing all dots within field names with underscores",
+              "description": "",
+              "sourceField": "text",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "text",
+                  "replaceNewVal": "\"${1}_${2}_${3}_${4}_${5}_${6}_${7}_${8}_${9}_${10}\":",
+                  "rule": "\"([a-zA-Z\\d\\_]+)\\.([a-zA-Z\\d\\_]+)(?:\\.([a-zA-Z\\d\\_]+))?(?:\\.([a-zA-Z\\d\\_]+))?(?:\\.([a-zA-Z\\d\\_]+))?(?:\\.([a-zA-Z\\d\\_]+))?(?:\\.([a-zA-Z\\d\\_]+))?(?:\\.([a-zA-Z\\d\\_]+))?(?:\\.([a-zA-Z\\d\\_]+))?(?:\\.([a-zA-Z\\d\\_]+))?\":"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 5
+        },
+        {
+          "id": "97261ff6-8596-4976-a532-98eb9aa58d24",
+          "rules": [
+            {
+              "id": "3477410f-8fd6-4d9e-b12d-5808314655a1",
+              "name": "Remove trailing underscores",
+              "description": "",
+              "sourceField": "text",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "text",
+                  "replaceNewVal": "\"$1\":",
+                  "rule": "\"([^\"]+?)\\_+\":"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 6
+        },
+        {
+          "id": "916062c4-8601-4d14-a337-4accacb77aea",
+          "rules": [
+            {
+              "id": "43d84f05-5849-4d0d-a328-a269c305421d",
+              "name": "map deprecatedLastTimestamp, eventTime as datetime fields",
+              "description": "",
+              "sourceField": "text",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "text",
+                  "replaceNewVal": "\"${1}_custom_timestamp\":\"",
+                  "rule": "\"(deprecatedLastTimestamp|eventTime)\":\""
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 7
+        },
+        {
+          "id": "1c20a840-5fb9-49b5-89a3-545fa6a84bcf",
+          "rules": [
+            {
+              "id": "6e40bd6b-a324-47ca-a35f-6d9cd4e4482f",
+              "name": "fix mapping exception for infra collector empty f:annotations",
+              "description": "",
+              "sourceField": "text",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "text",
+                  "replaceNewVal": "${1}\"f:workflow\":{",
+                  "rule": "(\"f:annotations\":\\{.*?)\"\\.\":\\{"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 8
+        },
+        {
+          "id": "e0a8f1ca-c354-419e-b19f-2fddc294d406",
+          "rules": [
+            {
+              "id": "d9c89889-45d4-4ff5-9aea-d07edf598a0c",
+              "name": "Parse common logs from k8s containers",
+              "description": "This rule parses containers: kube-apiserver, kube-controller-manager, kube-proxy, kube-scheduler, storage-provisioner.",
+              "sourceField": "text",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "text",
+                  "replaceNewVal": "\"level\":\"$level\",\"timestamp\":\"$timestamp\",\"caller\":\"$caller\",\"message\":\"$message\"",
+                  "rule": "\"body\":\"(?P<level>[A-Z])(?P<timestamp>\\d{4} \\d{2}:\\d{2}:\\d{2}\\.\\d+)\\s*1 (?P<caller>[^\\]]+)\\] (?P<message>(?:\\\\\"|[^\"])+?)(?:\\\\n)?\""
+                }
+              },
+              "enabled": true,
+              "order": 1
+            },
+            {
+              "id": "264a062f-fdc1-488f-99ae-797f13236aa3",
+              "name": "Replace body with kvPairs when body is a kv pairs message starts with time",
+              "description": "",
+              "sourceField": "text",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "text",
+                  "replaceNewVal": "\"kvPairs\":\"${1}\"",
+                  "rule": "\"body\":\"(time=\\\\\"(?:\\\\\"|[^\"])+?)(?:\\\\n)?\""
+                }
+              },
+              "enabled": true,
+              "order": 2
+            },
+            {
+              "id": "9fcd285e-4b9e-4790-8437-cf25f150f5f5",
+              "name": "Replace body with kvPairs when body is a kv pairs message starts with ts",
+              "description": "",
+              "sourceField": "text",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "text",
+                  "replaceNewVal": "\"kvPairs\":\"${1}\"",
+                  "rule": "\"body\":\"(ts=\\d{4}(?:\\\\\"|[^\"])+?)(?:\\\\n)?\""
+                }
+              },
+              "enabled": true,
+              "order": 3
+            }
+          ],
+          "enabled": true,
+          "order": 9
+        },
+        {
+          "id": "5ab07bbe-772d-4465-a68b-003d6cb4151c",
+          "rules": [
+            {
+              "id": "1f3f7feb-40ee-41df-83cb-19693a7ae31f",
+              "name": "Extract msg from kvPairs",
+              "description": "",
+              "sourceField": "text.kvPairs",
+              "parameters": {
+                "extractParameters": {
+                  "rule": "msg=\\\\\"(?P<msg>(?:\\\\\\\\\"|[^\"])+)\\\\\""
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 10
+        },
+        {
+          "id": "595abc0e-a73a-44a3-b54d-773a40eda797",
+          "rules": [
+            {
+              "id": "c6cffc27-6f86-45da-a825-fef020522512",
+              "name": "Remove msg from kvPairs",
+              "description": "",
+              "sourceField": "text.kvPairs",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "text.kvPairs",
+                  "replaceNewVal": "",
+                  "rule": "\\smsg=\\\\\"(?P<msg>(?:\\\\\\\\\"|[^\"])+)\\\\\""
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 11
+        },
+        {
+          "id": "296b21ee-3f03-4497-a0e2-5fef722a2458",
+          "rules": [
+            {
+              "id": "5f17e83d-5fd2-439b-acd3-bcf0aa212038",
+              "name": "Jsonizing key/vals when val is enclosed with double quotes",
+              "description": "",
+              "sourceField": "text.kvPairs",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "text.kvPairs",
+                  "replaceNewVal": "\u00a7$1\u00a7:\u00a7$2\u00a7,",
+                  "rule": "([\\w\\.\\-]+)=\\\\\\\\\\\\\"((?:\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"|[^\"])+)\\\\\\\\\\\\\""
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 12
+        },
+        {
+          "id": "d26c6ea0-f6a6-4aa8-8e36-ce72075c47fe",
+          "rules": [
+            {
+              "id": "dcf623d7-5952-4931-ab2d-364e759e84be",
+              "name": "Remove any remaining backslashes followed by double quotes",
+              "description": "",
+              "sourceField": "text.kvPairs",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "text.kvPairs",
+                  "replaceNewVal": "",
+                  "rule": "\\\\+\""
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 13
+        },
+        {
+          "id": "b657a026-92f0-42f3-84b9-1562bc5c8a00",
+          "rules": [
+            {
+              "id": "62780fc4-8d3d-4f6d-a51e-5c33716f5ae9",
+              "name": "Jsonizing rest of key/vals",
+              "description": "",
+              "sourceField": "text.kvPairs",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "text.kvPairs",
+                  "replaceNewVal": "\u00a7$1\u00a7:\u00a7$2\u00a7,",
+                  "rule": "([\\w\\.\\-]+)=((?:$|[^ \\xA7])+)?(?: |$)"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 14
+        },
+        {
+          "id": "da4ad107-df9c-4ad6-b74c-0892fa98a3c1",
+          "rules": [
+            {
+              "id": "3795015a-387a-48df-95e6-f1fe6eb91514",
+              "name": "Removing last Comma and wrapping with curly brackets",
+              "description": "",
+              "sourceField": "text.kvPairs",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "text.kvPairs",
+                  "replaceNewVal": "{$1}",
+                  "rule": "(.*),"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 15
+        },
+        {
+          "id": "07f35c36-71e2-479b-9df0-ff5e9d598205",
+          "rules": [
+            {
+              "id": "1f787fe5-6b81-4e7f-91ce-398587e66608",
+              "name": "Replacing \u00a7 with double quotes in order to get a valid JSON",
+              "description": "",
+              "sourceField": "text.kvPairs",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "text.kvPairs",
+                  "replaceNewVal": "\"",
+                  "rule": "\\xA7"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 16
+        },
+        {
+          "id": "27cac273-5754-4c81-8fd0-45d279ba6431",
+          "rules": [
+            {
+              "id": "8b8472d3-bb8b-4cfe-b7f5-be998cdf310a",
+              "name": "reformat kvPairs field back to an escaped JSON string format",
+              "description": "",
+              "sourceField": "text.kvPairs",
+              "parameters": {
+                "jsonStringifyParameters": {
+                  "destinationField": "text.kvPairs_tmp",
+                  "deleteSource": true
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 17
+        },
+        {
+          "id": "d65a6f53-c47f-4049-a232-8c3676b27c65",
+          "rules": [
+            {
+              "id": "6aef851b-e08c-4ba2-864d-5fa7e1bd35e3",
+              "name": "Parse kvPairs_tmp as JSON to root",
+              "description": "",
+              "sourceField": "text.kvPairs_tmp",
+              "parameters": {
+                "jsonParseParameters": {
+                  "destinationField": "text",
+                  "deleteSource": true,
+                  "escapedValue": null,
+                  "overrideDest": false
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 18
+        }
+      ],
+      "order": 9
+    },
+    {
+      "id": "9126f927-0b66-4a77-a7cb-4626aa63a55c",
+      "name": "remove fields",
+      "description": "",
+      "creator": "bot@coralogix.com",
+      "enabled": true,
+      "hidden": false,
+      "ruleMatchers": [],
+      "ruleSubgroups": [
+        {
+          "id": "f3d4e162-c615-400b-b54b-a611f62b05b2",
+          "rules": [
+            {
+              "id": "55f771e1-f34a-48cf-b7b3-5e4e1160e98e",
+              "name": "remove fields",
+              "description": "",
+              "sourceField": "text",
+              "parameters": {
+                "removeFieldsParameters": {
+                  "fields": [
+                    "resource.attributes.cloud_provider",
+                    "resource.attributes.cloud_account_id",
+                    "resource.attributes.cloud_availability_zone",
+                    "resource.attributes.cloud_platform"
+                  ]
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 1
+        }
+      ],
+      "order": 10
+    },
+    {
+      "id": "0a18b286-70e5-42e6-8ca5-1a4421f741b1",
+      "name": "Severity Rules",
+      "description": "",
+      "creator": "",
+      "enabled": true,
+      "hidden": false,
+      "ruleMatchers": [],
+      "ruleSubgroups": [
+        {
+          "id": "03b2098a-a750-486d-816e-880190c14f87",
+          "rules": [
+            {
+              "id": "42f23cbf-a345-4232-b78d-cc9f2da2f03b",
+              "name": "Severity Rule",
+              "description": "Look for default severity text",
+              "sourceField": "text",
+              "parameters": {
+                "extractParameters": {
+                  "rule": "\\b(?P<severity>DEBUG|TRACE|INFO|WARN|ERROR|FATAL|EXCEPTION|[Dd]ebug|[Tt]race|[Ii]nfo|[Ww]arn|[Ee]rror|[Ff]atal|[Ee]xception)\\b"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 1
+        }
+      ],
+      "order": 11
+    },
+    {
+      "id": "2e3f9ff7-9e1d-4afe-a29c-0cf861ba5032",
+      "name": "Cloudtrail rules",
+      "description": "Cloudtrail extension pack",
+      "creator": "Cloudtrail extension pack",
+      "enabled": true,
+      "hidden": false,
+      "ruleMatchers": [
+        {
+          "applicationName": {
+            "value": "aws"
+          }
+        },
+        {
+          "subsystemName": {
+            "value": "lambda.amazonaws.com"
+          }
+        }
+      ],
+      "ruleSubgroups": [
+        {
+          "id": "45cca8c5-e112-4b40-bfe3-841b5db91225",
+          "rules": [
+            {
+              "id": "9de38b7a-5e72-46c2-ae7b-062bf04af7d6",
+              "name": "Replace Cloudtrail log severity to error if errorMessage exists",
+              "description": "",
+              "sourceField": "text.errorMessage",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "severity",
+                  "replaceNewVal": "ERROR",
+                  "rule": ".*"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 1
+        }
+      ],
+      "order": 12
+    },
+    {
+      "id": "e34e4750-d833-40d9-a30d-5bf7924dcdbb",
+      "name": "topipaddress",
+      "description": "topipaddress",
+      "creator": "toorfthu@amazon.com",
+      "enabled": true,
+      "hidden": false,
+      "ruleMatchers": [
+        {
+          "applicationName": {
+            "value": "aws"
+          }
+        }
+      ],
+      "ruleSubgroups": [
+        {
+          "id": "d814e59e-53d5-4235-bbd1-92c6d3bcde57",
+          "rules": [
+            {
+              "id": "a339fde3-833c-4fe7-8870-074f0cbda529",
+              "name": "critical errors",
+              "description": "",
+              "sourceField": "text",
+              "parameters": {
+                "parseParameters": {
+                  "destinationField": "text",
+                  "rule": "awsRegion(?P<region>(\\S*))\\s.*sourceIPAddress:(?P<IpAddress>(\\S*))\\s.*errorCode:(?P<error_code>(\\S*))"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 1
+        }
+      ],
+      "order": 13
+    },
+    {
+      "id": "7c08b4e6-a493-4913-8702-746f5e9c3468",
+      "name": "refined-parsingrule",
+      "description": "",
+      "creator": "toorfthu@amazon.com",
+      "enabled": true,
+      "hidden": false,
+      "ruleMatchers": [
+        {
+          "applicationName": {
+            "value": "aws"
+          }
+        },
+        {
+          "subsystemName": {
+            "value": "s3.amazonaws.com"
+          }
+        },
+        {
+          "severity": {
+            "value": "VALUE_WARNING"
+          }
+        }
+      ],
+      "ruleSubgroups": [
+        {
+          "id": "965a793a-5a7b-496f-9325-68d42d14ad64",
+          "rules": [
+            {
+              "id": "981c9023-6a3b-4897-90b3-48694802eeb1",
+              "name": "useful-extraction",
+              "description": "",
+              "sourceField": "text",
+              "parameters": {
+                "parseParameters": {
+                  "destinationField": "text",
+                  "rule": "\\b(?P<ip>(?:[0-9]{1,3}\\.){3}[0-9]{1,3})\\b"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 1
+        }
+      ],
+      "order": 14
+    },
+    {
+      "id": "55a50db5-56eb-4e7e-aac9-48cc73390871",
+      "name": "Change Severity of Elb logs",
+      "description": "Change Severity of Elb logs",
+      "creator": "thulasiram.toorpu@coralogix.com",
+      "enabled": true,
+      "hidden": false,
+      "ruleMatchers": [],
+      "ruleSubgroups": [
+        {
+          "id": "4952117b-1eec-41ed-92e1-a52dc804535f",
+          "rules": [
+            {
+              "id": "ba927fdd-3c42-44c6-9b81-e77e68bd517b",
+              "name": "Change Severity of Elb logs",
+              "description": "Change Severity of Elb logs",
+              "sourceField": "text",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "severity",
+                  "replaceNewVal": "ERROR",
+                  "rule": ".*(target_status_code|elb_status_code)\":\"[5]\\d{2}\".*"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 1
+        }
+      ],
+      "order": 15
+    },
+    {
+      "id": "2ea3c345-fde2-4c54-a3d8-3c2711484e94",
+      "name": "parsing rule for sample application",
+      "description": "parsing rule for sample application",
+      "creator": "",
+      "enabled": true,
+      "hidden": false,
+      "ruleMatchers": [
+        {
+          "applicationName": {
+            "value": "cs-app"
+          }
+        },
+        {
+          "applicationName": {
+            "value": "sample"
+          }
+        },
+        {
+          "subsystemName": {
+            "value": "cs-app"
+          }
+        },
+        {
+          "subsystemName": {
+            "value": "sample"
+          }
+        }
+      ],
+      "ruleSubgroups": [
+        {
+          "id": "341b7a80-1976-468f-b63f-d67fe288e07b",
+          "rules": [
+            {
+              "id": "e0993390-1c04-4b19-bf91-921d84c2eb1f",
+              "name": "extract json log",
+              "description": "",
+              "sourceField": "text",
+              "parameters": {
+                "extractParameters": {
+                  "rule": "message\\s*:s*(?P<bytes>\\d+)\\s*.*?status\\sis\\s(?P<status>\\[^\"]+)"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 1
+        }
+      ],
+      "order": 16
+    }
+  ],
+  "count": 16,
+  "resource_identifiers": [
+    "aa6d4ebc-0b33-4568-abe4-c4a9b92e4001",
+    "5d6a366c-368e-44b4-b8af-659a7b264af8",
+    "e2c13f76-31fa-48ce-ba19-29b5834322c0",
+    "44f3c752-2c45-44b8-b19a-fccd1e9d423e",
+    "f5c8fd2d-4f53-4493-8858-e736fba8cfbd",
+    "72f6fce1-61b6-4eae-afb7-ea2e28bec1b1",
+    "7744386a-bfdc-4a8e-aca0-8e65eb6c3876",
+    "f10f9b12-9025-4a06-b05a-b66713d785a0",
+    "f62e666c-d4a0-4de2-9fc6-9d1d9d95e081",
+    "9126f927-0b66-4a77-a7cb-4626aa63a55c",
+    "0a18b286-70e5-42e6-8ca5-1a4421f741b1",
+    "2e3f9ff7-9e1d-4afe-a29c-0cf861ba5032",
+    "e34e4750-d833-40d9-a30d-5bf7924dcdbb",
+    "7c08b4e6-a493-4913-8702-746f5e9c3468",
+    "55a50db5-56eb-4e7e-aac9-48cc73390871",
+    "2ea3c345-fde2-4c54-a3d8-3c2711484e94"
+  ]
+}

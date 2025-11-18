@@ -1,0 +1,16 @@
+{
+  "uid": "dbfeab6d-134f-4e91-a42a-38e8d00b568b",
+  "title": "test_subfolder",
+  "url": "/grafana/dashboards/f/dbfeab6d-134f-4e91-a42a-38e8d00b568b/test-subfolder",
+  "hasAcl": false,
+  "canSave": true,
+  "canEdit": true,
+  "canAdmin": true,
+  "canDelete": true,
+  "createdBy": "1011501 | thulasiram.toorpu@coralogix.com",
+  "created": "2025-11-18T19:04:33Z",
+  "updatedBy": "1011501 | thulasiram.toorpu@coralogix.com",
+  "updated": "2025-11-18T19:04:33Z",
+  "version": 1,
+  "overwrite": true
+}

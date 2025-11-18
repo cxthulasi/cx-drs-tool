@@ -1,0 +1,16 @@
+{
+  "uid": "c2ab6eb8-5670-49a2-a829-76201c7e16bf",
+  "title": "Prod",
+  "url": "/grafana/dashboards/f/c2ab6eb8-5670-49a2-a829-76201c7e16bf/prod",
+  "hasAcl": false,
+  "canSave": true,
+  "canEdit": true,
+  "canAdmin": true,
+  "canDelete": true,
+  "createdBy": "1011501 | thulasiram.toorpu@coralogix.com",
+  "created": "2025-11-18T19:04:29Z",
+  "updatedBy": "1011501 | thulasiram.toorpu@coralogix.com",
+  "updated": "2025-11-18T19:04:29Z",
+  "version": 1,
+  "overwrite": true
+}

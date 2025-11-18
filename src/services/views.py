@@ -18,6 +18,8 @@ import time
 from core.base_service import BaseService
 from core.config import Config
 from core.api_client import CoralogixAPIError
+from core.safety_manager import SafetyManager
+from core.version_manager import VersionManager
 
 
 class ViewsService(BaseService):
@@ -26,6 +28,9 @@ class ViewsService(BaseService):
     def __init__(self, config: Config, logger):
         super().__init__(config, logger)
         self._setup_failed_views_logging()
+        # Initialize safety and version managers
+        self.safety_manager = SafetyManager(config, self.service_name)
+        self.version_manager = VersionManager(config, self.service_name)
 
     @property
     def service_name(self) -> str:
@@ -77,7 +82,10 @@ class ViewsService(BaseService):
             return []
 
     def fetch_resources_from_teama(self) -> List[Dict[str, Any]]:
-        """Fetch all views from Team A."""
+        """Fetch all views from Team A with safety checks."""
+        api_error = None
+        views = []
+
         try:
             self.logger.info("Fetching views from Team A")
 
@@ -94,14 +102,38 @@ class ViewsService(BaseService):
             self.logger.info(f"  - {len(folder_views)} views in folders")
             self.logger.info(f"  - {len(standalone_views)} standalone views")
 
-            return views
-
         except CoralogixAPIError as e:
             self.logger.error(f"Failed to fetch views from Team A: {e}")
-            raise
+            api_error = e
         except Exception as e:
             self.logger.error(f"Unexpected error fetching views from Team A: {e}")
-            raise
+            api_error = e
+
+        # Get previous count for safety check
+        previous_version = self.version_manager.get_current_version()
+        previous_count = previous_version.get('teama', {}).get('count') if previous_version else None
+
+        # Perform safety check
+        safety_result = self.safety_manager.check_teama_fetch_safety(
+            views, api_error, previous_count
+        )
+
+        if not safety_result.is_safe:
+            self.logger.error(f"TeamA fetch safety check failed: {safety_result.reason}")
+            self.logger.error(f"Safety check details: {safety_result.details}")
+
+            # If we have an API error, raise it
+            if api_error:
+                raise api_error
+
+            # If it's a safety issue without API error, raise a custom exception
+            raise RuntimeError(f"Safety check failed: {safety_result.reason}")
+
+        # If we had an API error but safety check passed, still raise the error
+        if api_error:
+            raise api_error
+
+        return views
 
     def fetch_resources_from_teamb(self) -> List[Dict[str, Any]]:
         """Fetch all views from Team B."""
@@ -227,7 +259,7 @@ class ViewsService(BaseService):
         return sanitized_view
 
     def migrate(self) -> bool:
-        """Perform the actual views migration using delete-and-recreate approach."""
+        """Perform the actual views migration with enhanced safety checks using delete-and-recreate approach."""
         try:
             self.log_migration_start(self.service_name, dry_run=False)
 
@@ -235,7 +267,7 @@ class ViewsService(BaseService):
             self.logger.info("📁 Fetching view folders from Team A...")
             teama_folders = self.fetch_view_folders_from_teama()
 
-            # Step 2: Fetch views from Team A
+            # Step 2: Fetch views from Team A (with safety checks)
             self.logger.info("📄 Fetching views from Team A...")
             teama_views = self.fetch_resources_from_teama()
 
@@ -246,6 +278,31 @@ class ViewsService(BaseService):
             # Step 4: Fetch views from Team B (for deletion)
             self.logger.info("📄 Fetching views from Team B...")
             teamb_views = self.fetch_resources_from_teamb()
+
+            # Combine views and folders for version snapshots
+            teama_resources = teama_views + teama_folders
+            teamb_resources = teamb_views + teamb_folders
+
+            # Create pre-migration version snapshot
+            self.logger.info("📸 Creating pre-migration version snapshot...")
+            pre_migration_version = self.version_manager.create_version_snapshot(
+                teama_resources, teamb_resources, 'pre_migration'
+            )
+            self.logger.info(f"Pre-migration snapshot created: {pre_migration_version}")
+
+            # Get previous TeamA count for safety checks
+            previous_version = self.version_manager.get_previous_version()
+            previous_teama_count = previous_version.get('teama', {}).get('count') if previous_version else None
+
+            # Perform mass deletion safety check (we delete ALL TeamB resources)
+            mass_deletion_check = self.safety_manager.check_mass_deletion_safety(
+                teamb_resources, len(teamb_resources), len(teama_resources), previous_teama_count
+            )
+
+            if not mass_deletion_check.is_safe:
+                self.logger.error(f"Mass deletion safety check failed: {mass_deletion_check.reason}")
+                self.logger.error(f"Safety check details: {mass_deletion_check.details}")
+                raise RuntimeError(f"Mass deletion safety check failed: {mass_deletion_check.reason}")
 
             # Step 5: Delete all existing views from Team B
             self.logger.info("🗑️ Deleting existing views from Team B...")
@@ -393,6 +450,17 @@ class ViewsService(BaseService):
             # Calculate totals
             created_views = created_folder_views + created_standalone_views
             failed_views = failed_folder_views + failed_standalone_views
+
+            # Create post-migration version snapshot
+            self.logger.info("📸 Creating post-migration version snapshot...")
+            # Fetch updated Team B resources for post-migration snapshot
+            teamb_folders_after = self.fetch_view_folders_from_teamb()
+            teamb_views_after = self.fetch_resources_from_teamb()
+            teamb_resources_after = teamb_views_after + teamb_folders_after
+            post_migration_version = self.version_manager.create_version_snapshot(
+                teama_resources, teamb_resources_after, 'post_migration'
+            )
+            self.logger.info(f"Post-migration snapshot created: {post_migration_version}")
 
             # Display results in tabular format
             self._display_migration_results_table({

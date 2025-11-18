@@ -9,6 +9,8 @@ from typing import Dict, List, Any
 
 from core.base_service import BaseService
 from core.api_client import CoralogixAPIError
+from core.safety_manager import SafetyManager
+from core.version_manager import VersionManager
 
 
 class AlertsService(BaseService):
@@ -20,6 +22,9 @@ class AlertsService(BaseService):
         self.creation_delay = 0.5  # Default delay between alert creations (seconds)
         self.max_retries = 3  # Maximum number of retries for failed operations
         self.base_backoff = 1.0  # Base backoff time in seconds
+        # Initialize safety and version managers
+        self.safety_manager = SafetyManager(config, self.service_name)
+        self.version_manager = VersionManager(config, self.service_name)
 
     @property
     def service_name(self) -> str:
@@ -30,7 +35,10 @@ class AlertsService(BaseService):
         return "/v3/alert-defs"
 
     def fetch_resources_from_teama(self) -> List[Dict[str, Any]]:
-        """Fetch all alerts from Team A."""
+        """Fetch all alerts from Team A with safety checks."""
+        api_error = None
+        alerts = []
+
         try:
             self.logger.info("Fetching alerts from Team A")
 
@@ -38,14 +46,39 @@ class AlertsService(BaseService):
             alerts = self.teama_client.get_paginated(self.api_endpoint)
 
             self.logger.info(f"Fetched {len(alerts)} alerts from Team A")
-            return alerts
 
         except CoralogixAPIError as e:
             self.logger.error(f"Failed to fetch alerts from Team A: {e}")
-            raise
+            api_error = e
         except Exception as e:
             self.logger.error(f"Unexpected error fetching alerts from Team A: {e}")
-            raise
+            api_error = e
+
+        # Get previous count for safety check
+        previous_version = self.version_manager.get_current_version()
+        previous_count = previous_version.get('teama', {}).get('count') if previous_version else None
+
+        # Perform safety check
+        safety_result = self.safety_manager.check_teama_fetch_safety(
+            alerts, api_error, previous_count
+        )
+
+        if not safety_result.is_safe:
+            self.logger.error(f"TeamA fetch safety check failed: {safety_result.reason}")
+            self.logger.error(f"Safety check details: {safety_result.details}")
+
+            # If we have an API error, raise it
+            if api_error:
+                raise api_error
+
+            # If it's a safety issue without API error, raise a custom exception
+            raise RuntimeError(f"Safety check failed: {safety_result.reason}")
+
+        # If we had an API error but safety check passed, still raise the error
+        if api_error:
+            raise api_error
+
+        return alerts
 
     def fetch_resources_from_teamb(self) -> List[Dict[str, Any]]:
         """Fetch all alerts from Team B."""
@@ -296,15 +329,16 @@ class AlertsService(BaseService):
 
     def migrate(self) -> bool:
         """
-        Perform the actual alerts migration.
+        Perform the actual alerts migration with enhanced safety checks.
 
         This method:
-        1. Fetches all alerts from Team A
-        2. Fetches all alerts from Team B
-        3. Compares and identifies changes
-        4. Creates new alerts in Team B
-        5. Updates changed alerts in Team B
-        6. Optionally deletes alerts that no longer exist in Team A
+        1. Create pre-migration version snapshot
+        2. Fetch all alerts from Team A and Team B with safety checks
+        3. Perform mass deletion safety check
+        4. Compare and identify changes
+        5. Create new alerts in Team B
+        6. Update changed alerts in Team B
+        7. Create post-migration version snapshot
 
         Returns:
             True if migration completed successfully
@@ -312,17 +346,28 @@ class AlertsService(BaseService):
         try:
             self.log_migration_start(self.service_name, dry_run=False)
 
-            # Fetch current resources from Team A
+            # Fetch current resources from Team A (with safety checks)
             self.logger.info("Fetching alerts from Team A...")
             teama_alerts = self.fetch_resources_from_teama()
-
-            # Save Team A artifacts
-            self.logger.info("Saving Team A artifacts...")
-            self.save_artifacts(teama_alerts, 'teama')
 
             # Fetch current resources from Team B
             self.logger.info("Fetching alerts from Team B...")
             teamb_alerts = self.fetch_resources_from_teamb()
+
+            # Create pre-migration version snapshot
+            self.logger.info("📸 Creating pre-migration version snapshot...")
+            pre_migration_version = self.version_manager.create_version_snapshot(
+                teama_alerts, teamb_alerts, 'pre_migration'
+            )
+            self.logger.info(f"Pre-migration snapshot created: {pre_migration_version}")
+
+            # Get previous TeamA count for safety checks
+            previous_version = self.version_manager.get_previous_version()
+            previous_teama_count = previous_version.get('teama', {}).get('count') if previous_version else None
+
+            # Save Team A artifacts
+            self.logger.info("Saving Team A artifacts...")
+            self.save_artifacts(teama_alerts, 'teama')
 
             # Save Team B artifacts
             self.logger.info("Saving Team B artifacts...")
@@ -331,6 +376,24 @@ class AlertsService(BaseService):
             # Create lookup dictionaries for comparison
             teama_by_id = {self.get_resource_identifier(alert): alert for alert in teama_alerts}
             teamb_by_id = {self.get_resource_identifier(alert): alert for alert in teamb_alerts}
+
+            # Identify alerts that would be updated (for mass deletion safety check)
+            alerts_to_update = []
+            for alert_id, teama_alert in teama_by_id.items():
+                if alert_id in teamb_by_id:
+                    teamb_alert = teamb_by_id[alert_id]
+                    if not self.resources_are_equal(teama_alert, teamb_alert):
+                        alerts_to_update.append(teamb_alert)
+
+            # Perform mass deletion safety check (updates involve delete+recreate in some cases)
+            mass_deletion_check = self.safety_manager.check_mass_deletion_safety(
+                alerts_to_update, len(teamb_alerts), len(teama_alerts), previous_teama_count
+            )
+
+            if not mass_deletion_check.is_safe:
+                self.logger.error(f"Mass deletion safety check failed: {mass_deletion_check.reason}")
+                self.logger.error(f"Safety check details: {mass_deletion_check.details}")
+                raise RuntimeError(f"Mass deletion safety check failed: {mass_deletion_check.reason}")
 
             # Track migration statistics
             created_count = 0
@@ -394,6 +457,15 @@ class AlertsService(BaseService):
                 }
             }
             self.save_state(state)
+
+            # Create post-migration version snapshot
+            self.logger.info("📸 Creating post-migration version snapshot...")
+            # Fetch updated Team B resources for post-migration snapshot
+            teamb_alerts_after = self.fetch_resources_from_teamb()
+            post_migration_version = self.version_manager.create_version_snapshot(
+                teama_alerts, teamb_alerts_after, 'post_migration'
+            )
+            self.logger.info(f"Post-migration snapshot created: {post_migration_version}")
 
             # Log completion with detailed statistics
             total_processed = created_count + updated_count

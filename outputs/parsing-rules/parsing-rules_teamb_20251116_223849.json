@@ -1,0 +1,44 @@
+{
+  "timestamp": "2025-11-16T22:38:49.358039",
+  "service": "parsing-rules",
+  "team": "teamb",
+  "resources": [
+    {
+      "id": "c8a699a8-3268-4768-8cbc-de7304e74294",
+      "name": "sample rule",
+      "description": "sample rule",
+      "creator": "thulasiram.toorpu@coralogix.com",
+      "enabled": true,
+      "hidden": false,
+      "ruleMatchers": [],
+      "ruleSubgroups": [
+        {
+          "id": "7441cfb8-1b12-4a1f-b696-cdb21fb37e7e",
+          "rules": [
+            {
+              "id": "63a889c8-eb48-43d1-bd63-4345fc911ce4",
+              "name": "sample rule",
+              "description": "sample rule",
+              "sourceField": "text",
+              "parameters": {
+                "parseParameters": {
+                  "destinationField": "text",
+                  "rule": ".*"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 1
+        }
+      ],
+      "order": 1
+    }
+  ],
+  "count": 1,
+  "resource_identifiers": [
+    "c8a699a8-3268-4768-8cbc-de7304e74294"
+  ]
+}

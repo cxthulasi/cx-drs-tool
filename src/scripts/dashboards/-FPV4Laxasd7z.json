@@ -1,0 +1,895 @@
+{
+  "dashboard": {
+    "annotations": {
+      "list": [
+        {
+          "builtIn": 1,
+          "datasource": {
+            "type": "grafana",
+            "uid": "-- Grafana --"
+          },
+          "enable": true,
+          "hide": true,
+          "iconColor": "rgba(0, 211, 255, 1)",
+          "name": "Annotations & Alerts",
+          "target": {
+            "limit": 100,
+            "matchAny": false,
+            "tags": [],
+            "type": "dashboard"
+          },
+          "type": "dashboard"
+        }
+      ]
+    },
+    "editable": true,
+    "fiscalYearStartMonth": 0,
+    "graphTooltip": 0,
+    "links": [],
+    "liveNow": false,
+    "maxDataPoints": 3000,
+    "panels": [
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "-FPV4La7z"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "drawStyle": "line",
+              "fillOpacity": 0,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "lineInterpolation": "linear",
+              "lineWidth": 1,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 0
+        },
+        "id": 4,
+        "maxDataPoints": 3000,
+        "options": {
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "tooltip": {
+            "mode": "single",
+            "sort": "none"
+          }
+        },
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "-FPV4La7z"
+            },
+            "editorMode": "code",
+            "expr": "level_increase(((((sum(failed_playback_api_total_without_content_id{play_type=\"watch_page\", error_code!~'ERR_PB_1405|ERR_PB_1411|ERR_PB_1410|ERR_PB_1424|ERR_PB_1415|ERR_PB_1426|Unknown|NET_100|NET_101|HTTP_404|NET_103|NET_104|NET_201|NET_301|PB_IOS_NM-1002|PB_IOS_NM-1005|PB_TVOS_NM-1005|NET_102|ERR_CON_041|ERR_PB_1419|ERR_PB_1430|HTTP_475|BFF_FAILED_HTTP_475|475|NET_105|NET_107|NET_106|NET_108|BFF_FAILED_NET_102|BFF_FAILED_NET_103|BFF_FAILED_NET_104|ERR_PB_1431|ERR_PB_1432', country!~'IN', platform=~'PLATFORM_ANDROIDTV'}) by (platform) or on () vector(0) + sum(failed_playback_api_total_without_content_id{play_type=\"watch_page\", error_code=~'NET_100|NET_101|NET_102|NET_103|NET_104|NET_301|NET_201|NET_105|NET_106|NET_107|NET_108|BFF_FAILED_NET_102|BFF_FAILED_NET_103|BFF_FAILED_NET_104', country!~'IN', platform=~'PLATFORM_ANDROIDTV', newtork_type!='NETWORK_TYPE_OFFLINE'}) by (platform) or on () vector(0) + sum(failed_video_total_without_content_id{country!~'IN', platform=~'PLATFORM_ANDROIDTV', play_type='PLAY_TYPE_WATCH_PAGE',error_code!~\"NM-1002_X|NM-4740|NM-1000|NM-4290|NM-4031|NM-4730|CE-1008|CE-16845|NM-1002|NM-1002_1\"}) by(platform))) or on () vector(0))),(sum(watch_attempt_total_without_content_id{play_type=\"watch_page\",country!~'IN', platform=~'PLATFORM_ANDROIDTV'}) by (platform)),250,5,3,0.6)",
+            "legendFormat": "__auto",
+            "range": true,
+            "refId": "A"
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "-FPV4La7z"
+            },
+            "editorMode": "code",
+            "expr": "explain_level_increase(((((sum(failed_playback_api_total_without_content_id{play_type=\"watch_page\", error_code!~'ERR_PB_1405|ERR_PB_1411|ERR_PB_1410|ERR_PB_1424|ERR_PB_1415|ERR_PB_1426|Unknown|NET_100|NET_101|HTTP_404|NET_103|NET_104|NET_201|NET_301|PB_IOS_NM-1002|PB_IOS_NM-1005|PB_TVOS_NM-1005|NET_102|ERR_CON_041|ERR_PB_1419|ERR_PB_1430|HTTP_475|BFF_FAILED_HTTP_475|475|NET_105|NET_107|NET_106|NET_108|BFF_FAILED_NET_102|BFF_FAILED_NET_103|BFF_FAILED_NET_104|ERR_PB_1431|ERR_PB_1432', country!~'IN', platform=~'PLATFORM_ANDROIDTV'}) by (platform) or on () vector(0) + sum(failed_playback_api_total_without_content_id{play_type=\"watch_page\", error_code=~'NET_100|NET_101|NET_102|NET_103|NET_104|NET_301|NET_201|NET_105|NET_106|NET_107|NET_108|BFF_FAILED_NET_102|BFF_FAILED_NET_103|BFF_FAILED_NET_104', country!~'IN', platform=~'PLATFORM_ANDROIDTV', newtork_type!='NETWORK_TYPE_OFFLINE'}) by (platform) or on () vector(0) + sum(failed_video_total_without_content_id{country!~'IN', platform=~'PLATFORM_ANDROIDTV', play_type='PLAY_TYPE_WATCH_PAGE',error_code!~\"NM-1002_X|NM-4740|NM-1000|NM-4290|NM-4031|NM-4730|CE-1008|CE-16845|NM-1002|NM-1002_1\"}) by(platform))) or on () vector(0))),(sum(watch_attempt_total_without_content_id{play_type=\"watch_page\",country!~'IN', platform=~'PLATFORM_ANDROIDTV'}) by (platform)),250,5,3,0.6)",
+            "hide": false,
+            "legendFormat": "__auto",
+            "range": true,
+            "refId": "B"
+          }
+        ],
+        "title": "PFR-PLATFORM_ANDROIDTV",
+        "type": "timeseries"
+      },
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "-FPV4La7z"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "drawStyle": "line",
+              "fillOpacity": 0,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "lineInterpolation": "linear",
+              "lineWidth": 1,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": [
+            {
+              "__systemRef": "hideSeriesFrom",
+              "matcher": {
+                "id": "byNames",
+                "maxDataPoints": 3000,
+                "options": {
+                  "mode": "exclude",
+                  "names": [
+                    "{__name__=\"metric\", platform=\"PLATFORM_IOS\"}"
+                  ],
+                  "prefix": "All except:",
+                  "readOnly": true
+                }
+              },
+              "properties": [
+                {
+                  "id": "custom.hideFrom",
+                  "maxDataPoints": 3000,
+                  "value": {
+                    "legend": false,
+                    "tooltip": false,
+                    "viz": true
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 12,
+          "y": 0
+        },
+        "id": 8,
+        "maxDataPoints": 3000,
+        "options": {
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "tooltip": {
+            "mode": "single",
+            "sort": "none"
+          }
+        },
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "-FPV4La7z"
+            },
+            "editorMode": "code",
+            "expr": "level_increase(((((sum(failed_playback_api_total_without_content_id{play_type=\"watch_page\", error_code!~'ERR_PB_1405|ERR_PB_1411|ERR_PB_1410|ERR_PB_1424|ERR_PB_1415|ERR_PB_1426|Unknown|NET_100|NET_101|HTTP_404|NET_103|NET_104|NET_201|NET_301|PB_IOS_NM-1002|PB_IOS_NM-1005|PB_TVOS_NM-1005|NET_102|ERR_CON_041|ERR_PB_1419|ERR_PB_1430|HTTP_475|BFF_FAILED_HTTP_475|475|NET_105|NET_107|NET_106|NET_108|BFF_FAILED_NET_102|BFF_FAILED_NET_103|BFF_FAILED_NET_104|ERR_PB_1431|ERR_PB_1432', country!~'IN', platform=~'PLATFORM_IOS'}) by (platform) or on () vector(0) + sum(failed_playback_api_total_without_content_id{play_type=\"watch_page\", error_code=~'NET_100|NET_101|NET_102|NET_103|NET_104|NET_301|NET_201|NET_105|NET_106|NET_107|NET_108|BFF_FAILED_NET_102|BFF_FAILED_NET_103|BFF_FAILED_NET_104', country!~'IN', platform=~'PLATFORM_IOS', newtork_type!='NETWORK_TYPE_OFFLINE'}) by (platform) or on () vector(0) + sum(failed_video_total_without_content_id{country!~'IN', platform=~'PLATFORM_IOS', play_type='PLAY_TYPE_WATCH_PAGE',error_code!~\"NM-1002_X|NM-4740|NM-1000|NM-4290|NM-4031|NM-4730|CE-1008|CE-16845|NM-1002|NM-1002_1\"}) by(platform))) or on () vector(0))),(sum(watch_attempt_total_without_content_id{play_type=\"watch_page\",country!~'IN', platform=~'PLATFORM_IOS'}) by (platform)),250,5,3,0.6)",
+            "legendFormat": "__auto",
+            "range": true,
+            "refId": "A"
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "-FPV4La7z"
+            },
+            "editorMode": "code",
+            "expr": "explain_level_increase(((((sum(failed_playback_api_total_without_content_id{play_type=\"watch_page\", error_code!~'ERR_PB_1405|ERR_PB_1411|ERR_PB_1410|ERR_PB_1424|ERR_PB_1415|ERR_PB_1426|Unknown|NET_100|NET_101|HTTP_404|NET_103|NET_104|NET_201|NET_301|PB_IOS_NM-1002|PB_IOS_NM-1005|PB_TVOS_NM-1005|NET_102|ERR_CON_041|ERR_PB_1419|ERR_PB_1430|HTTP_475|BFF_FAILED_HTTP_475|475|NET_105|NET_107|NET_106|NET_108|BFF_FAILED_NET_102|BFF_FAILED_NET_103|BFF_FAILED_NET_104|ERR_PB_1431|ERR_PB_1432', country!~'IN', platform=~'PLATFORM_IOS'}) by (platform) or on () vector(0) + sum(failed_playback_api_total_without_content_id{play_type=\"watch_page\", error_code=~'NET_100|NET_101|NET_102|NET_103|NET_104|NET_301|NET_201|NET_105|NET_106|NET_107|NET_108|BFF_FAILED_NET_102|BFF_FAILED_NET_103|BFF_FAILED_NET_104', country!~'IN', platform=~'PLATFORM_IOS', newtork_type!='NETWORK_TYPE_OFFLINE'}) by (platform) or on () vector(0) + sum(failed_video_total_without_content_id{country!~'IN', platform=~'PLATFORM_IOS', play_type='PLAY_TYPE_WATCH_PAGE',error_code!~\"NM-1002_X|NM-4740|NM-1000|NM-4290|NM-4031|NM-4730|CE-1008|CE-16845|NM-1002|NM-1002_1\"}) by(platform))) or on () vector(0))),(sum(watch_attempt_total_without_content_id{play_type=\"watch_page\",country!~'IN', platform=~'PLATFORM_IOS'}) by (platform)),250,5,3,0.6)",
+            "hide": false,
+            "legendFormat": "__auto",
+            "range": true,
+            "refId": "B"
+          }
+        ],
+        "title": "PFR-PLATFORM_IOS",
+        "type": "timeseries"
+      },
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "-FPV4La7z"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "drawStyle": "line",
+              "fillOpacity": 0,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "lineInterpolation": "linear",
+              "lineWidth": 1,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": [
+            {
+              "__systemRef": "hideSeriesFrom",
+              "matcher": {
+                "id": "byNames",
+                "maxDataPoints": 3000,
+                "options": {
+                  "mode": "exclude",
+                  "names": [
+                    "{__name__=\"metric\", platform=\"PLATFORM_ANDROID\"}"
+                  ],
+                  "prefix": "All except:",
+                  "readOnly": true
+                }
+              },
+              "properties": [
+                {
+                  "id": "custom.hideFrom",
+                  "maxDataPoints": 3000,
+                  "value": {
+                    "legend": false,
+                    "tooltip": false,
+                    "viz": true
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "gridPos": {
+          "h": 9,
+          "w": 12,
+          "x": 0,
+          "y": 8
+        },
+        "id": 2,
+        "maxDataPoints": 3000,
+        "options": {
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "tooltip": {
+            "mode": "single",
+            "sort": "none"
+          }
+        },
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "-FPV4La7z"
+            },
+            "editorMode": "code",
+            "expr": "level_increase(((((sum(failed_playback_api_total_without_content_id{play_type=\"watch_page\", error_code!~'ERR_PB_1405|ERR_PB_1411|ERR_PB_1410|ERR_PB_1424|ERR_PB_1415|ERR_PB_1426|Unknown|NET_100|NET_101|HTTP_404|NET_103|NET_104|NET_201|NET_301|PB_IOS_NM-1002|PB_IOS_NM-1005|PB_TVOS_NM-1005|NET_102|ERR_CON_041|ERR_PB_1419|ERR_PB_1430|HTTP_475|BFF_FAILED_HTTP_475|475|NET_105|NET_107|NET_106|NET_108|BFF_FAILED_NET_102|BFF_FAILED_NET_103|BFF_FAILED_NET_104|ERR_PB_1431|ERR_PB_1432', country!~'IN', platform=~'PLATFORM_ANDROID'}) by (platform) or on () vector(0) + sum(failed_playback_api_total_without_content_id{play_type=\"watch_page\", error_code=~'NET_100|NET_101|NET_102|NET_103|NET_104|NET_301|NET_201|NET_105|NET_106|NET_107|NET_108|BFF_FAILED_NET_102|BFF_FAILED_NET_103|BFF_FAILED_NET_104', country!~'IN', platform=~'PLATFORM_ANDROID', newtork_type!='NETWORK_TYPE_OFFLINE'}) by (platform) or on () vector(0) + sum(failed_video_total_without_content_id{country!~'IN', platform=~'PLATFORM_ANDROID', play_type='PLAY_TYPE_WATCH_PAGE',error_code!~\"NM-1002_X|NM-4740|NM-1000|NM-4290|NM-4031|NM-4730|CE-1008|CE-16845|NM-1002|NM-1002_1\"}) by(platform))) or on () vector(0))),(sum(watch_attempt_total_without_content_id{play_type=\"watch_page\",country!~'IN', platform=~'PLATFORM_ANDROID'}) by (platform)),250,5,3,0.6)",
+            "legendFormat": "__auto",
+            "range": true,
+            "refId": "A"
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "-FPV4La7z"
+            },
+            "editorMode": "code",
+            "expr": "explain_level_increase(((((sum(failed_playback_api_total_without_content_id{play_type=\"watch_page\", error_code!~'ERR_PB_1405|ERR_PB_1411|ERR_PB_1410|ERR_PB_1424|ERR_PB_1415|ERR_PB_1426|Unknown|NET_100|NET_101|HTTP_404|NET_103|NET_104|NET_201|NET_301|PB_IOS_NM-1002|PB_IOS_NM-1005|PB_TVOS_NM-1005|NET_102|ERR_CON_041|ERR_PB_1419|ERR_PB_1430|HTTP_475|BFF_FAILED_HTTP_475|475|NET_105|NET_107|NET_106|NET_108|BFF_FAILED_NET_102|BFF_FAILED_NET_103|BFF_FAILED_NET_104|ERR_PB_1431|ERR_PB_1432', country!~'IN', platform=~'PLATFORM_ANDROID'}) by (platform) or on () vector(0) + sum(failed_playback_api_total_without_content_id{play_type=\"watch_page\", error_code=~'NET_100|NET_101|NET_102|NET_103|NET_104|NET_301|NET_201|NET_105|NET_106|NET_107|NET_108|BFF_FAILED_NET_102|BFF_FAILED_NET_103|BFF_FAILED_NET_104', country!~'IN', platform=~'PLATFORM_ANDROID', newtork_type!='NETWORK_TYPE_OFFLINE'}) by (platform) or on () vector(0) + sum(failed_video_total_without_content_id{country!~'IN', platform=~'PLATFORM_ANDROID', play_type='PLAY_TYPE_WATCH_PAGE',error_code!~\"NM-1002_X|NM-4740|NM-1000|NM-4290|NM-4031|NM-4730|CE-1008|CE-16845|NM-1002|NM-1002_1\"}) by(platform))) or on () vector(0))),(sum(watch_attempt_total_without_content_id{play_type=\"watch_page\",country!~'IN', platform=~'PLATFORM_ANDROID'}) by (platform)),250,5,3,0.6)",
+            "hide": false,
+            "legendFormat": "__auto",
+            "range": true,
+            "refId": "B"
+          }
+        ],
+        "title": "AE-PLATFORM_ANDROID",
+        "type": "timeseries"
+      },
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "-FPV4La7z"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "drawStyle": "line",
+              "fillOpacity": 0,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "lineInterpolation": "linear",
+              "lineWidth": 1,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": [
+            {
+              "__systemRef": "hideSeriesFrom",
+              "matcher": {
+                "id": "byNames",
+                "maxDataPoints": 3000,
+                "options": {
+                  "mode": "exclude",
+                  "names": [
+                    "{platform=\"PLATFORM_WEB\"}",
+                    "{__name__=\"metric\", platform=\"PLATFORM_WEB\"}"
+                  ],
+                  "prefix": "All except:",
+                  "readOnly": true
+                }
+              },
+              "properties": [
+                {
+                  "id": "custom.hideFrom",
+                  "maxDataPoints": 3000,
+                  "value": {
+                    "legend": false,
+                    "tooltip": false,
+                    "viz": true
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 12,
+          "y": 8
+        },
+        "id": 10,
+        "maxDataPoints": 3000,
+        "options": {
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "tooltip": {
+            "mode": "single",
+            "sort": "none"
+          }
+        },
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "-FPV4La7z"
+            },
+            "editorMode": "code",
+            "expr": "level_increase(((((sum(failed_playback_api_total_without_content_id{play_type=\"watch_page\", error_code!~'ERR_PB_1405|ERR_PB_1411|ERR_PB_1410|ERR_PB_1424|ERR_PB_1415|ERR_PB_1426|Unknown|NET_100|NET_101|HTTP_404|NET_103|NET_104|NET_201|NET_301|PB_IOS_NM-1002|PB_IOS_NM-1005|PB_TVOS_NM-1005|NET_102|ERR_CON_041|ERR_PB_1419|ERR_PB_1430|HTTP_475|BFF_FAILED_HTTP_475|475|NET_105|NET_107|NET_106|NET_108|BFF_FAILED_NET_102|BFF_FAILED_NET_103|BFF_FAILED_NET_104|ERR_PB_1431|ERR_PB_1432', country!~'IN', platform=~'PLATFORM_WEB'}) by (platform) or on () vector(0) + sum(failed_playback_api_total_without_content_id{play_type=\"watch_page\", error_code=~'NET_100|NET_101|NET_102|NET_103|NET_104|NET_301|NET_201|NET_105|NET_106|NET_107|NET_108|BFF_FAILED_NET_102|BFF_FAILED_NET_103|BFF_FAILED_NET_104', country!~'IN', platform=~'PLATFORM_WEB', newtork_type!='NETWORK_TYPE_OFFLINE'}) by (platform) or on () vector(0) + sum(failed_video_total_without_content_id{country!~'IN', platform=~'PLATFORM_WEB', play_type='PLAY_TYPE_WATCH_PAGE',error_code!~\"NM-1002_X|NM-4740|NM-1000|NM-4290|NM-4031|NM-4730|CE-1008|CE-16845|NM-1002|NM-1002_1\"}) by(platform))) or on () vector(0))),(sum(watch_attempt_total_without_content_id{play_type=\"watch_page\",country!~'IN', platform=~'PLATFORM_WEB'}) by (platform)),250,5,3,0.6)",
+            "legendFormat": "__auto",
+            "range": true,
+            "refId": "A"
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "-FPV4La7z"
+            },
+            "editorMode": "code",
+            "expr": "explain_level_increase(((((sum(failed_playback_api_total_without_content_id{play_type=\"watch_page\", error_code!~'ERR_PB_1405|ERR_PB_1411|ERR_PB_1410|ERR_PB_1424|ERR_PB_1415|ERR_PB_1426|Unknown|NET_100|NET_101|HTTP_404|NET_103|NET_104|NET_201|NET_301|PB_IOS_NM-1002|PB_IOS_NM-1005|PB_TVOS_NM-1005|NET_102|ERR_CON_041|ERR_PB_1419|ERR_PB_1430|HTTP_475|BFF_FAILED_HTTP_475|475|NET_105|NET_107|NET_106|NET_108|BFF_FAILED_NET_102|BFF_FAILED_NET_103|BFF_FAILED_NET_104|ERR_PB_1431|ERR_PB_1432', country!~'IN', platform=~'PLATFORM_WEB'}) by (platform) or on () vector(0) + sum(failed_playback_api_total_without_content_id{play_type=\"watch_page\", error_code=~'NET_100|NET_101|NET_102|NET_103|NET_104|NET_301|NET_201|NET_105|NET_106|NET_107|NET_108|BFF_FAILED_NET_102|BFF_FAILED_NET_103|BFF_FAILED_NET_104', country!~'IN', platform=~'PLATFORM_WEB', newtork_type!='NETWORK_TYPE_OFFLINE'}) by (platform) or on () vector(0) + sum(failed_video_total_without_content_id{country!~'IN', platform=~'PLATFORM_WEB', play_type='PLAY_TYPE_WATCH_PAGE',error_code!~\"NM-1002_X|NM-4740|NM-1000|NM-4290|NM-4031|NM-4730|CE-1008|CE-16845|NM-1002|NM-1002_1\"}) by(platform))) or on () vector(0))),(sum(watch_attempt_total_without_content_id{play_type=\"watch_page\",country!~'IN', platform=~'PLATFORM_WEB'}) by (platform)),250,5,3,0.6)",
+            "hide": false,
+            "legendFormat": "__auto",
+            "range": true,
+            "refId": "B"
+          }
+        ],
+        "title": "PFR-PLATFORM_WEB",
+        "type": "timeseries"
+      },
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "-FPV4La7z"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "drawStyle": "line",
+              "fillOpacity": 0,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "lineInterpolation": "linear",
+              "lineWidth": 1,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 12,
+          "y": 16
+        },
+        "id": 12,
+        "maxDataPoints": 3000,
+        "options": {
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "tooltip": {
+            "mode": "single",
+            "sort": "none"
+          }
+        },
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "-FPV4La7z"
+            },
+            "editorMode": "code",
+            "expr": "level_increase(((((sum(failed_playback_api_total_without_content_id{play_type=\"watch_page\", error_code!~'ERR_PB_1405|ERR_PB_1411|ERR_PB_1410|ERR_PB_1424|ERR_PB_1415|ERR_PB_1426|Unknown|NET_100|NET_101|HTTP_404|NET_103|NET_104|NET_201|NET_301|PB_WEB_NM-1002|PB_WEB_NM-1005|PB_TVOS_NM-1005|NET_102|ERR_CON_041|ERR_PB_1419|ERR_PB_1430|HTTP_475|BFF_FAILED_HTTP_475|475|NET_105|NET_107|NET_106|NET_108|BFF_FAILED_NET_102|BFF_FAILED_NET_103|BFF_FAILED_NET_104|ERR_PB_1431|ERR_PB_1432', country!~'IN', platform=~'PLATFORM_WEBOS'}) by (platform) or on () vector(0) + sum(failed_playback_api_total_without_content_id{play_type=\"watch_page\", error_code=~'NET_100|NET_101|NET_102|NET_103|NET_104|NET_301|NET_201|NET_105|NET_106|NET_107|NET_108|BFF_FAILED_NET_102|BFF_FAILED_NET_103|BFF_FAILED_NET_104', country!~'IN', platform=~'PLATFORM_WEBOS', newtork_type!='NETWORK_TYPE_OFFLINE'}) by (platform) or on () vector(0) + sum(failed_video_total_without_content_id{country!~'IN', platform=~'PLATFORM_WEBOS', play_type='PLAY_TYPE_WATCH_PAGE',error_code!~\"NM-1002_X|NM-4740|NM-1000|NM-4290|NM-4031|NM-4730|CE-1008|CE-16845|NM-1002|NM-1002_1\"}) by(platform))) or on () vector(0))),(sum(watch_attempt_total_without_content_id{play_type=\"watch_page\",country!~'IN', platform=~'PLATFORM_WEBOS'}) by (platform)),250,5,3,0.6)",
+            "legendFormat": "__auto",
+            "range": true,
+            "refId": "A"
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "-FPV4La7z"
+            },
+            "editorMode": "code",
+            "expr": "explain_level_increase(((((sum(failed_playback_api_total_without_content_id{play_type=\"watch_page\", error_code!~'ERR_PB_1405|ERR_PB_1411|ERR_PB_1410|ERR_PB_1424|ERR_PB_1415|ERR_PB_1426|Unknown|NET_100|NET_101|HTTP_404|NET_103|NET_104|NET_201|NET_301|PB_WEB_NM-1002|PB_WEB_NM-1005|PB_TVOS_NM-1005|NET_102|ERR_CON_041|ERR_PB_1419|ERR_PB_1430|HTTP_475|BFF_FAILED_HTTP_475|475|NET_105|NET_107|NET_106|NET_108|BFF_FAILED_NET_102|BFF_FAILED_NET_103|BFF_FAILED_NET_104|ERR_PB_1431|ERR_PB_1432', country!~'IN', platform=~'PLATFORM_WEBOS'}) by (platform) or on () vector(0) + sum(failed_playback_api_total_without_content_id{play_type=\"watch_page\", error_code=~'NET_100|NET_101|NET_102|NET_103|NET_104|NET_301|NET_201|NET_105|NET_106|NET_107|NET_108|BFF_FAILED_NET_102|BFF_FAILED_NET_103|BFF_FAILED_NET_104', country!~'IN', platform=~'PLATFORM_WEBOS', newtork_type!='NETWORK_TYPE_OFFLINE'}) by (platform) or on () vector(0) + sum(failed_video_total_without_content_id{country!~'IN', platform=~'PLATFORM_WEBOS', play_type='PLAY_TYPE_WATCH_PAGE',error_code!~\"NM-1002_X|NM-4740|NM-1000|NM-4290|NM-4031|NM-4730|CE-1008|CE-16845|NM-1002|NM-1002_1\"}) by(platform))) or on () vector(0))),(sum(watch_attempt_total_without_content_id{play_type=\"watch_page\",country!~'IN', platform=~'PLATFORM_WEBOS'}) by (platform)),250,5,3,0.6)",
+            "hide": false,
+            "legendFormat": "__auto",
+            "range": true,
+            "refId": "B"
+          }
+        ],
+        "title": "PFR-PLATFORM_WEBOS",
+        "type": "timeseries"
+      },
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "-FPV4La7z"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "drawStyle": "line",
+              "fillOpacity": 0,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "lineInterpolation": "linear",
+              "lineWidth": 1,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": [
+            {
+              "__systemRef": "hideSeriesFrom",
+              "matcher": {
+                "id": "byNames",
+                "maxDataPoints": 3000,
+                "options": {
+                  "mode": "exclude",
+                  "names": [
+                    "{__name__=\"metric\", platform=\"PLATFORM_FIRETV\"}"
+                  ],
+                  "prefix": "All except:",
+                  "readOnly": true
+                }
+              },
+              "properties": [
+                {
+                  "id": "custom.hideFrom",
+                  "maxDataPoints": 3000,
+                  "value": {
+                    "legend": false,
+                    "tooltip": false,
+                    "viz": true
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 17
+        },
+        "id": 6,
+        "maxDataPoints": 3000,
+        "options": {
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "tooltip": {
+            "mode": "single",
+            "sort": "none"
+          }
+        },
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "-FPV4La7z"
+            },
+            "editorMode": "code",
+            "expr": "level_increase(((((sum(failed_playback_api_total_without_content_id{play_type=\"watch_page\", error_code!~'ERR_PB_1405|ERR_PB_1411|ERR_PB_1410|ERR_PB_1424|ERR_PB_1415|ERR_PB_1426|Unknown|NET_100|NET_101|HTTP_404|NET_103|NET_104|NET_201|NET_301|PB_IOS_NM-1002|PB_IOS_NM-1005|PB_TVOS_NM-1005|NET_102|ERR_CON_041|ERR_PB_1419|ERR_PB_1430|HTTP_475|BFF_FAILED_HTTP_475|475|NET_105|NET_107|NET_106|NET_108|BFF_FAILED_NET_102|BFF_FAILED_NET_103|BFF_FAILED_NET_104|ERR_PB_1431|ERR_PB_1432', country!~'IN', platform=~'PLATFORM_FIRETV'}) by (platform) or on () vector(0) + sum(failed_playback_api_total_without_content_id{play_type=\"watch_page\", error_code=~'NET_100|NET_101|NET_102|NET_103|NET_104|NET_301|NET_201|NET_105|NET_106|NET_107|NET_108|BFF_FAILED_NET_102|BFF_FAILED_NET_103|BFF_FAILED_NET_104', country!~'IN', platform=~'PLATFORM_FIRETV', newtork_type!='NETWORK_TYPE_OFFLINE'}) by (platform) or on () vector(0) + sum(failed_video_total_without_content_id{country!~'IN', platform=~'PLATFORM_FIRETV', play_type='PLAY_TYPE_WATCH_PAGE',error_code!~\"NM-1002_X|NM-4740|NM-1000|NM-4290|NM-4031|NM-4730|CE-1008|CE-16845|NM-1002|NM-1002_1\"}) by(platform))) or on () vector(0))),(sum(watch_attempt_total_without_content_id{play_type=\"watch_page\",country!~'IN', platform=~'PLATFORM_FIRETV'}) by (platform)),250,5,3,0.6)",
+            "legendFormat": "__auto",
+            "range": true,
+            "refId": "A"
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "-FPV4La7z"
+            },
+            "editorMode": "code",
+            "expr": "explain_level_increase(((((sum(failed_playback_api_total_without_content_id{play_type=\"watch_page\", error_code!~'ERR_PB_1405|ERR_PB_1411|ERR_PB_1410|ERR_PB_1424|ERR_PB_1415|ERR_PB_1426|Unknown|NET_100|NET_101|HTTP_404|NET_103|NET_104|NET_201|NET_301|PB_IOS_NM-1002|PB_IOS_NM-1005|PB_TVOS_NM-1005|NET_102|ERR_CON_041|ERR_PB_1419|ERR_PB_1430|HTTP_475|BFF_FAILED_HTTP_475|475|NET_105|NET_107|NET_106|NET_108|BFF_FAILED_NET_102|BFF_FAILED_NET_103|BFF_FAILED_NET_104|ERR_PB_1431|ERR_PB_1432', country!~'IN', platform=~'PLATFORM_FIRETV'}) by (platform) or on () vector(0) + sum(failed_playback_api_total_without_content_id{play_type=\"watch_page\", error_code=~'NET_100|NET_101|NET_102|NET_103|NET_104|NET_301|NET_201|NET_105|NET_106|NET_107|NET_108|BFF_FAILED_NET_102|BFF_FAILED_NET_103|BFF_FAILED_NET_104', country!~'IN', platform=~'PLATFORM_FIRETV', newtork_type!='NETWORK_TYPE_OFFLINE'}) by (platform) or on () vector(0) + sum(failed_video_total_without_content_id{country!~'IN', platform=~'PLATFORM_FIRETV', play_type='PLAY_TYPE_WATCH_PAGE',error_code!~\"NM-1002_X|NM-4740|NM-1000|NM-4290|NM-4031|NM-4730|CE-1008|CE-16845|NM-1002|NM-1002_1\"}) by(platform))) or on () vector(0))),(sum(watch_attempt_total_without_content_id{play_type=\"watch_page\",country!~'IN', platform=~'PLATFORM_FIRETV'}) by (platform)),250,5,3,0.6)",
+            "hide": false,
+            "legendFormat": "__auto",
+            "range": true,
+            "refId": "B"
+          }
+        ],
+        "title": "PFR-PLATFORM_FIRETV",
+        "type": "timeseries"
+      },
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "-FPV4La7z"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "drawStyle": "line",
+              "fillOpacity": 0,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "lineInterpolation": "linear",
+              "lineWidth": 1,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green"
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 25
+        },
+        "id": 14,
+        "maxDataPoints": 3000,
+        "options": {
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "tooltip": {
+            "mode": "single",
+            "sort": "none"
+          }
+        },
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "-FPV4La7z"
+            },
+            "editorMode": "code",
+            "expr": "level_increase(((((sum(failed_playback_api_total_without_content_id{play_type=\"watch_page\", error_code!~'ERR_PB_1405|ERR_PB_1411|ERR_PB_1410|ERR_PB_1424|ERR_PB_1415|ERR_PB_1426|Unknown|NET_100|NET_101|HTTP_404|NET_103|NET_104|NET_201|NET_301|PB_IOS_NM-1002|PB_IOS_NM-1005|PB_TVOS_NM-1005|NET_102|ERR_CON_041|ERR_PB_1419|ERR_PB_1430|HTTP_475|BFF_FAILED_HTTP_475|475|NET_105|NET_107|NET_106|NET_108|BFF_FAILED_NET_102|BFF_FAILED_NET_103|BFF_FAILED_NET_104|ERR_PB_1431|ERR_PB_1432', country!~'IN', platform=~'PLATFORM_TIZENTV'}) by (platform) or on () vector(0) + sum(failed_playback_api_total_without_content_id{play_type=\"watch_page\", error_code=~'NET_100|NET_101|NET_102|NET_103|NET_104|NET_301|NET_201|NET_105|NET_106|NET_107|NET_108|BFF_FAILED_NET_102|BFF_FAILED_NET_103|BFF_FAILED_NET_104', country!~'IN', platform=~'PLATFORM_TIZENTV', newtork_type!='NETWORK_TYPE_OFFLINE'}) by (platform) or on () vector(0) + sum(failed_video_total_without_content_id{country!~'IN', platform=~'PLATFORM_TIZENTV', play_type='PLAY_TYPE_WATCH_PAGE',error_code!~\"NM-1002_X|NM-4740|NM-1000|NM-4290|NM-4031|NM-4730|CE-1008|CE-16845|NM-1002|NM-1002_1\"}) by(platform))) or on () vector(0))),(sum(watch_attempt_total_without_content_id{play_type=\"watch_page\",country!~'IN', platform=~'PLATFORM_TIZENTV'}) by (platform)),250,5,3,0.6)",
+            "legendFormat": "__auto",
+            "range": true,
+            "refId": "A"
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "-FPV4La7z"
+            },
+            "editorMode": "code",
+            "expr": "explain_level_increase(((((sum(failed_playback_api_total_without_content_id{play_type=\"watch_page\", error_code!~'ERR_PB_1405|ERR_PB_1411|ERR_PB_1410|ERR_PB_1424|ERR_PB_1415|ERR_PB_1426|Unknown|NET_100|NET_101|HTTP_404|NET_103|NET_104|NET_201|NET_301|PB_IOS_NM-1002|PB_IOS_NM-1005|PB_TVOS_NM-1005|NET_102|ERR_CON_041|ERR_PB_1419|ERR_PB_1430|HTTP_475|BFF_FAILED_HTTP_475|475|NET_105|NET_107|NET_106|NET_108|BFF_FAILED_NET_102|BFF_FAILED_NET_103|BFF_FAILED_NET_104|ERR_PB_1431|ERR_PB_1432', country!~'IN', platform=~'PLATFORM_TIZENTV'}) by (platform) or on () vector(0) + sum(failed_playback_api_total_without_content_id{play_type=\"watch_page\", error_code=~'NET_100|NET_101|NET_102|NET_103|NET_104|NET_301|NET_201|NET_105|NET_106|NET_107|NET_108|BFF_FAILED_NET_102|BFF_FAILED_NET_103|BFF_FAILED_NET_104', country!~'IN', platform=~'PLATFORM_TIZENTV', newtork_type!='NETWORK_TYPE_OFFLINE'}) by (platform) or on () vector(0) + sum(failed_video_total_without_content_id{country!~'IN', platform=~'PLATFORM_TIZENTV', play_type='PLAY_TYPE_WATCH_PAGE',error_code!~\"NM-1002_X|NM-4740|NM-1000|NM-4290|NM-4031|NM-4730|CE-1008|CE-16845|NM-1002|NM-1002_1\"}) by(platform))) or on () vector(0))),(sum(watch_attempt_total_without_content_id{play_type=\"watch_page\",country!~'IN', platform=~'PLATFORM_TIZENTV'}) by (platform)),250,5,3,0.6)",
+            "hide": false,
+            "legendFormat": "__auto",
+            "range": true,
+            "refId": "B"
+          }
+        ],
+        "title": "PFR-PLATFORM_TIZENTV",
+        "type": "timeseries"
+      }
+    ],
+    "schemaVersion": 37,
+    "style": "dark",
+    "tags": [],
+    "templating": {
+      "list": []
+    },
+    "time": {
+      "from": "now-6h",
+      "to": "now"
+    },
+    "timepicker": {},
+    "timezone": "",
+    "title": "Last9_PFR_Other_Regions",
+    "uid": "-FPV4Laxasd7z",
+    "version": 1,
+    "weekStart": ""
+  },
+  "folderUid": "d4480be7-99b5-4c30-85ad-a79f79c08ce9",
+  "overwrite": true
+}

@@ -9,6 +9,8 @@ from typing import Dict, List, Any
 
 from core.base_service import BaseService
 from core.api_client import CoralogixAPIError
+from core.safety_manager import SafetyManager
+from core.version_manager import VersionManager
 
 
 class EnrichmentsService(BaseService):
@@ -20,6 +22,9 @@ class EnrichmentsService(BaseService):
         self.creation_delay = 0.5  # Default delay between enrichment creations (seconds)
         self.max_retries = 3  # Maximum number of retries for failed operations
         self.base_backoff = 1.0  # Base backoff time in seconds
+        # Initialize safety and version managers
+        self.safety_manager = SafetyManager(config, self.service_name)
+        self.version_manager = VersionManager(config, self.service_name)
 
     @property
     def service_name(self) -> str:
@@ -130,7 +135,10 @@ class EnrichmentsService(BaseService):
             time.sleep(self.creation_delay)
 
     def fetch_resources_from_teama(self) -> List[Dict[str, Any]]:
-        """Fetch enrichments from Team A."""
+        """Fetch enrichments from Team A with safety checks."""
+        api_error = None
+        enrichments = []
+
         try:
             self.logger.info("Fetching enrichments from Team A")
 
@@ -141,11 +149,36 @@ class EnrichmentsService(BaseService):
             enrichments = response.get('customEnrichments', [])
 
             self.logger.info(f"Fetched {len(enrichments)} enrichments from Team A")
-            return enrichments
 
         except Exception as e:
             self.logger.error(f"Failed to fetch enrichments from Team A: {e}")
-            raise
+            api_error = e
+
+        # Get previous count for safety check
+        previous_version = self.version_manager.get_current_version()
+        previous_count = previous_version.get('teama', {}).get('count') if previous_version else None
+
+        # Perform safety check
+        safety_result = self.safety_manager.check_teama_fetch_safety(
+            enrichments, api_error, previous_count
+        )
+
+        if not safety_result.is_safe:
+            self.logger.error(f"TeamA fetch safety check failed: {safety_result.reason}")
+            self.logger.error(f"Safety check details: {safety_result.details}")
+
+            # If we have an API error, raise it
+            if api_error:
+                raise api_error
+
+            # If it's a safety issue without API error, raise a custom exception
+            raise RuntimeError(f"Safety check failed: {safety_result.reason}")
+
+        # If we had an API error but safety check passed, still raise the error
+        if api_error:
+            raise api_error
+
+        return enrichments
 
     def fetch_resources_from_teamb(self) -> List[Dict[str, Any]]:
         """Fetch enrichments from Team B."""
@@ -389,18 +422,29 @@ class EnrichmentsService(BaseService):
         print("=" * 70)
 
     def migrate(self) -> bool:
-        """Perform the actual enrichments migration with enhanced features."""
+        """Perform the actual enrichments migration with enhanced safety checks."""
         try:
-            # Fetch resources from both teams
+            # Fetch resources from both teams (with safety checks)
             self.logger.info("Fetching resources from Team A...")
             teama_enrichments = self.fetch_resources_from_teama()
+
+            self.logger.info("Fetching resources from Team B...")
+            teamb_enrichments = self.fetch_resources_from_teamb()
+
+            # Create pre-migration version snapshot
+            self.logger.info("📸 Creating pre-migration version snapshot...")
+            pre_migration_version = self.version_manager.create_version_snapshot(
+                teama_enrichments, teamb_enrichments, 'pre_migration'
+            )
+            self.logger.info(f"Pre-migration snapshot created: {pre_migration_version}")
+
+            # Get previous TeamA count for safety checks
+            previous_version = self.version_manager.get_previous_version()
+            previous_teama_count = previous_version.get('teama', {}).get('count') if previous_version else None
 
             # Export Team A artifacts
             self.logger.info("Saving Team A artifacts...")
             self.save_artifacts(teama_enrichments, "teama")
-
-            self.logger.info("Fetching resources from Team B...")
-            teamb_enrichments = self.fetch_resources_from_teamb()
 
             # Export Team B artifacts
             self.logger.info("Saving Team B artifacts...")
@@ -409,6 +453,24 @@ class EnrichmentsService(BaseService):
             # Create mappings by ID for comparison
             teama_by_id = {self.get_resource_identifier(enrichment): enrichment for enrichment in teama_enrichments}
             teamb_by_id = {self.get_resource_identifier(enrichment): enrichment for enrichment in teamb_enrichments}
+
+            # Identify enrichments that would be recreated (for mass deletion safety check)
+            enrichments_to_recreate = []
+            for enrichment_id, teama_enrichment in teama_by_id.items():
+                if enrichment_id in teamb_by_id:
+                    teamb_enrichment = teamb_by_id[enrichment_id]
+                    if not self.resources_are_equal(teama_enrichment, teamb_enrichment):
+                        enrichments_to_recreate.append(teamb_enrichment)
+
+            # Perform mass deletion safety check (recreate involves delete+create)
+            mass_deletion_check = self.safety_manager.check_mass_deletion_safety(
+                enrichments_to_recreate, len(teamb_enrichments), len(teama_enrichments), previous_teama_count
+            )
+
+            if not mass_deletion_check.is_safe:
+                self.logger.error(f"Mass deletion safety check failed: {mass_deletion_check.reason}")
+                self.logger.error(f"Safety check details: {mass_deletion_check.details}")
+                raise RuntimeError(f"Mass deletion safety check failed: {mass_deletion_check.reason}")
 
             # Track migration statistics
             created_count = 0
@@ -502,6 +564,15 @@ class EnrichmentsService(BaseService):
                 }
             }
             self.save_state(state)
+
+            # Create post-migration version snapshot
+            self.logger.info("📸 Creating post-migration version snapshot...")
+            # Fetch updated Team B resources for post-migration snapshot
+            teamb_enrichments_after = self.fetch_resources_from_teamb()
+            post_migration_version = self.version_manager.create_version_snapshot(
+                teama_enrichments, teamb_enrichments_after, 'post_migration'
+            )
+            self.logger.info(f"Post-migration snapshot created: {post_migration_version}")
 
             # Log completion with detailed statistics
             total_processed = created_count + recreated_count

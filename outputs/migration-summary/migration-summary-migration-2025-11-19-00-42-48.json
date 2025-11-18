@@ -1,0 +1,91 @@
+{
+  "mode": "MIGRATION",
+  "timestamp": "2025-11-19T00:42:48.656752",
+  "duration_seconds": 583.296194,
+  "summary": {
+    "total_services": 5,
+    "successful_services": 4,
+    "failed_services": 1,
+    "success_rate": "80.0%"
+  },
+  "failed_service_names": [
+    "grafana-dashboards"
+  ],
+  "services": [
+    {
+      "service": "parsing-rules",
+      "status": "SUCCESS",
+      "teama_count": 0,
+      "teamb_before": 0,
+      "teamb_after": 0,
+      "created": 0,
+      "updated": 0,
+      "deleted": 0,
+      "failed": 0,
+      "skipped": 0,
+      "total_operations": 0,
+      "success_rate": "0.0%",
+      "error_message": null
+    },
+    {
+      "service": "recording-rules",
+      "status": "SUCCESS",
+      "teama_count": 0,
+      "teamb_before": 0,
+      "teamb_after": 0,
+      "created": 0,
+      "updated": 0,
+      "deleted": 0,
+      "failed": 0,
+      "skipped": 0,
+      "total_operations": 0,
+      "success_rate": "0.0%",
+      "error_message": null
+    },
+    {
+      "service": "grafana-dashboards",
+      "status": "FAILED",
+      "teama_count": 0,
+      "teamb_before": 0,
+      "teamb_after": 0,
+      "created": 0,
+      "updated": 0,
+      "deleted": 0,
+      "failed": 0,
+      "skipped": 0,
+      "total_operations": 0,
+      "success_rate": "0.0%",
+      "error_message": "migration returned False"
+    },
+    {
+      "service": "views",
+      "status": "SUCCESS",
+      "teama_count": 0,
+      "teamb_before": 0,
+      "teamb_after": 0,
+      "created": 0,
+      "updated": 0,
+      "deleted": 0,
+      "failed": 0,
+      "skipped": 0,
+      "total_operations": 0,
+      "success_rate": "0.0%",
+      "error_message": null
+    },
+    {
+      "service": "custom-actions",
+      "status": "SUCCESS",
+      "teama_count": 0,
+      "teamb_before": 0,
+      "teamb_after": 0,
+      "created": 0,
+      "updated": 0,
+      "deleted": 0,
+      "failed": 0,
+      "skipped": 0,
+      "total_operations": 0,
+      "success_rate": "0.0%",
+      "error_message": null
+    }
+  ]
+}

@@ -1,0 +1,250 @@
+{
+  "version_id": "v_20251110_084142",
+  "timestamp": "2025-11-10T08:41:42.037916",
+  "service": "tco",
+  "version_type": "post_migration",
+  "teama": {
+    "count": 4,
+    "resources": [
+      {
+        "id": "a9d12f41-5f85-4997-a04b-1c90b19ebc05",
+        "companyId": 1010487,
+        "name": "Move logs with Long retention ",
+        "description": "",
+        "priority": "PRIORITY_TYPE_MEDIUM",
+        "deleted": false,
+        "enabled": false,
+        "order": 1,
+        "logRules": {
+          "severities": [
+            "SEVERITY_DEBUG",
+            "SEVERITY_VERBOSE",
+            "SEVERITY_INFO",
+            "SEVERITY_WARNING",
+            "SEVERITY_ERROR",
+            "SEVERITY_CRITICAL"
+          ]
+        },
+        "createdAt": "Thu May 29 2025 17:23:49 GMT+0000 (Coordinated Universal Time)",
+        "updatedAt": "Tue Sep 09 2025 10:44:01 GMT+0000 (Coordinated Universal Time)",
+        "archiveRetention": {
+          "id": "5944cc24-5395-42ad-896b-e9d5341d8147"
+        },
+        "_source_type": "SOURCE_TYPE_UNSPECIFIED"
+      },
+      {
+        "id": "6a67c480-c91a-49a3-9725-11df61a4c59d",
+        "companyId": 1010487,
+        "name": "BFCM TAG",
+        "description": "",
+        "priority": "PRIORITY_TYPE_MEDIUM",
+        "deleted": false,
+        "enabled": false,
+        "order": 2,
+        "applicationRule": {
+          "ruleTypeId": "RULE_TYPE_ID_IS",
+          "name": "597078901540"
+        },
+        "logRules": {
+          "severities": [
+            "SEVERITY_DEBUG",
+            "SEVERITY_VERBOSE",
+            "SEVERITY_INFO",
+            "SEVERITY_WARNING",
+            "SEVERITY_ERROR",
+            "SEVERITY_CRITICAL"
+          ]
+        },
+        "createdAt": "Thu May 29 2025 11:09:08 GMT+0000 (Coordinated Universal Time)",
+        "updatedAt": "Tue Sep 09 2025 10:45:28 GMT+0000 (Coordinated Universal Time)",
+        "archiveRetention": {
+          "id": "518a7887-30b7-46fb-8708-93da6995e9ab"
+        },
+        "_source_type": "SOURCE_TYPE_UNSPECIFIED"
+      },
+      {
+        "id": "a9d12f41-5f85-4997-a04b-1c90b19ebc05",
+        "companyId": 1010487,
+        "name": "Move logs with Long retention ",
+        "description": "",
+        "priority": "PRIORITY_TYPE_MEDIUM",
+        "deleted": false,
+        "enabled": false,
+        "order": 1,
+        "logRules": {
+          "severities": [
+            "SEVERITY_DEBUG",
+            "SEVERITY_VERBOSE",
+            "SEVERITY_INFO",
+            "SEVERITY_WARNING",
+            "SEVERITY_ERROR",
+            "SEVERITY_CRITICAL"
+          ]
+        },
+        "createdAt": "Thu May 29 2025 17:23:49 GMT+0000 (Coordinated Universal Time)",
+        "updatedAt": "Tue Sep 09 2025 10:44:01 GMT+0000 (Coordinated Universal Time)",
+        "archiveRetention": {
+          "id": "5944cc24-5395-42ad-896b-e9d5341d8147"
+        },
+        "_source_type": "SOURCE_TYPE_LOGS"
+      },
+      {
+        "id": "6a67c480-c91a-49a3-9725-11df61a4c59d",
+        "companyId": 1010487,
+        "name": "BFCM TAG",
+        "description": "",
+        "priority": "PRIORITY_TYPE_MEDIUM",
+        "deleted": false,
+        "enabled": false,
+        "order": 2,
+        "applicationRule": {
+          "ruleTypeId": "RULE_TYPE_ID_IS",
+          "name": "597078901540"
+        },
+        "logRules": {
+          "severities": [
+            "SEVERITY_DEBUG",
+            "SEVERITY_VERBOSE",
+            "SEVERITY_INFO",
+            "SEVERITY_WARNING",
+            "SEVERITY_ERROR",
+            "SEVERITY_CRITICAL"
+          ]
+        },
+        "createdAt": "Thu May 29 2025 11:09:08 GMT+0000 (Coordinated Universal Time)",
+        "updatedAt": "Tue Sep 09 2025 10:45:28 GMT+0000 (Coordinated Universal Time)",
+        "archiveRetention": {
+          "id": "518a7887-30b7-46fb-8708-93da6995e9ab"
+        },
+        "_source_type": "SOURCE_TYPE_LOGS"
+      }
+    ],
+    "resource_identifiers": [
+      "Move logs with Long retention ",
+      "BFCM TAG",
+      "Move logs with Long retention ",
+      "BFCM TAG"
+    ]
+  },
+  "teamb": {
+    "count": 4,
+    "resources": [
+      {
+        "id": "d1f71758-bd90-4342-8e3a-a8a99862b8b2",
+        "companyId": 1011501,
+        "name": "Move logs with Long retention ",
+        "description": "",
+        "priority": "PRIORITY_TYPE_MEDIUM",
+        "deleted": false,
+        "enabled": false,
+        "order": 1,
+        "logRules": {
+          "severities": [
+            "SEVERITY_DEBUG",
+            "SEVERITY_VERBOSE",
+            "SEVERITY_INFO",
+            "SEVERITY_WARNING",
+            "SEVERITY_ERROR",
+            "SEVERITY_CRITICAL"
+          ]
+        },
+        "createdAt": "Mon Nov 10 2025 03:11:40 GMT+0000 (Coordinated Universal Time)",
+        "updatedAt": "Mon Nov 10 2025 03:11:40 GMT+0000 (Coordinated Universal Time)",
+        "archiveRetention": {
+          "id": "5ee50b85-d07d-4f8e-b599-2b4656a52172"
+        },
+        "_source_type": "SOURCE_TYPE_UNSPECIFIED"
+      },
+      {
+        "id": "5118ec11-1764-489f-a7f8-edf5bc58fbdf",
+        "companyId": 1011501,
+        "name": "BFCM TAG",
+        "description": "",
+        "priority": "PRIORITY_TYPE_MEDIUM",
+        "deleted": false,
+        "enabled": false,
+        "order": 2,
+        "applicationRule": {
+          "ruleTypeId": "RULE_TYPE_ID_IS",
+          "name": "597078901540"
+        },
+        "logRules": {
+          "severities": [
+            "SEVERITY_DEBUG",
+            "SEVERITY_VERBOSE",
+            "SEVERITY_INFO",
+            "SEVERITY_WARNING",
+            "SEVERITY_ERROR",
+            "SEVERITY_CRITICAL"
+          ]
+        },
+        "createdAt": "Mon Nov 10 2025 03:11:41 GMT+0000 (Coordinated Universal Time)",
+        "updatedAt": "Mon Nov 10 2025 03:11:41 GMT+0000 (Coordinated Universal Time)",
+        "_source_type": "SOURCE_TYPE_UNSPECIFIED"
+      },
+      {
+        "id": "d1f71758-bd90-4342-8e3a-a8a99862b8b2",
+        "companyId": 1011501,
+        "name": "Move logs with Long retention ",
+        "description": "",
+        "priority": "PRIORITY_TYPE_MEDIUM",
+        "deleted": false,
+        "enabled": false,
+        "order": 1,
+        "logRules": {
+          "severities": [
+            "SEVERITY_DEBUG",
+            "SEVERITY_VERBOSE",
+            "SEVERITY_INFO",
+            "SEVERITY_WARNING",
+            "SEVERITY_ERROR",
+            "SEVERITY_CRITICAL"
+          ]
+        },
+        "createdAt": "Mon Nov 10 2025 03:11:40 GMT+0000 (Coordinated Universal Time)",
+        "updatedAt": "Mon Nov 10 2025 03:11:40 GMT+0000 (Coordinated Universal Time)",
+        "archiveRetention": {
+          "id": "5ee50b85-d07d-4f8e-b599-2b4656a52172"
+        },
+        "_source_type": "SOURCE_TYPE_LOGS"
+      },
+      {
+        "id": "5118ec11-1764-489f-a7f8-edf5bc58fbdf",
+        "companyId": 1011501,
+        "name": "BFCM TAG",
+        "description": "",
+        "priority": "PRIORITY_TYPE_MEDIUM",
+        "deleted": false,
+        "enabled": false,
+        "order": 2,
+        "applicationRule": {
+          "ruleTypeId": "RULE_TYPE_ID_IS",
+          "name": "597078901540"
+        },
+        "logRules": {
+          "severities": [
+            "SEVERITY_DEBUG",
+            "SEVERITY_VERBOSE",
+            "SEVERITY_INFO",
+            "SEVERITY_WARNING",
+            "SEVERITY_ERROR",
+            "SEVERITY_CRITICAL"
+          ]
+        },
+        "createdAt": "Mon Nov 10 2025 03:11:41 GMT+0000 (Coordinated Universal Time)",
+        "updatedAt": "Mon Nov 10 2025 03:11:41 GMT+0000 (Coordinated Universal Time)",
+        "_source_type": "SOURCE_TYPE_LOGS"
+      }
+    ],
+    "resource_identifiers": [
+      "Move logs with Long retention ",
+      "BFCM TAG",
+      "Move logs with Long retention ",
+      "BFCM TAG"
+    ]
+  },
+  "metadata": {
+    "created_by": "version_manager",
+    "purpose": "post_migration_snapshot"
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "timestamp": "2025-11-08T14:04:00.449550",
+  "service": "slo",
+  "team": "teamb",
+  "resources": [
+    {
+      "id": "d797f3f4-ebcd-490b-94c6-bbdab0df8580",
+      "name": "API Availability SLO",
+      "description": "Monitors the availability of our critical API endpoints",
+      "creator": "thulasiram.toorpu@coralogix.com",
+      "labels": {},
+      "revision": {
+        "revision": 1,
+        "updateTime": "2025-11-08T08:33:37.859Z"
+      },
+      "grouping": {
+        "labels": [
+          "service_name"
+        ]
+      },
+      "createTime": "2025-11-08T08:33:37.859Z",
+      "updateTime": "2025-11-08T08:33:37.870Z",
+      "targetThresholdPercentage": 99.95,
+      "sloTimeFrame": "SLO_TIME_FRAME_28_DAYS",
+      "windowBasedMetricSli": {
+        "query": {
+          "query": "histogram_quantile(0.95, sum(increase(duration_ms_bucket)) by (service_name, le))"
+        },
+        "window": "WINDOW_SLO_WINDOW_1_MINUTE",
+        "comparisonOperator": "COMPARISON_OPERATOR_GREATER_THAN",
+        "threshold": 65
+      }
+    }
+  ],
+  "count": 1,
+  "resource_identifiers": [
+    "API Availability SLO"
+  ]
+}

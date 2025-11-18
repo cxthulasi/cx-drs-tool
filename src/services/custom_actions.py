@@ -13,6 +13,8 @@ from typing import Dict, List, Any, Optional
 
 from core.base_service import BaseService
 from core.api_client import CoralogixAPIError
+from core.safety_manager import SafetyManager
+from core.version_manager import VersionManager
 
 
 class CustomActionsService(BaseService):
@@ -24,6 +26,9 @@ class CustomActionsService(BaseService):
         self.creation_delay = 1.0  # Default delay between operations (seconds)
         self.max_retries = 3  # Maximum number of retries for failed operations
         self.base_backoff = 2.0  # Base backoff time in seconds
+        # Initialize safety and version managers
+        self.safety_manager = SafetyManager(config, self.service_name)
+        self.version_manager = VersionManager(config, self.service_name)
 
     @property
     def service_name(self) -> str:
@@ -128,16 +133,48 @@ class CustomActionsService(BaseService):
             self.logger.error(f"Failed to save failed actions log: {e}")
 
     def fetch_resources_from_teama(self) -> List[Dict[str, Any]]:
-        """Fetch all custom actions from Team A."""
+        """Fetch all custom actions from Team A with safety checks."""
+        api_error = None
+        actions = []
+
         try:
             self.logger.info("Fetching custom actions from Team A")
             response = self.teama_client.get(self.api_endpoint)
             actions = response.get('actions', [])
             self.logger.info(f"Fetched {len(actions)} custom actions from Team A")
-            return actions
-        except Exception as e:
+
+        except CoralogixAPIError as e:
             self.logger.error(f"Failed to fetch custom actions from Team A: {e}")
-            return []
+            api_error = e
+        except Exception as e:
+            self.logger.error(f"Unexpected error fetching custom actions from Team A: {e}")
+            api_error = e
+
+        # Get previous count for safety check
+        previous_version = self.version_manager.get_current_version()
+        previous_count = previous_version.get('teama', {}).get('count') if previous_version else None
+
+        # Perform safety check
+        safety_result = self.safety_manager.check_teama_fetch_safety(
+            actions, api_error, previous_count
+        )
+
+        if not safety_result.is_safe:
+            self.logger.error(f"TeamA fetch safety check failed: {safety_result.reason}")
+            self.logger.error(f"Safety check details: {safety_result.details}")
+
+            # If we have an API error, raise it
+            if api_error:
+                raise api_error
+
+            # If it's a safety issue without API error, raise a custom exception
+            raise RuntimeError(f"Safety check failed: {safety_result.reason}")
+
+        # If we had an API error but safety check passed, still raise the error
+        if api_error:
+            raise api_error
+
+        return actions
 
     def fetch_resources_from_teamb(self) -> List[Dict[str, Any]]:
         """Fetch all custom actions from Team B."""
@@ -497,24 +534,58 @@ class CustomActionsService(BaseService):
             return False
 
     def migrate(self) -> bool:
-        """Perform the actual custom actions migration using delete & recreate pattern."""
+        """
+        Perform the actual custom actions migration with enhanced safety checks.
+
+        Enhanced Implementation:
+        1. Create pre-migration version snapshot
+        2. Fetch custom actions from Team A and Team B with safety checks
+        3. Perform mass deletion safety check
+        4. Delete all existing actions in Team B
+        5. Create all actions from Team A in Team B
+        6. Create post-migration version snapshot
+
+        Returns:
+            True if migration completed successfully
+        """
         try:
             self.log_migration_start(self.service_name, dry_run=False)
 
-            # Fetch resources from both teams
+            # Step 1: Fetch resources from both teams
             self.logger.info("Fetching custom actions from Team A...")
-            teama_actions = self.fetch_resources_from_teama()
-
-            # Export Team A artifacts
-            self.logger.info("Saving Team A artifacts...")
-            self.save_artifacts(teama_actions, "teama")
+            teama_actions = self.fetch_resources_from_teama()  # This now includes safety checks
 
             self.logger.info("Fetching custom actions from Team B...")
             teamb_actions = self.fetch_resources_from_teamb()
 
-            # Export Team B artifacts
+            # Step 2: Create pre-migration version snapshot
+            self.logger.info("Creating pre-migration version snapshot...")
+            pre_migration_version = self.version_manager.create_version_snapshot(
+                teama_actions, teamb_actions, 'pre_migration'
+            )
+            self.logger.info(f"Pre-migration snapshot created: {pre_migration_version}")
+
+            # Step 3: Export artifacts
+            self.logger.info("Saving Team A artifacts...")
+            self.save_artifacts(teama_actions, "teama")
+
             self.logger.info("Saving Team B artifacts...")
             self.save_artifacts(teamb_actions, "teamb")
+
+            # Step 4: Perform mass deletion safety check
+            # Get previous TeamA count for trend analysis (from current version before this migration)
+            current_version = self.version_manager.get_current_version()
+            previous_teama_count = current_version.get('teama', {}).get('count') if current_version else None
+
+            # For custom-actions, we delete ALL TeamB actions, so all are "to be deleted"
+            mass_deletion_check = self.safety_manager.check_mass_deletion_safety(
+                teamb_actions, len(teamb_actions), len(teama_actions), previous_teama_count
+            )
+
+            if not mass_deletion_check.is_safe:
+                self.logger.error(f"Mass deletion safety check failed: {mass_deletion_check.reason}")
+                self.logger.error(f"Safety check details: {mass_deletion_check.details}")
+                raise RuntimeError(f"Mass deletion safety check failed: {mass_deletion_check.reason}")
 
             # Track migration statistics
             migration_stats = {
@@ -535,7 +606,7 @@ class CustomActionsService(BaseService):
 
             for action in teama_actions:
                 try:
-                    created_action = self.create_resource_in_teamb(action)
+                    self.create_resource_in_teamb(action)
                     migration_stats['actions']['created'] += 1
                 except Exception as e:
                     migration_stats['actions']['failed'] += 1
@@ -543,6 +614,18 @@ class CustomActionsService(BaseService):
             # Save failed actions log
             if self.failed_actions:
                 self._save_failed_actions_log()
+
+            # Step 5: Create post-migration version snapshot
+            try:
+                self.logger.info("Creating post-migration version snapshot...")
+                # Fetch updated TeamB resources
+                updated_teamb_actions = self.fetch_resources_from_teamb()
+                post_migration_version = self.version_manager.create_version_snapshot(
+                    teama_actions, updated_teamb_actions, 'post_migration'
+                )
+                self.logger.info(f"Post-migration snapshot created: {post_migration_version}")
+            except Exception as e:
+                self.logger.warning(f"Failed to create post-migration snapshot: {e}")
 
             # Calculate totals
             total_created = migration_stats['actions']['created']
@@ -601,4 +684,79 @@ class CustomActionsService(BaseService):
                 self._save_failed_actions_log()
 
             self.log_migration_complete(self.service_name, False, 0, 1)
+            return False
+
+    def rollback_to_version(self, version_id: str) -> bool:
+        """
+        Rollback TeamB custom actions to a specific version.
+
+        Args:
+            version_id: Version identifier to rollback to
+
+        Returns:
+            True if rollback completed successfully
+        """
+        try:
+            self.logger.info(f"Starting rollback to version: {version_id}")
+
+            # Get rollback plan
+            rollback_plan = self.version_manager.create_rollback_plan(version_id)
+            if not rollback_plan:
+                self.logger.error(f"Failed to create rollback plan for version: {version_id}")
+                return False
+
+            self.logger.info(f"Rollback plan: {rollback_plan['summary']}")
+
+            # Create pre-rollback snapshot
+            current_teamb_actions = self.fetch_resources_from_teamb()
+            pre_rollback_version = self.version_manager.create_version_snapshot(
+                [], current_teamb_actions, 'pre_rollback'
+            )
+            self.logger.info(f"Pre-rollback snapshot created: {pre_rollback_version}")
+
+            success_count = 0
+            error_count = 0
+
+            # Step 1: Delete all current actions in TeamB
+            self.logger.info("🗑️ Deleting current custom actions from Team B...")
+            for action in rollback_plan['resources_to_delete']:
+                try:
+                    action_id = self.get_resource_identifier(action)
+                    action_name = self.get_resource_name(action)
+                    if action_id and self.delete_resource_from_teamb(action_id):
+                        self.logger.info(f"Deleted current action: {action_name}")
+                        success_count += 1
+                except Exception as e:
+                    self.logger.error(f"Failed to delete action {action.get('name', 'Unknown')}: {e}")
+                    error_count += 1
+
+            # Step 2: Create target actions in TeamB
+            self.logger.info("📄 Creating target custom actions in Team B...")
+            for action in rollback_plan['resources_to_create']:
+                try:
+                    action_name = self.get_resource_name(action)
+                    self.logger.info(f"Creating target action: {action_name}")
+                    self.create_resource_in_teamb(action)
+                    success_count += 1
+                except Exception as e:
+                    self.logger.error(f"Failed to create action {action.get('name', 'Unknown')}: {e}")
+                    error_count += 1
+
+            # Create post-rollback snapshot
+            try:
+                final_teamb_actions = self.fetch_resources_from_teamb()
+                post_rollback_version = self.version_manager.create_version_snapshot(
+                    [], final_teamb_actions, 'post_rollback'
+                )
+                self.logger.info(f"Post-rollback snapshot created: {post_rollback_version}")
+            except Exception as e:
+                self.logger.warning(f"Failed to create post-rollback snapshot: {e}")
+
+            rollback_success = error_count == 0
+            self.logger.info(f"Rollback completed. Success: {rollback_success}, Operations: {success_count}, Errors: {error_count}")
+
+            return rollback_success
+
+        except Exception as e:
+            self.logger.error(f"Rollback failed: {e}")
             return False

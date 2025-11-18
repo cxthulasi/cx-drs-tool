@@ -1,0 +1,152 @@
+{
+  "version_id": "v_20251119_001120",
+  "timestamp": "2025-11-19T00:11:20.785811",
+  "service": "enrichments",
+  "version_type": "pre_migration",
+  "teama": {
+    "count": 13,
+    "resources": [
+      {
+        "id": 176,
+        "name": "Product details",
+        "description": "",
+        "version": 4,
+        "isQueryOnly": false,
+        "fileName": "",
+        "fileSize": 0
+      },
+      {
+        "id": 2582,
+        "name": "Location enrichment",
+        "description": "all locations will be refined here",
+        "version": 1,
+        "isQueryOnly": false,
+        "fileName": "",
+        "fileSize": 0
+      },
+      {
+        "id": 2741,
+        "name": "enrich_sample",
+        "description": "",
+        "version": 2,
+        "isQueryOnly": false,
+        "fileName": "",
+        "fileSize": 0
+      },
+      {
+        "id": 2769,
+        "name": "coindcxtest",
+        "description": "",
+        "version": 1,
+        "isQueryOnly": false,
+        "fileName": "",
+        "fileSize": 0
+      },
+      {
+        "id": 2770,
+        "name": "coindcx-status",
+        "description": "sewe",
+        "version": 1,
+        "isQueryOnly": false,
+        "fileName": "",
+        "fileSize": 0
+      },
+      {
+        "id": 13215,
+        "name": "product_details_2",
+        "description": "",
+        "version": 1,
+        "isQueryOnly": false,
+        "fileName": "",
+        "fileSize": 0
+      },
+      {
+        "id": 17052,
+        "name": "Cloudtrail_Event_Names",
+        "description": "Cloudtrail Event Names",
+        "version": 1,
+        "isQueryOnly": false,
+        "fileName": "",
+        "fileSize": 0
+      },
+      {
+        "id": 17634,
+        "name": "live_currency_conversions_usd",
+        "description": "For DataPrime Meetup",
+        "version": 1,
+        "isQueryOnly": false,
+        "fileName": "",
+        "fileSize": 0
+      },
+      {
+        "id": 29121,
+        "name": "test.enrich",
+        "description": "",
+        "version": 3,
+        "isQueryOnly": false,
+        "fileName": "cloudfront.locations.csv",
+        "fileSize": 12551
+      },
+      {
+        "id": 43545,
+        "name": "sdf",
+        "description": "sdf",
+        "version": 1,
+        "isQueryOnly": false,
+        "fileName": "d503fa57-8ef5-4219-b2fe-b850db12c21a.csv",
+        "fileSize": 4567
+      },
+      {
+        "id": 44591,
+        "name": "Product_Details_CC",
+        "description": "Updated product details with missing product IDs",
+        "version": 3,
+        "isQueryOnly": false,
+        "fileName": "fe94fcb7-dfda-4bee-ba22-af23b20e39f0 - fe94fcb7-dfda-4bee-ba22-af23b20e39f0 (1).csv",
+        "fileSize": 2030
+      },
+      {
+        "id": 45024,
+        "name": "slo",
+        "description": "",
+        "version": 2,
+        "isQueryOnly": false,
+        "fileName": "Untitled spreadsheet - Sheet1.csv",
+        "fileSize": 3488
+      },
+      {
+        "id": 50987,
+        "name": "test_g_enrichment",
+        "description": "",
+        "version": 1,
+        "isQueryOnly": false,
+        "fileName": "csv-test.csv",
+        "fileSize": 718
+      }
+    ],
+    "resource_identifiers": [
+      "Product details",
+      "Location enrichment",
+      "enrich_sample",
+      "coindcxtest",
+      "coindcx-status",
+      "product_details_2",
+      "Cloudtrail_Event_Names",
+      "live_currency_conversions_usd",
+      "test.enrich",
+      "sdf",
+      "Product_Details_CC",
+      "slo",
+      "test_g_enrichment"
+    ]
+  },
+  "teamb": {
+    "count": 0,
+    "resources": [],
+    "resource_identifiers": []
+  },
+  "metadata": {
+    "created_by": "version_manager",
+    "purpose": "pre_migration_snapshot"
+  }
+}

@@ -9,6 +9,7 @@ Supports modular migration of various Coralogix resources.
 import argparse
 import sys
 import os
+import json
 from datetime import datetime
 from pathlib import Path
 
@@ -17,6 +18,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'src'))
 
 from core.config import Config
 from core.logger import setup_logger
+from utils.migration_summary import MigrationSummaryCollector
 from services.parsing_rules import ParsingRulesService
 from services.recording_rules import RecordingRulesService
 from services.enrichments import EnrichmentsService
@@ -56,11 +58,115 @@ def create_service(service_name: str, config: Config, logger):
     return services[service_name](config, logger)
 
 
+def extract_service_statistics(service, service_name: str, result, success: bool) -> dict:
+    """
+    Extract statistics from a service after migration/dry-run.
+
+    Args:
+        service: The service instance
+        service_name: Name of the service
+        result: Result from dry_run() or migrate()
+        success: Whether the operation succeeded
+
+    Returns:
+        Dictionary with service statistics
+    """
+    stats = {
+        'service_name': service_name,
+        'success': success,
+        'teama_count': 0,
+        'teamb_before_count': 0,
+        'teamb_after_count': 0,
+        'created': 0,
+        'updated': 0,
+        'deleted': 0,
+        'failed': 0,
+        'skipped': 0,
+        'error_message': None
+    }
+
+    try:
+        # Get the outputs directory path
+        outputs_dir = Path("outputs") / service_name
+
+        # Try to get counts from artifact files
+        if outputs_dir.exists():
+            # Team A count
+            teama_file = outputs_dir / f"{service_name}_teama_latest.json"
+            if teama_file.exists():
+                with open(teama_file, 'r') as f:
+                    teama_data = json.load(f)
+                    if isinstance(teama_data, list):
+                        stats['teama_count'] = len(teama_data)
+                    elif isinstance(teama_data, dict):
+                        stats['teama_count'] = teama_data.get('count', len(teama_data.get('resources', [])))
+
+            # Team B count (before)
+            teamb_file = outputs_dir / f"{service_name}_teamb_latest.json"
+            if teamb_file.exists():
+                with open(teamb_file, 'r') as f:
+                    teamb_data = json.load(f)
+                    if isinstance(teamb_data, list):
+                        stats['teamb_before_count'] = len(teamb_data)
+                    elif isinstance(teamb_data, dict):
+                        stats['teamb_before_count'] = teamb_data.get('count', len(teamb_data.get('resources', [])))
+
+            # Team B count (after) - for actual migrations
+            teamb_after_file = outputs_dir / f"{service_name}_teamb_final_latest.json"
+            if teamb_after_file.exists():
+                with open(teamb_after_file, 'r') as f:
+                    teamb_after_data = json.load(f)
+                    if isinstance(teamb_after_data, list):
+                        stats['teamb_after_count'] = len(teamb_after_data)
+                    elif isinstance(teamb_after_data, dict):
+                        stats['teamb_after_count'] = teamb_after_data.get('count', len(teamb_after_data.get('resources', [])))
+            else:
+                # If no after file, use before count for dry runs
+                stats['teamb_after_count'] = stats['teamb_before_count']
+
+        # Try to extract from result if it's a dictionary (dry_run returns dict)
+        if isinstance(result, dict):
+            # Override with result data if available
+            if 'teama_count' in result:
+                stats['teama_count'] = result['teama_count']
+            if 'teamb_count' in result:
+                stats['teamb_before_count'] = result['teamb_count']
+
+            # Handle different result formats for operations
+            if 'to_create' in result:
+                stats['created'] = len(result['to_create']) if isinstance(result['to_create'], list) else result['to_create']
+            if 'to_update' in result:
+                stats['updated'] = len(result['to_update']) if isinstance(result['to_update'], list) else result['to_update']
+            if 'to_delete' in result:
+                stats['deleted'] = len(result['to_delete']) if isinstance(result['to_delete'], list) else result['to_delete']
+            if 'to_recreate' in result:
+                stats['updated'] += len(result['to_recreate']) if isinstance(result['to_recreate'], list) else result['to_recreate']
+
+        # For migrate() which returns bool, calculate operations from counts
+        elif isinstance(result, bool) and result:
+            # Calculate operations based on count changes
+            if stats['teamb_after_count'] > stats['teamb_before_count']:
+                stats['created'] = stats['teamb_after_count'] - stats['teamb_before_count']
+            elif stats['teamb_after_count'] < stats['teamb_before_count']:
+                stats['deleted'] = stats['teamb_before_count'] - stats['teamb_after_count']
+
+            # For delete-all + recreate-all pattern (parsing-rules, recording-rules, slo, custom-actions, views)
+            if service_name in ['parsing-rules', 'recording-rules', 'slo', 'custom-actions', 'views']:
+                stats['deleted'] = stats['teamb_before_count']
+                stats['created'] = stats['teamb_after_count']
+                stats['updated'] = 0
+
+    except Exception as e:
+        stats['error_message'] = f"Failed to extract statistics: {str(e)}"
+
+    return stats
+
+
 def run_all_services(config: Config, logger, dry_run: bool = False, force: bool = False, exclude_services: list = None):
     """Run migration for all services with meaningful separation."""
     all_services = [
-        'parsing-rules', 'recording-rules', 'enrichments', 'events2metrics',
-        'custom-dashboards', 'grafana-dashboards', 'views', 'custom-actions', 'slo'
+        'parsing-rules', 'recording-rules', 'enrichments', 'events2metrics', 'custom-dashboards',
+         'grafana-dashboards', 'views', 'custom-actions', 'slo', 'tco'
     ]
 
     # Filter out excluded services
@@ -84,12 +190,20 @@ def run_all_services(config: Config, logger, dry_run: bool = False, force: bool 
 
     mode = "DRY RUN" if dry_run else "MIGRATION"
 
+    # Initialize migration summary collector
+    summary_collector = MigrationSummaryCollector()
+    summary_collector.start_collection(mode=mode)
+
     logger.info("=" * 80)
     logger.info(f"🚀 STARTING {mode} FOR ALL SERVICES")
     logger.info(f"📊 Total services to process: {total_services}")
     logger.info("=" * 80)
 
     for index, service_name in enumerate(services, 1):
+        result = None
+        success = False
+        error_message = None
+
         try:
             # Create service-specific logger for better organization
             service_logger = setup_logger(service_name, 'main', config.log_level)
@@ -114,16 +228,47 @@ def run_all_services(config: Config, logger, dry_run: bool = False, force: bool 
 
             if result:
                 successful_services += 1
+                success = True
                 logger.info(f"✅ {service_name} {mode.lower()} completed successfully")
             else:
                 failed_services.append(service_name)
+                error_message = f"{mode.lower()} returned False"
                 logger.error(f"❌ {service_name} {mode.lower()} failed")
 
         except Exception as e:
             failed_services.append(service_name)
+            error_message = str(e)
             logger.error(f"❌ {service_name} {mode.lower()} failed with exception: {e}")
 
-    # Final summary
+        # Extract and add service statistics to summary collector
+        try:
+            stats = extract_service_statistics(service, service_name, result, success)
+            summary_collector.add_service_stats(
+                service_name=stats['service_name'],
+                success=stats['success'],
+                teama_count=stats['teama_count'],
+                teamb_before_count=stats['teamb_before_count'],
+                teamb_after_count=stats['teamb_after_count'],
+                created=stats['created'],
+                updated=stats['updated'],
+                deleted=stats['deleted'],
+                failed=stats['failed'],
+                skipped=stats['skipped'],
+                error_message=error_message or stats.get('error_message')
+            )
+        except Exception as e:
+            logger.warning(f"⚠️  Failed to collect statistics for {service_name}: {e}")
+            # Add minimal stats if extraction failed
+            summary_collector.add_service_stats(
+                service_name=service_name,
+                success=success,
+                error_message=error_message or f"Statistics extraction failed: {str(e)}"
+            )
+
+    # End collection and display summary
+    summary_collector.end_collection()
+
+    # Final summary (old format for compatibility)
     logger.info("")
     logger.info("=" * 80)
     logger.info(f"📋 {mode} SUMMARY FOR ALL SERVICES")
@@ -137,6 +282,9 @@ def run_all_services(config: Config, logger, dry_run: bool = False, force: bool 
         logger.warning(f"⚠️ Failed services: {', '.join(failed_services)}")
 
     logger.info("=" * 80)
+
+    # Display detailed summary table and save JSON
+    summary_collector.display_and_save()
 
     return len(failed_services) == 0
 

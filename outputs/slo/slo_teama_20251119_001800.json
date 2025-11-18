@@ -1,0 +1,2527 @@
+{
+  "timestamp": "2025-11-19T00:18:00.910068",
+  "service": "slo",
+  "team": "teama",
+  "resources": [
+    {
+      "id": "5213a5e6-23b9-4c01-a251-0e0c9f9187ff",
+      "name": "Amir_Time_Window",
+      "description": "",
+      "creator": "amir.golan@coralogix.com",
+      "labels": {
+        "amir": "test"
+      },
+      "revision": {
+        "revision": 1,
+        "updateTime": "2025-07-31T16:47:40.579Z"
+      },
+      "grouping": {
+        "labels": []
+      },
+      "createTime": "2025-07-31T16:47:40.579Z",
+      "updateTime": "2025-07-31T16:47:40.601Z",
+      "targetThresholdPercentage": 99,
+      "sloTimeFrame": "SLO_TIME_FRAME_14_DAYS",
+      "windowBasedMetricSli": {
+        "query": {
+          "query": "histogram_quantile(0.95, sum(rate(duration_ms_cx_bucket)) by (le))"
+        },
+        "window": "WINDOW_SLO_WINDOW_5_MINUTES",
+        "comparisonOperator": "COMPARISON_OPERATOR_LESS_THAN_OR_EQUALS",
+        "threshold": 101
+      }
+    },
+    {
+      "id": "502bb252-cbe8-491d-922d-668eb2b6a149",
+      "name": "Amir_test_Time_window",
+      "description": "",
+      "creator": "amir.golan@coralogix.com",
+      "labels": {
+        "amir": "test"
+      },
+      "revision": {
+        "revision": 1,
+        "updateTime": "2025-08-04T09:30:36.718Z"
+      },
+      "grouping": {
+        "labels": []
+      },
+      "createTime": "2025-08-04T09:30:36.718Z",
+      "updateTime": "2025-08-04T09:30:36.734Z",
+      "targetThresholdPercentage": 99.5,
+      "sloTimeFrame": "SLO_TIME_FRAME_14_DAYS",
+      "windowBasedMetricSli": {
+        "query": {
+          "query": "histogram_quantile(0.95, sum(rate(duration_ms_cx_bucket))by(le))"
+        },
+        "window": "WINDOW_SLO_WINDOW_1_MINUTE",
+        "comparisonOperator": "COMPARISON_OPERATOR_GREATER_THAN_OR_EQUALS",
+        "threshold": 0
+      }
+    },
+    {
+      "id": "32313bb7-b069-4219-b4b7-7b62bd88c5db",
+      "name": "Rahul Test - CPU Utilisation SLO",
+      "description": "",
+      "creator": "support@coralogix.com",
+      "labels": {
+        "test": "rahul"
+      },
+      "revision": {
+        "revision": 1,
+        "updateTime": "2025-08-19T04:34:31.729Z"
+      },
+      "grouping": {
+        "labels": []
+      },
+      "createTime": "2025-08-19T04:34:31.729Z",
+      "updateTime": "2025-08-19T04:34:31.743Z",
+      "targetThresholdPercentage": 99,
+      "sloTimeFrame": "SLO_TIME_FRAME_7_DAYS",
+      "windowBasedMetricSli": {
+        "query": {
+          "query": "avg(cpu_usage_system)"
+        },
+        "window": "WINDOW_SLO_WINDOW_5_MINUTES",
+        "comparisonOperator": "COMPARISON_OPERATOR_GREATER_THAN_OR_EQUALS",
+        "threshold": 0.3
+      }
+    },
+    {
+      "id": "015ad9d7-47d0-4d31-b420-a2fb7fbd21bb",
+      "name": "Health of Env",
+      "description": "",
+      "creator": "bot@coralogix.com",
+      "labels": {},
+      "revision": {
+        "revision": 1,
+        "updateTime": "2025-09-30T12:16:20.024Z"
+      },
+      "grouping": {
+        "labels": [
+          "cloud_region"
+        ]
+      },
+      "createTime": "2025-09-30T12:16:20.024Z",
+      "updateTime": "2025-09-30T12:16:20.050Z",
+      "targetThresholdPercentage": 99,
+      "sloTimeFrame": "SLO_TIME_FRAME_7_DAYS",
+      "windowBasedMetricSli": {
+        "query": {
+          "query": "sum(sum_over_time(system_cpu_time_total{})) by (cloud_region)"
+        },
+        "window": "WINDOW_SLO_WINDOW_1_MINUTE",
+        "comparisonOperator": "COMPARISON_OPERATOR_GREATER_THAN_OR_EQUALS",
+        "threshold": 90
+      }
+    },
+    {
+      "id": "a35443f6-0778-494f-80c7-d3c1a0686d52",
+      "name": "netanel test slo",
+      "description": "",
+      "creator": "bot@coralogix.com",
+      "labels": {},
+      "revision": {
+        "revision": 1,
+        "updateTime": "2025-06-12T10:36:10.232Z"
+      },
+      "grouping": {
+        "labels": []
+      },
+      "createTime": "2025-06-12T10:36:10.232Z",
+      "updateTime": "2025-06-12T10:36:10.305Z",
+      "targetThresholdPercentage": 99,
+      "sloTimeFrame": "SLO_TIME_FRAME_7_DAYS",
+      "requestBasedMetricSli": {
+        "goodEvents": {
+          "query": "sum(calls_total_total)"
+        },
+        "totalEvents": {
+          "query": "sum(calls_total_total)"
+        }
+      }
+    },
+    {
+      "id": "40ef910a-622b-4328-a2e0-8167fdff709d",
+      "name": "SLO Lean Error",
+      "description": "",
+      "creator": "amir.golan@coralogix.com",
+      "labels": {
+        "amir": "test"
+      },
+      "revision": {
+        "revision": 1,
+        "updateTime": "2025-06-18T14:43:09.178Z"
+      },
+      "grouping": {
+        "labels": [
+          "k8s_namespace_name",
+          "service_name"
+        ]
+      },
+      "createTime": "2025-06-18T14:43:09.178Z",
+      "updateTime": "2025-06-18T14:43:09.193Z",
+      "targetThresholdPercentage": 99,
+      "sloTimeFrame": "SLO_TIME_FRAME_7_DAYS",
+      "requestBasedMetricSli": {
+        "goodEvents": {
+          "query": "sum(calls_total_total{status_code!='STATUS_CODE_ERROR'})by(service_name,k8s_namespace_name)"
+        },
+        "totalEvents": {
+          "query": "sum(calls_total_total)by(service_name,k8s_namespace_name)"
+        }
+      }
+    },
+    {
+      "id": "c69aa87b-8e01-4354-b734-f20411988b4f",
+      "name": "slo test",
+      "description": "",
+      "creator": "bot@coralogix.com",
+      "labels": {},
+      "revision": {
+        "revision": 2,
+        "updateTime": "2025-08-05T10:23:54.476Z"
+      },
+      "grouping": {
+        "labels": [
+          "service_name",
+          "span_kind"
+        ]
+      },
+      "createTime": "2025-08-05T06:53:59.488Z",
+      "updateTime": "2025-09-18T13:44:10.703Z",
+      "targetThresholdPercentage": 95,
+      "sloTimeFrame": "SLO_TIME_FRAME_7_DAYS",
+      "requestBasedMetricSli": {
+        "goodEvents": {
+          "query": "sum by(service_name, span_kind) (increase(calls_total_total{status_code=\"STATUS_CODE_ERROR\"}))"
+        },
+        "totalEvents": {
+          "query": "sum by(service_name, span_kind) (increase(calls_total_total))"
+        }
+      }
+    },
+    {
+      "id": "7cba20ef-f560-49c9-85f5-bb4277288eec",
+      "name": "Test 500 validation",
+      "description": "",
+      "creator": "amir.golan@coralogix.com",
+      "labels": {},
+      "revision": {
+        "revision": 1,
+        "updateTime": "2025-09-24T08:12:47.182Z"
+      },
+      "grouping": {
+        "labels": [
+          "service_name",
+          "span_kind",
+          "k8s_node_name",
+          "k8s_container_name"
+        ]
+      },
+      "createTime": "2025-09-24T08:12:47.182Z",
+      "updateTime": "2025-09-24T08:12:47.195Z",
+      "targetThresholdPercentage": 99,
+      "sloTimeFrame": "SLO_TIME_FRAME_7_DAYS",
+      "requestBasedMetricSli": {
+        "goodEvents": {
+          "query": "sum(calls_total_total{status_code!='STATUS_CODE_ERROR'}) by (service_name,span_kind, k8s_node_name, k8s_container_name)"
+        },
+        "totalEvents": {
+          "query": "sum(calls_total_total) by (service_name,span_kind, k8s_node_name, k8s_container_name)"
+        }
+      }
+    },
+    {
+      "id": "11ce3a4d-9773-4b3a-a45c-e013903c4687",
+      "name": "foo",
+      "description": "",
+      "creator": "bot@coralogix.com",
+      "labels": {},
+      "revision": {
+        "revision": 1,
+        "updateTime": "2025-11-11T17:26:23.241Z"
+      },
+      "grouping": {
+        "labels": [
+          "span_name"
+        ]
+      },
+      "createTime": "2025-11-11T17:26:23.241Z",
+      "updateTime": "2025-11-11T17:26:23.258Z",
+      "targetThresholdPercentage": 99,
+      "sloTimeFrame": "SLO_TIME_FRAME_7_DAYS",
+      "requestBasedMetricSli": {
+        "goodEvents": {
+          "query": "sum(rate(cx_service_catalog_duration_update_cx_count{service=\"productcatalogservice\",status_code!=\"STATUS_CODE_ERROR\"}[5m])) by (span_name)"
+        },
+        "totalEvents": {
+          "query": "sum(rate(cx_service_catalog_duration_update_cx_count{service=\"productcatalogservice\"}[5m])) by (span_name)"
+        }
+      }
+    },
+    {
+      "id": "d195131f-0676-4d87-87ad-cd4c48d30852",
+      "name": "checkoutservice high latency",
+      "description": "",
+      "creator": "jasvinder.atwal@coralogix.com",
+      "labels": {},
+      "revision": {
+        "revision": 2,
+        "updateTime": "2025-07-10T18:13:07.544Z"
+      },
+      "grouping": {
+        "labels": []
+      },
+      "createTime": "2025-07-10T18:11:35.928Z",
+      "updateTime": "2025-07-10T18:14:03.674Z",
+      "targetThresholdPercentage": 95,
+      "sloTimeFrame": "SLO_TIME_FRAME_7_DAYS",
+      "requestBasedMetricSli": {
+        "goodEvents": {
+          "query": "avg(cx_service_catalog_service_duration_cx_avg{service=\"checkoutservice\"}) < 100000"
+        },
+        "totalEvents": {
+          "query": "avg(cx_service_catalog_service_duration_cx_avg{service=\"checkoutservice\"})"
+        }
+      }
+    },
+    {
+      "id": "b375a10b-e3a9-48e2-b830-a70f8f66af47",
+      "name": "coralogix_slo_go_example",
+      "description": "Example SLO for Coralogix using request-based metrics",
+      "labels": {
+        "label1": "value1"
+      },
+      "revision": {
+        "revision": 2,
+        "updateTime": "2025-09-15T03:51:22.609Z"
+      },
+      "grouping": {
+        "labels": [
+          "host_name"
+        ]
+      },
+      "createTime": "2025-09-14T13:15:32.311Z",
+      "updateTime": "2025-09-15T03:51:22.618Z",
+      "targetThresholdPercentage": 30.5,
+      "sloTimeFrame": "SLO_TIME_FRAME_7_DAYS",
+      "requestBasedMetricSli": {
+        "goodEvents": {
+          "query": "avg(rate(k8s_node_cpu_utilization_1[5m])) by (host_name  )"
+        },
+        "totalEvents": {
+          "query": "avg(rate(k8s_node_cpu_utilization_1[5m])) by (host_name)"
+        }
+      }
+    },
+    {
+      "id": "2000e930-16e2-4140-8c45-5ec57a378de5",
+      "name": "test_ayo",
+      "description": "",
+      "creator": "support@coralogix.com",
+      "labels": {},
+      "revision": {
+        "revision": 1,
+        "updateTime": "2025-09-15T18:58:59.983Z"
+      },
+      "grouping": {
+        "labels": [
+          "service_name",
+          "k8s_node_name"
+        ]
+      },
+      "createTime": "2025-09-15T18:58:59.983Z",
+      "updateTime": "2025-09-15T18:59:00.021Z",
+      "targetThresholdPercentage": 99,
+      "sloTimeFrame": "SLO_TIME_FRAME_7_DAYS",
+      "requestBasedMetricSli": {
+        "goodEvents": {
+          "query": "sum(calls_total_total{status_code!='STATUS_CODE_ERROR'}) by (service_name, k8s_node_name)"
+        },
+        "totalEvents": {
+          "query": "sum(calls_total_total{}) by (service_name, k8s_node_name)"
+        }
+      }
+    },
+    {
+      "id": "1c045ba8-04b4-4cd9-bad8-91b219617790",
+      "name": "slo-new-18.6",
+      "description": "",
+      "creator": "amir.golan@coralogix.com",
+      "labels": {
+        "amir": "test"
+      },
+      "revision": {
+        "revision": 1,
+        "updateTime": "2025-06-18T13:35:22.739Z"
+      },
+      "grouping": {
+        "labels": [
+          "k8s_node_name",
+          "service_name"
+        ]
+      },
+      "createTime": "2025-06-18T13:35:22.739Z",
+      "updateTime": "2025-07-10T11:37:41.809Z",
+      "targetThresholdPercentage": 20,
+      "sloTimeFrame": "SLO_TIME_FRAME_7_DAYS",
+      "requestBasedMetricSli": {
+        "goodEvents": {
+          "query": "sum(calls_total_total{status_code!='STATUS_CODE_ERROR'}) by (service_name,k8s_node_name)"
+        },
+        "totalEvents": {
+          "query": "sum(calls_total_total) by (service_name,k8s_node_name)"
+        }
+      }
+    },
+    {
+      "id": "dade9b92-965a-40c7-9807-93ca97ac5d7c",
+      "name": "Udi",
+      "description": "",
+      "creator": "bot@coralogix.com",
+      "labels": {
+        "Udi": "Mazor"
+      },
+      "revision": {
+        "revision": 1,
+        "updateTime": "2025-06-19T09:51:09.843Z"
+      },
+      "grouping": {
+        "labels": [
+          "service_name"
+        ]
+      },
+      "createTime": "2025-06-19T09:51:09.843Z",
+      "updateTime": "2025-06-19T09:51:09.860Z",
+      "targetThresholdPercentage": 99.9,
+      "sloTimeFrame": "SLO_TIME_FRAME_7_DAYS",
+      "requestBasedMetricSli": {
+        "goodEvents": {
+          "query": "sum(calls_total_total{status_code!='STATUS_CODE_ERROR'}) by(service_name)"
+        },
+        "totalEvents": {
+          "query": "sum(calls_total_total) by (service_name)"
+        }
+      }
+    },
+    {
+      "id": "05416ccf-ef24-488d-aa7e-9a432815b969",
+      "name": "Amir-demo-sprint",
+      "description": "",
+      "creator": "amir.golan@coralogix.com",
+      "labels": {
+        "amir": "test"
+      },
+      "revision": {
+        "revision": 1,
+        "updateTime": "2025-06-18T15:33:48.740Z"
+      },
+      "grouping": {
+        "labels": [
+          "service_name",
+          "k8s_node_name"
+        ]
+      },
+      "createTime": "2025-06-18T15:33:48.740Z",
+      "updateTime": "2025-11-18T07:13:30.808Z",
+      "targetThresholdPercentage": 99,
+      "sloTimeFrame": "SLO_TIME_FRAME_7_DAYS",
+      "requestBasedMetricSli": {
+        "goodEvents": {
+          "query": "sum(calls_total_total{status_code!='STATUS_CODE_ERROR'})by (service_name,k8s_node_name)"
+        },
+        "totalEvents": {
+          "query": "sum(calls_total_total) by (service_name,k8s_node_name)"
+        }
+      }
+    },
+    {
+      "id": "1283144f-6eb8-4581-b32c-db893bed2e6e",
+      "name": "Itai test RR based offset",
+      "description": "",
+      "creator": "bot@coralogix.com",
+      "labels": {},
+      "revision": {
+        "revision": 1,
+        "updateTime": "2025-06-19T12:21:53.132Z"
+      },
+      "grouping": {
+        "labels": [
+          "service"
+        ]
+      },
+      "createTime": "2025-06-19T12:21:53.132Z",
+      "updateTime": "2025-06-19T12:21:53.230Z",
+      "targetThresholdPercentage": 95,
+      "sloTimeFrame": "SLO_TIME_FRAME_7_DAYS",
+      "requestBasedMetricSli": {
+        "goodEvents": {
+          "query": "sum(increase(recording_rule:cx_service_catalog_global_service_apdex{cx_replica_dedup=\"true\"} offset 2m)) by(service)"
+        },
+        "totalEvents": {
+          "query": "sum(increase(recording_rule:cx_service_catalog_global_service_apdex offset 2m)) by(service)"
+        }
+      }
+    },
+    {
+      "id": "9edd664c-a52e-444d-aef0-e0ebfc3fe5c0",
+      "name": "entity-lable-test",
+      "description": "",
+      "creator": "amir.golan@coralogix.com",
+      "labels": {
+        "entity": "test"
+      },
+      "revision": {
+        "revision": 1,
+        "updateTime": "2025-07-09T14:01:08.362Z"
+      },
+      "grouping": {
+        "labels": [
+          "alertName"
+        ]
+      },
+      "createTime": "2025-07-09T14:01:08.362Z",
+      "updateTime": "2025-07-09T14:01:08.663Z",
+      "targetThresholdPercentage": 99,
+      "sloTimeFrame": "SLO_TIME_FRAME_7_DAYS",
+      "requestBasedMetricSli": {
+        "goodEvents": {
+          "query": "sum(alerts_stats_cx_docs_total) by (alertName)"
+        },
+        "totalEvents": {
+          "query": "sum(alerts_stats_cx_docs_total) by (alertName)"
+        }
+      }
+    },
+    {
+      "id": "88203429-555d-4e3e-b508-46a2689d4663",
+      "name": "TEST10.7",
+      "description": "",
+      "creator": "amir.golan@coralogix.com",
+      "labels": {
+        "APM": "SLO",
+        "amiq1": "9.7",
+        "amir": "test",
+        "sh": "12",
+        "testtest": "123"
+      },
+      "revision": {
+        "revision": 1,
+        "updateTime": "2025-07-10T08:16:14.860Z"
+      },
+      "grouping": {
+        "labels": []
+      },
+      "createTime": "2025-07-10T08:16:14.860Z",
+      "updateTime": "2025-07-10T08:16:14.876Z",
+      "targetThresholdPercentage": 99,
+      "sloTimeFrame": "SLO_TIME_FRAME_14_DAYS",
+      "requestBasedMetricSli": {
+        "goodEvents": {
+          "query": "sum(calls_total_total)"
+        },
+        "totalEvents": {
+          "query": "sum(calls_total_total)"
+        }
+      }
+    },
+    {
+      "id": "96efd023-ba06-43ee-abfa-3d222bec7472",
+      "name": "Demo_CS_July_16",
+      "description": "Demo",
+      "creator": "amir.golan@coralogix.com",
+      "labels": {
+        "APM": "SLO",
+        "amir": "test"
+      },
+      "revision": {
+        "revision": 1,
+        "updateTime": "2025-07-16T13:28:31.464Z"
+      },
+      "grouping": {
+        "labels": [
+          "alertName"
+        ]
+      },
+      "createTime": "2025-07-16T13:28:31.464Z",
+      "updateTime": "2025-07-16T13:28:31.484Z",
+      "targetThresholdPercentage": 99,
+      "sloTimeFrame": "SLO_TIME_FRAME_14_DAYS",
+      "requestBasedMetricSli": {
+        "goodEvents": {
+          "query": "sum(alerts_stats_cx_docs_total{alertName!='Checkly Synthetic Test Status Change - Failing'}) by (alertName)"
+        },
+        "totalEvents": {
+          "query": "sum(alerts_stats_cx_docs_total) by (alertName)"
+        }
+      }
+    },
+    {
+      "id": "32473481-a924-4aa1-b52a-34db48b3a976",
+      "name": "Udi Mazor",
+      "description": "",
+      "creator": "bot@coralogix.com",
+      "labels": {},
+      "revision": {
+        "revision": 1,
+        "updateTime": "2025-08-04T19:03:40.302Z"
+      },
+      "grouping": {
+        "labels": []
+      },
+      "createTime": "2025-08-04T19:03:40.302Z",
+      "updateTime": "2025-08-04T19:03:40.331Z",
+      "targetThresholdPercentage": 99.2,
+      "sloTimeFrame": "SLO_TIME_FRAME_7_DAYS",
+      "requestBasedMetricSli": {
+        "goodEvents": {
+          "query": "sum(calls_total_total{status_code!='STATUS_CODE_ERROR'})"
+        },
+        "totalEvents": {
+          "query": "sum(calls_total_total)"
+        }
+      }
+    },
+    {
+      "id": "fecfcff8-9eca-4f8e-afcd-c4de53f3345d",
+      "name": "Test",
+      "description": "",
+      "creator": "amir.golan@coralogix.com",
+      "labels": {},
+      "revision": {
+        "revision": 1,
+        "updateTime": "2025-08-05T06:43:08.382Z"
+      },
+      "grouping": {
+        "labels": []
+      },
+      "createTime": "2025-08-05T06:43:08.382Z",
+      "updateTime": "2025-08-05T06:43:08.396Z",
+      "targetThresholdPercentage": 99,
+      "sloTimeFrame": "SLO_TIME_FRAME_7_DAYS",
+      "requestBasedMetricSli": {
+        "goodEvents": {
+          "query": "sum(increase(calls_total_total))"
+        },
+        "totalEvents": {
+          "query": "sum(increase(calls_total_total))"
+        }
+      }
+    },
+    {
+      "id": "be0d7721-8951-4dfc-83d4-28e2ce55c418",
+      "name": "Test2",
+      "description": "",
+      "creator": "amir.golan@coralogix.com",
+      "labels": {},
+      "revision": {
+        "revision": 1,
+        "updateTime": "2025-08-05T06:43:45.484Z"
+      },
+      "grouping": {
+        "labels": []
+      },
+      "createTime": "2025-08-05T06:43:45.484Z",
+      "updateTime": "2025-08-05T06:43:45.498Z",
+      "targetThresholdPercentage": 99,
+      "sloTimeFrame": "SLO_TIME_FRAME_7_DAYS",
+      "requestBasedMetricSli": {
+        "goodEvents": {
+          "query": "sum(increase(calls_total_total))"
+        },
+        "totalEvents": {
+          "query": "sum(increase(calls_total_total))"
+        }
+      }
+    },
+    {
+      "id": "4ce1f34a-48f8-4d88-b294-a5ac90521de2",
+      "name": "Udi Mazor",
+      "description": "",
+      "creator": "bot@coralogix.com",
+      "labels": {},
+      "revision": {
+        "revision": 1,
+        "updateTime": "2025-08-04T19:17:52.448Z"
+      },
+      "grouping": {
+        "labels": []
+      },
+      "createTime": "2025-08-04T19:17:52.448Z",
+      "updateTime": "2025-08-22T10:21:24.742Z",
+      "targetThresholdPercentage": 99,
+      "sloTimeFrame": "SLO_TIME_FRAME_7_DAYS",
+      "requestBasedMetricSli": {
+        "goodEvents": {
+          "query": "sum(calls_total_total{status_code!='STATUS_CODE_ERROR'})"
+        },
+        "totalEvents": {
+          "query": "sum(calls_total_total)"
+        }
+      }
+    },
+    {
+      "id": "53b2c8a6-9dda-400f-a500-87c7c1095ff9",
+      "name": "Udi Sanity 2",
+      "description": "",
+      "creator": "bot@coralogix.com",
+      "labels": {},
+      "revision": {
+        "revision": 1,
+        "updateTime": "2025-08-05T11:19:34.892Z"
+      },
+      "grouping": {
+        "labels": []
+      },
+      "createTime": "2025-08-05T11:19:34.892Z",
+      "updateTime": "2025-08-05T11:19:34.911Z",
+      "targetThresholdPercentage": 99,
+      "sloTimeFrame": "SLO_TIME_FRAME_7_DAYS",
+      "requestBasedMetricSli": {
+        "goodEvents": {
+          "query": "sum(calls_total_total{status_code!=\"STATUS_CODE_ERROR\"})"
+        },
+        "totalEvents": {
+          "query": "sum(calls_total_total)"
+        }
+      }
+    },
+    {
+      "id": "1a344ba3-1153-4570-925c-1fa2ec1d4b70",
+      "name": "Sanity 3",
+      "description": "",
+      "creator": "bot@coralogix.com",
+      "labels": {},
+      "revision": {
+        "revision": 1,
+        "updateTime": "2025-08-05T11:24:31.732Z"
+      },
+      "grouping": {
+        "labels": []
+      },
+      "createTime": "2025-08-05T11:24:31.732Z",
+      "updateTime": "2025-08-05T11:24:31.746Z",
+      "targetThresholdPercentage": 99.4,
+      "sloTimeFrame": "SLO_TIME_FRAME_7_DAYS",
+      "requestBasedMetricSli": {
+        "goodEvents": {
+          "query": "sum(calls_total_total{status_code!=\"STATUS_CODE_ERROR\"})"
+        },
+        "totalEvents": {
+          "query": "sum(calls_total_total)"
+        }
+      }
+    },
+    {
+      "id": "318f4d59-d463-4ee6-ba69-6acc43a316a0",
+      "name": "Test for Chris",
+      "description": "",
+      "creator": "amir.golan@coralogix.com",
+      "labels": {},
+      "revision": {
+        "revision": 1,
+        "updateTime": "2025-08-06T20:32:23.951Z"
+      },
+      "grouping": {
+        "labels": [
+          "service_name"
+        ]
+      },
+      "createTime": "2025-08-06T20:32:23.951Z",
+      "updateTime": "2025-08-06T20:32:23.954Z",
+      "targetThresholdPercentage": 99,
+      "sloTimeFrame": "SLO_TIME_FRAME_7_DAYS",
+      "requestBasedMetricSli": {
+        "goodEvents": {
+          "query": "sum(increase(calls_total_total{status_code!='STATUS_CODE_ERROR',service_name=\"frontend\"}[7d]))by(service_name)"
+        },
+        "totalEvents": {
+          "query": "sum(increase(calls_total_total{service_name=\"frontend\"}[7d])) by (service_name)"
+        }
+      }
+    },
+    {
+      "id": "4b9da675-f34f-49fe-9e99-bb44b2a94afb",
+      "name": "SLO Service Errors",
+      "description": "This SLO tracks error events in requests, internal operations or outgoing calls.",
+      "creator": "amir.golan@coralogix.com",
+      "labels": {
+        "Metric": "Error"
+      },
+      "revision": {
+        "revision": 1,
+        "updateTime": "2025-06-17T18:00:42.454Z"
+      },
+      "grouping": {
+        "labels": [
+          "k8s_node_name",
+          "service_name"
+        ]
+      },
+      "createTime": "2025-06-17T18:00:42.454Z",
+      "updateTime": "2025-06-17T18:00:42.469Z",
+      "targetThresholdPercentage": 94,
+      "sloTimeFrame": "SLO_TIME_FRAME_7_DAYS",
+      "requestBasedMetricSli": {
+        "goodEvents": {
+          "query": "sum(calls_total_total{status_code!='STATUS_CODE_ERROR'}) by (service_name, k8s_node_name)"
+        },
+        "totalEvents": {
+          "query": "sum(calls_total_total) by (service_name, k8s_node_name)"
+        }
+      }
+    },
+    {
+      "id": "4cf3d971-2842-4bc5-bf5b-598bfa227882",
+      "name": "demo_10_9_coralogix_window_based_slo",
+      "description": "Example SLO using window-based metrics",
+      "labels": {
+        "env": "prod",
+        "service": "api"
+      },
+      "revision": {
+        "revision": 3,
+        "updateTime": "2025-10-22T07:09:05.633Z"
+      },
+      "grouping": {
+        "labels": [
+          "service_name"
+        ]
+      },
+      "createTime": "2025-09-10T12:21:19.533Z",
+      "updateTime": "2025-10-22T07:09:05.646Z",
+      "targetThresholdPercentage": 95,
+      "sloTimeFrame": "SLO_TIME_FRAME_28_DAYS",
+      "windowBasedMetricSli": {
+        "query": {
+          "query": "sum(increase(calls_total_total{status_code!=\"STATUS_CODE_ERROR\"})) by(service_name)"
+        },
+        "window": "WINDOW_SLO_WINDOW_1_MINUTE",
+        "comparisonOperator": "COMPARISON_OPERATOR_LESS_THAN",
+        "threshold": 0.232
+      }
+    },
+    {
+      "id": "894f83ca-e970-488b-be89-84f5512e5899",
+      "name": "Frontend service error rate",
+      "description": "frontend error",
+      "creator": "bot@coralogix.com",
+      "labels": {},
+      "revision": {
+        "revision": 1,
+        "updateTime": "2025-06-15T19:37:58.437Z"
+      },
+      "grouping": {
+        "labels": []
+      },
+      "createTime": "2025-06-15T19:37:58.437Z",
+      "updateTime": "2025-06-15T19:37:58.628Z",
+      "targetThresholdPercentage": 99,
+      "sloTimeFrame": "SLO_TIME_FRAME_7_DAYS",
+      "requestBasedMetricSli": {
+        "goodEvents": {
+          "query": "sum(calls_total_total{status_code!=\"STATUS_CODE_ERROR\", service_name=\"frontend\"})"
+        },
+        "totalEvents": {
+          "query": "sum(calls_total_total{service_name=\"frontend\"})"
+        }
+      }
+    },
+    {
+      "id": "998fad8a-231f-41f3-b0f9-8abedebf18b7",
+      "name": "amir-slo-test",
+      "description": "",
+      "creator": "amir.golan@coralogix.com",
+      "labels": {
+        "amir": "test"
+      },
+      "revision": {
+        "revision": 1,
+        "updateTime": "2025-06-18T13:16:44.017Z"
+      },
+      "grouping": {
+        "labels": [
+          "cx_subsystem_name"
+        ]
+      },
+      "createTime": "2025-06-18T13:16:44.017Z",
+      "updateTime": "2025-07-13T14:19:58.080Z",
+      "targetThresholdPercentage": 20,
+      "sloTimeFrame": "SLO_TIME_FRAME_14_DAYS",
+      "requestBasedMetricSli": {
+        "goodEvents": {
+          "query": "sum(container_cpu_time_s_total{host_id!= \"i-05ce9be06bdf46556\"}) by (cx_subsystem_name)"
+        },
+        "totalEvents": {
+          "query": "sum(container_cpu_time_s_total) by (cx_subsystem_name)"
+        }
+      }
+    },
+    {
+      "id": "86f19921-49f7-444e-9ede-3b504aa19f2e",
+      "name": "Amir-SLO-18.6",
+      "description": "",
+      "creator": "amir.golan@coralogix.com",
+      "labels": {
+        "amir": "test"
+      },
+      "revision": {
+        "revision": 1,
+        "updateTime": "2025-06-18T13:28:16.932Z"
+      },
+      "grouping": {
+        "labels": [
+          "alertName"
+        ]
+      },
+      "createTime": "2025-06-18T13:28:16.932Z",
+      "updateTime": "2025-06-18T13:28:16.948Z",
+      "targetThresholdPercentage": 70,
+      "sloTimeFrame": "SLO_TIME_FRAME_7_DAYS",
+      "requestBasedMetricSli": {
+        "goodEvents": {
+          "query": "sum(alerts_stats_cx_docs_total{alertName!='Checkly Synthetic Test Status Change - Failing'}) by (alertName)"
+        },
+        "totalEvents": {
+          "query": "sum(alerts_stats_cx_docs_total) by (alertName)"
+        }
+      }
+    },
+    {
+      "id": "ec79fed8-17be-4dae-b84a-9a53a8e42019",
+      "name": "APM - Services SLO",
+      "description": "This SLO tracks the error responses from APM services tracked by Coralogix. ",
+      "creator": "bot@coralogix.com",
+      "labels": {
+        "APM": "SLO"
+      },
+      "revision": {
+        "revision": 1,
+        "updateTime": "2025-06-11T13:40:31.966Z"
+      },
+      "grouping": {
+        "labels": [
+          "service_name"
+        ]
+      },
+      "createTime": "2025-06-11T13:40:31.966Z",
+      "updateTime": "2025-06-19T06:06:29.335Z",
+      "targetThresholdPercentage": 50,
+      "sloTimeFrame": "SLO_TIME_FRAME_14_DAYS",
+      "requestBasedMetricSli": {
+        "goodEvents": {
+          "query": "sum(increase(calls_total_total{status_code != \"STATUS_CODE_ERROR\"}[1m])) by (service_name)"
+        },
+        "totalEvents": {
+          "query": "sum(increase(calls_total_total[1m])) by (service_name)"
+        }
+      }
+    },
+    {
+      "id": "4c7aa7df-62aa-48d3-bab1-5a0b050be954",
+      "name": "lmaxperm",
+      "creator": "bot@coralogix.com",
+      "labels": {},
+      "revision": {
+        "revision": 1,
+        "updateTime": "2025-10-26T09:05:19.317Z"
+      },
+      "grouping": {
+        "labels": [
+          "service_name",
+          "span_name"
+        ]
+      },
+      "createTime": "2025-10-26T09:05:19.317Z",
+      "updateTime": "2025-10-26T09:05:20.535Z",
+      "targetThresholdPercentage": 99,
+      "sloTimeFrame": "SLO_TIME_FRAME_7_DAYS",
+      "requestBasedMetricSli": {
+        "goodEvents": {
+          "query": "sum by(service_name, span_name) (increase(calls_total_total{status_code!=\"STATUS_CODE_ERROR\"}))"
+        },
+        "totalEvents": {
+          "query": "sum by(service_name, span_name) (increase(calls_total_total{status_code!=\"STATUS_CODE_ERROR\"}))"
+        }
+      }
+    },
+    {
+      "id": "d917e062-0514-4b47-a42e-dbd2ad3708a8",
+      "name": "Errors SLO",
+      "description": "",
+      "creator": "amir.golan@coralogix.com",
+      "labels": {},
+      "revision": {
+        "revision": 1,
+        "updateTime": "2025-06-16T16:09:51.751Z"
+      },
+      "grouping": {
+        "labels": [
+          "service_name"
+        ]
+      },
+      "createTime": "2025-06-16T16:09:51.751Z",
+      "updateTime": "2025-09-22T12:12:40.629Z",
+      "targetThresholdPercentage": 99.999,
+      "sloTimeFrame": "SLO_TIME_FRAME_7_DAYS",
+      "requestBasedMetricSli": {
+        "goodEvents": {
+          "query": "sum(calls_total_total{status_code!='STATUS_CODE_ERROR'}) by (service_name)"
+        },
+        "totalEvents": {
+          "query": "sum(calls_total_total) by (service_name)"
+        }
+      }
+    },
+    {
+      "id": "59b2cf1c-5479-4f50-92b0-a294abeacd71",
+      "name": "demo_new_10_9_coralogix_slo_go_example",
+      "description": "Example SLO for Coralogix using request-based metrics",
+      "labels": {
+        "label1": "value1"
+      },
+      "revision": {
+        "revision": 2,
+        "updateTime": "2025-11-01T19:16:55.883Z"
+      },
+      "grouping": {
+        "labels": [
+          "service_name",
+          "k8s_node_name"
+        ]
+      },
+      "createTime": "2025-09-10T14:38:15.259Z",
+      "updateTime": "2025-11-01T19:16:55.894Z",
+      "targetThresholdPercentage": 30.5,
+      "sloTimeFrame": "SLO_TIME_FRAME_7_DAYS",
+      "requestBasedMetricSli": {
+        "goodEvents": {
+          "query": "sum(calls_total_total{status_code!='STATUS_CODE_ERROR'}) by (service_name, k8s_node_name)"
+        },
+        "totalEvents": {
+          "query": "sum(calls_total_total) by (service_name, k8s_node_name)"
+        }
+      }
+    },
+    {
+      "id": "011cf2b6-9dee-45e9-8c6c-124048410436",
+      "name": "Ttest",
+      "description": "",
+      "creator": "bot@coralogix.com",
+      "labels": {},
+      "revision": {
+        "revision": 1,
+        "updateTime": "2025-08-04T17:55:42.464Z"
+      },
+      "grouping": {
+        "labels": []
+      },
+      "createTime": "2025-08-04T17:55:42.464Z",
+      "updateTime": "2025-08-04T17:55:42.487Z",
+      "targetThresholdPercentage": 98,
+      "sloTimeFrame": "SLO_TIME_FRAME_7_DAYS",
+      "requestBasedMetricSli": {
+        "goodEvents": {
+          "query": "sum(calls_total_total{status_code!=\"STATUS_CODE_ERROR\"})"
+        },
+        "totalEvents": {
+          "query": "sum(calls_total_total)"
+        }
+      }
+    },
+    {
+      "id": "81ee5680-45ab-4232-87bc-5067fab72e68",
+      "name": "Amir-Alerts-Test",
+      "description": "",
+      "creator": "amir.golan@coralogix.com",
+      "labels": {},
+      "revision": {
+        "revision": 1,
+        "updateTime": "2025-08-04T18:58:38.164Z"
+      },
+      "grouping": {
+        "labels": [
+          "service_name"
+        ]
+      },
+      "createTime": "2025-08-04T18:58:38.164Z",
+      "updateTime": "2025-08-04T18:58:38.188Z",
+      "targetThresholdPercentage": 99,
+      "sloTimeFrame": "SLO_TIME_FRAME_7_DAYS",
+      "requestBasedMetricSli": {
+        "goodEvents": {
+          "query": "sum(increase(calls_total_total{status_code!='STATUS_CODE_ERROR'}))by(service_name)"
+        },
+        "totalEvents": {
+          "query": "sum(increase(calls_total_total))by(service_name)"
+        }
+      }
+    },
+    {
+      "id": "edfaf5b5-f256-43ab-995c-b28306d7a909",
+      "name": "aviv-test-abc",
+      "description": "",
+      "creator": "bot@coralogix.com",
+      "labels": {},
+      "revision": {
+        "revision": 1,
+        "updateTime": "2025-08-05T10:23:02.271Z"
+      },
+      "grouping": {
+        "labels": [
+          "service_name"
+        ]
+      },
+      "createTime": "2025-08-05T10:23:02.271Z",
+      "updateTime": "2025-08-05T10:23:02.288Z",
+      "targetThresholdPercentage": 99,
+      "sloTimeFrame": "SLO_TIME_FRAME_7_DAYS",
+      "requestBasedMetricSli": {
+        "goodEvents": {
+          "query": "sum(increase(calls_total_total{status_code!='STATUS_CODE_ERROR'}))by (service_name)"
+        },
+        "totalEvents": {
+          "query": "sum(increase(calls_total_total))by (service_name)"
+        }
+      }
+    },
+    {
+      "id": "d2721497-f495-43cb-9878-4d06a87ab9a7",
+      "name": "Udi7",
+      "description": "",
+      "creator": "bot@coralogix.com",
+      "labels": {},
+      "revision": {
+        "revision": 1,
+        "updateTime": "2025-08-05T08:16:48.604Z"
+      },
+      "grouping": {
+        "labels": []
+      },
+      "createTime": "2025-08-05T08:16:48.604Z",
+      "updateTime": "2025-08-05T08:16:48.616Z",
+      "targetThresholdPercentage": 98,
+      "sloTimeFrame": "SLO_TIME_FRAME_7_DAYS",
+      "requestBasedMetricSli": {
+        "goodEvents": {
+          "query": "sum(calls_total_total{status_code!='STATUS_CODE_ERROR'})"
+        },
+        "totalEvents": {
+          "query": "sum(calls_total_total)"
+        }
+      }
+    },
+    {
+      "id": "b774f5d9-6878-4b49-af97-48ce1bac5f68",
+      "name": "Test 28.8",
+      "description": "",
+      "creator": "amir.golan@coralogix.com",
+      "labels": {},
+      "revision": {
+        "revision": 1,
+        "updateTime": "2025-08-28T12:40:30.061Z"
+      },
+      "grouping": {
+        "labels": []
+      },
+      "createTime": "2025-08-28T12:40:30.061Z",
+      "updateTime": "2025-08-28T12:40:30.099Z",
+      "targetThresholdPercentage": 99,
+      "sloTimeFrame": "SLO_TIME_FRAME_7_DAYS",
+      "requestBasedMetricSli": {
+        "goodEvents": {
+          "query": "sum(increase(calls_total_total))"
+        },
+        "totalEvents": {
+          "query": "sum(increase(calls_total_total))"
+        }
+      }
+    },
+    {
+      "id": "29f7ee1d-5fef-4b3d-a7f5-1a42cb7427cb",
+      "name": "Demo_SLO_5.8",
+      "description": "",
+      "creator": "amir.golan@coralogix.com",
+      "labels": {
+        "APM": "SLO"
+      },
+      "revision": {
+        "revision": 1,
+        "updateTime": "2025-08-05T14:26:51.637Z"
+      },
+      "grouping": {
+        "labels": [
+          "service_name"
+        ]
+      },
+      "createTime": "2025-08-05T14:26:51.637Z",
+      "updateTime": "2025-08-05T14:26:51.658Z",
+      "targetThresholdPercentage": 99,
+      "sloTimeFrame": "SLO_TIME_FRAME_7_DAYS",
+      "requestBasedMetricSli": {
+        "goodEvents": {
+          "query": "sum(increase(calls_total_total{status_code!='STATUS_CODE_ERROR'}))by(service_name)"
+        },
+        "totalEvents": {
+          "query": "sum(increase(calls_total_total))by(service_name)"
+        }
+      }
+    },
+    {
+      "id": "0c29a4cf-b780-4313-832d-bf777e2b269f",
+      "name": "Demo-2-test",
+      "description": "Test",
+      "creator": "amir.golan@coralogix.com",
+      "labels": {
+        "APM": "SLO",
+        "amir": "test",
+        "test": "12"
+      },
+      "revision": {
+        "revision": 1,
+        "updateTime": "2025-08-05T14:31:51.024Z"
+      },
+      "grouping": {
+        "labels": [
+          "k8s_namespace_name",
+          "service_name"
+        ]
+      },
+      "createTime": "2025-08-05T14:31:51.024Z",
+      "updateTime": "2025-08-05T14:31:51.053Z",
+      "targetThresholdPercentage": 99,
+      "sloTimeFrame": "SLO_TIME_FRAME_7_DAYS",
+      "requestBasedMetricSli": {
+        "goodEvents": {
+          "query": "sum(increase(calls_total_total{status_code!='STATUS_CODE_ERROR'}))by(service_name,k8s_namespace_name)"
+        },
+        "totalEvents": {
+          "query": "sum(increase(calls_total_total))by(service_name,k8s_namespace_name)"
+        }
+      }
+    },
+    {
+      "id": "84992560-c72b-4e8b-9959-b6da1146e478",
+      "name": "avi demo",
+      "description": "",
+      "creator": "avi.greenbury@coralogix.com",
+      "labels": {},
+      "revision": {
+        "revision": 2,
+        "updateTime": "2025-11-04T10:44:23.553Z"
+      },
+      "grouping": {
+        "labels": [
+          "country"
+        ]
+      },
+      "createTime": "2025-09-17T09:31:13.748Z",
+      "updateTime": "2025-11-04T10:44:23.562Z",
+      "targetThresholdPercentage": 99,
+      "sloTimeFrame": "SLO_TIME_FRAME_7_DAYS",
+      "requestBasedMetricSli": {
+        "goodEvents": {
+          "query": "avg(product_latency_by_country) by (country) < 900"
+        },
+        "totalEvents": {
+          "query": "avg(product_latency_by_country) by (country)"
+        }
+      }
+    },
+    {
+      "id": "aa9af4d9-e203-4682-997b-759a4223b1f2",
+      "name": "Service Call Success Rate",
+      "description": "Tracks the success rate of service calls by measuring non-error responses across all services and Kubernetes nodes",
+      "creator": "sre-team@example.com",
+      "labels": {
+        "sampleLabel": "Kubernetes"
+      },
+      "revision": {
+        "revision": 1,
+        "updateTime": "2025-08-06T20:37:50.431Z"
+      },
+      "grouping": {
+        "labels": [
+          "k8s_node_name",
+          "service_name"
+        ]
+      },
+      "createTime": "2025-08-06T20:37:50.431Z",
+      "updateTime": "2025-08-06T20:50:42.757Z",
+      "targetThresholdPercentage": 99,
+      "sloTimeFrame": "SLO_TIME_FRAME_21_DAYS",
+      "requestBasedMetricSli": {
+        "goodEvents": {
+          "query": "sum(calls_total_total{status_code!='STATUS_CODE_ERROR'}) by (service_name, k8s_node_name)"
+        },
+        "totalEvents": {
+          "query": "sum(calls_total_total) by (service_name, k8s_node_name)"
+        }
+      }
+    },
+    {
+      "id": "1f04dcc9-9ec8-4e0d-adba-f6c476dc8045",
+      "name": "amir_no_data_slo",
+      "description": "Example SLO for Coralogix using request-based metrics",
+      "creator": "amir.golan@coralogix.com",
+      "labels": {
+        "label1": "value1"
+      },
+      "revision": {
+        "revision": 1,
+        "updateTime": "2025-11-05T15:55:59.313Z"
+      },
+      "grouping": {
+        "labels": [
+          "service_name"
+        ]
+      },
+      "createTime": "2025-11-05T15:55:59.313Z",
+      "updateTime": "2025-11-05T15:55:59.317Z",
+      "targetThresholdPercentage": 30.5,
+      "sloTimeFrame": "SLO_TIME_FRAME_7_DAYS",
+      "requestBasedMetricSli": {
+        "goodEvents": {
+          "query": "sum(test{status_code!='STATUS_CODE_ERROR'}) by (service_name)"
+        },
+        "totalEvents": {
+          "query": "sum(test) by (service_name)"
+        }
+      }
+    },
+    {
+      "id": "87603cc4-7693-418d-bd88-48b30a5cb51c",
+      "name": "Tracking Errors Per Service & VM",
+      "description": "",
+      "creator": "amir.golan@coralogix.com",
+      "labels": {},
+      "revision": {
+        "revision": 1,
+        "updateTime": "2025-06-18T06:02:49.693Z"
+      },
+      "grouping": {
+        "labels": [
+          "service_name",
+          "k8s_node_name"
+        ]
+      },
+      "createTime": "2025-06-18T06:02:49.693Z",
+      "updateTime": "2025-11-06T15:11:33.448Z",
+      "targetThresholdPercentage": 99.9,
+      "sloTimeFrame": "SLO_TIME_FRAME_7_DAYS",
+      "requestBasedMetricSli": {
+        "goodEvents": {
+          "query": "sum(calls_total_total{status_code!='STATUS_CODE_ERROR'}) by (service_name, k8s_node_name)"
+        },
+        "totalEvents": {
+          "query": "sum(calls_total_total) by (service_name, k8s_node_name)"
+        }
+      }
+    },
+    {
+      "id": "87066fbe-c54e-47e9-961f-6eb11dd14778",
+      "name": "SLO APM - Alert ",
+      "description": "",
+      "creator": "support@coralogix.com",
+      "labels": {
+        "type": "prod"
+      },
+      "revision": {
+        "revision": 2,
+        "updateTime": "2025-09-25T06:32:43.934Z"
+      },
+      "grouping": {
+        "labels": [
+          "service_name",
+          "k8s_node_name"
+        ]
+      },
+      "createTime": "2025-09-25T06:30:07.262Z",
+      "updateTime": "2025-09-25T06:32:43.940Z",
+      "targetThresholdPercentage": 99,
+      "sloTimeFrame": "SLO_TIME_FRAME_7_DAYS",
+      "requestBasedMetricSli": {
+        "goodEvents": {
+          "query": "sum(increase(calls_total_total{status_code!=\"STATUS_CODE_ERROR\"}[1m])) by (service_name,k8s_node_name)"
+        },
+        "totalEvents": {
+          "query": "sum(increase(calls_total_total[1m])) by (service_name,k8s_node_name)"
+        }
+      }
+    },
+    {
+      "id": "3e910c7f-fccc-4f58-9b3a-96c667f7cfc6",
+      "name": "Udi Sanity test",
+      "description": "",
+      "creator": "bot@coralogix.com",
+      "labels": {},
+      "revision": {
+        "revision": 1,
+        "updateTime": "2025-08-05T10:57:24.110Z"
+      },
+      "grouping": {
+        "labels": []
+      },
+      "createTime": "2025-08-05T10:57:24.110Z",
+      "updateTime": "2025-09-09T13:55:21.210Z",
+      "targetThresholdPercentage": 97,
+      "sloTimeFrame": "SLO_TIME_FRAME_7_DAYS",
+      "requestBasedMetricSli": {
+        "goodEvents": {
+          "query": "sum(calls_total_total{status_code!=\"STATUS_CODE_ERROR\"})"
+        },
+        "totalEvents": {
+          "query": "sum(calls_total_total)"
+        }
+      }
+    },
+    {
+      "id": "a8611df1-2655-4283-b344-4393e8442623",
+      "name": "classy-application-shell-fcp",
+      "description": "Proportion of page loads with First Contentful Paint <= 10000ms",
+      "creator": "unknown",
+      "labels": {},
+      "revision": {
+        "revision": 1,
+        "updateTime": "2025-09-11T04:32:28.037Z"
+      },
+      "grouping": {
+        "labels": [
+          "context_name"
+        ]
+      },
+      "createTime": "2025-09-11T04:32:28.037Z",
+      "updateTime": "2025-09-11T04:32:28.052Z",
+      "targetThresholdPercentage": 99,
+      "sloTimeFrame": "SLO_TIME_FRAME_28_DAYS",
+      "requestBasedMetricSli": {
+        "goodEvents": {
+          "query": "count(RUM_web_vitals_context_value{app_name=\"onlineboutique\"} <= 100) by (context_name)"
+        },
+        "totalEvents": {
+          "query": "sum(RUM_web_vitals_context_value{app_name=\"onlineboutique\"} <= 100) by (context_name)"
+        }
+      }
+    },
+    {
+      "id": "46f1c044-92b9-4cff-a8ef-c8da7170ef28",
+      "name": "APM - By SErvice - Rahul",
+      "description": "",
+      "creator": "support@coralogix.com",
+      "labels": {
+        "type": " prod"
+      },
+      "revision": {
+        "revision": 1,
+        "updateTime": "2025-09-25T08:07:40.787Z"
+      },
+      "grouping": {
+        "labels": [
+          "service_name",
+          "k8s_node_name"
+        ]
+      },
+      "createTime": "2025-09-25T08:07:40.787Z",
+      "updateTime": "2025-09-25T08:07:40.789Z",
+      "targetThresholdPercentage": 90,
+      "sloTimeFrame": "SLO_TIME_FRAME_7_DAYS",
+      "requestBasedMetricSli": {
+        "goodEvents": {
+          "query": "sum(increase(calls_total_total{status_code!=\"STATUS_CODE_ERROR\"}[1m])) by (service_name,k8s_node_name)"
+        },
+        "totalEvents": {
+          "query": "sum(increase(calls_total_total[1m])) by (service_name,k8s_node_name)"
+        }
+      }
+    },
+    {
+      "id": "0b4a0e34-8816-4a74-9cca-4ac5d72c51f7",
+      "name": "avitest",
+      "description": "",
+      "creator": "avi.greenbury@coralogix.com",
+      "labels": {},
+      "revision": {
+        "revision": 1,
+        "updateTime": "2025-09-25T09:33:35.712Z"
+      },
+      "grouping": {
+        "labels": [
+          "country"
+        ]
+      },
+      "createTime": "2025-09-25T09:33:35.712Z",
+      "updateTime": "2025-09-25T09:33:35.726Z",
+      "targetThresholdPercentage": 96,
+      "sloTimeFrame": "SLO_TIME_FRAME_14_DAYS",
+      "requestBasedMetricSli": {
+        "goodEvents": {
+          "query": "avg(product_latency_by_country) by (country) < 1000"
+        },
+        "totalEvents": {
+          "query": "avg(product_latency_by_country) by (country)"
+        }
+      }
+    },
+    {
+      "id": "b62d84e8-0029-4be4-950a-18941b1e1e03",
+      "name": "Amir-test-9.7-1",
+      "description": "",
+      "creator": "amir.golan@coralogix.com",
+      "labels": {
+        "APM": "SLO",
+        "amiq1": "9.7",
+        "amir": "test"
+      },
+      "revision": {
+        "revision": 1,
+        "updateTime": "2025-07-09T08:47:42.939Z"
+      },
+      "grouping": {
+        "labels": [
+          "alertName"
+        ]
+      },
+      "createTime": "2025-07-09T08:47:42.939Z",
+      "updateTime": "2025-07-09T08:48:29.393Z",
+      "targetThresholdPercentage": 99.9,
+      "sloTimeFrame": "SLO_TIME_FRAME_7_DAYS",
+      "requestBasedMetricSli": {
+        "goodEvents": {
+          "query": "sum(alerts_stats_cx_docs_total{alertName!='Checkly Synthetic Test Status Change - Failing'}) by (alertName)"
+        },
+        "totalEvents": {
+          "query": "sum(alerts_stats_cx_docs_total) by (alertName)"
+        }
+      }
+    },
+    {
+      "id": "4169aa17-c884-4feb-befb-79bf130d7081",
+      "name": "amir-slo-test-2-9.7",
+      "description": "",
+      "creator": "amir.golan@coralogix.com",
+      "labels": {},
+      "revision": {
+        "revision": 1,
+        "updateTime": "2025-07-09T13:58:21.220Z"
+      },
+      "grouping": {
+        "labels": [
+          "alertName"
+        ]
+      },
+      "createTime": "2025-07-09T13:58:21.220Z",
+      "updateTime": "2025-07-09T13:59:19.207Z",
+      "targetThresholdPercentage": 99,
+      "sloTimeFrame": "SLO_TIME_FRAME_7_DAYS",
+      "requestBasedMetricSli": {
+        "goodEvents": {
+          "query": "sum(alerts_stats_cx_docs_total{alertName!='Checkly Synthetic Test Status Change - Failing'}) by (alertName)"
+        },
+        "totalEvents": {
+          "query": "sum(alerts_stats_cx_docs_total) by (alertName)"
+        }
+      }
+    },
+    {
+      "id": "876c28e7-7300-44e1-ae81-2cc2141c889b",
+      "name": "eyal",
+      "description": "",
+      "creator": "bot@coralogix.com",
+      "labels": {},
+      "revision": {
+        "revision": 1,
+        "updateTime": "2025-06-18T12:48:16.086Z"
+      },
+      "grouping": {
+        "labels": [
+          "service_name"
+        ]
+      },
+      "createTime": "2025-06-18T12:48:16.086Z",
+      "updateTime": "2025-06-18T12:48:16.099Z",
+      "targetThresholdPercentage": 99,
+      "sloTimeFrame": "SLO_TIME_FRAME_7_DAYS",
+      "requestBasedMetricSli": {
+        "goodEvents": {
+          "query": "sum(calls_total_total) by (service_name)"
+        },
+        "totalEvents": {
+          "query": "sum(calls_total_total) by (service_name)"
+        }
+      }
+    },
+    {
+      "id": "8a2942a2-6b5e-4426-a9b3-84fbcab00b87",
+      "name": "Shuki-Demo Availability SLO",
+      "description": "Monitors the availability of our critical API endpoints",
+      "creator": "amir.golan@coralogix.com",
+      "labels": {},
+      "revision": {
+        "revision": 1,
+        "updateTime": "2025-08-20T15:08:21.221Z"
+      },
+      "grouping": {
+        "labels": [
+          "service_name"
+        ]
+      },
+      "createTime": "2025-08-20T15:08:21.221Z",
+      "updateTime": "2025-08-20T15:08:21.255Z",
+      "targetThresholdPercentage": 99.95,
+      "sloTimeFrame": "SLO_TIME_FRAME_28_DAYS",
+      "requestBasedMetricSli": {
+        "goodEvents": {
+          "query": "sum(calls_total_total{status_code!='STATUS_CODE_ERROR'}) by (service_name)"
+        },
+        "totalEvents": {
+          "query": "sum(calls_total_total) by (service_name)"
+        }
+      }
+    },
+    {
+      "id": "b2684c0f-bb72-40f5-8231-7fa950fbf7de",
+      "name": "Product Page load latency ",
+      "description": "SLO tracking overall performance of product summary page loads times, ensuring smooth customer experience and ensuring latency doesn't impact customer buying process.",
+      "creator": "chris.cooney@coralogix.com",
+      "labels": {
+        "column": "ecommerce",
+        "platform": "site"
+      },
+      "revision": {
+        "revision": 3,
+        "updateTime": "2025-07-13T12:21:10.984Z"
+      },
+      "grouping": {
+        "labels": [
+          "country"
+        ]
+      },
+      "createTime": "2025-07-01T10:32:50.120Z",
+      "updateTime": "2025-09-05T08:12:50.321Z",
+      "targetThresholdPercentage": 90,
+      "sloTimeFrame": "SLO_TIME_FRAME_7_DAYS",
+      "requestBasedMetricSli": {
+        "goodEvents": {
+          "query": "avg(product_latency_by_country) by (country) < 1000"
+        },
+        "totalEvents": {
+          "query": "avg(product_latency_by_country) by (country)"
+        }
+      }
+    },
+    {
+      "id": "82916db8-7439-4ca4-aea0-f11f1e8b7a69",
+      "name": "CX Academy Event-based SLO Example",
+      "description": "Event-based SLO - Measures reliability as the ratio of good to total events",
+      "creator": "martin.mclarnon@coralogix.com",
+      "labels": {
+        "cx": "academy",
+        "env": "slo-center",
+        "type": "event-based"
+      },
+      "revision": {
+        "revision": 1,
+        "updateTime": "2025-09-05T10:39:56.400Z"
+      },
+      "grouping": {
+        "labels": [
+          "service_name"
+        ]
+      },
+      "createTime": "2025-09-05T10:39:56.400Z",
+      "updateTime": "2025-09-05T11:09:21.845Z",
+      "targetThresholdPercentage": 99.95,
+      "sloTimeFrame": "SLO_TIME_FRAME_7_DAYS",
+      "requestBasedMetricSli": {
+        "goodEvents": {
+          "query": "sum(calls_total_total{status_code!='STATUS_CODE_ERROR'}) by (service_name)"
+        },
+        "totalEvents": {
+          "query": "sum(calls_total_total) by (service_name)"
+        }
+      }
+    },
+    {
+      "id": "4a418acd-af2a-42d1-b988-4d2be34dcb73",
+      "name": "demo_10_9_coralogix_slo_go_example",
+      "description": "Example SLO for Coralogix using request-based metrics",
+      "creator": "amir.golan@coralogix.com",
+      "labels": {
+        "label1": "value1"
+      },
+      "revision": {
+        "revision": 1,
+        "updateTime": "2025-09-10T12:21:19.769Z"
+      },
+      "grouping": {
+        "labels": [
+          "service_name"
+        ]
+      },
+      "createTime": "2025-09-10T12:21:19.769Z",
+      "updateTime": "2025-09-10T12:21:19.779Z",
+      "targetThresholdPercentage": 30.5,
+      "sloTimeFrame": "SLO_TIME_FRAME_7_DAYS",
+      "requestBasedMetricSli": {
+        "goodEvents": {
+          "query": "sum(calls_total_total{status_code!='STATUS_CODE_ERROR'}) by (service_name)"
+        },
+        "totalEvents": {
+          "query": "sum(calls_total_total) by (service_name)"
+        }
+      }
+    },
+    {
+      "id": "f0efed02-a0eb-444e-8ec1-ca8a51826430",
+      "name": "demo_amir_new_10_9_coralogix_slo_go_example",
+      "description": "Example SLO for Coralogix using request-based metrics",
+      "creator": "amir.golan@coralogix.com",
+      "labels": {
+        "label1": "value1"
+      },
+      "revision": {
+        "revision": 1,
+        "updateTime": "2025-09-10T14:54:57.106Z"
+      },
+      "grouping": {
+        "labels": [
+          "service_name"
+        ]
+      },
+      "createTime": "2025-09-10T14:54:57.106Z",
+      "updateTime": "2025-09-10T14:54:57.112Z",
+      "targetThresholdPercentage": 30.5,
+      "sloTimeFrame": "SLO_TIME_FRAME_7_DAYS",
+      "requestBasedMetricSli": {
+        "goodEvents": {
+          "query": "sum(calls_total_total{status_code!='STATUS_CODE_ERROR'}) by (service_name)"
+        },
+        "totalEvents": {
+          "query": "sum(calls_total_total) by (service_name)"
+        }
+      }
+    },
+    {
+      "id": "c28ace4d-8c8e-472d-a7e2-f8e1949fb82c",
+      "name": "coralogix_slo_go_example",
+      "description": "Example SLO for Coralogix using request-based metrics",
+      "creator": "polina.shtanko@coralogix.com",
+      "labels": {
+        "label1": "value1"
+      },
+      "revision": {
+        "revision": 1,
+        "updateTime": "2025-09-10T17:22:37.933Z"
+      },
+      "grouping": {
+        "labels": [
+          "service_name"
+        ]
+      },
+      "createTime": "2025-09-10T17:22:37.933Z",
+      "updateTime": "2025-09-10T17:22:37.943Z",
+      "targetThresholdPercentage": 30.5,
+      "sloTimeFrame": "SLO_TIME_FRAME_7_DAYS",
+      "requestBasedMetricSli": {
+        "goodEvents": {
+          "query": "sum(calls_total_total{status_code!='STATUS_CODE_ERROR'}) by (service_name)"
+        },
+        "totalEvents": {
+          "query": "sum(calls_total_total{status_code!='STATUS_CODE_ERROR'}) by (service_name)"
+        }
+      }
+    },
+    {
+      "id": "3878c468-b3ba-4f62-a9c1-9cbe66567e1d",
+      "name": "Katya Test",
+      "description": "",
+      "creator": "support@coralogix.com",
+      "labels": {},
+      "revision": {
+        "revision": 1,
+        "updateTime": "2025-09-17T17:54:37.435Z"
+      },
+      "grouping": {
+        "labels": [
+          "service_name",
+          "k8s_node_name"
+        ]
+      },
+      "createTime": "2025-09-17T17:54:37.435Z",
+      "updateTime": "2025-09-17T17:54:37.458Z",
+      "targetThresholdPercentage": 98,
+      "sloTimeFrame": "SLO_TIME_FRAME_7_DAYS",
+      "requestBasedMetricSli": {
+        "goodEvents": {
+          "query": "sum(calls_total_total{status_code!='STATUS_CODE_ERROR'}) by (service_name, k8s_node_name)"
+        },
+        "totalEvents": {
+          "query": "sum(calls_total_total) by (service_name, k8s_node_name)"
+        }
+      }
+    },
+    {
+      "id": "5fabc6d0-c3af-4c61-ab38-ef1f5c89ad81",
+      "name": "Test window event - CC",
+      "description": "",
+      "creator": "chris.cooney@coralogix.com",
+      "labels": {},
+      "revision": {
+        "revision": 1,
+        "updateTime": "2025-08-20T08:36:23.733Z"
+      },
+      "grouping": {
+        "labels": [
+          "country"
+        ]
+      },
+      "createTime": "2025-08-20T08:36:23.733Z",
+      "updateTime": "2025-08-20T08:36:23.743Z",
+      "targetThresholdPercentage": 75,
+      "sloTimeFrame": "SLO_TIME_FRAME_7_DAYS",
+      "windowBasedMetricSli": {
+        "query": {
+          "query": "avg(product_latency_by_country) by (country)"
+        },
+        "window": "WINDOW_SLO_WINDOW_1_MINUTE",
+        "comparisonOperator": "COMPARISON_OPERATOR_GREATER_THAN_OR_EQUALS",
+        "threshold": 60
+      }
+    },
+    {
+      "id": "1b12755e-f13e-44ea-acea-d3bd6128fa87",
+      "name": "Amir-alerts-test-12/11",
+      "description": "",
+      "creator": "bot@coralogix.com",
+      "labels": {
+        "slo": "alert"
+      },
+      "revision": {
+        "revision": 1,
+        "updateTime": "2025-11-12T17:29:27.278Z"
+      },
+      "grouping": {
+        "labels": [
+          "service_name",
+          "operation",
+          "k8s_container_name"
+        ]
+      },
+      "createTime": "2025-11-12T17:29:27.278Z",
+      "updateTime": "2025-11-12T17:31:36.306Z",
+      "targetThresholdPercentage": 99,
+      "sloTimeFrame": "SLO_TIME_FRAME_7_DAYS",
+      "requestBasedMetricSli": {
+        "goodEvents": {
+          "query": "sum(calls_total_total{status_code!='STATUS_CODE_ERROR'}) by (service_name, operation,k8s_container_name)"
+        },
+        "totalEvents": {
+          "query": "sum(calls_total_total) by (service_name, operation,k8s_container_name)"
+        }
+      }
+    },
+    {
+      "id": "deb09adf-d6ab-4ec8-b7e9-35b00720ecba",
+      "name": "CX Academy Time window-based SLO Example",
+      "description": "Time window-based SLO - Measures how many good time windows were achieved during the SLO time frame",
+      "creator": "martin.mclarnon@coralogix.com",
+      "labels": {
+        "cx": "academy",
+        "env": "slo-center",
+        "type": "window-based"
+      },
+      "revision": {
+        "revision": 1,
+        "updateTime": "2025-09-05T14:36:35.743Z"
+      },
+      "grouping": {
+        "labels": [
+          "service_name"
+        ]
+      },
+      "createTime": "2025-09-05T14:36:35.743Z",
+      "updateTime": "2025-09-05T15:05:00.909Z",
+      "targetThresholdPercentage": 99.95,
+      "sloTimeFrame": "SLO_TIME_FRAME_28_DAYS",
+      "windowBasedMetricSli": {
+        "query": {
+          "query": "histogram_quantile(0.9, sum(increase(duration_ms_cx_bucket)) by(service_name, le))"
+        },
+        "window": "WINDOW_SLO_WINDOW_1_MINUTE",
+        "comparisonOperator": "COMPARISON_OPERATOR_LESS_THAN",
+        "threshold": 100
+      }
+    },
+    {
+      "id": "2495c6f5-cda6-4e63-95f0-083f337415a1",
+      "name": "coralogix_window_based_slo",
+      "description": "Example SLO using window-based metrics",
+      "creator": "polina.shtanko@coralogix.com",
+      "labels": {
+        "env": "prod",
+        "service": "api"
+      },
+      "revision": {
+        "revision": 1,
+        "updateTime": "2025-09-10T17:22:37.697Z"
+      },
+      "grouping": {
+        "labels": [
+          "service_name"
+        ]
+      },
+      "createTime": "2025-09-10T17:22:37.697Z",
+      "updateTime": "2025-10-15T17:03:05.899Z",
+      "targetThresholdPercentage": 95,
+      "sloTimeFrame": "SLO_TIME_FRAME_28_DAYS",
+      "windowBasedMetricSli": {
+        "query": {
+          "query": "sum(calls_total_total{status_code!='STATUS_CODE_ERROR'}) by (service_name)"
+        },
+        "window": "WINDOW_SLO_WINDOW_1_MINUTE",
+        "comparisonOperator": "COMPARISON_OPERATOR_LESS_THAN",
+        "threshold": 0.232
+      }
+    },
+    {
+      "id": "ab3c934a-68e2-4776-9b32-b5ec35b3e489",
+      "name": "API Availability SLO",
+      "description": "Monitors the availability of our critical API endpoints",
+      "creator": "bot@coralogix.com",
+      "labels": {},
+      "revision": {
+        "revision": 1,
+        "updateTime": "2025-08-06T09:25:30.980Z"
+      },
+      "grouping": {
+        "labels": [
+          "country"
+        ]
+      },
+      "createTime": "2025-08-06T09:25:30.980Z",
+      "updateTime": "2025-09-23T19:40:03.086Z",
+      "targetThresholdPercentage": 99.95,
+      "sloTimeFrame": "SLO_TIME_FRAME_28_DAYS",
+      "windowBasedMetricSli": {
+        "query": {
+          "query": "avg(product_latency_by_country) by (country) < 500"
+        },
+        "window": "WINDOW_SLO_WINDOW_1_MINUTE",
+        "comparisonOperator": "COMPARISON_OPERATOR_GREATER_THAN",
+        "threshold": 65
+      }
+    },
+    {
+      "id": "f2a68a28-810d-4e16-92d5-b4ef6921a4ba",
+      "name": "this is time window slo test ",
+      "description": "",
+      "creator": "bot@coralogix.com",
+      "labels": {
+        "slo": "window"
+      },
+      "revision": {
+        "revision": 2,
+        "updateTime": "2025-07-29T14:21:15.983Z"
+      },
+      "grouping": {
+        "labels": [
+          "service_name"
+        ]
+      },
+      "createTime": "2025-07-29T11:12:14.296Z",
+      "updateTime": "2025-07-31T11:26:07.608Z",
+      "targetThresholdPercentage": 60,
+      "sloTimeFrame": "SLO_TIME_FRAME_7_DAYS",
+      "windowBasedMetricSli": {
+        "query": {
+          "query": "sum(increase(calls_total_total)) by (service_name)"
+        },
+        "window": "WINDOW_SLO_WINDOW_5_MINUTES",
+        "comparisonOperator": "COMPARISON_OPERATOR_LESS_THAN_OR_EQUALS",
+        "threshold": 12000
+      }
+    },
+    {
+      "id": "7e903c7d-8ec0-460d-bded-58457913ad3a",
+      "name": "Test_Amir_Aviv",
+      "description": "",
+      "creator": "amir.golan@coralogix.com",
+      "labels": {
+        "amir": "test"
+      },
+      "revision": {
+        "revision": 1,
+        "updateTime": "2025-08-04T18:51:42.659Z"
+      },
+      "grouping": {
+        "labels": []
+      },
+      "createTime": "2025-08-04T18:51:42.659Z",
+      "updateTime": "2025-08-04T18:51:42.672Z",
+      "targetThresholdPercentage": 98,
+      "sloTimeFrame": "SLO_TIME_FRAME_7_DAYS",
+      "windowBasedMetricSli": {
+        "query": {
+          "query": "histogram_quantile(0.95, sum(rate(duration_ms_cx_bucket)) by (le))"
+        },
+        "window": "WINDOW_SLO_WINDOW_1_MINUTE",
+        "comparisonOperator": "COMPARISON_OPERATOR_GREATER_THAN_OR_EQUALS",
+        "threshold": 110
+      }
+    },
+    {
+      "id": "fce25c6c-94e3-48a2-9a1f-e1a4b30f4668",
+      "name": "Udi Mazor window-based",
+      "description": "",
+      "creator": "bot@coralogix.com",
+      "labels": {},
+      "revision": {
+        "revision": 1,
+        "updateTime": "2025-08-05T10:43:52.262Z"
+      },
+      "grouping": {
+        "labels": [
+          "service_name",
+          "status_code"
+        ]
+      },
+      "createTime": "2025-08-05T10:43:52.262Z",
+      "updateTime": "2025-08-05T10:43:52.288Z",
+      "targetThresholdPercentage": 90,
+      "sloTimeFrame": "SLO_TIME_FRAME_7_DAYS",
+      "windowBasedMetricSli": {
+        "query": {
+          "query": "sum(calls_total_total) by(service_name, status_code)"
+        },
+        "window": "WINDOW_SLO_WINDOW_1_MINUTE",
+        "comparisonOperator": "COMPARISON_OPERATOR_GREATER_THAN_OR_EQUALS",
+        "threshold": 428000000
+      }
+    },
+    {
+      "id": "a9ae34a7-b660-435a-9f18-a7221a907301",
+      "name": "Test Window SLO Itai",
+      "description": "",
+      "creator": "bot@coralogix.com",
+      "labels": {},
+      "revision": {
+        "revision": 2,
+        "updateTime": "2025-08-05T11:37:56.659Z"
+      },
+      "grouping": {
+        "labels": [
+          "service"
+        ]
+      },
+      "createTime": "2025-08-05T11:33:06.796Z",
+      "updateTime": "2025-08-25T11:30:27.499Z",
+      "targetThresholdPercentage": 95,
+      "sloTimeFrame": "SLO_TIME_FRAME_7_DAYS",
+      "windowBasedMetricSli": {
+        "query": {
+          "query": "histogram_quantile(0.9, sum(increase(duration_ms_cx_bucket)) by(service, le))"
+        },
+        "window": "WINDOW_SLO_WINDOW_1_MINUTE",
+        "comparisonOperator": "COMPARISON_OPERATOR_LESS_THAN_OR_EQUALS",
+        "threshold": 100
+      }
+    },
+    {
+      "id": "7d4b374c-ec1f-4bbd-88c9-f0a37e4ba078",
+      "name": "v_test_slo",
+      "description": "",
+      "creator": "bot@coralogix.com",
+      "labels": {},
+      "revision": {
+        "revision": 1,
+        "updateTime": "2025-08-07T09:08:17.963Z"
+      },
+      "grouping": {
+        "labels": [
+          "service_name",
+          "status_code"
+        ]
+      },
+      "createTime": "2025-08-07T09:08:17.963Z",
+      "updateTime": "2025-08-07T09:08:17.970Z",
+      "targetThresholdPercentage": 99,
+      "sloTimeFrame": "SLO_TIME_FRAME_7_DAYS",
+      "windowBasedMetricSli": {
+        "query": {
+          "query": "sum(calls_total_total) by(service_name, status_code)"
+        },
+        "window": "WINDOW_SLO_WINDOW_1_MINUTE",
+        "comparisonOperator": "COMPARISON_OPERATOR_GREATER_THAN_OR_EQUALS",
+        "threshold": 1000
+      }
+    },
+    {
+      "id": "306d09a2-6812-4125-90fa-c1b230e470a6",
+      "name": "No Grouping Test",
+      "description": "",
+      "creator": "chris.cooney@coralogix.com",
+      "labels": {},
+      "revision": {
+        "revision": 1,
+        "updateTime": "2025-08-20T08:20:54.710Z"
+      },
+      "grouping": {
+        "labels": []
+      },
+      "createTime": "2025-08-20T08:20:54.710Z",
+      "updateTime": "2025-08-20T08:20:54.725Z",
+      "targetThresholdPercentage": 99,
+      "sloTimeFrame": "SLO_TIME_FRAME_7_DAYS",
+      "requestBasedMetricSli": {
+        "goodEvents": {
+          "query": "sum(calls_total_total{status_code!=\"STATUS_CODE_ERROR\"})"
+        },
+        "totalEvents": {
+          "query": "sum(calls_total_total)"
+        }
+      }
+    },
+    {
+      "id": "0863a843-1076-437d-99eb-02339ac32ed0",
+      "name": "Webinar SLO",
+      "description": "",
+      "creator": "amir.golan@coralogix.com",
+      "labels": {
+        "Webinar": "SLO"
+      },
+      "revision": {
+        "revision": 1,
+        "updateTime": "2025-10-14T10:05:22.870Z"
+      },
+      "grouping": {
+        "labels": [
+          "service_name",
+          "k8s_node_name"
+        ]
+      },
+      "createTime": "2025-10-14T10:05:22.870Z",
+      "updateTime": "2025-10-14T10:05:22.880Z",
+      "targetThresholdPercentage": 99.5,
+      "sloTimeFrame": "SLO_TIME_FRAME_7_DAYS",
+      "requestBasedMetricSli": {
+        "goodEvents": {
+          "query": "sum(calls_total_total{status_code!='STATUS_CODE_ERROR'})by (service_name,k8s_node_name)"
+        },
+        "totalEvents": {
+          "query": "sum(calls_total_total)by (service_name,k8s_node_name)"
+        }
+      }
+    },
+    {
+      "id": "81c1eee6-75b1-4b68-98d2-9dd9b7824c2b",
+      "name": "amir 21.8 ccoralogix_window_based_slo",
+      "description": "Example SLO using window-based metrics",
+      "labels": {
+        "env": "prod",
+        "service": "api"
+      },
+      "revision": {
+        "revision": 2,
+        "updateTime": "2025-10-08T07:00:16.874Z"
+      },
+      "grouping": {
+        "labels": [
+          "service",
+          "action"
+        ]
+      },
+      "createTime": "2025-08-21T13:52:06.005Z",
+      "updateTime": "2025-10-08T07:00:16.882Z",
+      "targetThresholdPercentage": 95,
+      "sloTimeFrame": "SLO_TIME_FRAME_28_DAYS",
+      "windowBasedMetricSli": {
+        "query": {
+          "query": "histogram_quantile(0.9, sum(increase(duration_ms_cx_bucket)) by(service, action, le))"
+        },
+        "window": "WINDOW_SLO_WINDOW_1_MINUTE",
+        "comparisonOperator": "COMPARISON_OPERATOR_LESS_THAN",
+        "threshold": 0.232
+      }
+    },
+    {
+      "id": "48bbdb13-0b03-4aae-b481-1ce390fd11b8",
+      "name": "test_123",
+      "description": "",
+      "creator": "support@coralogix.com",
+      "labels": {},
+      "revision": {
+        "revision": 1,
+        "updateTime": "2025-11-17T18:30:49.224Z"
+      },
+      "grouping": {
+        "labels": [
+          "service_name",
+          "status_code"
+        ]
+      },
+      "createTime": "2025-11-17T18:30:49.224Z",
+      "updateTime": "2025-11-17T18:30:49.237Z",
+      "targetThresholdPercentage": 99,
+      "sloTimeFrame": "SLO_TIME_FRAME_7_DAYS",
+      "requestBasedMetricSli": {
+        "goodEvents": {
+          "query": "sum(calls_total_total) by(service_name, status_code)"
+        },
+        "totalEvents": {
+          "query": "sum(calls_total_total) by(service_name, status_code)"
+        }
+      }
+    },
+    {
+      "id": "a7b68704-f9eb-4d33-a812-8ca4033b1ffd",
+      "name": "amir 21.8 coralogix_slo_go_example",
+      "description": "Example SLO for Coralogix using request-based metrics 10.9",
+      "labels": {
+        "label1": "value1"
+      },
+      "revision": {
+        "revision": 3,
+        "updateTime": "2025-10-08T07:04:12.762Z"
+      },
+      "grouping": {
+        "labels": [
+          "service_name",
+          "span_kind",
+          "k8s_node_name"
+        ]
+      },
+      "createTime": "2025-08-21T13:52:06.206Z",
+      "updateTime": "2025-10-08T07:04:12.826Z",
+      "targetThresholdPercentage": 30.5,
+      "sloTimeFrame": "SLO_TIME_FRAME_7_DAYS",
+      "requestBasedMetricSli": {
+        "goodEvents": {
+          "query": "sum(calls_total_total{status_code!='STATUS_CODE_ERROR'}) by (service_name, span_kind, k8s_node_name)"
+        },
+        "totalEvents": {
+          "query": "sum(calls_total_total) by (service_name, span_kind, k8s_node_name)"
+        }
+      }
+    },
+    {
+      "id": "f732f44f-cae1-485a-af53-111b0a2950fe",
+      "name": "Something",
+      "description": "",
+      "creator": "chris.cooney@coralogix.com",
+      "labels": {
+        "owner": "chris"
+      },
+      "revision": {
+        "revision": 1,
+        "updateTime": "2025-10-08T08:21:51.606Z"
+      },
+      "grouping": {
+        "labels": [
+          "service_name"
+        ]
+      },
+      "createTime": "2025-10-08T08:21:51.606Z",
+      "updateTime": "2025-10-08T08:21:51.618Z",
+      "targetThresholdPercentage": 99,
+      "sloTimeFrame": "SLO_TIME_FRAME_7_DAYS",
+      "requestBasedMetricSli": {
+        "goodEvents": {
+          "query": "sum(calls_total_total) by (service_name)"
+        },
+        "totalEvents": {
+          "query": "sum(calls_total_total) by (service_name)"
+        }
+      }
+    },
+    {
+      "id": "261b002b-194a-4289-8f5b-57063af94815",
+      "name": "Load Balancer Availability",
+      "description": "",
+      "creator": "bot@coralogix.com",
+      "labels": {},
+      "revision": {
+        "revision": 1,
+        "updateTime": "2025-10-08T08:58:24.830Z"
+      },
+      "grouping": {
+        "labels": [
+          "service_name"
+        ]
+      },
+      "createTime": "2025-10-08T08:58:24.830Z",
+      "updateTime": "2025-10-08T08:58:24.857Z",
+      "targetThresholdPercentage": 99,
+      "sloTimeFrame": "SLO_TIME_FRAME_7_DAYS",
+      "requestBasedMetricSli": {
+        "goodEvents": {
+          "query": "sum(rate(http_client_duration_ms_count{http_status_code=\"200\"}[1m])) by (service_name)"
+        },
+        "totalEvents": {
+          "query": "sum(rate(http_client_duration_ms_count{}[1m])) by (service_name)"
+        }
+      }
+    },
+    {
+      "id": "d1c4831c-a155-43f1-bb8b-222eac3b37da",
+      "name": "Test 500 validation (2)",
+      "description": "",
+      "creator": "amir.golan@coralogix.com",
+      "labels": {},
+      "revision": {
+        "revision": 2,
+        "updateTime": "2025-09-24T08:17:30.195Z"
+      },
+      "grouping": {
+        "labels": [
+          "service_name",
+          "operation",
+          "k8s_container_name"
+        ]
+      },
+      "createTime": "2025-09-24T08:15:52.141Z",
+      "updateTime": "2025-09-24T08:17:30.201Z",
+      "targetThresholdPercentage": 99,
+      "sloTimeFrame": "SLO_TIME_FRAME_7_DAYS",
+      "requestBasedMetricSli": {
+        "goodEvents": {
+          "query": "sum(calls_total_total{status_code!='STATUS_CODE_ERROR'}) by (service_name, operation,k8s_container_name)"
+        },
+        "totalEvents": {
+          "query": "sum(calls_total_total) by (service_name, operation,k8s_container_name)"
+        }
+      }
+    },
+    {
+      "id": "4068a6aa-102c-49c8-bdd5-b7d39422d32c",
+      "name": "Errors detected in Payment service",
+      "description": "",
+      "creator": "aaron.kinchen@coralogix.com",
+      "labels": {
+        "application": "payment",
+        "severity": "critical"
+      },
+      "revision": {
+        "revision": 3,
+        "updateTime": "2025-10-16T12:40:53.578Z"
+      },
+      "grouping": {
+        "labels": [
+          "service_name"
+        ]
+      },
+      "createTime": "2025-07-25T16:36:59.685Z",
+      "updateTime": "2025-10-16T12:40:53.585Z",
+      "targetThresholdPercentage": 50,
+      "sloTimeFrame": "SLO_TIME_FRAME_7_DAYS",
+      "requestBasedMetricSli": {
+        "goodEvents": {
+          "query": "sum(increase(calls_total_total{status_code!='STATUS_CODE_ERROR', service_name = 'paymentservice'})) by (service_name)"
+        },
+        "totalEvents": {
+          "query": "sum(increase(calls_total_total{service_name = 'paymentservice'})) by (service_name)"
+        }
+      }
+    },
+    {
+      "id": "ec3463c9-db5e-4db2-a7ea-2edd18daecdc",
+      "name": "test",
+      "description": "",
+      "creator": "bot@coralogix.com",
+      "labels": {},
+      "revision": {
+        "revision": 1,
+        "updateTime": "2025-10-08T13:27:54.456Z"
+      },
+      "grouping": {
+        "labels": []
+      },
+      "createTime": "2025-10-08T13:27:54.456Z",
+      "updateTime": "2025-10-08T13:27:54.482Z",
+      "targetThresholdPercentage": 99,
+      "sloTimeFrame": "SLO_TIME_FRAME_7_DAYS",
+      "requestBasedMetricSli": {
+        "goodEvents": {
+          "query": "sum(calls_total_total)"
+        },
+        "totalEvents": {
+          "query": "sum(calls_total_total)"
+        }
+      }
+    },
+    {
+      "id": "5ba745a5-e37b-4633-bf27-62199e39b774",
+      "name": "Product Search Response Time SLO",
+      "description": "This SLO measures the responsiveness of product services, and ensures that all product API calls return to the user in less than 500ms within a one week time period.",
+      "creator": "chris.cooney@coralogix.com",
+      "labels": {
+        "service": "responsive"
+      },
+      "revision": {
+        "revision": 1,
+        "updateTime": "2025-10-08T17:46:26.214Z"
+      },
+      "grouping": {
+        "labels": [
+          "product"
+        ]
+      },
+      "createTime": "2025-10-08T17:46:26.214Z",
+      "updateTime": "2025-10-08T17:46:26.233Z",
+      "targetThresholdPercentage": 99,
+      "sloTimeFrame": "SLO_TIME_FRAME_7_DAYS",
+      "windowBasedMetricSli": {
+        "query": {
+          "query": "avg(product_latency_by_country) by (product)"
+        },
+        "window": "WINDOW_SLO_WINDOW_1_MINUTE",
+        "comparisonOperator": "COMPARISON_OPERATOR_LESS_THAN_OR_EQUALS",
+        "threshold": 500
+      }
+    },
+    {
+      "id": "fb0bcd41-bb9a-4051-a6ec-bd0150762417",
+      "name": "Amir test 11.11",
+      "description": "",
+      "creator": "bot@coralogix.com",
+      "labels": {},
+      "revision": {
+        "revision": 1,
+        "updateTime": "2025-11-11T16:36:25.712Z"
+      },
+      "grouping": {
+        "labels": [
+          "service_name",
+          "span_kind"
+        ]
+      },
+      "createTime": "2025-11-11T16:36:25.712Z",
+      "updateTime": "2025-11-11T16:36:25.714Z",
+      "targetThresholdPercentage": 99,
+      "sloTimeFrame": "SLO_TIME_FRAME_7_DAYS",
+      "requestBasedMetricSli": {
+        "goodEvents": {
+          "query": "sum by(service_name, span_kind) (increase(calls_total_total{status_code=\"STATUS_CODE_ERROR\"}))"
+        },
+        "totalEvents": {
+          "query": "sum by(service_name, span_kind) (increase(calls_total_total))"
+        }
+      }
+    },
+    {
+      "id": "28464079-e3a1-4099-8531-d75774724248",
+      "name": "Itai Dan Window test",
+      "description": "foo",
+      "creator": "bot@coralogix.com",
+      "labels": {},
+      "revision": {
+        "revision": 1,
+        "updateTime": "2025-07-31T11:29:14.338Z"
+      },
+      "grouping": {
+        "labels": [
+          "service_name"
+        ]
+      },
+      "createTime": "2025-07-31T11:29:14.338Z",
+      "updateTime": "2025-07-31T11:29:14.376Z",
+      "targetThresholdPercentage": 50,
+      "sloTimeFrame": "SLO_TIME_FRAME_7_DAYS",
+      "windowBasedMetricSli": {
+        "query": {
+          "query": "sum(increase(calls_total_total{status_code!=\"STATUS_CODE_ERROR\"})) by(service_name)"
+        },
+        "window": "WINDOW_SLO_WINDOW_1_MINUTE",
+        "comparisonOperator": "COMPARISON_OPERATOR_LESS_THAN_OR_EQUALS",
+        "threshold": 2000
+      }
+    }
+  ],
+  "count": 84,
+  "resource_identifiers": [
+    "Amir_Time_Window",
+    "Amir_test_Time_window",
+    "Rahul Test - CPU Utilisation SLO",
+    "Health of Env",
+    "netanel test slo",
+    "SLO Lean Error",
+    "slo test",
+    "Test 500 validation",
+    "foo",
+    "checkoutservice high latency",
+    "coralogix_slo_go_example",
+    "test_ayo",
+    "slo-new-18.6",
+    "Udi",
+    "Amir-demo-sprint",
+    "Itai test RR based offset",
+    "entity-lable-test",
+    "TEST10.7",
+    "Demo_CS_July_16",
+    "Udi Mazor",
+    "Test",
+    "Test2",
+    "Udi Mazor",
+    "Udi Sanity 2",
+    "Sanity 3",
+    "Test for Chris",
+    "SLO Service Errors",
+    "demo_10_9_coralogix_window_based_slo",
+    "Frontend service error rate",
+    "amir-slo-test",
+    "Amir-SLO-18.6",
+    "APM - Services SLO",
+    "lmaxperm",
+    "Errors SLO",
+    "demo_new_10_9_coralogix_slo_go_example",
+    "Ttest",
+    "Amir-Alerts-Test",
+    "aviv-test-abc",
+    "Udi7",
+    "Test 28.8",
+    "Demo_SLO_5.8",
+    "Demo-2-test",
+    "avi demo",
+    "Service Call Success Rate",
+    "amir_no_data_slo",
+    "Tracking Errors Per Service & VM",
+    "SLO APM - Alert ",
+    "Udi Sanity test",
+    "classy-application-shell-fcp",
+    "APM - By SErvice - Rahul",
+    "avitest",
+    "Amir-test-9.7-1",
+    "amir-slo-test-2-9.7",
+    "eyal",
+    "Shuki-Demo Availability SLO",
+    "Product Page load latency ",
+    "CX Academy Event-based SLO Example",
+    "demo_10_9_coralogix_slo_go_example",
+    "demo_amir_new_10_9_coralogix_slo_go_example",
+    "coralogix_slo_go_example",
+    "Katya Test",
+    "Test window event - CC",
+    "Amir-alerts-test-12/11",
+    "CX Academy Time window-based SLO Example",
+    "coralogix_window_based_slo",
+    "API Availability SLO",
+    "this is time window slo test ",
+    "Test_Amir_Aviv",
+    "Udi Mazor window-based",
+    "Test Window SLO Itai",
+    "v_test_slo",
+    "No Grouping Test",
+    "Webinar SLO",
+    "amir 21.8 ccoralogix_window_based_slo",
+    "test_123",
+    "amir 21.8 coralogix_slo_go_example",
+    "Something",
+    "Load Balancer Availability",
+    "Test 500 validation (2)",
+    "Errors detected in Payment service",
+    "test",
+    "Product Search Response Time SLO",
+    "Amir test 11.11",
+    "Itai Dan Window test"
+  ]
+}

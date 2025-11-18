@@ -1,0 +1,43 @@
+{
+  "timestamp": "2025-11-12T23:06:33.425490",
+  "service": "parsing-rules",
+  "team": "teamb",
+  "resources": [
+    {
+      "id": "cdc848af-d3e6-4725-957d-d698ffb1faca",
+      "name": "Severity Rules",
+      "description": "",
+      "creator": "organisations-service",
+      "enabled": true,
+      "hidden": false,
+      "ruleMatchers": [],
+      "ruleSubgroups": [
+        {
+          "id": "291befa7-5918-48bc-8b40-1564c1c1a304",
+          "rules": [
+            {
+              "id": "754326c0-fbbe-4344-a4c0-eb4b63ab3120",
+              "name": "Severity Rule",
+              "description": "Look for default severity text",
+              "sourceField": "text",
+              "parameters": {
+                "extractParameters": {
+                  "rule": "\\b(?P<severity>DEBUG|TRACE|INFO|WARN|ERROR|FATAL|EXCEPTION|[Dd]ebug|[Tt]race|[Ii]nfo|[Ww]arn|[Ee]rror|[Ff]atal|[Ee]xception)\\b"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 1
+        }
+      ],
+      "order": 1
+    }
+  ],
+  "count": 1,
+  "resource_identifiers": [
+    "cdc848af-d3e6-4725-957d-d698ffb1faca"
+  ]
+}

@@ -17,6 +17,8 @@ from pathlib import Path
 from core.base_service import BaseService
 from core.config import Config
 from core.api_client import CoralogixAPIError
+from core.safety_manager import SafetyManager
+from core.version_manager import VersionManager
 
 
 class RecordingRulesService(BaseService):
@@ -25,6 +27,10 @@ class RecordingRulesService(BaseService):
     def __init__(self, config: Config, logger):
         super().__init__(config, logger)
         self._setup_failed_rules_logging()
+
+        # Initialize safety manager and version manager
+        self.safety_manager = SafetyManager(config, self.service_name)
+        self.version_manager = VersionManager(config, self.service_name)
 
     @property
     def service_name(self) -> str:
@@ -40,7 +46,10 @@ class RecordingRulesService(BaseService):
         self.failed_rules_dir.mkdir(parents=True, exist_ok=True)
 
     def fetch_resources_from_teama(self) -> List[Dict[str, Any]]:
-        """Fetch all recording rule group sets from Team A."""
+        """Fetch all recording rule group sets from Team A with safety checks."""
+        api_error = None
+        rule_group_sets = []
+
         try:
             self.logger.info("Fetching recording rule group sets from Team A")
 
@@ -51,18 +60,44 @@ class RecordingRulesService(BaseService):
             rule_group_sets = response.get('sets', [])
 
             self.logger.info(f"Fetched {len(rule_group_sets)} recording rule group sets from Team A")
-            return rule_group_sets
 
         except CoralogixAPIError as e:
             # Handle 404 gracefully - it means no recording rules exist
             if "404" in str(e):
                 self.logger.info("No recording rule group sets found in Team A (404 response)")
-                return []
-            self.logger.error(f"Failed to fetch recording rule group sets from Team A: {e}")
-            raise
+                rule_group_sets = []
+            else:
+                self.logger.error(f"Failed to fetch recording rule group sets from Team A: {e}")
+                api_error = e
         except Exception as e:
             self.logger.error(f"Unexpected error fetching recording rule group sets from Team A: {e}")
-            raise
+            api_error = e
+
+        # Get previous count for safety check
+        previous_version = self.version_manager.get_current_version()
+        previous_count = previous_version.get('teama', {}).get('count') if previous_version else None
+
+        # Perform safety check
+        safety_result = self.safety_manager.check_teama_fetch_safety(
+            rule_group_sets, api_error, previous_count
+        )
+
+        if not safety_result.is_safe:
+            self.logger.error(f"TeamA fetch safety check failed: {safety_result.reason}")
+            self.logger.error(f"Safety check details: {safety_result.details}")
+
+            # If we have an API error, raise it
+            if api_error:
+                raise api_error
+
+            # If it's a safety issue without API error, raise a custom exception
+            raise RuntimeError(f"Safety check failed: {safety_result.reason}")
+
+        # If we had an API error but safety check passed, still raise the error
+        if api_error:
+            raise api_error
+
+        return rule_group_sets
 
     def fetch_resources_from_teamb(self) -> List[Dict[str, Any]]:
         """Fetch all recording rule group sets from Team B."""
@@ -316,13 +351,14 @@ class RecordingRulesService(BaseService):
 
     def migrate(self) -> bool:
         """
-        Perform the actual recording rule group sets migration.
+        Perform the actual recording rule group sets migration with enhanced safety checks.
 
-        Implementation:
-        1. Fetch rule group sets from Team A and Team B
-        2. Compare to identify new, changed, and deleted rule group sets
-        3. Delete changed/deleted rule group sets from Team B
-        4. Create new/changed rule group sets in Team B
+        Enhanced Implementation:
+        1. Create pre-migration version snapshot
+        2. Fetch rule group sets from Team A and Team B with safety checks
+        3. Perform mass deletion safety check
+        4. Execute migration operations
+        5. Create post-migration version snapshot
 
         Returns:
             True if migration completed successfully
@@ -330,12 +366,21 @@ class RecordingRulesService(BaseService):
         try:
             self.log_migration_start(self.service_name, dry_run=False)
 
-            # Fetch current resources from both teams
-            self.logger.info("Fetching resources from Team A...")
-            teama_resources = self.fetch_resources_from_teama()
-
-            self.logger.info("Fetching resources from Team B...")
+            # Step 1: Fetch resources from both teams (with safety checks for TeamA)
+            self.logger.info("📥 Fetching recording rule group sets from both teams...")
+            teama_resources = self.fetch_resources_from_teama()  # This includes safety checks
             teamb_resources = self.fetch_resources_from_teamb()
+
+            # Step 2: Create pre-migration version snapshot
+            self.logger.info("📸 Creating pre-migration version snapshot...")
+            pre_migration_version = self.version_manager.create_version_snapshot(
+                teama_resources, teamb_resources, 'pre_migration'
+            )
+            self.logger.info(f"Pre-migration snapshot created: {pre_migration_version}")
+
+            # Get previous TeamA count for safety checks
+            previous_version = self.version_manager.get_previous_version()
+            previous_teama_count = previous_version.get('teama', {}).get('count') if previous_version else None
 
             # Save artifacts
             self.save_artifacts(teama_resources, 'teama')
@@ -343,6 +388,44 @@ class RecordingRulesService(BaseService):
 
             # Compare resources to identify changes
             comparison = self._compare_rule_group_sets(teama_resources, teamb_resources)
+
+            # Check if any operations are needed
+            total_operations = len(comparison['new_in_teama']) + len(comparison['changed_resources']) + len(comparison['deleted_from_teama'])
+
+            if total_operations == 0:
+                self.logger.info("No recording rule group sets migration needed - teams are in sync")
+
+                # Display migration results even when no operations are needed
+                self._display_migration_results_table({
+                    'total_teama_resources': len(teama_resources),
+                    'total_teamb_resources': len(teamb_resources),
+                    'new_resources': 0,
+                    'changed_resources': 0,
+                    'deleted_resources': 0,
+                    'successful_operations': 0,
+                    'failed_operations': 0,
+                    'total_operations': 0
+                })
+
+                # Still create post-migration snapshot for consistency
+                self.version_manager.create_version_snapshot(
+                    teama_resources, teamb_resources, 'post_migration'
+                )
+                self.log_migration_complete(self.service_name, True, 0, 0)
+                return True
+
+            # Step 3: Perform mass deletion safety check
+            # Calculate total resources that would be deleted (including recreations)
+            resources_to_delete = comparison['deleted_from_teama'] + [teamb_resource for _, teamb_resource in comparison['changed_resources']]
+
+            mass_deletion_check = self.safety_manager.check_mass_deletion_safety(
+                resources_to_delete, len(teamb_resources), len(teama_resources), previous_teama_count
+            )
+
+            if not mass_deletion_check.is_safe:
+                self.logger.error(f"Mass deletion safety check failed: {mass_deletion_check.reason}")
+                self.logger.error(f"Safety check details: {mass_deletion_check.details}")
+                raise RuntimeError(f"Mass deletion safety check failed: {mass_deletion_check.reason}")
 
             self.logger.info(
                 "Migration plan",
@@ -408,6 +491,20 @@ class RecordingRulesService(BaseService):
                 'total_operations': len(comparison['new_in_teama']) + len(comparison['changed_resources']) + len(comparison['deleted_from_teama'])
             })
 
+            # Step 4: Create post-migration version snapshot
+            self.logger.info("📸 Creating post-migration version snapshot...")
+            try:
+                # Fetch updated resources from both teams for post-migration snapshot
+                updated_teama_resources = self.fetch_resources_from_teama()
+                updated_teamb_resources = self.fetch_resources_from_teamb()
+
+                post_migration_version = self.version_manager.create_version_snapshot(
+                    updated_teama_resources, updated_teamb_resources, 'post_migration'
+                )
+                self.logger.info(f"Post-migration snapshot created: {post_migration_version}")
+            except Exception as e:
+                self.logger.warning(f"Failed to create post-migration snapshot: {e}")
+
             # Log completion
             migration_success = error_count == 0
             self.log_migration_complete(
@@ -416,6 +513,11 @@ class RecordingRulesService(BaseService):
                 success_count,
                 error_count
             )
+
+            if migration_success:
+                self.logger.info("🎉 Recording rule group sets migration completed successfully!")
+            else:
+                self.logger.warning(f"⚠️ Recording rule group sets migration completed with {error_count} failures")
 
             return migration_success
 

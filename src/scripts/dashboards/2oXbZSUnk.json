@@ -1,0 +1,2495 @@
+{
+  "dashboard": {
+    "annotations": {
+      "list": [
+        {
+          "builtIn": 1,
+          "datasource": null,
+          "enable": true,
+          "hide": true,
+          "iconColor": "rgba(0, 211, 255, 1)",
+          "name": "Annotations & Alerts",
+          "type": "dashboard"
+        }
+      ]
+    },
+    "editable": true,
+    "gnetId": null,
+    "graphTooltip": 0,
+    "iteration": 1696828965429,
+    "links": [],
+    "panels": [
+      {
+        "collapsed": true,
+        "datasource": null,
+        "gridPos": {
+          "h": 1,
+          "w": 24,
+          "x": 0,
+          "y": 0
+        },
+        "id": 36,
+        "maxDataPoints": 1360,
+        "panels": [
+          {
+            "aliasColors": {},
+            "bars": false,
+            "dashLength": 10,
+            "dashes": false,
+            "datasource": {
+              "type": "prometheus",
+              "uid": "-FPV4La7z"
+            },
+            "fieldConfig": {
+              "defaults": {},
+              "overrides": []
+            },
+            "fill": 1,
+            "fillGradient": 0,
+            "gridPos": {
+              "h": 11,
+              "w": 12,
+              "x": 0,
+              "y": 1
+            },
+            "hiddenSeries": false,
+            "id": 48,
+            "legend": {
+              "alignAsTable": true,
+              "avg": false,
+              "current": true,
+              "max": false,
+              "min": false,
+              "rightSide": false,
+              "show": true,
+              "total": false,
+              "values": true
+            },
+            "lines": true,
+            "linewidth": 1,
+            "maxDataPoints": 1360,
+            "nullPointMode": "null",
+            "options": {
+              "alertThreshold": true
+            },
+            "percentage": false,
+            "pluginVersion": "7.5.17",
+            "pointradius": 2,
+            "points": false,
+            "renderer": "flot",
+            "seriesOverrides": [],
+            "spaceLength": 10,
+            "stack": false,
+            "steppedLine": false,
+            "targets": [
+              {
+                "exemplar": true,
+                "expr": "avg(sum(namespace_pod_container:container_cpu_usage_seconds_total:sum_rate{container=\"main\", source_cluster=\"$cluster\",pod=~\"hs-core-config-store.*\"}) by (pod)/sum(kube_pod_container_resource_requests_cpu_cores{container=\"main\",source_cluster=\"$cluster\", pod=~\"hs-core-config-store.*\"}) by (pod))",
+                "hide": false,
+                "interval": "60",
+                "legendFormat": "Average",
+                "queryType": "randomWalk",
+                "refId": "D"
+              },
+              {
+                "exemplar": true,
+                "expr": "max(sum(namespace_pod_container:container_cpu_usage_seconds_total:sum_rate{container=\"main\", source_cluster=\"$cluster\",pod=~\"hs-core-config-store.*\"}) by (pod)/sum(kube_pod_container_resource_requests_cpu_cores{container=\"main\",source_cluster=\"$cluster\", pod=~\"hs-core-config-store.*\"}) by (pod))",
+                "hide": false,
+                "interval": "60",
+                "legendFormat": "Maximum",
+                "queryType": "randomWalk",
+                "refId": "A"
+              }
+            ],
+            "thresholds": [],
+            "timeFrom": null,
+            "timeRegions": [],
+            "timeShift": null,
+            "title": "Overall CPU utilisation",
+            "tooltip": {
+              "shared": true,
+              "sort": 0,
+              "value_type": "individual"
+            },
+            "transparent": true,
+            "type": "graph",
+            "xaxis": {
+              "buckets": null,
+              "mode": "time",
+              "name": null,
+              "show": true,
+              "values": []
+            },
+            "yaxes": [
+              {
+                "$$hashKey": "object:2390",
+                "format": "percentunit",
+                "label": null,
+                "logBase": 1,
+                "max": null,
+                "min": null,
+                "show": true
+              },
+              {
+                "$$hashKey": "object:2391",
+                "format": "short",
+                "label": null,
+                "logBase": 1,
+                "max": null,
+                "min": null,
+                "show": true
+              }
+            ],
+            "yaxis": {
+              "align": false,
+              "alignLevel": null
+            }
+          },
+          {
+            "aliasColors": {},
+            "bars": false,
+            "dashLength": 10,
+            "dashes": false,
+            "datasource": {
+              "type": "prometheus",
+              "uid": "-FPV4La7z"
+            },
+            "fieldConfig": {
+              "defaults": {},
+              "overrides": []
+            },
+            "fill": 1,
+            "fillGradient": 0,
+            "gridPos": {
+              "h": 11,
+              "w": 12,
+              "x": 12,
+              "y": 1
+            },
+            "hiddenSeries": false,
+            "id": 50,
+            "legend": {
+              "alignAsTable": true,
+              "avg": false,
+              "current": true,
+              "max": false,
+              "min": false,
+              "rightSide": false,
+              "show": true,
+              "sort": "max",
+              "sortDesc": false,
+              "total": false,
+              "values": true
+            },
+            "lines": true,
+            "linewidth": 2,
+            "maxDataPoints": 1360,
+            "nullPointMode": "null",
+            "options": {
+              "alertThreshold": true
+            },
+            "percentage": false,
+            "pluginVersion": "7.5.17",
+            "pointradius": 2,
+            "points": false,
+            "renderer": "flot",
+            "seriesOverrides": [],
+            "spaceLength": 10,
+            "stack": false,
+            "steppedLine": false,
+            "targets": [
+              {
+                "exemplar": true,
+                "expr": "avg(sum(container_memory_rss{namespace=\"hs-core\", source_cluster=~\"$cluster\", container=\"main\", pod=~\"hs-core-config-store.*\"}) by (pod)/sum(kube_pod_container_resource_requests_memory_bytes{namespace=\"hs-core\", source_cluster=~\"$cluster\", container=\"main\", pod=~\"hs-core-config-store.*\"}) by (pod))",
+                "hide": false,
+                "interval": "60",
+                "legendFormat": "Average",
+                "queryType": "randomWalk",
+                "refId": "D"
+              },
+              {
+                "exemplar": true,
+                "expr": "max(sum(container_memory_rss{namespace=\"hs-core\", source_cluster=~\"$cluster\", container=\"main\", pod=~\"hs-core-config-store.*\"}) by (pod)/sum(kube_pod_container_resource_requests_memory_bytes{namespace=\"hs-core\", source_cluster=~\"$cluster\", container=\"main\", pod=~\"hs-core-config-store.*\"}) by (pod))",
+                "hide": false,
+                "interval": "60",
+                "legendFormat": "Maximum",
+                "queryType": "randomWalk",
+                "refId": "A"
+              }
+            ],
+            "thresholds": [],
+            "timeFrom": null,
+            "timeRegions": [],
+            "timeShift": null,
+            "title": "Overall Memory utilisation",
+            "tooltip": {
+              "shared": true,
+              "sort": 0,
+              "value_type": "individual"
+            },
+            "transparent": true,
+            "type": "graph",
+            "xaxis": {
+              "buckets": null,
+              "mode": "time",
+              "name": null,
+              "show": true,
+              "values": []
+            },
+            "yaxes": [
+              {
+                "$$hashKey": "object:2545",
+                "format": "percentunit",
+                "label": null,
+                "logBase": 1,
+                "max": null,
+                "min": null,
+                "show": true
+              },
+              {
+                "$$hashKey": "object:2546",
+                "format": "short",
+                "label": null,
+                "logBase": 1,
+                "max": null,
+                "min": null,
+                "show": true
+              }
+            ],
+            "yaxis": {
+              "align": false,
+              "alignLevel": null
+            }
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "-FPV4La7z"
+            },
+            "fieldConfig": {
+              "defaults": {
+                "color": {
+                  "mode": "thresholds"
+                },
+                "mappings": [],
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": null
+                    },
+                    {
+                      "color": "red",
+                      "value": 80
+                    }
+                  ]
+                }
+              },
+              "overrides": []
+            },
+            "gridPos": {
+              "h": 10,
+              "w": 8,
+              "x": 0,
+              "y": 12
+            },
+            "id": 40,
+            "maxDataPoints": 1360,
+            "options": {
+              "colorMode": "value",
+              "graphMode": "area",
+              "justifyMode": "auto",
+              "orientation": "auto",
+              "reduceOptions": {
+                "calcs": [
+                  "lastNotNull"
+                ],
+                "fields": "",
+                "values": false
+              },
+              "text": {},
+              "textMode": "auto"
+            },
+            "pluginVersion": "7.5.17",
+            "targets": [
+              {
+                "exemplar": true,
+                "expr": "sum(kube_pod_container_status_ready{container=\"main\", pod=~\"hs-core-config-store-.*\", source_cluster=\"$cluster\"})",
+                "interval": "60",
+                "legendFormat": "Instances",
+                "queryType": "randomWalk",
+                "refId": "A"
+              }
+            ],
+            "title": "Config Service Instances",
+            "type": "stat"
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "-FPV4La7z"
+            },
+            "fieldConfig": {
+              "defaults": {
+                "color": {
+                  "mode": "thresholds"
+                },
+                "mappings": [],
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": null
+                    },
+                    {
+                      "color": "red",
+                      "value": 80
+                    }
+                  ]
+                }
+              },
+              "overrides": []
+            },
+            "gridPos": {
+              "h": 10,
+              "w": 8,
+              "x": 8,
+              "y": 12
+            },
+            "id": 42,
+            "maxDataPoints": 1360,
+            "options": {
+              "colorMode": "value",
+              "graphMode": "area",
+              "justifyMode": "auto",
+              "orientation": "auto",
+              "reduceOptions": {
+                "calcs": [
+                  "lastNotNull"
+                ],
+                "fields": "",
+                "values": false
+              },
+              "text": {},
+              "textMode": "auto"
+            },
+            "pluginVersion": "7.5.17",
+            "targets": [
+              {
+                "exemplar": true,
+                "expr": "sum(kube_pod_container_resource_requests_cpu_cores{container=\"main\", pod=~\"hs-core-config-store-.*\",source_cluster=\"$cluster\"})",
+                "interval": "60",
+                "legendFormat": "{{ pod }}",
+                "queryType": "randomWalk",
+                "refId": "A"
+              }
+            ],
+            "title": "Config Service Cores",
+            "type": "stat"
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "-FPV4La7z"
+            },
+            "fieldConfig": {
+              "defaults": {
+                "color": {
+                  "mode": "thresholds"
+                },
+                "mappings": [],
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": null
+                    },
+                    {
+                      "color": "red",
+                      "value": 80
+                    }
+                  ]
+                }
+              },
+              "overrides": []
+            },
+            "gridPos": {
+              "h": 10,
+              "w": 8,
+              "x": 16,
+              "y": 12
+            },
+            "id": 44,
+            "maxDataPoints": 1360,
+            "options": {
+              "colorMode": "value",
+              "graphMode": "area",
+              "justifyMode": "auto",
+              "orientation": "auto",
+              "reduceOptions": {
+                "calcs": [
+                  "lastNotNull"
+                ],
+                "fields": "",
+                "values": false
+              },
+              "text": {},
+              "textMode": "auto"
+            },
+            "pluginVersion": "7.5.17",
+            "targets": [
+              {
+                "exemplar": true,
+                "expr": "sum(go_threads{service =~ \"$service_name\",source_cluster=\"$cluster\"}[1m])",
+                "interval": "60",
+                "legendFormat": "Go Threads",
+                "queryType": "randomWalk",
+                "refId": "A"
+              }
+            ],
+            "title": "Number of OS threads",
+            "type": "stat"
+          },
+          {
+            "aliasColors": {},
+            "bars": false,
+            "dashLength": 10,
+            "dashes": false,
+            "datasource": {
+              "type": "prometheus",
+              "uid": "-FPV4La7z"
+            },
+            "fieldConfig": {
+              "defaults": {},
+              "overrides": []
+            },
+            "fill": 1,
+            "fillGradient": 0,
+            "gridPos": {
+              "h": 11,
+              "w": 12,
+              "x": 0,
+              "y": 22
+            },
+            "hiddenSeries": false,
+            "id": 53,
+            "legend": {
+              "alignAsTable": true,
+              "avg": true,
+              "current": true,
+              "max": true,
+              "min": false,
+              "rightSide": false,
+              "show": true,
+              "total": false,
+              "values": true
+            },
+            "lines": true,
+            "linewidth": 2,
+            "maxDataPoints": 1360,
+            "nullPointMode": "null",
+            "options": {
+              "alertThreshold": true
+            },
+            "percentage": false,
+            "pluginVersion": "7.5.17",
+            "pointradius": 2,
+            "points": false,
+            "renderer": "flot",
+            "seriesOverrides": [],
+            "spaceLength": 10,
+            "stack": false,
+            "steppedLine": false,
+            "targets": [
+              {
+                "exemplar": true,
+                "expr": "sum(namespace_pod_container:container_cpu_usage_seconds_total:sum_rate{namespace=\"hs-core\", container=\"main\", pod=~\"${service_name}.*\", source_cluster=~\"$cluster\"}) by (pod)",
+                "interval": "60",
+                "legendFormat": "{{ pod }}",
+                "queryType": "randomWalk",
+                "refId": "A"
+              }
+            ],
+            "thresholds": [],
+            "timeFrom": null,
+            "timeRegions": [],
+            "timeShift": null,
+            "title": "Config Service CPU usage Per Pod",
+            "tooltip": {
+              "shared": true,
+              "sort": 0,
+              "value_type": "individual"
+            },
+            "transparent": true,
+            "type": "graph",
+            "xaxis": {
+              "buckets": null,
+              "mode": "time",
+              "name": null,
+              "show": true,
+              "values": []
+            },
+            "yaxes": [
+              {
+                "$$hashKey": "object:2701",
+                "format": "none",
+                "label": null,
+                "logBase": 1,
+                "max": null,
+                "min": null,
+                "show": true
+              },
+              {
+                "$$hashKey": "object:2702",
+                "format": "short",
+                "label": null,
+                "logBase": 1,
+                "max": null,
+                "min": null,
+                "show": true
+              }
+            ],
+            "yaxis": {
+              "align": false,
+              "alignLevel": null
+            }
+          },
+          {
+            "aliasColors": {},
+            "bars": false,
+            "dashLength": 10,
+            "dashes": false,
+            "datasource": {
+              "type": "prometheus",
+              "uid": "-FPV4La7z"
+            },
+            "fieldConfig": {
+              "defaults": {},
+              "overrides": []
+            },
+            "fill": 1,
+            "fillGradient": 0,
+            "gridPos": {
+              "h": 11,
+              "w": 12,
+              "x": 12,
+              "y": 22
+            },
+            "hiddenSeries": false,
+            "id": 54,
+            "legend": {
+              "alignAsTable": true,
+              "avg": true,
+              "current": true,
+              "max": true,
+              "min": false,
+              "rightSide": false,
+              "show": true,
+              "total": false,
+              "values": true
+            },
+            "lines": true,
+            "linewidth": 2,
+            "maxDataPoints": 1360,
+            "nullPointMode": "null",
+            "options": {
+              "alertThreshold": true
+            },
+            "percentage": false,
+            "pluginVersion": "7.5.17",
+            "pointradius": 2,
+            "points": false,
+            "renderer": "flot",
+            "seriesOverrides": [],
+            "spaceLength": 10,
+            "stack": false,
+            "steppedLine": false,
+            "targets": [
+              {
+                "exemplar": true,
+                "expr": "sum(container_memory_rss{namespace=\"hs-core\", container=\"main\", pod=~\"${service_name}.*\", source_cluster=\"$cluster\"}) by (pod)",
+                "interval": "60",
+                "legendFormat": "{{ pod }}",
+                "queryType": "randomWalk",
+                "refId": "A"
+              }
+            ],
+            "thresholds": [],
+            "timeFrom": null,
+            "timeRegions": [],
+            "timeShift": null,
+            "title": "Config Service Memory usage Per Pod",
+            "tooltip": {
+              "shared": true,
+              "sort": 0,
+              "value_type": "individual"
+            },
+            "transparent": true,
+            "type": "graph",
+            "xaxis": {
+              "buckets": null,
+              "mode": "time",
+              "name": null,
+              "show": true,
+              "values": []
+            },
+            "yaxes": [
+              {
+                "$$hashKey": "object:2701",
+                "format": "bytes",
+                "label": null,
+                "logBase": 1,
+                "max": null,
+                "min": null,
+                "show": true
+              },
+              {
+                "$$hashKey": "object:2702",
+                "format": "short",
+                "label": null,
+                "logBase": 1,
+                "max": null,
+                "min": null,
+                "show": true
+              }
+            ],
+            "yaxis": {
+              "align": false,
+              "alignLevel": null
+            }
+          },
+          {
+            "aliasColors": {},
+            "bars": false,
+            "dashLength": 10,
+            "dashes": false,
+            "datasource": {
+              "type": "prometheus",
+              "uid": "-FPV4La7z"
+            },
+            "fieldConfig": {
+              "defaults": {},
+              "overrides": []
+            },
+            "fill": 1,
+            "fillGradient": 0,
+            "gridPos": {
+              "h": 11,
+              "w": 12,
+              "x": 0,
+              "y": 33
+            },
+            "hiddenSeries": false,
+            "id": 52,
+            "legend": {
+              "alignAsTable": true,
+              "avg": false,
+              "current": true,
+              "max": false,
+              "min": false,
+              "rightSide": false,
+              "show": true,
+              "total": false,
+              "values": true
+            },
+            "lines": true,
+            "linewidth": 2,
+            "maxDataPoints": 1360,
+            "nullPointMode": "null",
+            "options": {
+              "alertThreshold": true
+            },
+            "percentage": false,
+            "pluginVersion": "7.5.17",
+            "pointradius": 2,
+            "points": false,
+            "renderer": "flot",
+            "seriesOverrides": [],
+            "spaceLength": 10,
+            "stack": false,
+            "steppedLine": false,
+            "targets": [
+              {
+                "exemplar": true,
+                "expr": "sum(go_goroutines{service =~ \"$service_name\", source_cluster=\"$cluster\"}[10m]) by (pod)",
+                "interval": "60",
+                "legendFormat": "{{ pod }}",
+                "queryType": "randomWalk",
+                "refId": "A"
+              }
+            ],
+            "thresholds": [],
+            "timeFrom": null,
+            "timeRegions": [],
+            "timeShift": null,
+            "title": "Config Service Go Routines Per Pod",
+            "tooltip": {
+              "shared": true,
+              "sort": 0,
+              "value_type": "individual"
+            },
+            "transparent": true,
+            "type": "graph",
+            "xaxis": {
+              "buckets": null,
+              "mode": "time",
+              "name": null,
+              "show": true,
+              "values": []
+            },
+            "yaxes": [
+              {
+                "$$hashKey": "object:2701",
+                "format": "none",
+                "label": null,
+                "logBase": 1,
+                "max": null,
+                "min": null,
+                "show": true
+              },
+              {
+                "$$hashKey": "object:2702",
+                "format": "short",
+                "label": null,
+                "logBase": 1,
+                "max": null,
+                "min": null,
+                "show": true
+              }
+            ],
+            "yaxis": {
+              "align": false,
+              "alignLevel": null
+            }
+          }
+        ],
+        "title": "Config Service POD Metrics",
+        "type": "row"
+      },
+      {
+        "collapsed": true,
+        "datasource": null,
+        "gridPos": {
+          "h": 1,
+          "w": 24,
+          "x": 0,
+          "y": 1
+        },
+        "id": 28,
+        "maxDataPoints": 1360,
+        "panels": [
+          {
+            "aliasColors": {},
+            "bars": false,
+            "dashLength": 10,
+            "dashes": false,
+            "datasource": {
+              "type": "prometheus",
+              "uid": "-FPV4La7z"
+            },
+            "fieldConfig": {
+              "defaults": {},
+              "overrides": []
+            },
+            "fill": 1,
+            "fillGradient": 0,
+            "gridPos": {
+              "h": 8,
+              "w": 12,
+              "x": 0,
+              "y": 2
+            },
+            "hiddenSeries": false,
+            "id": 30,
+            "legend": {
+              "alignAsTable": true,
+              "avg": true,
+              "current": true,
+              "max": true,
+              "min": false,
+              "rightSide": true,
+              "show": true,
+              "total": true,
+              "values": true
+            },
+            "lines": true,
+            "linewidth": 2,
+            "maxDataPoints": 1360,
+            "nullPointMode": "null",
+            "options": {
+              "alertThreshold": true
+            },
+            "percentage": false,
+            "pluginVersion": "7.5.17",
+            "pointradius": 2,
+            "points": false,
+            "renderer": "flot",
+            "seriesOverrides": [],
+            "spaceLength": 10,
+            "stack": false,
+            "steppedLine": false,
+            "targets": [
+              {
+                "exemplar": true,
+                "expr": "sum(rate(hs_core_config_store_ld_latency_count{service =~ \"$service_name\",source_cluster=\"$cluster\"}[$__rate_interval])*60) by (type)",
+                "interval": "60",
+                "legendFormat": "\"{{type}}\" Throughput",
+                "queryType": "randomWalk",
+                "refId": "A"
+              }
+            ],
+            "thresholds": [],
+            "timeFrom": null,
+            "timeRegions": [],
+            "timeShift": null,
+            "title": "Launch Darkly Throughput",
+            "tooltip": {
+              "shared": true,
+              "sort": 0,
+              "value_type": "individual"
+            },
+            "transparent": true,
+            "type": "graph",
+            "xaxis": {
+              "buckets": null,
+              "mode": "time",
+              "name": null,
+              "show": true,
+              "values": []
+            },
+            "yaxes": [
+              {
+                "$$hashKey": "object:1526",
+                "format": "short",
+                "label": null,
+                "logBase": 1,
+                "max": null,
+                "min": null,
+                "show": true
+              },
+              {
+                "$$hashKey": "object:1527",
+                "format": "short",
+                "label": null,
+                "logBase": 1,
+                "max": null,
+                "min": null,
+                "show": true
+              }
+            ],
+            "yaxis": {
+              "align": false,
+              "alignLevel": null
+            }
+          },
+          {
+            "aliasColors": {},
+            "bars": false,
+            "dashLength": 10,
+            "dashes": false,
+            "datasource": {
+              "type": "prometheus",
+              "uid": "-FPV4La7z"
+            },
+            "fieldConfig": {
+              "defaults": {},
+              "overrides": []
+            },
+            "fill": 1,
+            "fillGradient": 0,
+            "gridPos": {
+              "h": 8,
+              "w": 12,
+              "x": 12,
+              "y": 2
+            },
+            "hiddenSeries": false,
+            "id": 32,
+            "legend": {
+              "alignAsTable": true,
+              "avg": true,
+              "current": true,
+              "max": true,
+              "min": false,
+              "rightSide": true,
+              "show": true,
+              "total": true,
+              "values": true
+            },
+            "lines": true,
+            "linewidth": 2,
+            "maxDataPoints": 1360,
+            "nullPointMode": "null",
+            "options": {
+              "alertThreshold": true
+            },
+            "percentage": false,
+            "pluginVersion": "7.5.17",
+            "pointradius": 2,
+            "points": false,
+            "renderer": "flot",
+            "seriesOverrides": [],
+            "spaceLength": 10,
+            "stack": false,
+            "steppedLine": false,
+            "targets": [
+              {
+                "exemplar": true,
+                "expr": "sum(rate(hs_core_config_store_ld_latency_sum{service =~ \"$service_name\",source_cluster=\"$cluster\"}[$__rate_interval])) by (type)/\nsum(rate(hs_core_config_store_ld_latency_count{service =~ \"$service_name\",source_cluster=\"$cluster\"}[$__rate_interval])) by (type)",
+                "interval": "60",
+                "legendFormat": "launchdarkly {{ type }}",
+                "queryType": "randomWalk",
+                "refId": "A"
+              }
+            ],
+            "thresholds": [],
+            "timeFrom": null,
+            "timeRegions": [],
+            "timeShift": null,
+            "title": "Launch Darkly Latency",
+            "tooltip": {
+              "shared": true,
+              "sort": 0,
+              "value_type": "individual"
+            },
+            "transparent": true,
+            "type": "graph",
+            "xaxis": {
+              "buckets": null,
+              "mode": "time",
+              "name": null,
+              "show": true,
+              "values": []
+            },
+            "yaxes": [
+              {
+                "$$hashKey": "object:1760",
+                "format": "s",
+                "label": null,
+                "logBase": 1,
+                "max": null,
+                "min": null,
+                "show": true
+              },
+              {
+                "$$hashKey": "object:1761",
+                "format": "short",
+                "label": null,
+                "logBase": 1,
+                "max": null,
+                "min": null,
+                "show": true
+              }
+            ],
+            "yaxis": {
+              "align": false,
+              "alignLevel": null
+            }
+          },
+          {
+            "aliasColors": {},
+            "bars": false,
+            "dashLength": 10,
+            "dashes": false,
+            "datasource": {
+              "type": "prometheus",
+              "uid": "-FPV4La7z"
+            },
+            "fieldConfig": {
+              "defaults": {},
+              "overrides": []
+            },
+            "fill": 1,
+            "fillGradient": 0,
+            "gridPos": {
+              "h": 8,
+              "w": 24,
+              "x": 0,
+              "y": 10
+            },
+            "hiddenSeries": false,
+            "id": 34,
+            "legend": {
+              "alignAsTable": true,
+              "avg": true,
+              "current": true,
+              "max": true,
+              "min": false,
+              "rightSide": true,
+              "show": true,
+              "total": true,
+              "values": true
+            },
+            "lines": true,
+            "linewidth": 2,
+            "maxDataPoints": 1360,
+            "nullPointMode": "null",
+            "options": {
+              "alertThreshold": true
+            },
+            "percentage": false,
+            "pluginVersion": "7.5.17",
+            "pointradius": 2,
+            "points": false,
+            "renderer": "flot",
+            "seriesOverrides": [],
+            "spaceLength": 10,
+            "stack": false,
+            "steppedLine": false,
+            "targets": [
+              {
+                "exemplar": true,
+                "expr": "histogram_quantile(0.999, sum(rate(hs_core_config_store_ld_latency_bucket{service =~ \"$service_name\",source_cluster=\"$cluster\"}[$__rate_interval])*60) by (le))",
+                "hide": false,
+                "interval": "60",
+                "legendFormat": "p999",
+                "queryType": "randomWalk",
+                "refId": "A"
+              },
+              {
+                "exemplar": true,
+                "expr": "histogram_quantile(0.99, sum(rate(hs_core_config_store_ld_latency_bucket{service =~ \"$service_name\",source_cluster=\"$cluster\"}[$__rate_interval])*60) by (le))",
+                "hide": false,
+                "interval": "60",
+                "legendFormat": "p99",
+                "refId": "B"
+              },
+              {
+                "exemplar": true,
+                "expr": "histogram_quantile(0.95, sum(rate(hs_core_config_store_ld_latency_bucket{service =~ \"$service_name\",source_cluster=\"$cluster\"}[$__rate_interval])*60) by (le))",
+                "hide": false,
+                "interval": "60",
+                "legendFormat": "p95",
+                "refId": "C"
+              },
+              {
+                "exemplar": true,
+                "expr": "histogram_quantile(0.90, sum(rate(hs_core_config_store_ld_latency_bucket{service =~ \"$service_name\",source_cluster=\"$cluster\"}[$__rate_interval])*60) by (le))",
+                "hide": false,
+                "interval": "60",
+                "legendFormat": "p90",
+                "refId": "D"
+              },
+              {
+                "exemplar": true,
+                "expr": "histogram_quantile(0.50, sum(rate(hs_core_config_store_ld_latency_bucket{service =~ \"$service_name\",source_cluster=\"$cluster\"}[$__rate_interval])*60) by (le))",
+                "hide": false,
+                "interval": "60",
+                "legendFormat": "p50",
+                "refId": "E"
+              },
+              {
+                "exemplar": true,
+                "expr": "histogram_quantile(0.99, sum(rate(hs_core_config_store_ld_latency_bucket{service =~ \"hs-core-config-store-prod-eu\", source_cluster=\"hs-eks-prod-api-euw1\"}[1m])*60) by (le))",
+                "hide": true,
+                "interval": "60",
+                "legendFormat": "{{source_cluster}}",
+                "refId": "p99 Latency MENA"
+              },
+              {
+                "exemplar": true,
+                "expr": "histogram_quantile(0.99, sum(rate(hs_core_config_store_ld_latency_bucket{service =~ \"hs-core-config-store\",source_cluster=\"hs-eks-prod-api-apse1\"}[1m])*60) by (le))",
+                "hide": true,
+                "interval": "60",
+                "legendFormat": "{{source_cluster}}",
+                "refId": "p99 Latency SGP"
+              }
+            ],
+            "thresholds": [],
+            "timeFrom": null,
+            "timeRegions": [],
+            "timeShift": null,
+            "title": "LaunchDarkly P0 latencies",
+            "tooltip": {
+              "shared": true,
+              "sort": 0,
+              "value_type": "individual"
+            },
+            "transparent": true,
+            "type": "graph",
+            "xaxis": {
+              "buckets": null,
+              "mode": "time",
+              "name": null,
+              "show": true,
+              "values": []
+            },
+            "yaxes": [
+              {
+                "$$hashKey": "object:2070",
+                "format": "s",
+                "label": null,
+                "logBase": 1,
+                "max": null,
+                "min": null,
+                "show": true
+              },
+              {
+                "$$hashKey": "object:2071",
+                "format": "short",
+                "label": null,
+                "logBase": 1,
+                "max": null,
+                "min": null,
+                "show": true
+              }
+            ],
+            "yaxis": {
+              "align": false,
+              "alignLevel": null
+            }
+          }
+        ],
+        "title": "Launch Darkly Metrics",
+        "type": "row"
+      },
+      {
+        "collapsed": true,
+        "datasource": null,
+        "gridPos": {
+          "h": 1,
+          "w": 24,
+          "x": 0,
+          "y": 2
+        },
+        "id": 12,
+        "maxDataPoints": 1360,
+        "panels": [
+          {
+            "alert": {
+              "alertRuleTags": {},
+              "conditions": [
+                {
+                  "evaluator": {
+                    "params": [
+                      99.99
+                    ],
+                    "type": "lt"
+                  },
+                  "operator": {
+                    "type": "and"
+                  },
+                  "query": {
+                    "params": [
+                      "Throughput MENA",
+                      "5m",
+                      "now"
+                    ]
+                  },
+                  "reducer": {
+                    "params": [],
+                    "type": "avg"
+                  },
+                  "type": "query"
+                },
+                {
+                  "evaluator": {
+                    "params": [
+                      99.99
+                    ],
+                    "type": "lt"
+                  },
+                  "operator": {
+                    "type": "or"
+                  },
+                  "query": {
+                    "params": [
+                      "Throughput SGP",
+                      "5m",
+                      "now"
+                    ]
+                  },
+                  "reducer": {
+                    "params": [],
+                    "type": "avg"
+                  },
+                  "type": "query"
+                }
+              ],
+              "executionErrorState": "keep_state",
+              "for": "1m",
+              "frequency": "1m",
+              "handler": 1,
+              "message": "Overall throughput for config store in ${source_cluster} has dropped below 99.99% for 5 mins now.\n\nhttps://grafana.hotstar.com/d/2oXbZSUnk/hs-core-config-store?viewPanel=14&orgId=1&from=now-30m&to=now",
+              "name": "Overall Config Store Throughput alert",
+              "noDataState": "keep_state",
+              "notifications": [
+                {
+                  "uid": "p0-3mfGIz"
+                }
+              ]
+            },
+            "aliasColors": {},
+            "bars": false,
+            "dashLength": 10,
+            "dashes": false,
+            "datasource": {
+              "type": "prometheus",
+              "uid": "-FPV4La7z"
+            },
+            "fieldConfig": {
+              "defaults": {},
+              "overrides": []
+            },
+            "fill": 1,
+            "fillGradient": 0,
+            "gridPos": {
+              "h": 9,
+              "w": 12,
+              "x": 0,
+              "y": 3
+            },
+            "hiddenSeries": false,
+            "id": 14,
+            "legend": {
+              "alignAsTable": true,
+              "avg": true,
+              "current": true,
+              "max": true,
+              "min": false,
+              "rightSide": true,
+              "show": true,
+              "total": false,
+              "values": true
+            },
+            "lines": true,
+            "linewidth": 2,
+            "maxDataPoints": 1360,
+            "nullPointMode": "null",
+            "options": {
+              "alertThreshold": true
+            },
+            "percentage": false,
+            "pluginVersion": "7.5.17",
+            "pointradius": 2,
+            "points": false,
+            "renderer": "flot",
+            "seriesOverrides": [],
+            "spaceLength": 10,
+            "stack": false,
+            "steppedLine": false,
+            "targets": [
+              {
+                "exemplar": true,
+                "expr": "sum(rate(config_store_http_server_requests_seconds_count{service =~ \"$service_name\", source_cluster=\"$cluster\", platform=~\"$platform\", code=~\"2..\",url!=\"/health\"}[$__rate_interval])*60)",
+                "hide": false,
+                "interval": "60",
+                "legendFormat": "2XX",
+                "queryType": "randomWalk",
+                "refId": "A"
+              },
+              {
+                "exemplar": true,
+                "expr": "sum(rate(config_store_http_server_requests_seconds_count{service =~ \"$service_name\",source_cluster=\"$cluster\", platform=~\"$platform\",code=~\"4..\"}[$__rate_interval])*60)",
+                "hide": false,
+                "interval": "60",
+                "legendFormat": "4XX",
+                "refId": "B"
+              },
+              {
+                "exemplar": true,
+                "expr": "sum(rate(config_store_http_server_requests_seconds_count{service =~ \"$service_name\",source_cluster=\"$cluster\", platform=~\"$platform\",code=~\"5..\"}[$__rate_interval])*60)",
+                "hide": false,
+                "interval": "60",
+                "legendFormat": "5XX",
+                "refId": "C"
+              },
+              {
+                "exemplar": true,
+                "expr": "100 * (sum(rate(config_store_http_server_requests_seconds_count{service =~ \"hs-core-config-store-prod-eu\", code!~\"5..\", url!=\"/health\"}[1m])*60) by (source_cluster)/ sum(rate(config_store_http_server_requests_seconds_count{service =~ \"hs-core-config-store-prod-eu\",url!=\"/health\"}[1m])*60) by (source_cluster))",
+                "hide": true,
+                "interval": "60",
+                "legendFormat": "{{source_cluster}} throughput",
+                "refId": "Throughput MENA"
+              },
+              {
+                "exemplar": true,
+                "expr": "100 * (sum(rate(config_store_http_server_requests_seconds_count{service =~ \"hs-core-config-store\", code!~\"5..\", url!=\"/health\"}[1m])*60) by (source_cluster)/ sum(rate(config_store_http_server_requests_seconds_count{service =~ \"hs-core-config-store\",url!=\"/health\"}[1m])*60) by (source_cluster))",
+                "hide": true,
+                "interval": "60",
+                "legendFormat": "{{source_cluster}} throughput",
+                "refId": "Throughput SGP"
+              }
+            ],
+            "thresholds": [
+              {
+                "colorMode": "critical",
+                "fill": true,
+                "line": true,
+                "op": "lt",
+                "value": 99.99,
+                "visible": true
+              }
+            ],
+            "timeFrom": null,
+            "timeRegions": [],
+            "timeShift": null,
+            "title": "Overall Throughput",
+            "tooltip": {
+              "shared": true,
+              "sort": 0,
+              "value_type": "individual"
+            },
+            "transparent": true,
+            "type": "graph",
+            "xaxis": {
+              "buckets": null,
+              "mode": "time",
+              "name": null,
+              "show": true,
+              "values": []
+            },
+            "yaxes": [
+              {
+                "$$hashKey": "object:264",
+                "format": "short",
+                "label": null,
+                "logBase": 1,
+                "max": null,
+                "min": null,
+                "show": true
+              },
+              {
+                "$$hashKey": "object:265",
+                "format": "short",
+                "label": null,
+                "logBase": 1,
+                "max": null,
+                "min": null,
+                "show": true
+              }
+            ],
+            "yaxis": {
+              "align": false,
+              "alignLevel": null
+            }
+          },
+          {
+            "alert": {
+              "alertRuleTags": {},
+              "conditions": [
+                {
+                  "evaluator": {
+                    "params": [
+                      0.1
+                    ],
+                    "type": "gt"
+                  },
+                  "operator": {
+                    "type": "and"
+                  },
+                  "query": {
+                    "params": [
+                      "p99 latency MENA",
+                      "5m",
+                      "now"
+                    ]
+                  },
+                  "reducer": {
+                    "params": [],
+                    "type": "avg"
+                  },
+                  "type": "query"
+                },
+                {
+                  "evaluator": {
+                    "params": [
+                      0.1
+                    ],
+                    "type": "gt"
+                  },
+                  "operator": {
+                    "type": "or"
+                  },
+                  "query": {
+                    "params": [
+                      "p99 latency SGP",
+                      "5m",
+                      "now"
+                    ]
+                  },
+                  "reducer": {
+                    "params": [],
+                    "type": "avg"
+                  },
+                  "type": "query"
+                },
+                {
+                  "evaluator": {
+                    "params": [
+                      0.1
+                    ],
+                    "type": "gt"
+                  },
+                  "operator": {
+                    "type": "or"
+                  },
+                  "query": {
+                    "params": [
+                      "p99 latency MENA new",
+                      "5m",
+                      "now"
+                    ]
+                  },
+                  "reducer": {
+                    "params": [],
+                    "type": "avg"
+                  },
+                  "type": "query"
+                }
+              ],
+              "executionErrorState": "keep_state",
+              "for": "1m",
+              "frequency": "1m",
+              "handler": 1,
+              "message": "Overall p99 latency for config store in ${source_cluster} cluster has been above the threshold value of 100ms for 5 mins now.\n\nhttps://grafana.hotstar.com/d/2oXbZSUnk/hs-core-config-store?viewPanel=16&orgId=1&from=now-30m&to=now",
+              "name": "Overall Config store p99 Latency alert",
+              "noDataState": "keep_state",
+              "notifications": [
+                {
+                  "uid": "p0-3mfGIz"
+                }
+              ]
+            },
+            "aliasColors": {},
+            "bars": false,
+            "dashLength": 10,
+            "dashes": false,
+            "datasource": {
+              "type": "prometheus",
+              "uid": "-FPV4La7z"
+            },
+            "fieldConfig": {
+              "defaults": {
+                "unit": "s"
+              },
+              "overrides": []
+            },
+            "fill": 1,
+            "fillGradient": 0,
+            "gridPos": {
+              "h": 9,
+              "w": 12,
+              "x": 12,
+              "y": 3
+            },
+            "hiddenSeries": false,
+            "id": 16,
+            "legend": {
+              "alignAsTable": true,
+              "avg": true,
+              "current": true,
+              "max": true,
+              "min": false,
+              "rightSide": true,
+              "show": true,
+              "total": false,
+              "values": true
+            },
+            "lines": true,
+            "linewidth": 2,
+            "maxDataPoints": 1360,
+            "nullPointMode": "null",
+            "options": {
+              "alertThreshold": true
+            },
+            "percentage": false,
+            "pluginVersion": "7.5.17",
+            "pointradius": 2,
+            "points": false,
+            "renderer": "flot",
+            "seriesOverrides": [],
+            "spaceLength": 10,
+            "stack": false,
+            "steppedLine": false,
+            "targets": [
+              {
+                "exemplar": true,
+                "expr": "histogram_quantile(0.999, sum(rate(config_store_http_server_requests_seconds_bucket{service =~ \"$service_name\",source_cluster=\"$cluster\", platform=~\"$platform\"}[$__rate_interval])*60) by (le))",
+                "hide": false,
+                "interval": "60",
+                "legendFormat": "p999",
+                "queryType": "randomWalk",
+                "refId": "A"
+              },
+              {
+                "exemplar": true,
+                "expr": "histogram_quantile(0.99, sum(rate(config_store_http_server_requests_seconds_bucket{service =~ \"$service_name\",source_cluster=\"$cluster\", platform=~\"$platform\"}[$__rate_interval])*60) by (le))",
+                "hide": false,
+                "interval": "60",
+                "legendFormat": "p99",
+                "refId": "B"
+              },
+              {
+                "exemplar": true,
+                "expr": "histogram_quantile(0.95, sum(rate(config_store_http_server_requests_seconds_bucket{service =~ \"$service_name\",source_cluster=\"$cluster\", platform=~\"$platform\"}[$__rate_interval])*60) by (le))",
+                "hide": false,
+                "interval": "60",
+                "legendFormat": "p95",
+                "refId": "C"
+              },
+              {
+                "exemplar": true,
+                "expr": "histogram_quantile(0.90, sum(rate(config_store_http_server_requests_seconds_bucket{service =~ \"$service_name\",source_cluster=\"$cluster\", platform=~\"$platform\"}[$__rate_interval])*60) by (le))",
+                "hide": false,
+                "interval": "60",
+                "legendFormat": "p90",
+                "refId": "D"
+              },
+              {
+                "exemplar": true,
+                "expr": "histogram_quantile(0.50, sum(rate(config_store_http_server_requests_seconds_bucket{service =~ \"$service_name\",source_cluster=\"$cluster\", platform=~\"$platform\"}[$__rate_interval])*60) by (le))",
+                "hide": false,
+                "interval": "60",
+                "legendFormat": "p50",
+                "refId": "E"
+              },
+              {
+                "exemplar": true,
+                "expr": "histogram_quantile(0.99, sum(rate(config_store_http_server_requests_seconds_bucket{namespace = \"hs-core\", service =~ \"hs-core-config-store-prod-eu\"}[1m])*60) by (le, source_cluster))",
+                "hide": true,
+                "interval": "60",
+                "legendFormat": "p99 {{source_cluster}}",
+                "refId": "p99 latency MENA"
+              },
+              {
+                "exemplar": true,
+                "expr": "histogram_quantile(0.99, sum(rate(config_store_http_server_requests_seconds_bucket{namespace = \"hs-core\", service =~ \"hs-core-config-store\"}[1m])*60) by (le, source_cluster))",
+                "hide": true,
+                "interval": "60",
+                "legendFormat": "p99 {{source_cluster}}",
+                "refId": "p99 latency SGP"
+              },
+              {
+                "exemplar": true,
+                "expr": "histogram_quantile(0.99, sum(rate(config_store_http_server_requests_seconds_bucket{namespace = \"hs-core\", service = \"hs-core-config-store\", source_cluster =~ \"hs-eks-prod-api-euw1\" }[1m])*60) by (le, source_cluster))",
+                "hide": true,
+                "interval": "60",
+                "legendFormat": "p99 {{source_cluster}}",
+                "refId": "p99 latency MENA new"
+              }
+            ],
+            "thresholds": [
+              {
+                "colorMode": "critical",
+                "fill": true,
+                "line": true,
+                "op": "gt",
+                "value": 0.1,
+                "visible": true
+              }
+            ],
+            "timeFrom": null,
+            "timeRegions": [],
+            "timeShift": null,
+            "title": "Overall Latency",
+            "tooltip": {
+              "shared": true,
+              "sort": 0,
+              "value_type": "individual"
+            },
+            "transparent": true,
+            "type": "graph",
+            "xaxis": {
+              "buckets": null,
+              "mode": "time",
+              "name": null,
+              "show": true,
+              "values": []
+            },
+            "yaxes": [
+              {
+                "$$hashKey": "object:465",
+                "format": "s",
+                "label": null,
+                "logBase": 1,
+                "max": null,
+                "min": null,
+                "show": true
+              },
+              {
+                "$$hashKey": "object:466",
+                "format": "short",
+                "label": null,
+                "logBase": 1,
+                "max": null,
+                "min": null,
+                "show": true
+              }
+            ],
+            "yaxis": {
+              "align": false,
+              "alignLevel": null
+            }
+          },
+          {
+            "aliasColors": {},
+            "bars": false,
+            "dashLength": 10,
+            "dashes": false,
+            "datasource": {
+              "type": "prometheus",
+              "uid": "-FPV4La7z"
+            },
+            "fieldConfig": {
+              "defaults": {},
+              "overrides": []
+            },
+            "fill": 1,
+            "fillGradient": 0,
+            "gridPos": {
+              "h": 10,
+              "w": 12,
+              "x": 0,
+              "y": 12
+            },
+            "hiddenSeries": false,
+            "id": 18,
+            "legend": {
+              "alignAsTable": true,
+              "avg": true,
+              "current": true,
+              "max": true,
+              "min": false,
+              "rightSide": true,
+              "show": true,
+              "total": false,
+              "values": true
+            },
+            "lines": true,
+            "linewidth": 1,
+            "maxDataPoints": 1360,
+            "nullPointMode": "null",
+            "options": {
+              "alertThreshold": true
+            },
+            "percentage": false,
+            "pluginVersion": "7.5.17",
+            "pointradius": 2,
+            "points": false,
+            "renderer": "flot",
+            "seriesOverrides": [],
+            "spaceLength": 10,
+            "stack": false,
+            "steppedLine": false,
+            "targets": [
+              {
+                "exemplar": true,
+                "expr": "sum(rate(config_store_http_server_requests_seconds_count{service =~ \"$service_name\",source_cluster=\"$cluster\", platform=~\"$platform\", code =~\"2..\"}[$__rate_interval])*60) by (url)",
+                "interval": "60",
+                "legendFormat": "2xx",
+                "queryType": "randomWalk",
+                "refId": "A"
+              }
+            ],
+            "thresholds": [],
+            "timeFrom": null,
+            "timeRegions": [],
+            "timeShift": null,
+            "title": "API 2XX",
+            "tooltip": {
+              "shared": true,
+              "sort": 0,
+              "value_type": "individual"
+            },
+            "transparent": true,
+            "type": "graph",
+            "xaxis": {
+              "buckets": null,
+              "mode": "time",
+              "name": null,
+              "show": true,
+              "values": []
+            },
+            "yaxes": [
+              {
+                "$$hashKey": "object:102",
+                "format": "short",
+                "label": null,
+                "logBase": 1,
+                "max": null,
+                "min": null,
+                "show": true
+              },
+              {
+                "$$hashKey": "object:103",
+                "format": "short",
+                "label": null,
+                "logBase": 1,
+                "max": null,
+                "min": null,
+                "show": true
+              }
+            ],
+            "yaxis": {
+              "align": false,
+              "alignLevel": null
+            }
+          },
+          {
+            "aliasColors": {},
+            "bars": false,
+            "dashLength": 10,
+            "dashes": false,
+            "datasource": {
+              "type": "prometheus",
+              "uid": "-FPV4La7z"
+            },
+            "fieldConfig": {
+              "defaults": {},
+              "overrides": []
+            },
+            "fill": 1,
+            "fillGradient": 0,
+            "gridPos": {
+              "h": 10,
+              "w": 12,
+              "x": 12,
+              "y": 12
+            },
+            "hiddenSeries": false,
+            "id": 22,
+            "legend": {
+              "alignAsTable": true,
+              "avg": true,
+              "current": true,
+              "max": true,
+              "min": false,
+              "rightSide": true,
+              "show": true,
+              "total": true,
+              "values": true
+            },
+            "lines": true,
+            "linewidth": 1,
+            "maxDataPoints": 1360,
+            "nullPointMode": "null",
+            "options": {
+              "alertThreshold": true
+            },
+            "percentage": false,
+            "pluginVersion": "7.5.17",
+            "pointradius": 2,
+            "points": false,
+            "renderer": "flot",
+            "seriesOverrides": [],
+            "spaceLength": 10,
+            "stack": false,
+            "steppedLine": false,
+            "targets": [
+              {
+                "exemplar": true,
+                "expr": "sum(rate(config_store_http_server_requests_seconds_count{service =~ \"$service_name\",source_cluster=\"$cluster\", platform=~\"$platform\",code=~\"5..\"}[$__rate_interval])*60) by (url)",
+                "interval": "60",
+                "legendFormat": "5xx",
+                "queryType": "randomWalk",
+                "refId": "A"
+              }
+            ],
+            "thresholds": [],
+            "timeFrom": null,
+            "timeRegions": [],
+            "timeShift": null,
+            "title": "API 5XX",
+            "tooltip": {
+              "shared": true,
+              "sort": 0,
+              "value_type": "individual"
+            },
+            "transparent": true,
+            "type": "graph",
+            "xaxis": {
+              "buckets": null,
+              "mode": "time",
+              "name": null,
+              "show": true,
+              "values": []
+            },
+            "yaxes": [
+              {
+                "$$hashKey": "object:133",
+                "format": "short",
+                "label": null,
+                "logBase": 1,
+                "max": null,
+                "min": null,
+                "show": true
+              },
+              {
+                "$$hashKey": "object:134",
+                "format": "short",
+                "label": null,
+                "logBase": 1,
+                "max": null,
+                "min": null,
+                "show": true
+              }
+            ],
+            "yaxis": {
+              "align": false,
+              "alignLevel": null
+            }
+          },
+          {
+            "aliasColors": {},
+            "bars": false,
+            "dashLength": 10,
+            "dashes": false,
+            "datasource": {
+              "type": "prometheus",
+              "uid": "-FPV4La7z"
+            },
+            "fieldConfig": {
+              "defaults": {},
+              "overrides": []
+            },
+            "fill": 1,
+            "fillGradient": 0,
+            "gridPos": {
+              "h": 8,
+              "w": 12,
+              "x": 0,
+              "y": 22
+            },
+            "hiddenSeries": false,
+            "id": 20,
+            "legend": {
+              "alignAsTable": true,
+              "avg": true,
+              "current": true,
+              "max": true,
+              "min": false,
+              "rightSide": true,
+              "show": true,
+              "total": true,
+              "values": true
+            },
+            "lines": true,
+            "linewidth": 2,
+            "maxDataPoints": 1360,
+            "nullPointMode": "null",
+            "options": {
+              "alertThreshold": true
+            },
+            "percentage": false,
+            "pluginVersion": "7.5.17",
+            "pointradius": 2,
+            "points": false,
+            "renderer": "flot",
+            "seriesOverrides": [],
+            "spaceLength": 10,
+            "stack": false,
+            "steppedLine": false,
+            "targets": [
+              {
+                "exemplar": true,
+                "expr": "sum(rate(config_store_http_server_requests_seconds_count{service =~ \"$service_name\",source_cluster=\"$cluster\", platform=~\"$platform\",code=~\"4..\"}[$__rate_interval])*60) by (url)",
+                "interval": "60",
+                "legendFormat": "4XX",
+                "queryType": "randomWalk",
+                "refId": "A"
+              }
+            ],
+            "thresholds": [],
+            "timeFrom": null,
+            "timeRegions": [],
+            "timeShift": null,
+            "title": "API 4XX",
+            "tooltip": {
+              "shared": true,
+              "sort": 0,
+              "value_type": "individual"
+            },
+            "transparent": true,
+            "type": "graph",
+            "xaxis": {
+              "buckets": null,
+              "mode": "time",
+              "name": null,
+              "show": true,
+              "values": []
+            },
+            "yaxes": [
+              {
+                "$$hashKey": "object:673",
+                "format": "short",
+                "label": null,
+                "logBase": 1,
+                "max": null,
+                "min": null,
+                "show": true
+              },
+              {
+                "$$hashKey": "object:674",
+                "format": "short",
+                "label": null,
+                "logBase": 1,
+                "max": null,
+                "min": null,
+                "show": true
+              }
+            ],
+            "yaxis": {
+              "align": false,
+              "alignLevel": null
+            }
+          },
+          {
+            "aliasColors": {},
+            "bars": false,
+            "dashLength": 10,
+            "dashes": false,
+            "datasource": {
+              "type": "prometheus",
+              "uid": "-FPV4La7z"
+            },
+            "fieldConfig": {
+              "defaults": {},
+              "overrides": []
+            },
+            "fill": 1,
+            "fillGradient": 0,
+            "gridPos": {
+              "h": 9,
+              "w": 12,
+              "x": 12,
+              "y": 22
+            },
+            "hiddenSeries": false,
+            "id": 24,
+            "legend": {
+              "alignAsTable": true,
+              "avg": true,
+              "current": true,
+              "max": true,
+              "min": false,
+              "rightSide": true,
+              "show": true,
+              "total": true,
+              "values": true
+            },
+            "lines": true,
+            "linewidth": 2,
+            "maxDataPoints": 1360,
+            "nullPointMode": "null",
+            "options": {
+              "alertThreshold": true
+            },
+            "percentage": false,
+            "pluginVersion": "7.5.17",
+            "pointradius": 2,
+            "points": false,
+            "renderer": "flot",
+            "seriesOverrides": [],
+            "spaceLength": 10,
+            "stack": false,
+            "steppedLine": false,
+            "targets": [
+              {
+                "exemplar": true,
+                "expr": "histogram_quantile(0.99, sum(rate(config_store_http_server_requests_seconds_bucket{service =~ \"$service_name\",source_cluster=\"$cluster\", platform=~\"$platform\"}[$__rate_interval])*60) by (le,url))",
+                "interval": "60",
+                "legendFormat": "{{url}} p99",
+                "queryType": "randomWalk",
+                "refId": "A"
+              },
+              {
+                "exemplar": true,
+                "expr": "histogram_quantile(0.95, sum(rate(config_store_http_server_requests_seconds_bucket{service =~ \"$service_name\",source_cluster=\"$cluster\", platform=~\"$platform\"}[$__rate_interval])*60) by (le,url))",
+                "hide": false,
+                "interval": "60",
+                "legendFormat": "{{url}} p95",
+                "refId": "B"
+              },
+              {
+                "exemplar": true,
+                "expr": "histogram_quantile(0.90, sum(rate(config_store_http_server_requests_seconds_bucket{service =~ \"$service_name\",source_cluster=\"$cluster\", platform=~\"$platform\"}[$__rate_interval])*60) by (le,url))",
+                "hide": false,
+                "interval": "60",
+                "legendFormat": "{{url}} p90",
+                "refId": "C"
+              },
+              {
+                "exemplar": true,
+                "expr": "histogram_quantile(0.50, sum(rate(config_store_http_server_requests_seconds_bucket{service =~ \"$service_name\",source_cluster=\"$cluster\", platform=~\"$platform\"}[$__rate_interval])*60) by (le,url))",
+                "hide": false,
+                "interval": "60",
+                "legendFormat": "{{url}} p50",
+                "refId": "D"
+              }
+            ],
+            "thresholds": [],
+            "timeFrom": null,
+            "timeRegions": [],
+            "timeShift": null,
+            "title": "Config Store API Latency",
+            "tooltip": {
+              "shared": true,
+              "sort": 0,
+              "value_type": "individual"
+            },
+            "transparent": true,
+            "type": "graph",
+            "xaxis": {
+              "buckets": null,
+              "mode": "time",
+              "name": null,
+              "show": true,
+              "values": []
+            },
+            "yaxes": [
+              {
+                "$$hashKey": "object:1088",
+                "format": "s",
+                "label": null,
+                "logBase": 1,
+                "max": null,
+                "min": null,
+                "show": true
+              },
+              {
+                "$$hashKey": "object:1089",
+                "format": "short",
+                "label": null,
+                "logBase": 1,
+                "max": null,
+                "min": null,
+                "show": true
+              }
+            ],
+            "yaxis": {
+              "align": false,
+              "alignLevel": null
+            }
+          }
+        ],
+        "title": "Config Service metrics",
+        "type": "row"
+      },
+      {
+        "collapsed": true,
+        "datasource": null,
+        "gridPos": {
+          "h": 1,
+          "w": 24,
+          "x": 0,
+          "y": 3
+        },
+        "id": 2,
+        "maxDataPoints": 1360,
+        "panels": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "-FPV4La7z"
+            },
+            "fieldConfig": {
+              "defaults": {
+                "color": {
+                  "mode": "thresholds"
+                },
+                "mappings": [],
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": null
+                    },
+                    {
+                      "color": "red",
+                      "value": 80
+                    }
+                  ]
+                }
+              },
+              "overrides": []
+            },
+            "gridPos": {
+              "h": 10,
+              "w": 6,
+              "x": 0,
+              "y": 4
+            },
+            "id": 4,
+            "maxDataPoints": 1360,
+            "options": {
+              "colorMode": "value",
+              "graphMode": "area",
+              "justifyMode": "auto",
+              "orientation": "auto",
+              "reduceOptions": {
+                "calcs": [
+                  "lastNotNull"
+                ],
+                "fields": "",
+                "values": false
+              },
+              "text": {},
+              "textMode": "auto"
+            },
+            "pluginVersion": "7.5.17",
+            "targets": [
+              {
+                "exemplar": true,
+                "expr": "sum(rate(config_store_http_server_requests_seconds_count{service=~\"$service_name\", url!=\"/health\", source_cluster=~\"$cluster\"}[$__rate_interval])*60)",
+                "interval": "60",
+                "legendFormat": "",
+                "queryType": "randomWalk",
+                "refId": "A"
+              }
+            ],
+            "timeFrom": null,
+            "timeShift": null,
+            "title": "Total RPM",
+            "type": "stat"
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "-FPV4La7z"
+            },
+            "fieldConfig": {
+              "defaults": {
+                "color": {
+                  "mode": "thresholds"
+                },
+                "mappings": [],
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": null
+                    },
+                    {
+                      "color": "red",
+                      "value": 80
+                    }
+                  ]
+                }
+              },
+              "overrides": []
+            },
+            "gridPos": {
+              "h": 10,
+              "w": 6,
+              "x": 6,
+              "y": 4
+            },
+            "id": 6,
+            "maxDataPoints": 1360,
+            "options": {
+              "colorMode": "value",
+              "graphMode": "area",
+              "justifyMode": "auto",
+              "orientation": "auto",
+              "reduceOptions": {
+                "calcs": [
+                  "lastNotNull"
+                ],
+                "fields": "",
+                "values": false
+              },
+              "text": {},
+              "textMode": "auto"
+            },
+            "pluginVersion": "7.5.17",
+            "targets": [
+              {
+                "exemplar": true,
+                "expr": "sum(rate(config_store_http_server_requests_seconds_count{service=~\"$service_name\",source_cluster=~\"$cluster\", code=~\"2..\", url!=\"/health\"}[$__rate_interval])*60)",
+                "interval": "60",
+                "legendFormat": "",
+                "queryType": "randomWalk",
+                "refId": "A"
+              }
+            ],
+            "title": "2xx RPM",
+            "type": "stat"
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "-FPV4La7z"
+            },
+            "fieldConfig": {
+              "defaults": {
+                "color": {
+                  "mode": "thresholds"
+                },
+                "mappings": [],
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": null
+                    },
+                    {
+                      "color": "red",
+                      "value": 80
+                    }
+                  ]
+                }
+              },
+              "overrides": []
+            },
+            "gridPos": {
+              "h": 10,
+              "w": 6,
+              "x": 12,
+              "y": 4
+            },
+            "id": 10,
+            "maxDataPoints": 1360,
+            "options": {
+              "colorMode": "value",
+              "graphMode": "area",
+              "justifyMode": "auto",
+              "orientation": "auto",
+              "reduceOptions": {
+                "calcs": [
+                  "lastNotNull"
+                ],
+                "fields": "",
+                "values": false
+              },
+              "text": {},
+              "textMode": "auto"
+            },
+            "pluginVersion": "7.5.17",
+            "targets": [
+              {
+                "exemplar": true,
+                "expr": "sum(rate(config_store_http_server_requests_seconds_count{service=~\"$service_name\",source_cluster=~\"$cluster\",code=~\"5..\"}[$__rate_interval])*60)",
+                "interval": "60",
+                "legendFormat": "",
+                "queryType": "randomWalk",
+                "refId": "A"
+              }
+            ],
+            "title": "5xx RPM",
+            "type": "stat"
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "-FPV4La7z"
+            },
+            "fieldConfig": {
+              "defaults": {
+                "color": {
+                  "mode": "thresholds"
+                },
+                "mappings": [],
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": null
+                    },
+                    {
+                      "color": "red",
+                      "value": 80
+                    }
+                  ]
+                }
+              },
+              "overrides": []
+            },
+            "gridPos": {
+              "h": 10,
+              "w": 6,
+              "x": 18,
+              "y": 4
+            },
+            "id": 8,
+            "maxDataPoints": 1360,
+            "options": {
+              "colorMode": "value",
+              "graphMode": "area",
+              "justifyMode": "auto",
+              "orientation": "auto",
+              "reduceOptions": {
+                "calcs": [
+                  "lastNotNull"
+                ],
+                "fields": "",
+                "values": false
+              },
+              "text": {},
+              "textMode": "auto"
+            },
+            "pluginVersion": "7.5.17",
+            "targets": [
+              {
+                "exemplar": true,
+                "expr": "sum(rate(config_store_http_server_requests_seconds_count{service=~\"$service_name\", source_cluster=~\"$cluster\",code=~\"4..\"}[$__rate_interval])*60)",
+                "interval": "60",
+                "legendFormat": "",
+                "queryType": "randomWalk",
+                "refId": "A"
+              }
+            ],
+            "title": "4xx RPM",
+            "type": "stat"
+          }
+        ],
+        "title": "RPM Metrics",
+        "type": "row"
+      }
+    ],
+    "refresh": "",
+    "schemaVersion": 27,
+    "style": "dark",
+    "tags": [],
+    "templating": {
+      "list": [
+        {
+          "allValue": null,
+          "current": {
+            "selected": false,
+            "text": "hs-core-config-store",
+            "value": "hs-core-config-store"
+          },
+          "description": null,
+          "error": null,
+          "hide": 0,
+          "includeAll": false,
+          "label": "service_name",
+          "multi": false,
+          "name": "service_name",
+          "options": [
+            {
+              "selected": true,
+              "text": "hs-core-config-store",
+              "value": "hs-core-config-store"
+            }
+          ],
+          "query": "hs-core-config-store",
+          "queryValue": "",
+          "skipUrlSync": false,
+          "type": "custom"
+        },
+        {
+          "allValue": null,
+          "current": {
+            "selected": true,
+            "tags": [],
+            "text": [
+              "All"
+            ],
+            "value": [
+              "$__all"
+            ]
+          },
+          "description": null,
+          "error": null,
+          "hide": 0,
+          "includeAll": true,
+          "label": null,
+          "multi": true,
+          "name": "platform",
+          "options": [
+            {
+              "selected": true,
+              "text": "All",
+              "value": "$__all"
+            },
+            {
+              "selected": false,
+              "text": "android",
+              "value": "android"
+            },
+            {
+              "selected": false,
+              "text": "web",
+              "value": "web"
+            },
+            {
+              "selected": false,
+              "text": "ios",
+              "value": "ios"
+            },
+            {
+              "selected": false,
+              "text": "others",
+              "value": "others"
+            }
+          ],
+          "query": "android,web,ios,others",
+          "queryValue": "",
+          "skipUrlSync": false,
+          "type": "custom"
+        },
+        {
+          "allValue": null,
+          "current": {
+            "selected": false,
+            "text": "hs-eks-prod-api-apse1",
+            "value": "hs-eks-prod-api-apse1"
+          },
+          "description": null,
+          "error": null,
+          "hide": 0,
+          "includeAll": false,
+          "label": null,
+          "multi": false,
+          "name": "cluster",
+          "options": [
+            {
+              "selected": true,
+              "text": "hs-eks-prod-api-apse1",
+              "value": "hs-eks-prod-api-apse1"
+            },
+            {
+              "selected": false,
+              "text": "hs-eks-prod-api-euw1",
+              "value": "hs-eks-prod-api-euw1"
+            },
+            {
+              "selected": false,
+              "text": "hs-eks-load1-api-apse1",
+              "value": "hs-eks-load1-api-apse1"
+            },
+            {
+              "selected": false,
+              "text": "hs-eks-dev-api-aps1",
+              "value": "hs-eks-dev-api-aps1"
+            },
+            {
+              "selected": false,
+              "text": "hs-eks-qa-api-aps1",
+              "value": "hs-eks-qa-api-aps1"
+            },
+            {
+              "selected": false,
+              "text": "hs-eks-nonprod-api-aps1",
+              "value": "hs-eks-nonprod-api-aps1"
+            }
+          ],
+          "query": "hs-eks-prod-api-apse1,hs-eks-prod-api-euw1,hs-eks-load1-api-apse1,hs-eks-dev-api-aps1,hs-eks-qa-api-aps1,hs-eks-nonprod-api-aps1",
+          "queryValue": "",
+          "skipUrlSync": false,
+          "type": "custom"
+        }
+      ]
+    },
+    "time": {
+      "from": "now-15m",
+      "to": "now"
+    },
+    "timepicker": {},
+    "timezone": "",
+    "title": "HS-CORE-CONFIG-STORE",
+    "uid": "2oXbZSUnk",
+    "version": 1
+  },
+  "folderUid": "c2ab6eb8-5670-49a2-a829-76201c7e16bf",
+  "overwrite": true
+}

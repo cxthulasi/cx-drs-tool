@@ -18,6 +18,8 @@ import uuid
 from core.base_service import BaseService
 from core.config import Config
 from core.api_client import CoralogixAPIError
+from core.safety_manager import SafetyManager
+from core.version_manager import VersionManager
 
 
 class CustomDashboardsService(BaseService):
@@ -26,6 +28,9 @@ class CustomDashboardsService(BaseService):
     def __init__(self, config: Config, logger):
         super().__init__(config, logger)
         self._setup_failed_dashboards_logging()
+        # Initialize safety and version managers
+        self.safety_manager = SafetyManager(config, self.service_name)
+        self.version_manager = VersionManager(config, self.service_name)
 
     @property
     def service_name(self) -> str:
@@ -280,7 +285,10 @@ class CustomDashboardsService(BaseService):
         return folder_id_mapping
 
     def fetch_resources_from_teama(self) -> List[Dict[str, Any]]:
-        """Fetch all custom dashboards from Team A."""
+        """Fetch all custom dashboards from Team A with safety checks."""
+        api_error = None
+        full_dashboards = []
+
         try:
             self.logger.info("Fetching custom dashboards from Team A")
 
@@ -291,7 +299,6 @@ class CustomDashboardsService(BaseService):
             self.logger.info(f"Found {len(dashboard_items)} dashboards in Team A catalog")
 
             # For each dashboard, get the full dashboard details
-            full_dashboards = []
             for item in dashboard_items:
                 dashboard_id = item.get('id')
                 if dashboard_id:
@@ -307,14 +314,39 @@ class CustomDashboardsService(BaseService):
                         continue
 
             self.logger.info(f"Fetched {len(full_dashboards)} complete dashboards from Team A")
-            return full_dashboards
 
         except CoralogixAPIError as e:
             self.logger.error(f"Failed to fetch custom dashboards from Team A: {e}")
-            raise
+            api_error = e
         except Exception as e:
             self.logger.error(f"Unexpected error fetching custom dashboards from Team A: {e}")
-            raise
+            api_error = e
+
+        # Get previous count for safety check
+        previous_version = self.version_manager.get_current_version()
+        previous_count = previous_version.get('teama', {}).get('count') if previous_version else None
+
+        # Perform safety check
+        safety_result = self.safety_manager.check_teama_fetch_safety(
+            full_dashboards, api_error, previous_count
+        )
+
+        if not safety_result.is_safe:
+            self.logger.error(f"TeamA fetch safety check failed: {safety_result.reason}")
+            self.logger.error(f"Safety check details: {safety_result.details}")
+
+            # If we have an API error, raise it
+            if api_error:
+                raise api_error
+
+            # If it's a safety issue without API error, raise a custom exception
+            raise RuntimeError(f"Safety check failed: {safety_result.reason}")
+
+        # If we had an API error but safety check passed, still raise the error
+        if api_error:
+            raise api_error
+
+        return full_dashboards
 
     def fetch_resources_from_teamb(self) -> List[Dict[str, Any]]:
         """Fetch all custom dashboards from Team B."""
@@ -652,14 +684,17 @@ class CustomDashboardsService(BaseService):
 
     def migrate(self) -> bool:
         """
-        Perform the actual custom dashboards migration.
+        Perform the actual custom dashboards migration with enhanced safety checks.
 
         Implementation:
         1. Fetch dashboard folders from Team A and ensure they exist in Team B
-        2. Fetch dashboards from Team A and Team B
-        3. Compare to identify new, changed, and deleted dashboards
-        4. Delete changed/deleted dashboards from Team B
-        5. Create new/changed dashboards in Team B with proper folder assignments
+        2. Fetch dashboards from Team A and Team B with safety checks
+        3. Create pre-migration version snapshot
+        4. Perform mass deletion safety check
+        5. Compare to identify new, changed, and deleted dashboards
+        6. Delete changed/deleted dashboards from Team B
+        7. Create new/changed dashboards in Team B with proper folder assignments
+        8. Create post-migration version snapshot
 
         Returns:
             True if migration completed successfully
@@ -678,12 +713,23 @@ class CustomDashboardsService(BaseService):
                 self.logger.warning("⚠️ No folders found in Team A or folder fetching failed. Proceeding without folder management.")
                 folder_id_mapping = {}
 
-            # Step 2: Fetch current dashboards from both teams
+            # Step 2: Fetch current dashboards from both teams (with safety checks)
             self.logger.info("🔄 Step 2: Fetching dashboards from Team A...")
             teama_resources = self.fetch_resources_from_teama()
 
             self.logger.info("🔄 Step 3: Fetching dashboards from Team B...")
             teamb_resources = self.fetch_resources_from_teamb()
+
+            # Create pre-migration version snapshot
+            self.logger.info("📸 Creating pre-migration version snapshot...")
+            pre_migration_version = self.version_manager.create_version_snapshot(
+                teama_resources, teamb_resources, 'pre_migration'
+            )
+            self.logger.info(f"Pre-migration snapshot created: {pre_migration_version}")
+
+            # Get previous TeamA count for safety checks
+            previous_version = self.version_manager.get_previous_version()
+            previous_teama_count = previous_version.get('teama', {}).get('count') if previous_version else None
 
             # Save artifacts
             self.save_artifacts(teama_resources, 'teama')
@@ -691,6 +737,19 @@ class CustomDashboardsService(BaseService):
 
             # Compare resources to identify changes
             comparison = self._compare_dashboards(teama_resources, teamb_resources)
+
+            # Identify dashboards that would be deleted (for mass deletion safety check)
+            dashboards_to_delete = comparison['deleted_from_teama'] + [tb for ta, tb in comparison['changed_resources']]
+
+            # Perform mass deletion safety check
+            mass_deletion_check = self.safety_manager.check_mass_deletion_safety(
+                dashboards_to_delete, len(teamb_resources), len(teama_resources), previous_teama_count
+            )
+
+            if not mass_deletion_check.is_safe:
+                self.logger.error(f"Mass deletion safety check failed: {mass_deletion_check.reason}")
+                self.logger.error(f"Safety check details: {mass_deletion_check.details}")
+                raise RuntimeError(f"Mass deletion safety check failed: {mass_deletion_check.reason}")
 
             # Display comprehensive migration statistics
             # Calculate folders to create more accurately
@@ -712,6 +771,11 @@ class CustomDashboardsService(BaseService):
 
             if total_operations == 0:
                 self.logger.info("✅ No changes needed - all dashboards and folders are already synchronized!")
+                # Still create post-migration snapshot even if no changes
+                teamb_resources_after = self.fetch_resources_from_teamb()
+                post_migration_version = self.version_manager.create_version_snapshot(
+                    teama_resources, teamb_resources_after, 'post_migration'
+                )
                 return True
 
             # Initialize counters for detailed statistics
@@ -834,6 +898,15 @@ class CustomDashboardsService(BaseService):
                 print("   Check the logs above for detailed error information")
 
             print("=" * 80)
+
+            # Create post-migration version snapshot
+            self.logger.info("📸 Creating post-migration version snapshot...")
+            # Fetch updated Team B resources for post-migration snapshot
+            teamb_resources_after = self.fetch_resources_from_teamb()
+            post_migration_version = self.version_manager.create_version_snapshot(
+                teama_resources, teamb_resources_after, 'post_migration'
+            )
+            self.logger.info(f"Post-migration snapshot created: {post_migration_version}")
 
             # Log to migration system
             self.log_migration_complete(

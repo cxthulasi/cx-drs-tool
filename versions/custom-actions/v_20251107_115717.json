@@ -1,0 +1,1508 @@
+{
+  "version_id": "v_20251107_115717",
+  "timestamp": "2025-11-07T11:57:17.761625",
+  "service": "custom-actions",
+  "version_type": "pre_migration",
+  "teama": {
+    "count": 59,
+    "resources": [
+      {
+        "id": "c948cb93-01a5-44a9-b7d3-d92d97c599a4",
+        "name": "Ryan IP",
+        "url": "https://whatismyipaddress.com/ip/{{$d.sourceIPAddress}}",
+        "isHidden": false,
+        "isPrivate": true,
+        "sourceType": "SOURCE_TYPE_LOG",
+        "applicationNames": [],
+        "subsystemNames": [],
+        "createdBy": "bot@coralogix.com"
+      },
+      {
+        "id": "d108ef5e-0dca-4307-82e8-48929abc5eae",
+        "name": "Google Error Message Troubleshoot",
+        "url": "https://www.google.com/search?q=troubleshoot%20{{$d.cx_rum.error_context.error_message}}",
+        "isHidden": false,
+        "isPrivate": true,
+        "sourceType": "SOURCE_TYPE_LOG",
+        "applicationNames": [],
+        "subsystemNames": [],
+        "createdBy": "bot@coralogix.com"
+      },
+      {
+        "id": "d7658b5e-e9a8-4987-a6d6-38bf6e714146",
+        "name": "Dashboard Time Range",
+        "url": "https://onlineboutique.coralogix.com/#/dashboards/9GSPvLj01IIwXHwZ964dQ?var-hostname={{$d.resource.attributes.host_name}}&var-application={{$m.applicationName}}&from={{$p.start_date}}&to={{$p.end_date}}",
+        "isHidden": false,
+        "isPrivate": true,
+        "sourceType": "SOURCE_TYPE_LOG",
+        "applicationNames": [],
+        "subsystemNames": [],
+        "createdBy": "bot@coralogix.com"
+      },
+      {
+        "id": "160a6ab8-160a-448c-875d-f8adb34744de",
+        "name": "Ryan's Dashboard",
+        "url": "https://onlineboutique.coralogix.com/#/dashboards/9GSPvLj01IIwXHwZ964dQ?var-hostname={{$d.resource.attributes.host_name}}&var-application={{$m.applicationName}}",
+        "isHidden": false,
+        "isPrivate": true,
+        "sourceType": "SOURCE_TYPE_LOG",
+        "applicationNames": [],
+        "subsystemNames": [],
+        "createdBy": "bot@coralogix.com"
+      },
+      {
+        "id": "e04665ad-1db4-4112-af8d-07e0043a00cf",
+        "name": "Query Log",
+        "url": "https://onlineboutique.coralogix.com/#/query-new/logs?query=ip%3A%22{{$d.ip}}%22",
+        "isHidden": false,
+        "isPrivate": true,
+        "sourceType": "SOURCE_TYPE_LOG",
+        "applicationNames": [],
+        "subsystemNames": [],
+        "createdBy": "bot@coralogix.com"
+      },
+      {
+        "id": "1777204e-c2ac-45c2-a81c-393e6b627799",
+        "name": "RANATEST",
+        "url": "https://onlineboutique.coralogix.com//#/tracing/{{$d.traceID}}?selectedSpanId={{$d.spanID}}&start={{$p.start_date*1000}}&end={{$p.end_date*1000}}",
+        "isHidden": false,
+        "isPrivate": true,
+        "sourceType": "SOURCE_TYPE_LOG",
+        "applicationNames": [],
+        "subsystemNames": [],
+        "createdBy": "bot@coralogix.com"
+      },
+      {
+        "id": "ebef8734-99f9-45b6-bd50-5241fd6b17ff",
+        "name": "What is that ip?",
+        "url": "https://whatismyipaddress.com/ip/{{$d.cx_rum.session_context.ip_geoip.ip_ipaddr}}",
+        "isHidden": false,
+        "isPrivate": true,
+        "sourceType": "SOURCE_TYPE_LOG",
+        "applicationNames": [],
+        "subsystemNames": [],
+        "createdBy": "bot@coralogix.com"
+      },
+      {
+        "id": "7b8b4f70-2f4f-44c3-818c-cdfdf2c5c75c",
+        "name": "platformEventType",
+        "url": "https://www.google.com/search?q={{$d.platform_event_type}}",
+        "isHidden": false,
+        "isPrivate": true,
+        "sourceType": "SOURCE_TYPE_LOG",
+        "applicationNames": [],
+        "subsystemNames": [],
+        "createdBy": "bot@coralogix.com"
+      },
+      {
+        "id": "77382bd3-bd58-4566-b860-1abfdc272636",
+        "name": "OpenSearch",
+        "url": "http://{{$d.coralogix.logId}}",
+        "isHidden": false,
+        "isPrivate": true,
+        "sourceType": "SOURCE_TYPE_LOG",
+        "applicationNames": [],
+        "subsystemNames": [],
+        "createdBy": "bot@coralogix.com"
+      },
+      {
+        "id": "1fc2f5c6-f9a5-4146-b250-b0bfc8b6c6b9",
+        "name": "Open Trace View ivan123",
+        "url": "https://onlineboutique.coralogix.com/#/query-new/tracing?query=%2522{{$d.cx_rum.traceId}}%2522&start={{$p.start_date*1000}}&end={{$p.end_date*1000}}",
+        "isHidden": true,
+        "isPrivate": true,
+        "sourceType": "SOURCE_TYPE_LOG",
+        "applicationNames": [],
+        "subsystemNames": [],
+        "createdBy": "bot@coralogix.com"
+      },
+      {
+        "id": "b66407fe-69a9-4f76-8c56-6b2a00c8f35a",
+        "name": "KL_Trace_View",
+        "url": "https://onlineboutique.coralogix.com/#/tracing/{{$d.json.Scopes[0].TraceId}}?selectedSpanId={{$d.json.Scopes[0].SpanId}}&start={{$p.start_date*1000}}&end={{$p.end_date*1000}}",
+        "isHidden": false,
+        "isPrivate": true,
+        "sourceType": "SOURCE_TYPE_LOG",
+        "applicationNames": [],
+        "subsystemNames": [],
+        "createdBy": "bot@coralogix.com"
+      },
+      {
+        "id": "7038c391-9369-4996-8845-a48c2da332a6",
+        "name": "message ventura",
+        "url": "https://{{$d.message}}",
+        "isHidden": true,
+        "isPrivate": true,
+        "sourceType": "SOURCE_TYPE_LOG",
+        "applicationNames": [],
+        "subsystemNames": [],
+        "createdBy": "bot@coralogix.com"
+      },
+      {
+        "id": "c821852d-5fab-44fb-9636-36188943a14a",
+        "name": "Open Trace View ivan",
+        "url": "https://onlineboutique.coralogix.com/#/tracing/{{$d.traceID}}?selectedSpanId={{$d.spanID}}&start={{$p.start_date*1000}}&end={{$p.end_date*1000}}",
+        "isHidden": false,
+        "isPrivate": true,
+        "sourceType": "SOURCE_TYPE_LOG",
+        "applicationNames": [],
+        "subsystemNames": [],
+        "createdBy": "bot@coralogix.com"
+      },
+      {
+        "id": "7ebbc550-7ef5-4248-a210-dd00180eba52",
+        "name": "Product Demo - Variables",
+        "url": "https://onlineboutique.coralogix.com/#/dashboards/uj94q9Far8NBaCovTgfbT?var-product_id={{$d.product_id}}",
+        "isHidden": true,
+        "isPrivate": true,
+        "sourceType": "SOURCE_TYPE_LOG",
+        "applicationNames": [],
+        "subsystemNames": [],
+        "createdBy": "bot@coralogix.com"
+      },
+      {
+        "id": "f55c0b98-a7ff-4ac9-b906-fb3cb78f881e",
+        "name": "Product Sales Variables Demo",
+        "url": "https://onlineboutique.coralogix.com/#/dashboards/utwtr6Tro0RZC1mRjFs0I?var-product_name=}",
+        "isHidden": true,
+        "isPrivate": true,
+        "sourceType": "SOURCE_TYPE_LOG",
+        "applicationNames": [],
+        "subsystemNames": [],
+        "createdBy": "bot@coralogix.com"
+      },
+      {
+        "id": "99213927-38a6-4269-8e2e-161b5b8ddca3",
+        "name": "JaegerView",
+        "url": "https://onlineboutique.coralogix.com/#/jaeger/search/{{$d.json.trace_id}}?selectedSpanId={{$d.json.span_id}}&start={{$p.start_date*1000}}&end={{$p.end_date*1000}}",
+        "isHidden": true,
+        "isPrivate": true,
+        "sourceType": "SOURCE_TYPE_LOG",
+        "applicationNames": [],
+        "subsystemNames": [],
+        "createdBy": "bot@coralogix.com"
+      },
+      {
+        "id": "f38d5ebd-0a75-46c0-b206-5febd754ebb5",
+        "name": "K8 Host Dashboard",
+        "url": "https://onlineboutique.coralogix.com/#/infrastructure/k8s/pods?clusters=onlineboutique&namespaces=default",
+        "isHidden": false,
+        "isPrivate": true,
+        "sourceType": "SOURCE_TYPE_LOG",
+        "applicationNames": [],
+        "subsystemNames": [],
+        "createdBy": "bot@coralogix.com"
+      },
+      {
+        "id": "2375ad6d-f994-4dd4-8e72-278cff765d6b",
+        "name": "aws2",
+        "url": "https://{{$d.cloud.region}}.console.aws.amazon.com/ec2/v2/home?region={{$d.cloud.region}}#InstanceDetails:instanceId={{$d.cloud.instance.id}}",
+        "isHidden": true,
+        "isPrivate": true,
+        "sourceType": "SOURCE_TYPE_LOG",
+        "applicationNames": [],
+        "subsystemNames": [],
+        "createdBy": "bot@coralogix.com"
+      },
+      {
+        "id": "ad036e73-166f-4412-b183-daf3047dc29c",
+        "name": "AWS-EC2",
+        "url": "https://{{$d.cloud.region}}.console.aws.amazon.com/ec2/v2/home?region={{$d.cloud.region}}#InstanceDetails:instanceId={{$d.cloud.instance.id}}",
+        "isHidden": true,
+        "isPrivate": true,
+        "sourceType": "SOURCE_TYPE_LOG",
+        "applicationNames": [],
+        "subsystemNames": [],
+        "createdBy": "bot@coralogix.com"
+      },
+      {
+        "id": "db9c248c-e22f-43db-835c-b4fbbf430557",
+        "name": "no span",
+        "url": "https://onlineboutique.coralogix.com/#/tracing/{{$d.json.span_id}}?selectedSpanId={{$d.json.span_id}}",
+        "isHidden": true,
+        "isPrivate": true,
+        "sourceType": "SOURCE_TYPE_LOG",
+        "applicationNames": [],
+        "subsystemNames": [],
+        "createdBy": "bot@coralogix.com"
+      },
+      {
+        "id": "9e08da7d-9200-4ebc-92b5-ea584cdea31d",
+        "name": "Infra - Node",
+        "url": "https://onlineboutique.coralogix.com/#/infrastructure/monitoring/explorer?menu=Kubernetes&menuItem=Nodes&entryDeeplink=17266:k8s_cluster_name%3D{{$d.resource.attributes['k8s_cluster_name']}}%7Ck8s_node_name%3D{{$d.resource.attributes['k8s_node_name']}}&shareUrl=true",
+        "isHidden": false,
+        "isPrivate": false,
+        "sourceType": "SOURCE_TYPE_LOG",
+        "applicationNames": [],
+        "subsystemNames": [],
+        "createdBy": "george.boddey@coralogix.com"
+      },
+      {
+        "id": "5afea543-d0eb-427f-96d5-dddaf0bbb3e0",
+        "name": "Infra - Cluster",
+        "url": "https://onlineboutique.coralogix.com/#/infrastructure/monitoring/explorer?menu=Kubernetes&menuItem=Clusters&entryDeeplink=17266:k8s_cluster_name%3D{{$d.resource.attributes['k8s_cluster_name']}}&shareUrl=true",
+        "isHidden": false,
+        "isPrivate": false,
+        "sourceType": "SOURCE_TYPE_LOG",
+        "applicationNames": [],
+        "subsystemNames": [],
+        "createdBy": "george.boddey@coralogix.com"
+      },
+      {
+        "id": "4c014965-0a09-4243-a50b-70a4eb1ea2e9",
+        "name": "Infra - Pod",
+        "url": "https://onlineboutique.coralogix.com/#/infrastructure/monitoring/explorer?menu=Kubernetes&menuItem=Pods&entryDeeplink=17266:k8s_cluster_name%3D{{$d.resource.attributes['k8s_cluster_name']}}%7Ck8s_namespace_name%3D{{$d.resource.attributes['k8s_namespace_name']}}%7Ck8s_pod_name%3D{{$d.resource.attributes['k8s_pod_name']}}&shareUrl=true",
+        "isHidden": false,
+        "isPrivate": false,
+        "sourceType": "SOURCE_TYPE_LOG",
+        "applicationNames": [],
+        "subsystemNames": [],
+        "createdBy": "george.boddey@coralogix.com"
+      },
+      {
+        "id": "0a8d6129-4704-4a8d-9863-109747fd89e8",
+        "name": "Trace CC",
+        "url": "https://caratlane.app.coralogix.in/#/tracing/{{$d.trace}}?selectedSpanId={{$d.span}}&start={{$d.start_date*1000}}&end={{$d.end_date*1000}}",
+        "isHidden": false,
+        "isPrivate": false,
+        "sourceType": "SOURCE_TYPE_LOG",
+        "applicationNames": [],
+        "subsystemNames": [],
+        "createdBy": "support@coralogix.com"
+      },
+      {
+        "id": "01481893-1cc8-4ea3-a19e-892c00637bbf",
+        "name": "Domaintools Whois Lookup",
+        "url": "https://whois.domaintools.com/{{$p.selected_value}}",
+        "isHidden": false,
+        "isPrivate": false,
+        "sourceType": "SOURCE_TYPE_LOG",
+        "applicationNames": [],
+        "subsystemNames": [],
+        "createdBy": "bot@coralogix.com"
+      },
+      {
+        "id": "29a95771-84ec-40b5-b20f-1545b843c86e",
+        "name": "Grey Noise - IP",
+        "url": "https://viz.greynoise.io/ip/{{$p.selected_value}}",
+        "isHidden": false,
+        "isPrivate": false,
+        "sourceType": "SOURCE_TYPE_LOG",
+        "applicationNames": [],
+        "subsystemNames": [],
+        "createdBy": "bot@coralogix.com"
+      },
+      {
+        "id": "309d8cf1-c2bd-49fc-9ce1-f11873014010",
+        "name": "NVD NIST - CVE",
+        "url": "https://nvd.nist.gov/vuln/detail/{{$p.selected_value}}",
+        "isHidden": false,
+        "isPrivate": false,
+        "sourceType": "SOURCE_TYPE_LOG",
+        "applicationNames": [],
+        "subsystemNames": [],
+        "createdBy": "bot@coralogix.com"
+      },
+      {
+        "id": "3a6f396c-df60-471d-b5a0-c52987dcb1b3",
+        "name": "BGP - IP",
+        "url": "https://bgp.he.net/ip/{{$p.selected_value}}",
+        "isHidden": false,
+        "isPrivate": false,
+        "sourceType": "SOURCE_TYPE_LOG",
+        "applicationNames": [],
+        "subsystemNames": [],
+        "createdBy": "bot@coralogix.com"
+      },
+      {
+        "id": "6995275d-86e8-4250-b280-3e66cb085c1a",
+        "name": "Shodan.io - IP/Domain",
+        "url": "https://www.shodan.io/search?query={{$p.selected_value}}",
+        "isHidden": false,
+        "isPrivate": false,
+        "sourceType": "SOURCE_TYPE_LOG",
+        "applicationNames": [],
+        "subsystemNames": [],
+        "createdBy": "bot@coralogix.com"
+      },
+      {
+        "id": "a2c2b03f-2862-4031-b93a-219d9b0bed18",
+        "name": "Grey Noise - CVE",
+        "url": "https://viz.greynoise.io/query/?gnql=cve%3A{{$p.selected_value}}",
+        "isHidden": false,
+        "isPrivate": false,
+        "sourceType": "SOURCE_TYPE_LOG",
+        "applicationNames": [],
+        "subsystemNames": [],
+        "createdBy": "bot@coralogix.com"
+      },
+      {
+        "id": "a66aea04-d4f0-419a-9eee-1ffe3d945ef0",
+        "name": "Talos Security - IP/Domain",
+        "url": "https://talosintelligence.com/reputation_center/lookup?search={{$p.selected_value}}",
+        "isHidden": false,
+        "isPrivate": false,
+        "sourceType": "SOURCE_TYPE_LOG",
+        "applicationNames": [],
+        "subsystemNames": [],
+        "createdBy": "bot@coralogix.com"
+      },
+      {
+        "id": "ab957452-0eb3-49a1-ac04-802f4549c4ac",
+        "name": "AlienVault OTX - Domain",
+        "url": "https://otx.alienvault.com/indicator/domain/{{$p.selected_value}}",
+        "isHidden": false,
+        "isPrivate": false,
+        "sourceType": "SOURCE_TYPE_LOG",
+        "applicationNames": [],
+        "subsystemNames": [],
+        "createdBy": "bot@coralogix.com"
+      },
+      {
+        "id": "c8cd8dcb-12bc-4a15-948c-d27da01fb621",
+        "name": "AlienVault OTX - IP",
+        "url": "https://otx.alienvault.com/indicator/ip/{{$p.selected_value}}",
+        "isHidden": false,
+        "isPrivate": false,
+        "sourceType": "SOURCE_TYPE_LOG",
+        "applicationNames": [],
+        "subsystemNames": [],
+        "createdBy": "bot@coralogix.com"
+      },
+      {
+        "id": "e03e0527-eb68-4211-8131-e3b00a3af138",
+        "name": "VirusTotal - Domain",
+        "url": "https://www.virustotal.com/gui/domain/{{$p.selected_value}}",
+        "isHidden": false,
+        "isPrivate": false,
+        "sourceType": "SOURCE_TYPE_LOG",
+        "applicationNames": [],
+        "subsystemNames": [],
+        "createdBy": "bot@coralogix.com"
+      },
+      {
+        "id": "ef59d889-29f1-48d3-a6cc-7dc1ba6138b0",
+        "name": "VirusTotal - IP",
+        "url": "https://www.virustotal.com/gui/ip-address/{{$p.selected_value}}",
+        "isHidden": false,
+        "isPrivate": false,
+        "sourceType": "SOURCE_TYPE_LOG",
+        "applicationNames": [],
+        "subsystemNames": [],
+        "createdBy": "bot@coralogix.com"
+      },
+      {
+        "id": "b1a9ce2f-4c32-4087-bf6d-060d898da3fc",
+        "name": "Open google maps with CX Rum location data",
+        "url": "https://www.google.com/maps/@{{$d.cx_rum.session_context.ip_geoip.location_geopoint.lat}},{{$d.cx_rum.session_context.ip_geoip.location_geopoint.lon}},15z",
+        "isHidden": false,
+        "isPrivate": false,
+        "sourceType": "SOURCE_TYPE_LOG",
+        "applicationNames": [],
+        "subsystemNames": [
+          "cx_rum"
+        ],
+        "createdBy": "david.bott+boutique@coralogix.com"
+      },
+      {
+        "id": "2ba7a08e-567f-4a7c-9564-4504c40b4f54",
+        "name": "K8s Pods Dashboard",
+        "url": "https://onlineboutique.coralogix.com/#/infrastructure/k8s/pods?clusters={{$d.resource.attributes.k8s_cluster_name}}&pods={{$d.resource.attributes.k8s_pod_name}}",
+        "isHidden": false,
+        "isPrivate": false,
+        "sourceType": "SOURCE_TYPE_LOG",
+        "applicationNames": [],
+        "subsystemNames": [],
+        "createdBy": "gal.vardi+ob@coralogix.com"
+      },
+      {
+        "id": "594200ac-a678-47e8-af6a-14a6a7ed70d8",
+        "name": "View Resource",
+        "url": "https://onlineboutique.coralogix.com/#/infrastructure/monitoring/catalog?menu=Hosts&menuItem=EC2_Instances&search=Name%253A{{$d.resource.attributes.host_id ? $d.resource.attributes.host_id : '' }}",
+        "isHidden": false,
+        "isPrivate": false,
+        "sourceType": "SOURCE_TYPE_LOG",
+        "applicationNames": [],
+        "subsystemNames": [
+          "frontend"
+        ],
+        "createdBy": "george.pickers@coralogix.com"
+      },
+      {
+        "id": "17844d5a-2e73-475c-92d4-f4bf65d44b9f",
+        "name": "Search Bing",
+        "url": "https://www.bing.com/search?q=why+did+this+happened+{{$d.json.error}}",
+        "isHidden": true,
+        "isPrivate": false,
+        "sourceType": "SOURCE_TYPE_LOG",
+        "applicationNames": [],
+        "subsystemNames": [],
+        "createdBy": "bot@coralogix.com"
+      },
+      {
+        "id": "802e7219-3328-4757-9dfe-3db1b2596300",
+        "name": "Search Google",
+        "url": "https://www.google.com/search?q={{$d.cx_rum.session_context.ip}}",
+        "isHidden": false,
+        "isPrivate": false,
+        "sourceType": "SOURCE_TYPE_LOG",
+        "applicationNames": [],
+        "subsystemNames": [],
+        "createdBy": "bot@coralogix.com"
+      },
+      {
+        "id": "c4454298-7e65-44d6-a02d-396dd2868f21",
+        "name": "Open Trace View",
+        "url": "https://onlineboutique.coralogix.com/#/tracing/{{$d.trace_id}}?selectedSpanId={{$d.span_id}}&start={{$p.start_date*1000}}&end={{$p.end_date*1000}}",
+        "isHidden": false,
+        "isPrivate": false,
+        "sourceType": "SOURCE_TYPE_LOG",
+        "applicationNames": [],
+        "subsystemNames": [],
+        "createdBy": "bot@coralogix.com"
+      },
+      {
+        "id": "63c6f565-1db4-46a7-8a5c-b70545908598",
+        "name": "Open Trace View - json",
+        "url": "https://onlineboutique.coralogix.com/#/tracing/{{$d.json.trace_id}}?selectedSpanId={{$d.json.span_id}}&start={{$p.start_date*1000}}&end={{$p.end_date*1000}}",
+        "isHidden": false,
+        "isPrivate": false,
+        "sourceType": "SOURCE_TYPE_LOG",
+        "applicationNames": [],
+        "subsystemNames": [],
+        "createdBy": "chen+demoadmin@coralogix.com"
+      },
+      {
+        "id": "a24aad9b-5b21-4df0-8663-494aa18eb399",
+        "name": "Open Host Metrics in Grafana",
+        "url": "https://onlineboutique.coralogix.com/#/grafana/d/l8S_EIF7k/kubernetes-hosts-metrics?orgId=6&var-datasource=Metrics&var-instance={{$d.host}}:9100&from={{$p.start_date}}&to={{$p.end_date}}",
+        "isHidden": true,
+        "isPrivate": false,
+        "sourceType": "SOURCE_TYPE_LOG",
+        "applicationNames": [],
+        "subsystemNames": [],
+        "createdBy": "bot@coralogix.com"
+      },
+      {
+        "id": "1782cb55-cf91-432b-927a-b1a4dc9056be",
+        "name": "GEO Map",
+        "url": "https://www.google.com/maps?q={{$d.json.http_req_ip_geoip.location_geopoint.lat}},{{$d.cx_rum.session_context.ip_geoip.location_geopoint.lon}}",
+        "isHidden": false,
+        "isPrivate": false,
+        "sourceType": "SOURCE_TYPE_LOG",
+        "applicationNames": [],
+        "subsystemNames": [],
+        "createdBy": "bot@coralogix.com"
+      },
+      {
+        "id": "32631aa8-83d5-4c0b-99f0-ba007008d365",
+        "name": "APM Service Drilldown",
+        "url": "https://onlineboutique.coralogix.com/#/apm/service-catalog/drilldown/overview?serviceName={{$m.subsystemName}}&newTimeRange=%7B%22type%22:%22custom%22,%22fromTimestamp%22:{{$p.start_date}},%22toTimestamp%22:{{$p.end_date}}%7D",
+        "isHidden": false,
+        "isPrivate": false,
+        "sourceType": "SOURCE_TYPE_LOG",
+        "applicationNames": [
+          "default"
+        ],
+        "subsystemNames": [],
+        "createdBy": "bot@coralogix.com"
+      },
+      {
+        "id": "2bce81ca-3cf0-40bb-907d-c22289d3774a",
+        "name": "Customer Frontend Dashboard",
+        "url": "https://onlineboutique.coralogix.com/#/dashboards/sbK8japc0NijCwgwX6sMv",
+        "isHidden": false,
+        "isPrivate": false,
+        "sourceType": "SOURCE_TYPE_LOG",
+        "applicationNames": [
+          "default"
+        ],
+        "subsystemNames": [
+          "frontend"
+        ],
+        "createdBy": "gal.vardi+ob@coralogix.com"
+      },
+      {
+        "id": "6b5e719b-2395-4e07-bf72-85001ec65f72",
+        "name": "Frontend Grafana Dashboard",
+        "url": "https://onlineboutique.coralogix.com/#/grafana/d/ckH9XYmVk1/frontend-l2m-dashboard?orgId=6&var-front_req_method={{$d.json.http_req_method}}&var-front_req_path={{$d.json.http_req_path}}&var-front_req_country_name={{$d.json.http_req_ip_geoip.country_name}}&from={{$p.start_date}}&to={{$p.end_date}}",
+        "isHidden": false,
+        "isPrivate": false,
+        "sourceType": "SOURCE_TYPE_LOG",
+        "applicationNames": [
+          "default"
+        ],
+        "subsystemNames": [
+          "frontend"
+        ],
+        "createdBy": "gal.vardi+ob@coralogix.com"
+      },
+      {
+        "id": "7638b1ce-12af-46d3-b691-4cd3bd32728c",
+        "name": "Synthetics Test",
+        "url": "https://app.checklyhq.com/checks/{{$d.check_id}}/results/browser/{{$d.check_result_id}}/",
+        "isHidden": false,
+        "isPrivate": false,
+        "sourceType": "SOURCE_TYPE_LOG",
+        "applicationNames": [
+          "synthetics"
+        ],
+        "subsystemNames": [],
+        "createdBy": "rajeev.govindan@coralogix.com"
+      },
+      {
+        "id": "3c862006-baf6-4c8b-b606-c8d10b82df2a",
+        "name": "Open metrics view (Coralogix k8s OOTB)",
+        "url": "https://onlineboutique.coralogix.com/#/infrastructure/k8s/pods?clusters=onlineboutique&pods={{$d.resource.attributes[\"k8s_pod_name\"]}}",
+        "isHidden": false,
+        "isPrivate": false,
+        "sourceType": "SOURCE_TYPE_LOG",
+        "applicationNames": [
+          "default"
+        ],
+        "subsystemNames": [],
+        "createdBy": "bot@coralogix.com"
+      },
+      {
+        "id": "687d10ce-bd5d-44bb-9405-ee1be0514ab0",
+        "name": "View Product Load Latency",
+        "url": "https://onlineboutique.coralogix.com/#/grafana/explore?orgId=6&left=%5B%22now-1h%22,%22now%22,%22Metrics%22,%7B%22refId%22:%22A%22,%22exemplar%22:true,%22expr%22:%22avg_over_time(product_latency_by_country%7Bcity%3D~%5C%22{{$l.city}}%5C%22,product%3D~%5C%22{{$l.product}}%5C%22%7D%5B5m%5D)%22%7D%5D",
+        "isHidden": false,
+        "isPrivate": false,
+        "sourceType": "SOURCE_TYPE_DATA_MAP",
+        "applicationNames": [],
+        "subsystemNames": [],
+        "createdBy": "bot@coralogix.com"
+      },
+      {
+        "id": "7c04df8e-d201-4434-bea2-c7d74b757fa0",
+        "name": "Grafana - ELB Metrics",
+        "url": "https://onlineboutique.coralogix.com/#/grafana/d/ckH9XYmVk/aws-elb-l2m-dashboard?orgId=6&var-elb_name={{$d.elb_name}}&var-country={{$d.client_ip_geoip.country_name}}&from={{$p.start_date}}&to={{$p.end_date}}",
+        "isHidden": false,
+        "isPrivate": false,
+        "sourceType": "SOURCE_TYPE_LOG",
+        "applicationNames": [
+          "aws-elb"
+        ],
+        "subsystemNames": [
+          "customers-elb"
+        ],
+        "createdBy": "george.pickers@coralogix.com"
+      },
+      {
+        "id": "ec9db734-1032-4300-a6ed-72c5660c1c21",
+        "name": "Query pod in Grafana (cpu_usage_total)",
+        "url": "https://onlineboutique.coralogix.com/#/grafana/explore?orgId=6&left=%5B%22now-1h%22,%22now%22,%22Metrics%22,%7B%22refId%22:%22A%22,%22exemplar%22:false,%22expr%22:%22avg(container_cpu_usage_seconds_total%20%7Bpod%3D%5C%22{{$l.pod}}%5C%22%7D)%22%7D%5D",
+        "isHidden": true,
+        "isPrivate": false,
+        "sourceType": "SOURCE_TYPE_DATA_MAP",
+        "applicationNames": [],
+        "subsystemNames": [],
+        "createdBy": "bot@coralogix.com"
+      },
+      {
+        "id": "a52a4c07-dbbb-4a50-814f-a27e6a78d829",
+        "name": "View Country Logs",
+        "url": "https://onlineboutique.coralogix.com/#/query-new/logs?query={{$l.country}}&permalink=true",
+        "isHidden": true,
+        "isPrivate": false,
+        "sourceType": "SOURCE_TYPE_DATA_MAP",
+        "applicationNames": [],
+        "subsystemNames": [],
+        "createdBy": "bot@coralogix.com"
+      },
+      {
+        "id": "6dc9ef78-65e8-461a-b990-6884c41d5824",
+        "name": "New Relic - Trace",
+        "url": "https://one.eu.newrelic.com/nr1-core/distributed-tracing/distributed-trace-list/MzI3ODc4NHxBUE18QVBQTElDQVRJT058NDIyNjQ2OTk1?account=3278784&duration=3600000&state=05e07ce3-6d3c-523a-ee21-6395d9f73b46",
+        "isHidden": true,
+        "isPrivate": false,
+        "sourceType": "SOURCE_TYPE_LOG",
+        "applicationNames": [
+          "windows_logs"
+        ],
+        "subsystemNames": [],
+        "createdBy": "bot@coralogix.com"
+      },
+      {
+        "id": "287ab546-6284-4b29-95b8-16d4cf1d6947",
+        "name": "Jaeger - Open Trace",
+        "url": "https://onlineboutique.coralogix.com/#/jaeger/trace/{{$d.json.trace_id}}",
+        "isHidden": true,
+        "isPrivate": false,
+        "sourceType": "SOURCE_TYPE_LOG",
+        "applicationNames": [
+          "default"
+        ],
+        "subsystemNames": [
+          "shippingservice"
+        ],
+        "createdBy": "bot@coralogix.com"
+      },
+      {
+        "id": "ade71710-0380-4edd-88a0-8c9ecbe9f4b2",
+        "name": "DataDog - Trace",
+        "url": "https://app.datadoghq.com/apm/traces?query=env%3A?&cols=core_service%2Ccore_resource_name%2Clog_duration%2Clog_http.method%2Clog_http.status_code&historicalData=false&messageDisplay=inline&sort=desc&spanID={{$d.Headers['X-Datadog-Trace-Id']}}&streamTraces=true&trace={{$d.Headers['X-Datadog-Trace-Id']}}{{$d.Headers['X-Datadog-Trace-Id']}}&traceID={{$d.Headers['X-Datadog-Trace-Id']}}",
+        "isHidden": true,
+        "isPrivate": false,
+        "sourceType": "SOURCE_TYPE_LOG",
+        "applicationNames": [
+          "windows_logs"
+        ],
+        "subsystemNames": [],
+        "createdBy": "bot@coralogix.com"
+      },
+      {
+        "id": "6a702662-e990-48f5-8de4-9209813cf57a",
+        "name": "Open metrics view (Grafana K8S Host)",
+        "url": "https://onlineboutique.coralogix.com/#/grafana/d/l8S_EIF7k/kubernetes-hosts-metrics?orgId=6&var-datasource=Metrics&var-instance={{$d.resource.attributes[\"k8s.node.name\"]}}:9100&from={{$p.start_date}}&to={{$p.end_date}}",
+        "isHidden": false,
+        "isPrivate": false,
+        "sourceType": "SOURCE_TYPE_LOG",
+        "applicationNames": [],
+        "subsystemNames": [
+          "frontend"
+        ],
+        "createdBy": "bot@coralogix.com"
+      },
+      {
+        "id": "fc262495-66b5-4db4-9f90-296605335e08",
+        "name": "AWS - EC2 Instance",
+        "url": "https://{{$d.cloud.region}}.console.aws.amazon.com/ec2/home?region={{$d.cloud.region}}#InstanceDetails:instanceId={{$d.cloud.instance.id}}",
+        "isHidden": false,
+        "isPrivate": false,
+        "sourceType": "SOURCE_TYPE_LOG",
+        "applicationNames": [],
+        "subsystemNames": [],
+        "createdBy": "ariel@coralogix.com"
+      },
+      {
+        "id": "144c6202-6c2e-42c3-a8cc-edd24a7ffa1a",
+        "name": "Virustotal",
+        "url": "https://www.virustotal.com/gui/ip-address/{{$p.selected_value}}",
+        "isHidden": false,
+        "isPrivate": false,
+        "sourceType": "SOURCE_TYPE_LOG",
+        "applicationNames": [],
+        "subsystemNames": [
+          "frontend"
+        ],
+        "createdBy": "bot@coralogix.com"
+      }
+    ],
+    "resource_identifiers": [
+      "Ryan IP",
+      "Google Error Message Troubleshoot",
+      "Dashboard Time Range",
+      "Ryan's Dashboard",
+      "Query Log",
+      "RANATEST",
+      "What is that ip?",
+      "platformEventType",
+      "OpenSearch",
+      "Open Trace View ivan123",
+      "KL_Trace_View",
+      "message ventura",
+      "Open Trace View ivan",
+      "Product Demo - Variables",
+      "Product Sales Variables Demo",
+      "JaegerView",
+      "K8 Host Dashboard",
+      "aws2",
+      "AWS-EC2",
+      "no span",
+      "Infra - Node",
+      "Infra - Cluster",
+      "Infra - Pod",
+      "Trace CC",
+      "Domaintools Whois Lookup",
+      "Grey Noise - IP",
+      "NVD NIST - CVE",
+      "BGP - IP",
+      "Shodan.io - IP/Domain",
+      "Grey Noise - CVE",
+      "Talos Security - IP/Domain",
+      "AlienVault OTX - Domain",
+      "AlienVault OTX - IP",
+      "VirusTotal - Domain",
+      "VirusTotal - IP",
+      "Open google maps with CX Rum location data",
+      "K8s Pods Dashboard",
+      "View Resource",
+      "Search Bing",
+      "Search Google",
+      "Open Trace View",
+      "Open Trace View - json",
+      "Open Host Metrics in Grafana",
+      "GEO Map",
+      "APM Service Drilldown",
+      "Customer Frontend Dashboard",
+      "Frontend Grafana Dashboard",
+      "Synthetics Test",
+      "Open metrics view (Coralogix k8s OOTB)",
+      "View Product Load Latency",
+      "Grafana - ELB Metrics",
+      "Query pod in Grafana (cpu_usage_total)",
+      "View Country Logs",
+      "New Relic - Trace",
+      "Jaeger - Open Trace",
+      "DataDog - Trace",
+      "Open metrics view (Grafana K8S Host)",
+      "AWS - EC2 Instance",
+      "Virustotal"
+    ]
+  },
+  "teamb": {
+    "count": 59,
+    "resources": [
+      {
+        "id": "0c2eeb37-e164-4d0f-8860-9207a524aa8a",
+        "name": "no span",
+        "url": "https://cx-coe-test.app.coralogix.in#/tracing/{{$d.json.span_id}}?selectedSpanId={{$d.json.span_id}}",
+        "isHidden": false,
+        "isPrivate": true,
+        "sourceType": "SOURCE_TYPE_LOG",
+        "applicationNames": [],
+        "subsystemNames": [],
+        "createdBy": "thulasiram.toorpu@coralogix.com"
+      },
+      {
+        "id": "2b72e43f-e05a-496a-980c-132ce219f811",
+        "name": "AWS-EC2",
+        "url": "https://{{$d.cloud.region}}.console.aws.amazon.com/ec2/v2/home?region={{$d.cloud.region}}#InstanceDetails:instanceId={{$d.cloud.instance.id}}",
+        "isHidden": false,
+        "isPrivate": true,
+        "sourceType": "SOURCE_TYPE_LOG",
+        "applicationNames": [],
+        "subsystemNames": [],
+        "createdBy": "thulasiram.toorpu@coralogix.com"
+      },
+      {
+        "id": "9dbdfb6d-a51b-433d-be3f-8ece1ef0385a",
+        "name": "aws2",
+        "url": "https://{{$d.cloud.region}}.console.aws.amazon.com/ec2/v2/home?region={{$d.cloud.region}}#InstanceDetails:instanceId={{$d.cloud.instance.id}}",
+        "isHidden": false,
+        "isPrivate": true,
+        "sourceType": "SOURCE_TYPE_LOG",
+        "applicationNames": [],
+        "subsystemNames": [],
+        "createdBy": "thulasiram.toorpu@coralogix.com"
+      },
+      {
+        "id": "db41bbb9-2fc5-43e0-9745-41800f0c7830",
+        "name": "K8 Host Dashboard",
+        "url": "https://cx-coe-test.app.coralogix.in#/infrastructure/k8s/pods?clusters=onlineboutique&namespaces=default",
+        "isHidden": false,
+        "isPrivate": true,
+        "sourceType": "SOURCE_TYPE_LOG",
+        "applicationNames": [],
+        "subsystemNames": [],
+        "createdBy": "thulasiram.toorpu@coralogix.com"
+      },
+      {
+        "id": "800ec69f-721b-4bad-a276-1b19974d9247",
+        "name": "JaegerView",
+        "url": "https://cx-coe-test.app.coralogix.in#/jaeger/search/{{$d.json.trace_id}}?selectedSpanId={{$d.json.span_id}}&start={{$p.start_date*1000}}&end={{$p.end_date*1000}}",
+        "isHidden": false,
+        "isPrivate": true,
+        "sourceType": "SOURCE_TYPE_LOG",
+        "applicationNames": [],
+        "subsystemNames": [],
+        "createdBy": "thulasiram.toorpu@coralogix.com"
+      },
+      {
+        "id": "24ddd5ec-9b64-44bf-8115-3a7836ed4093",
+        "name": "Product Sales Variables Demo",
+        "url": "https://cx-coe-test.app.coralogix.in#/dashboards/utwtr6Tro0RZC1mRjFs0I?var-product_name=}",
+        "isHidden": false,
+        "isPrivate": true,
+        "sourceType": "SOURCE_TYPE_LOG",
+        "applicationNames": [],
+        "subsystemNames": [],
+        "createdBy": "thulasiram.toorpu@coralogix.com"
+      },
+      {
+        "id": "2f5b3110-a374-42ff-82e2-e25728ad9ecc",
+        "name": "Product Demo - Variables",
+        "url": "https://cx-coe-test.app.coralogix.in#/dashboards/uj94q9Far8NBaCovTgfbT?var-product_id={{$d.product_id}}",
+        "isHidden": false,
+        "isPrivate": true,
+        "sourceType": "SOURCE_TYPE_LOG",
+        "applicationNames": [],
+        "subsystemNames": [],
+        "createdBy": "thulasiram.toorpu@coralogix.com"
+      },
+      {
+        "id": "6cfccc97-6760-434d-9647-6f5bd4422eb7",
+        "name": "Open Trace View ivan",
+        "url": "https://cx-coe-test.app.coralogix.in#/tracing/{{$d.traceID}}?selectedSpanId={{$d.spanID}}&start={{$p.start_date*1000}}&end={{$p.end_date*1000}}",
+        "isHidden": false,
+        "isPrivate": true,
+        "sourceType": "SOURCE_TYPE_LOG",
+        "applicationNames": [],
+        "subsystemNames": [],
+        "createdBy": "thulasiram.toorpu@coralogix.com"
+      },
+      {
+        "id": "fc3dea01-5949-4738-82b4-5bddcb7cc224",
+        "name": "message ventura",
+        "url": "https://{{$d.message}}",
+        "isHidden": false,
+        "isPrivate": true,
+        "sourceType": "SOURCE_TYPE_LOG",
+        "applicationNames": [],
+        "subsystemNames": [],
+        "createdBy": "thulasiram.toorpu@coralogix.com"
+      },
+      {
+        "id": "0bcf5a2e-c5fa-4188-af45-e5063903da4d",
+        "name": "KL_Trace_View",
+        "url": "https://cx-coe-test.app.coralogix.in#/tracing/{{$d.json.Scopes[0].TraceId}}?selectedSpanId={{$d.json.Scopes[0].SpanId}}&start={{$p.start_date*1000}}&end={{$p.end_date*1000}}",
+        "isHidden": false,
+        "isPrivate": true,
+        "sourceType": "SOURCE_TYPE_LOG",
+        "applicationNames": [],
+        "subsystemNames": [],
+        "createdBy": "thulasiram.toorpu@coralogix.com"
+      },
+      {
+        "id": "d276907d-22bf-4cce-aa54-34a5b09819d6",
+        "name": "Open Trace View ivan123",
+        "url": "https://cx-coe-test.app.coralogix.in#/query-new/tracing?query=%2522{{$d.cx_rum.traceId}}%2522&start={{$p.start_date*1000}}&end={{$p.end_date*1000}}",
+        "isHidden": false,
+        "isPrivate": true,
+        "sourceType": "SOURCE_TYPE_LOG",
+        "applicationNames": [],
+        "subsystemNames": [],
+        "createdBy": "thulasiram.toorpu@coralogix.com"
+      },
+      {
+        "id": "ff7fe4c0-2f42-4c07-a69d-1a908c94bb22",
+        "name": "OpenSearch",
+        "url": "http://{{$d.coralogix.logId}}",
+        "isHidden": false,
+        "isPrivate": true,
+        "sourceType": "SOURCE_TYPE_LOG",
+        "applicationNames": [],
+        "subsystemNames": [],
+        "createdBy": "thulasiram.toorpu@coralogix.com"
+      },
+      {
+        "id": "86b3f649-ae67-4a19-8e1f-63f0d83b1e0f",
+        "name": "platformEventType",
+        "url": "https://www.google.com/search?q={{$d.platform_event_type}}",
+        "isHidden": false,
+        "isPrivate": true,
+        "sourceType": "SOURCE_TYPE_LOG",
+        "applicationNames": [],
+        "subsystemNames": [],
+        "createdBy": "thulasiram.toorpu@coralogix.com"
+      },
+      {
+        "id": "5cdb06f2-d342-49ce-a665-3eace73bdc46",
+        "name": "What is that ip?",
+        "url": "https://whatismyipaddress.com/ip/{{$d.cx_rum.session_context.ip_geoip.ip_ipaddr}}",
+        "isHidden": false,
+        "isPrivate": true,
+        "sourceType": "SOURCE_TYPE_LOG",
+        "applicationNames": [],
+        "subsystemNames": [],
+        "createdBy": "thulasiram.toorpu@coralogix.com"
+      },
+      {
+        "id": "12f7a382-87b1-4e43-96e6-010f368fc3d0",
+        "name": "RANATEST",
+        "url": "https://cx-coe-test.app.coralogix.in/#/tracing/{{$d.traceID}}?selectedSpanId={{$d.spanID}}&start={{$p.start_date*1000}}&end={{$p.end_date*1000}}",
+        "isHidden": false,
+        "isPrivate": true,
+        "sourceType": "SOURCE_TYPE_LOG",
+        "applicationNames": [],
+        "subsystemNames": [],
+        "createdBy": "thulasiram.toorpu@coralogix.com"
+      },
+      {
+        "id": "691e2bb6-92c3-4e80-aba2-9169a8c55152",
+        "name": "Query Log",
+        "url": "https://cx-coe-test.app.coralogix.in#/query-new/logs?query=ip%3A%22{{$d.ip}}%22",
+        "isHidden": false,
+        "isPrivate": true,
+        "sourceType": "SOURCE_TYPE_LOG",
+        "applicationNames": [],
+        "subsystemNames": [],
+        "createdBy": "thulasiram.toorpu@coralogix.com"
+      },
+      {
+        "id": "2c433b82-8e64-478c-a2a6-34a8b568aa98",
+        "name": "Ryan's Dashboard",
+        "url": "https://cx-coe-test.app.coralogix.in#/dashboards/9GSPvLj01IIwXHwZ964dQ?var-hostname={{$d.resource.attributes.host_name}}&var-application={{$m.applicationName}}",
+        "isHidden": false,
+        "isPrivate": true,
+        "sourceType": "SOURCE_TYPE_LOG",
+        "applicationNames": [],
+        "subsystemNames": [],
+        "createdBy": "thulasiram.toorpu@coralogix.com"
+      },
+      {
+        "id": "78e49218-053f-49f3-9c01-53d47d3232a5",
+        "name": "Dashboard Time Range",
+        "url": "https://cx-coe-test.app.coralogix.in#/dashboards/9GSPvLj01IIwXHwZ964dQ?var-hostname={{$d.resource.attributes.host_name}}&var-application={{$m.applicationName}}&from={{$p.start_date}}&to={{$p.end_date}}",
+        "isHidden": false,
+        "isPrivate": true,
+        "sourceType": "SOURCE_TYPE_LOG",
+        "applicationNames": [],
+        "subsystemNames": [],
+        "createdBy": "thulasiram.toorpu@coralogix.com"
+      },
+      {
+        "id": "54d4298d-a5d1-4ea5-8469-bc3beff57119",
+        "name": "Google Error Message Troubleshoot",
+        "url": "https://www.google.com/search?q=troubleshoot%20{{$d.cx_rum.error_context.error_message}}",
+        "isHidden": false,
+        "isPrivate": true,
+        "sourceType": "SOURCE_TYPE_LOG",
+        "applicationNames": [],
+        "subsystemNames": [],
+        "createdBy": "thulasiram.toorpu@coralogix.com"
+      },
+      {
+        "id": "509647d8-a8a1-4469-afae-7cdf4dfa0352",
+        "name": "Ryan IP",
+        "url": "https://whatismyipaddress.com/ip/{{$d.sourceIPAddress}}",
+        "isHidden": false,
+        "isPrivate": true,
+        "sourceType": "SOURCE_TYPE_LOG",
+        "applicationNames": [],
+        "subsystemNames": [],
+        "createdBy": "thulasiram.toorpu@coralogix.com"
+      },
+      {
+        "id": "4cefb826-d79b-4726-be14-84c384a2aefe",
+        "name": "Virustotal",
+        "url": "https://www.virustotal.com/gui/ip-address/{{$p.selected_value}}",
+        "isHidden": false,
+        "isPrivate": false,
+        "sourceType": "SOURCE_TYPE_LOG",
+        "applicationNames": [],
+        "subsystemNames": [
+          "frontend"
+        ],
+        "createdBy": "thulasiram.toorpu@coralogix.com"
+      },
+      {
+        "id": "4379cf6a-339c-4b56-9f8d-a270c93a4913",
+        "name": "AWS - EC2 Instance",
+        "url": "https://{{$d.cloud.region}}.console.aws.amazon.com/ec2/home?region={{$d.cloud.region}}#InstanceDetails:instanceId={{$d.cloud.instance.id}}",
+        "isHidden": false,
+        "isPrivate": false,
+        "sourceType": "SOURCE_TYPE_LOG",
+        "applicationNames": [],
+        "subsystemNames": [],
+        "createdBy": "thulasiram.toorpu@coralogix.com"
+      },
+      {
+        "id": "936d6edd-ac2a-4529-bed5-55e4056203a3",
+        "name": "Open metrics view (Grafana K8S Host)",
+        "url": "https://cx-coe-test.app.coralogix.in#/grafana/d/l8S_EIF7k/kubernetes-hosts-metrics?orgId=6&var-datasource=Metrics&var-instance={{$d.resource.attributes[\"k8s.node.name\"]}}:9100&from={{$p.start_date}}&to={{$p.end_date}}",
+        "isHidden": false,
+        "isPrivate": false,
+        "sourceType": "SOURCE_TYPE_LOG",
+        "applicationNames": [],
+        "subsystemNames": [
+          "frontend"
+        ],
+        "createdBy": "thulasiram.toorpu@coralogix.com"
+      },
+      {
+        "id": "1a233884-43bb-46c9-989d-d726f1d4f0a4",
+        "name": "DataDog - Trace",
+        "url": "https://app.datadoghq.com/apm/traces?query=env%3A?&cols=core_service%2Ccore_resource_name%2Clog_duration%2Clog_http.method%2Clog_http.status_code&historicalData=false&messageDisplay=inline&sort=desc&spanID={{$d.Headers['X-Datadog-Trace-Id']}}&streamTraces=true&trace={{$d.Headers['X-Datadog-Trace-Id']}}{{$d.Headers['X-Datadog-Trace-Id']}}&traceID={{$d.Headers['X-Datadog-Trace-Id']}}",
+        "isHidden": false,
+        "isPrivate": false,
+        "sourceType": "SOURCE_TYPE_LOG",
+        "applicationNames": [
+          "windows_logs"
+        ],
+        "subsystemNames": [],
+        "createdBy": "thulasiram.toorpu@coralogix.com"
+      },
+      {
+        "id": "9cdd621c-5c49-4df5-b1ab-08f10a2fb4fc",
+        "name": "Jaeger - Open Trace",
+        "url": "https://cx-coe-test.app.coralogix.in#/jaeger/trace/{{$d.json.trace_id}}",
+        "isHidden": false,
+        "isPrivate": false,
+        "sourceType": "SOURCE_TYPE_LOG",
+        "applicationNames": [
+          "default"
+        ],
+        "subsystemNames": [
+          "shippingservice"
+        ],
+        "createdBy": "thulasiram.toorpu@coralogix.com"
+      },
+      {
+        "id": "8d415191-70b3-4ec7-b526-5b7616f55814",
+        "name": "New Relic - Trace",
+        "url": "https://one.eu.newrelic.com/nr1-core/distributed-tracing/distributed-trace-list/MzI3ODc4NHxBUE18QVBQTElDQVRJT058NDIyNjQ2OTk1?account=3278784&duration=3600000&state=05e07ce3-6d3c-523a-ee21-6395d9f73b46",
+        "isHidden": false,
+        "isPrivate": false,
+        "sourceType": "SOURCE_TYPE_LOG",
+        "applicationNames": [
+          "windows_logs"
+        ],
+        "subsystemNames": [],
+        "createdBy": "thulasiram.toorpu@coralogix.com"
+      },
+      {
+        "id": "ce1f125c-6291-45bb-9f7e-b67372bd7344",
+        "name": "View Country Logs",
+        "url": "https://cx-coe-test.app.coralogix.in#/query-new/logs?query={{$l.country}}&permalink=true",
+        "isHidden": false,
+        "isPrivate": false,
+        "sourceType": "SOURCE_TYPE_DATA_MAP",
+        "applicationNames": [],
+        "subsystemNames": [],
+        "createdBy": "thulasiram.toorpu@coralogix.com"
+      },
+      {
+        "id": "f1bcaa38-7077-47e5-8d29-71ff472e044d",
+        "name": "Query pod in Grafana (cpu_usage_total)",
+        "url": "https://cx-coe-test.app.coralogix.in#/grafana/explore?orgId=6&left=%5B%22now-1h%22,%22now%22,%22Metrics%22,%7B%22refId%22:%22A%22,%22exemplar%22:false,%22expr%22:%22avg(container_cpu_usage_seconds_total%20%7Bpod%3D%5C%22{{$l.pod}}%5C%22%7D)%22%7D%5D",
+        "isHidden": false,
+        "isPrivate": false,
+        "sourceType": "SOURCE_TYPE_DATA_MAP",
+        "applicationNames": [],
+        "subsystemNames": [],
+        "createdBy": "thulasiram.toorpu@coralogix.com"
+      },
+      {
+        "id": "326c314a-2fec-403e-acb0-1433d60b9d5a",
+        "name": "Grafana - ELB Metrics",
+        "url": "https://cx-coe-test.app.coralogix.in#/grafana/d/ckH9XYmVk/aws-elb-l2m-dashboard?orgId=6&var-elb_name={{$d.elb_name}}&var-country={{$d.client_ip_geoip.country_name}}&from={{$p.start_date}}&to={{$p.end_date}}",
+        "isHidden": false,
+        "isPrivate": false,
+        "sourceType": "SOURCE_TYPE_LOG",
+        "applicationNames": [
+          "aws-elb"
+        ],
+        "subsystemNames": [
+          "customers-elb"
+        ],
+        "createdBy": "thulasiram.toorpu@coralogix.com"
+      },
+      {
+        "id": "53433172-d945-41cd-aa8b-d129410b357b",
+        "name": "View Product Load Latency",
+        "url": "https://cx-coe-test.app.coralogix.in#/grafana/explore?orgId=6&left=%5B%22now-1h%22,%22now%22,%22Metrics%22,%7B%22refId%22:%22A%22,%22exemplar%22:true,%22expr%22:%22avg_over_time(product_latency_by_country%7Bcity%3D~%5C%22{{$l.city}}%5C%22,product%3D~%5C%22{{$l.product}}%5C%22%7D%5B5m%5D)%22%7D%5D",
+        "isHidden": false,
+        "isPrivate": false,
+        "sourceType": "SOURCE_TYPE_DATA_MAP",
+        "applicationNames": [],
+        "subsystemNames": [],
+        "createdBy": "thulasiram.toorpu@coralogix.com"
+      },
+      {
+        "id": "f8b6a803-3ae6-4023-9963-599a07b63cb2",
+        "name": "Open metrics view (Coralogix k8s OOTB)",
+        "url": "https://cx-coe-test.app.coralogix.in#/infrastructure/k8s/pods?clusters=onlineboutique&pods={{$d.resource.attributes[\"k8s_pod_name\"]}}",
+        "isHidden": false,
+        "isPrivate": false,
+        "sourceType": "SOURCE_TYPE_LOG",
+        "applicationNames": [
+          "default"
+        ],
+        "subsystemNames": [],
+        "createdBy": "thulasiram.toorpu@coralogix.com"
+      },
+      {
+        "id": "956fc765-bb99-4bd8-b85f-7b069747371a",
+        "name": "Synthetics Test",
+        "url": "https://app.checklyhq.com/checks/{{$d.check_id}}/results/browser/{{$d.check_result_id}}/",
+        "isHidden": false,
+        "isPrivate": false,
+        "sourceType": "SOURCE_TYPE_LOG",
+        "applicationNames": [
+          "synthetics"
+        ],
+        "subsystemNames": [],
+        "createdBy": "thulasiram.toorpu@coralogix.com"
+      },
+      {
+        "id": "e75bb4cb-ea1b-48d2-adce-9c346b2f8272",
+        "name": "Frontend Grafana Dashboard",
+        "url": "https://cx-coe-test.app.coralogix.in#/grafana/d/ckH9XYmVk1/frontend-l2m-dashboard?orgId=6&var-front_req_method={{$d.json.http_req_method}}&var-front_req_path={{$d.json.http_req_path}}&var-front_req_country_name={{$d.json.http_req_ip_geoip.country_name}}&from={{$p.start_date}}&to={{$p.end_date}}",
+        "isHidden": false,
+        "isPrivate": false,
+        "sourceType": "SOURCE_TYPE_LOG",
+        "applicationNames": [
+          "default"
+        ],
+        "subsystemNames": [
+          "frontend"
+        ],
+        "createdBy": "thulasiram.toorpu@coralogix.com"
+      },
+      {
+        "id": "1470ec65-941e-43a8-a1d7-00bfda0eb4b8",
+        "name": "Customer Frontend Dashboard",
+        "url": "https://cx-coe-test.app.coralogix.in#/dashboards/sbK8japc0NijCwgwX6sMv",
+        "isHidden": false,
+        "isPrivate": false,
+        "sourceType": "SOURCE_TYPE_LOG",
+        "applicationNames": [
+          "default"
+        ],
+        "subsystemNames": [
+          "frontend"
+        ],
+        "createdBy": "thulasiram.toorpu@coralogix.com"
+      },
+      {
+        "id": "11c727d7-d1b6-4ca0-a90a-2546dfb20dd1",
+        "name": "APM Service Drilldown",
+        "url": "https://cx-coe-test.app.coralogix.in#/apm/service-catalog/drilldown/overview?serviceName={{$m.subsystemName}}&newTimeRange=%7B%22type%22:%22custom%22,%22fromTimestamp%22:{{$p.start_date}},%22toTimestamp%22:{{$p.end_date}}%7D",
+        "isHidden": false,
+        "isPrivate": false,
+        "sourceType": "SOURCE_TYPE_LOG",
+        "applicationNames": [
+          "default"
+        ],
+        "subsystemNames": [],
+        "createdBy": "thulasiram.toorpu@coralogix.com"
+      },
+      {
+        "id": "891f4a8a-a632-4989-b8c7-605e667653d0",
+        "name": "GEO Map",
+        "url": "https://www.google.com/maps?q={{$d.json.http_req_ip_geoip.location_geopoint.lat}},{{$d.cx_rum.session_context.ip_geoip.location_geopoint.lon}}",
+        "isHidden": false,
+        "isPrivate": false,
+        "sourceType": "SOURCE_TYPE_LOG",
+        "applicationNames": [],
+        "subsystemNames": [],
+        "createdBy": "thulasiram.toorpu@coralogix.com"
+      },
+      {
+        "id": "dd27399a-652c-4779-9d91-de7c10138fce",
+        "name": "Open Host Metrics in Grafana",
+        "url": "https://cx-coe-test.app.coralogix.in#/grafana/d/l8S_EIF7k/kubernetes-hosts-metrics?orgId=6&var-datasource=Metrics&var-instance={{$d.host}}:9100&from={{$p.start_date}}&to={{$p.end_date}}",
+        "isHidden": false,
+        "isPrivate": false,
+        "sourceType": "SOURCE_TYPE_LOG",
+        "applicationNames": [],
+        "subsystemNames": [],
+        "createdBy": "thulasiram.toorpu@coralogix.com"
+      },
+      {
+        "id": "01c7f24a-1420-4ddc-8310-129e0073bfbf",
+        "name": "Open Trace View - json",
+        "url": "https://cx-coe-test.app.coralogix.in#/tracing/{{$d.json.trace_id}}?selectedSpanId={{$d.json.span_id}}&start={{$p.start_date*1000}}&end={{$p.end_date*1000}}",
+        "isHidden": false,
+        "isPrivate": false,
+        "sourceType": "SOURCE_TYPE_LOG",
+        "applicationNames": [],
+        "subsystemNames": [],
+        "createdBy": "thulasiram.toorpu@coralogix.com"
+      },
+      {
+        "id": "f95bcd78-9327-4697-9267-4169640e97a6",
+        "name": "Open Trace View",
+        "url": "https://cx-coe-test.app.coralogix.in#/tracing/{{$d.trace_id}}?selectedSpanId={{$d.span_id}}&start={{$p.start_date*1000}}&end={{$p.end_date*1000}}",
+        "isHidden": false,
+        "isPrivate": false,
+        "sourceType": "SOURCE_TYPE_LOG",
+        "applicationNames": [],
+        "subsystemNames": [],
+        "createdBy": "thulasiram.toorpu@coralogix.com"
+      },
+      {
+        "id": "f5f8c480-4d6d-4fd4-bb0f-906a256340c0",
+        "name": "Search Google",
+        "url": "https://www.google.com/search?q={{$d.cx_rum.session_context.ip}}",
+        "isHidden": false,
+        "isPrivate": false,
+        "sourceType": "SOURCE_TYPE_LOG",
+        "applicationNames": [],
+        "subsystemNames": [],
+        "createdBy": "thulasiram.toorpu@coralogix.com"
+      },
+      {
+        "id": "ceae7d4e-8953-4774-93f6-ce759ca14a48",
+        "name": "Search Bing",
+        "url": "https://www.bing.com/search?q=why+did+this+happened+{{$d.json.error}}",
+        "isHidden": false,
+        "isPrivate": false,
+        "sourceType": "SOURCE_TYPE_LOG",
+        "applicationNames": [],
+        "subsystemNames": [],
+        "createdBy": "thulasiram.toorpu@coralogix.com"
+      },
+      {
+        "id": "89c76e54-5a15-4734-9346-0dedd54435d1",
+        "name": "View Resource",
+        "url": "https://cx-coe-test.app.coralogix.in#/infrastructure/monitoring/catalog?menu=Hosts&menuItem=EC2_Instances&search=Name%253A{{$d.resource.attributes.host_id ? $d.resource.attributes.host_id : '' }}",
+        "isHidden": false,
+        "isPrivate": false,
+        "sourceType": "SOURCE_TYPE_LOG",
+        "applicationNames": [],
+        "subsystemNames": [
+          "frontend"
+        ],
+        "createdBy": "thulasiram.toorpu@coralogix.com"
+      },
+      {
+        "id": "125e9935-2353-43b9-96d2-9ffbadc1e885",
+        "name": "K8s Pods Dashboard",
+        "url": "https://cx-coe-test.app.coralogix.in#/infrastructure/k8s/pods?clusters={{$d.resource.attributes.k8s_cluster_name}}&pods={{$d.resource.attributes.k8s_pod_name}}",
+        "isHidden": false,
+        "isPrivate": false,
+        "sourceType": "SOURCE_TYPE_LOG",
+        "applicationNames": [],
+        "subsystemNames": [],
+        "createdBy": "thulasiram.toorpu@coralogix.com"
+      },
+      {
+        "id": "0641ecf7-099e-42e6-a1eb-66341fe69fd6",
+        "name": "Open google maps with CX Rum location data",
+        "url": "https://www.google.com/maps/@{{$d.cx_rum.session_context.ip_geoip.location_geopoint.lat}},{{$d.cx_rum.session_context.ip_geoip.location_geopoint.lon}},15z",
+        "isHidden": false,
+        "isPrivate": false,
+        "sourceType": "SOURCE_TYPE_LOG",
+        "applicationNames": [],
+        "subsystemNames": [
+          "cx_rum"
+        ],
+        "createdBy": "thulasiram.toorpu@coralogix.com"
+      },
+      {
+        "id": "198bcda6-2fd8-4d31-bb4a-8935d0364a6f",
+        "name": "VirusTotal - IP",
+        "url": "https://www.virustotal.com/gui/ip-address/{{$p.selected_value}}",
+        "isHidden": false,
+        "isPrivate": false,
+        "sourceType": "SOURCE_TYPE_LOG",
+        "applicationNames": [],
+        "subsystemNames": [],
+        "createdBy": "thulasiram.toorpu@coralogix.com"
+      },
+      {
+        "id": "e7130834-5438-4060-8881-6380b190da1c",
+        "name": "VirusTotal - Domain",
+        "url": "https://www.virustotal.com/gui/domain/{{$p.selected_value}}",
+        "isHidden": false,
+        "isPrivate": false,
+        "sourceType": "SOURCE_TYPE_LOG",
+        "applicationNames": [],
+        "subsystemNames": [],
+        "createdBy": "thulasiram.toorpu@coralogix.com"
+      },
+      {
+        "id": "dd6342a0-bd09-4d66-9649-9da92e920582",
+        "name": "AlienVault OTX - IP",
+        "url": "https://otx.alienvault.com/indicator/ip/{{$p.selected_value}}",
+        "isHidden": false,
+        "isPrivate": false,
+        "sourceType": "SOURCE_TYPE_LOG",
+        "applicationNames": [],
+        "subsystemNames": [],
+        "createdBy": "thulasiram.toorpu@coralogix.com"
+      },
+      {
+        "id": "17e15010-a99f-4322-b893-50538b3d86ba",
+        "name": "AlienVault OTX - Domain",
+        "url": "https://otx.alienvault.com/indicator/domain/{{$p.selected_value}}",
+        "isHidden": false,
+        "isPrivate": false,
+        "sourceType": "SOURCE_TYPE_LOG",
+        "applicationNames": [],
+        "subsystemNames": [],
+        "createdBy": "thulasiram.toorpu@coralogix.com"
+      },
+      {
+        "id": "1b9e6426-6108-4647-9bab-ad7f8a506a4e",
+        "name": "Talos Security - IP/Domain",
+        "url": "https://talosintelligence.com/reputation_center/lookup?search={{$p.selected_value}}",
+        "isHidden": false,
+        "isPrivate": false,
+        "sourceType": "SOURCE_TYPE_LOG",
+        "applicationNames": [],
+        "subsystemNames": [],
+        "createdBy": "thulasiram.toorpu@coralogix.com"
+      },
+      {
+        "id": "3ac80d0b-254b-43fc-b686-98f85b51826a",
+        "name": "Grey Noise - CVE",
+        "url": "https://viz.greynoise.io/query/?gnql=cve%3A{{$p.selected_value}}",
+        "isHidden": false,
+        "isPrivate": false,
+        "sourceType": "SOURCE_TYPE_LOG",
+        "applicationNames": [],
+        "subsystemNames": [],
+        "createdBy": "thulasiram.toorpu@coralogix.com"
+      },
+      {
+        "id": "63f3556e-2434-4b78-98d2-6c96612be919",
+        "name": "Shodan.io - IP/Domain",
+        "url": "https://www.shodan.io/search?query={{$p.selected_value}}",
+        "isHidden": false,
+        "isPrivate": false,
+        "sourceType": "SOURCE_TYPE_LOG",
+        "applicationNames": [],
+        "subsystemNames": [],
+        "createdBy": "thulasiram.toorpu@coralogix.com"
+      },
+      {
+        "id": "42f60793-cbb7-4885-821a-546471791f00",
+        "name": "BGP - IP",
+        "url": "https://bgp.he.net/ip/{{$p.selected_value}}",
+        "isHidden": false,
+        "isPrivate": false,
+        "sourceType": "SOURCE_TYPE_LOG",
+        "applicationNames": [],
+        "subsystemNames": [],
+        "createdBy": "thulasiram.toorpu@coralogix.com"
+      },
+      {
+        "id": "f25e9aa5-ffe3-49ad-9c78-53829c60652d",
+        "name": "NVD NIST - CVE",
+        "url": "https://nvd.nist.gov/vuln/detail/{{$p.selected_value}}",
+        "isHidden": false,
+        "isPrivate": false,
+        "sourceType": "SOURCE_TYPE_LOG",
+        "applicationNames": [],
+        "subsystemNames": [],
+        "createdBy": "thulasiram.toorpu@coralogix.com"
+      },
+      {
+        "id": "8a74423f-cccc-4bd8-ac34-69e0974601e3",
+        "name": "Grey Noise - IP",
+        "url": "https://viz.greynoise.io/ip/{{$p.selected_value}}",
+        "isHidden": false,
+        "isPrivate": false,
+        "sourceType": "SOURCE_TYPE_LOG",
+        "applicationNames": [],
+        "subsystemNames": [],
+        "createdBy": "thulasiram.toorpu@coralogix.com"
+      },
+      {
+        "id": "e2a7fc16-e0f0-4f8d-a803-958cb9b86d81",
+        "name": "Domaintools Whois Lookup",
+        "url": "https://whois.domaintools.com/{{$p.selected_value}}",
+        "isHidden": false,
+        "isPrivate": false,
+        "sourceType": "SOURCE_TYPE_LOG",
+        "applicationNames": [],
+        "subsystemNames": [],
+        "createdBy": "thulasiram.toorpu@coralogix.com"
+      },
+      {
+        "id": "946a25cf-163b-403c-9818-b3406f745e9e",
+        "name": "Trace CC",
+        "url": "https://caratlane.app.coralogix.in/#/tracing/{{$d.trace}}?selectedSpanId={{$d.span}}&start={{$d.start_date*1000}}&end={{$d.end_date*1000}}",
+        "isHidden": false,
+        "isPrivate": false,
+        "sourceType": "SOURCE_TYPE_LOG",
+        "applicationNames": [],
+        "subsystemNames": [],
+        "createdBy": "thulasiram.toorpu@coralogix.com"
+      },
+      {
+        "id": "280f7b8a-50d2-4cb5-9eb1-8b19f112a49d",
+        "name": "Infra - Pod",
+        "url": "https://cx-coe-test.app.coralogix.in#/infrastructure/monitoring/explorer?menu=Kubernetes&menuItem=Pods&entryDeeplink=17266:k8s_cluster_name%3D{{$d.resource.attributes['k8s_cluster_name']}}%7Ck8s_namespace_name%3D{{$d.resource.attributes['k8s_namespace_name']}}%7Ck8s_pod_name%3D{{$d.resource.attributes['k8s_pod_name']}}&shareUrl=true",
+        "isHidden": false,
+        "isPrivate": false,
+        "sourceType": "SOURCE_TYPE_LOG",
+        "applicationNames": [],
+        "subsystemNames": [],
+        "createdBy": "thulasiram.toorpu@coralogix.com"
+      },
+      {
+        "id": "b1144f4e-a10b-4b60-a543-b7e0a0e71f98",
+        "name": "Infra - Cluster",
+        "url": "https://cx-coe-test.app.coralogix.in#/infrastructure/monitoring/explorer?menu=Kubernetes&menuItem=Clusters&entryDeeplink=17266:k8s_cluster_name%3D{{$d.resource.attributes['k8s_cluster_name']}}&shareUrl=true",
+        "isHidden": false,
+        "isPrivate": false,
+        "sourceType": "SOURCE_TYPE_LOG",
+        "applicationNames": [],
+        "subsystemNames": [],
+        "createdBy": "thulasiram.toorpu@coralogix.com"
+      },
+      {
+        "id": "78c3f54b-ce91-4cbc-b74f-c4a81a4bd30c",
+        "name": "Infra - Node",
+        "url": "https://cx-coe-test.app.coralogix.in#/infrastructure/monitoring/explorer?menu=Kubernetes&menuItem=Nodes&entryDeeplink=17266:k8s_cluster_name%3D{{$d.resource.attributes['k8s_cluster_name']}}%7Ck8s_node_name%3D{{$d.resource.attributes['k8s_node_name']}}&shareUrl=true",
+        "isHidden": false,
+        "isPrivate": false,
+        "sourceType": "SOURCE_TYPE_LOG",
+        "applicationNames": [],
+        "subsystemNames": [],
+        "createdBy": "thulasiram.toorpu@coralogix.com"
+      }
+    ],
+    "resource_identifiers": [
+      "no span",
+      "AWS-EC2",
+      "aws2",
+      "K8 Host Dashboard",
+      "JaegerView",
+      "Product Sales Variables Demo",
+      "Product Demo - Variables",
+      "Open Trace View ivan",
+      "message ventura",
+      "KL_Trace_View",
+      "Open Trace View ivan123",
+      "OpenSearch",
+      "platformEventType",
+      "What is that ip?",
+      "RANATEST",
+      "Query Log",
+      "Ryan's Dashboard",
+      "Dashboard Time Range",
+      "Google Error Message Troubleshoot",
+      "Ryan IP",
+      "Virustotal",
+      "AWS - EC2 Instance",
+      "Open metrics view (Grafana K8S Host)",
+      "DataDog - Trace",
+      "Jaeger - Open Trace",
+      "New Relic - Trace",
+      "View Country Logs",
+      "Query pod in Grafana (cpu_usage_total)",
+      "Grafana - ELB Metrics",
+      "View Product Load Latency",
+      "Open metrics view (Coralogix k8s OOTB)",
+      "Synthetics Test",
+      "Frontend Grafana Dashboard",
+      "Customer Frontend Dashboard",
+      "APM Service Drilldown",
+      "GEO Map",
+      "Open Host Metrics in Grafana",
+      "Open Trace View - json",
+      "Open Trace View",
+      "Search Google",
+      "Search Bing",
+      "View Resource",
+      "K8s Pods Dashboard",
+      "Open google maps with CX Rum location data",
+      "VirusTotal - IP",
+      "VirusTotal - Domain",
+      "AlienVault OTX - IP",
+      "AlienVault OTX - Domain",
+      "Talos Security - IP/Domain",
+      "Grey Noise - CVE",
+      "Shodan.io - IP/Domain",
+      "BGP - IP",
+      "NVD NIST - CVE",
+      "Grey Noise - IP",
+      "Domaintools Whois Lookup",
+      "Trace CC",
+      "Infra - Pod",
+      "Infra - Cluster",
+      "Infra - Node"
+    ]
+  },
+  "metadata": {
+    "created_by": "version_manager",
+    "purpose": "pre_migration_snapshot"
+  }
+}

@@ -1,0 +1,297 @@
+{
+  "dashboard": {
+    "annotations": {
+      "list": [
+        {
+          "builtIn": 1,
+          "datasource": {
+            "type": "grafana",
+            "uid": "-- Grafana --"
+          },
+          "enable": true,
+          "hide": true,
+          "iconColor": "rgba(0, 211, 255, 1)",
+          "name": "Annotations & Alerts",
+          "target": {
+            "limit": 100,
+            "matchAny": false,
+            "tags": [],
+            "type": "dashboard"
+          },
+          "type": "dashboard"
+        }
+      ]
+    },
+    "editable": true,
+    "fiscalYearStartMonth": 0,
+    "graphTooltip": 0,
+    "links": [],
+    "liveNow": false,
+    "maxDataPoints": 3000,
+    "panels": [
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "-FPV4La7z"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "drawStyle": "line",
+              "fillOpacity": 0,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "lineInterpolation": "linear",
+              "lineWidth": 1,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 12,
+          "w": 24,
+          "x": 0,
+          "y": 0
+        },
+        "id": 2,
+        "maxDataPoints": 3000,
+        "options": {
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "tooltip": {
+            "mode": "single",
+            "sort": "none"
+          }
+        },
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "-FPV4La7z"
+            },
+            "editorMode": "code",
+            "expr": "((((((sum(failed_playback_api_total_without_content_id{page_type='PAGE_TYPE_WATCH', error_code!~\"ERR_PB_1405|ERR_PB_1411|ERR_PB_1410|ERR_PB_1424|ERR_PB_1415|ERR_PB_1426|Unknown|NET_100|NET_101|HTTP_404|NET_103|NET_104|NET_201|NET_301|PB_IOS_NM-1002|PB_IOS_NM-1005|PB_TVOS_NM-1005|NET_102|ERR_CON_041|ERR_PB_1419|ERR_PB_1430|HTTP_475|BFF_FAILED_HTTP_475|475|NET_105|NET_107|NET_106|NET_108|BFF_FAILED_NET_102|BFF_FAILED_NET_103|BFF_FAILED_NET_104|ERR_PB_1431|ERR_PB_1432\", country=~'$country', platform!='PLATFORM_UNSPECIFIED', platform='$platform'}) by (platform) or on () (vector(0) + sum(failed_video_total_without_content_id{play_type='PLAY_TYPE_WATCH_PAGE', country=~'$country', platform!='PLATFORM_UNSPECIFIED', platform='$platform', error_code!~\"NM-1002_X|NM-4740|NM-1000|NM-4290|NM-4031|NM-4730|CE-1008|CE-16845|NM-1002|NM-1002_1\"}) by (platform))) or on () vector(0)) / sum(watch_attempt_total_without_content_id{country=~'$country', platform!='PLATFORM_UNSPECIFIED', platform='$platform'}) by (platform)) * 100) > (quantile_over_time(0.99,((((sum(failed_playback_api_total_without_content_id{page_type='PAGE_TYPE_WATCH', error_code!~\"ERR_PB_1405|ERR_PB_1411|ERR_PB_1410|ERR_PB_1424|ERR_PB_1415|ERR_PB_1426|Unknown|NET_100|NET_101|HTTP_404|NET_103|NET_104|NET_201|NET_301|PB_IOS_NM-1002|PB_IOS_NM-1005|PB_TVOS_NM-1005|NET_102|ERR_CON_041|ERR_PB_1419|ERR_PB_1430|HTTP_475|BFF_FAILED_HTTP_475|475|NET_105|NET_107|NET_106|NET_108|BFF_FAILED_NET_102|BFF_FAILED_NET_103|BFF_FAILED_NET_104|ERR_PB_1431|ERR_PB_1432\", country=~'$country', platform!='PLATFORM_UNSPECIFIED', platform='$platform'}) by (platform) or on () (vector(0) + sum(failed_video_total_without_content_id{play_type='PLAY_TYPE_WATCH_PAGE', country=~'$country', platform!='PLATFORM_UNSPECIFIED', platform='$platform', error_code!~\"NM-1002_X|NM-4740|NM-1000|NM-4290|NM-4031|NM-4730|CE-1008|CE-16845|NM-1002|NM-1002_1\"}) by (platform))) or on () vector(0)) / sum(watch_attempt_total_without_content_id{country=~'$country', platform!='PLATFORM_UNSPECIFIED', platform='$platform'}) by (platform)) * 100)[7d]))) or on () vector(0))",
+            "legendFormat": "__auto",
+            "range": true,
+            "refId": "A"
+          }
+        ],
+        "title": "PFR > 99th Percentile",
+        "type": "timeseries"
+      },
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "-FPV4La7z"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "drawStyle": "line",
+              "fillOpacity": 0,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "lineInterpolation": "linear",
+              "lineWidth": 1,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 12,
+          "w": 24,
+          "x": 0,
+          "y": 12
+        },
+        "id": 3,
+        "maxDataPoints": 3000,
+        "options": {
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "tooltip": {
+            "mode": "single",
+            "sort": "none"
+          }
+        },
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "-FPV4La7z"
+            },
+            "editorMode": "code",
+            "expr": "((((sum(failed_video_total_without_content_id{play_type='PLAY_TYPE_WATCH_PAGE', error_code!~'NM-1002_X|NM-4740|NM-1000|NM-4290|NM-4031|NM-4730|CE-1008|CE-16845|NM-1002|NM-1002_1',country=~'$country', platform!='PLATFORM_UNSPECIFIED', platform='$platform'}) by (platform) or on () vector(0) + sum(failed_playback_api_total_without_content_id{play_type='watch_page', error_code!~'ERR_PB_1405|ERR_PB_1411|ERR_PB_1410|ERR_PB_1424|ERR_PB_1415|ERR_PB_1426|Unknown|NET_100|NET_101|HTTP_404|NET_103|NET_104|NET_201|NET_301|PB_IOS_NM-1002|PB_IOS_NM-1005|PB_TVOS_NM-1005|NET_102|ERR_CON_041|ERR_PB_1419|ERR_PB_1430|HTTP_475|BFF_FAILED_HTTP_475|475|NET_105|NET_107|NET_106|NET_108|BFF_FAILED_NET_102|BFF_FAILED_NET_103|BFF_FAILED_NET_104|ERR_PB_1431|ERR_PB_1432', country=~'$country', platform!='PLATFORM_UNSPECIFIED', platform='$platform'}) by (platform) or on () vector(0) + sum(failed_playback_api_total_without_content_id{play_type='watch_page', error_code=~'NET_100|NET_101|NET_102|NET_103|NET_104|NET_301|NET_201|NET_105|NET_106|NET_107|NET_108|BFF_FAILED_NET_102|BFF_FAILED_NET_103|BFF_FAILED_NET_104', newtork_type!='NETWORK_TYPE_OFFLINE', country=~'$country', platform!='PLATFORM_UNSPECIFIED', platform='$platform'}) by (platform) or on () vector(0))/ sum(watch_attempt_total_without_content_id{play_type='watch_page', country=~'$country', platform!='PLATFORM_UNSPECIFIED', platform='$platform'}) by (platform)) * 100) or on () vector(0)) > quantile_over_time(0.99,((((sum(failed_video_total_without_content_id{play_type='PLAY_TYPE_WATCH_PAGE', error_code!~'NM-1002_X|NM-4740|NM-1000|NM-4290|NM-4031|NM-4730|CE-1008|CE-16845|NM-1002|NM-1002_1',country=~'$country', platform!='PLATFORM_UNSPECIFIED', platform='$platform'}) by (platform) or on () vector(0) + sum(failed_playback_api_total_without_content_id{play_type='watch_page', error_code!~'ERR_PB_1405|ERR_PB_1411|ERR_PB_1410|ERR_PB_1424|ERR_PB_1415|ERR_PB_1426|Unknown|NET_100|NET_101|HTTP_404|NET_103|NET_104|NET_201|NET_301|PB_IOS_NM-1002|PB_IOS_NM-1005|PB_TVOS_NM-1005|NET_102|ERR_CON_041|ERR_PB_1419|ERR_PB_1430|HTTP_475|BFF_FAILED_HTTP_475|475|NET_105|NET_107|NET_106|NET_108|BFF_FAILED_NET_102|BFF_FAILED_NET_103|BFF_FAILED_NET_104|ERR_PB_1431|ERR_PB_1432', country=~'$country', platform!='PLATFORM_UNSPECIFIED', platform='$platform'}) by (platform) or on () vector(0) + sum(failed_playback_api_total_without_content_id{play_type='watch_page', error_code=~'NET_100|NET_101|NET_102|NET_103|NET_104|NET_301|NET_201|NET_105|NET_106|NET_107|NET_108|BFF_FAILED_NET_102|BFF_FAILED_NET_103|BFF_FAILED_NET_104', newtork_type!='NETWORK_TYPE_OFFLINE', country=~'$country', platform!='PLATFORM_UNSPECIFIED', platform='$platform'}) by (platform) or on () vector(0))/ sum(watch_attempt_total_without_content_id{play_type='watch_page', country=~'$country', platform!='PLATFORM_UNSPECIFIED', platform='$platform'}) by (platform)) * 100) or on () vector(0)))",
+            "legendFormat": "__auto",
+            "range": true,
+            "refId": "A"
+          }
+        ],
+        "title": "Updated(PFR > 99th Percentile)",
+        "type": "timeseries"
+      }
+    ],
+    "schemaVersion": 37,
+    "style": "dark",
+    "tags": [],
+    "templating": {
+      "list": [
+        {
+          "current": {
+            "selected": false,
+            "text": [
+              "PH"
+            ],
+            "value": [
+              "PH"
+            ]
+          },
+          "datasource": {
+            "type": "prometheus",
+            "uid": "-FPV4La7z"
+          },
+          "definition": "label_values(failed_playback_api_total_without_content_id,country)",
+          "hide": 0,
+          "includeAll": false,
+          "label": "country",
+          "multi": true,
+          "name": "country",
+          "options": [],
+          "query": {
+            "query": "label_values(failed_playback_api_total_without_content_id,country)",
+            "refId": "StandardVariableQuery"
+          },
+          "refresh": 1,
+          "regex": "",
+          "skipUrlSync": false,
+          "sort": 0,
+          "type": "query"
+        },
+        {
+          "current": {
+            "selected": false,
+            "text": "PLATFORM_TIZENTV",
+            "value": "PLATFORM_TIZENTV"
+          },
+          "datasource": {
+            "type": "prometheus",
+            "uid": "-FPV4La7z"
+          },
+          "definition": "label_values(failed_playback_api_total_without_content_id,platform)",
+          "hide": 0,
+          "includeAll": false,
+          "label": "platform",
+          "multi": true,
+          "name": "platform",
+          "options": [],
+          "query": {
+            "query": "label_values(failed_playback_api_total_without_content_id,platform)",
+            "refId": "StandardVariableQuery"
+          },
+          "refresh": 1,
+          "regex": "",
+          "skipUrlSync": false,
+          "sort": 0,
+          "type": "query"
+        }
+      ]
+    },
+    "time": {
+      "from": "now-6h",
+      "to": "now"
+    },
+    "timepicker": {},
+    "timezone": "",
+    "title": "PFR % Greater than P99",
+    "uid": "4La7zcs",
+    "version": 1,
+    "weekStart": ""
+  },
+  "folderUid": "d4480be7-99b5-4c30-85ad-a79f79c08ce9",
+  "overwrite": true
+}

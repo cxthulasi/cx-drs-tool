@@ -1,0 +1,86 @@
+{
+  "timestamp": "2025-11-08T02:48:16.425769",
+  "service": "recording-rules",
+  "team": "teama",
+  "resources": [
+    {
+      "id": "01K7M1MPWM8XFPNCKJ67X6ZB4Y",
+      "groups": [
+        {
+          "name": "somegroup",
+          "interval": 60,
+          "limit": "0",
+          "rules": [
+            {
+              "record": "somemetric",
+              "expr": "sum(amazonaws_com_AWS_ApplicationELB_ActiveConnectionCount_avg)",
+              "lastEvalDurationMs": "2"
+            }
+          ],
+          "lastEvalAt": "1762550225",
+          "id": "01K7M1MPWN6MKGJ9SN5BZCXJ7B"
+        }
+      ],
+      "name": "samplegroup"
+    },
+    {
+      "id": "01K87VPWWYCZKT0DP470GPYN0K",
+      "groups": [
+        {
+          "name": "cx_slo_hourly_status",
+          "interval": 3600,
+          "limit": "0",
+          "rules": [
+            {
+              "record": "cx:slo:statuses:hourly",
+              "expr": "count_values(\"status\", ceil(clamp(1- ((((count_over_time(cx:slo:window{slo_id=\"76af8c83-2b65-476f-8f04-d3df1fd954f0\",revision=\"1\"}[28d]) - sum_over_time(cx:slo:window{slo_id=\"76af8c83-2b65-476f-8f04-d3df1fd954f0\",revision=\"1\"}[28d])) / count_over_time(cx:slo:window{slo_id=\"76af8c83-2b65-476f-8f04-d3df1fd954f0\",revision=\"1\"}[28d])) or on() vector(0))) / (1-(99.95/100)) , 0, 1) * 4))",
+              "labels": {
+                "revision": "1",
+                "slo_id": "76af8c83-2b65-476f-8f04-d3df1fd954f0",
+                "slo_time_window": "28d"
+              },
+              "lastEvalDurationMs": "259"
+            }
+          ],
+          "lastEvalAt": "1762546934",
+          "id": "01K87VPWX082HMK3DTTY2HBTYM"
+        },
+        {
+          "name": "cx_slo_window_based",
+          "interval": 60,
+          "limit": "0",
+          "rules": [
+            {
+              "record": "cx:slo:window",
+              "expr": "((clamp(histogram_quantile(0.95, sum(increase(duration_ms_bucket)) by (service_name, le)) > 65, 1, 1)) or on() vector(0)) and count(histogram_quantile(0.95, sum(increase(duration_ms_bucket)) by (service_name, le))[60]) by (service_name) > 0",
+              "labels": {
+                "revision": "1",
+                "slo_id": "76af8c83-2b65-476f-8f04-d3df1fd954f0",
+                "slo_time_window": "28d"
+              },
+              "lastEvalDurationMs": "6"
+            },
+            {
+              "record": "cx:slo:target",
+              "expr": "99.95",
+              "labels": {
+                "revision": "1",
+                "slo_id": "76af8c83-2b65-476f-8f04-d3df1fd954f0",
+                "slo_time_window": "28d"
+              },
+              "lastEvalDurationMs": "0"
+            }
+          ],
+          "lastEvalAt": "1762550234",
+          "id": "01K87VPWWZ5ZX651SVJE9XK7AC"
+        }
+      ],
+      "name": "cx:slo:76af8c83-2b65-476f-8f04-d3df1fd954f0"
+    }
+  ],
+  "count": 2,
+  "resource_identifiers": [
+    "samplegroup",
+    "cx:slo:76af8c83-2b65-476f-8f04-d3df1fd954f0"
+  ]
+}

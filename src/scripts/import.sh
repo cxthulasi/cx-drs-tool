@@ -21,15 +21,15 @@ else
 fi
 
 # Check if required Grafana credentials are set
-if [ -z "$TEAMA_HOST" ] || [ -z "$TEAMA_KEY" ]; then
-    echo "❌ ERROR: TEAMA_HOST and TEAMA_KEY must be set in .env file"
+if [ -z "$TEAMA_HOST" ] || [ -z "$CX_API_KEY_TEAMA" ]; then
+    echo "❌ ERROR: TEAMA_HOST and CX_API_KEY_TEAMA must be set in .env file"
     echo "   TEAMA_HOST: ${TEAMA_HOST:-"Not set"}"
-    echo "   TEAMA_KEY: ${TEAMA_KEY:-"Not set"}"
+    echo "   CX_API_KEY_TEAMA: ${CX_API_KEY_TEAMA:-"Not set"}"
     echo ""
     echo "📝 To fix this:"
     echo "   1. Edit .env file in the project root"
     echo "   2. Set TEAMA_HOST to your Team A Grafana URL"
-    echo "   3. Set TEAMA_KEY to your Team A service account API key"
+    echo "   3. Set CX_API_KEY_TEAMA to your Team A service account API key"
     exit 1
 fi
 
@@ -47,16 +47,16 @@ if [ ! -d $SCRIPT_DIR/folders ] ; then
 fi
 
 # fetch dashboard details
-for dash in $(curl -s -k -H "Authorization: Bearer $TEAMA_KEY" $TEAMA_HOST/api/search\?query\=\& | jq -r '.[] | select(.type == "dash-db") | .uid'); do
-  curl -s -k -H "Authorization: Bearer $TEAMA_KEY" "$TEAMA_HOST/api/dashboards/uid/$dash" \
+for dash in $(curl -s -k -H "Authorization: Bearer $CX_API_KEY_TEAMA" $TEAMA_HOST/api/search\?query\=\& | jq -r '.[] | select(.type == "dash-db") | .uid'); do
+  curl -s -k -H "Authorization: Bearer $CX_API_KEY_TEAMA" "$TEAMA_HOST/api/dashboards/uid/$dash" \
     | jq '. |= (.folderUid=.meta.folderUid) |del(.meta) |del(.dashboard.id) + {overwrite: true}' \
     > dashboards/${dash}.json
   echo "Dashboard: ${dash} saved."
 done
 
 # fetch folder details
-for folder in $(curl -s -k -H "Authorization: Bearer $TEAMA_KEY" $TEAMA_HOST/api/folders |  jq -r '.[] | .uid'); do
-  curl -s -k -H "Authorization: Bearer $TEAMA_KEY" $TEAMA_HOST/api/folders/$folder \
+for folder in $(curl -s -k -H "Authorization: Bearer $CX_API_KEY_TEAMA" $TEAMA_HOST/api/folders |  jq -r '.[] | .uid'); do
+  curl -s -k -H "Authorization: Bearer $CX_API_KEY_TEAMA" $TEAMA_HOST/api/folders/$folder \
     | jq '. |del(.id) + {overwrite: true}' \
     > folders/${folder}.json
   echo "Folder: ${folder} saved."

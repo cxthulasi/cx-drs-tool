@@ -1,0 +1,4666 @@
+{
+  "timestamp": "2025-11-04T15:58:45.258275",
+  "service": "parsing-rules",
+  "team": "teamb",
+  "resources": [
+    {
+      "id": "3b209415-9e88-4b24-8eda-bef16d224aa1",
+      "name": "OTEL -> filebeat",
+      "description": "Converts OTEL log to filebeat format",
+      "creator": "himanshu.gupta@jiostar.com",
+      "enabled": true,
+      "hidden": false,
+      "ruleMatchers": [],
+      "ruleSubgroups": [
+        {
+          "id": "7044a2fd-b221-4b18-85a9-f6f5b10c3cd6",
+          "rules": [
+            {
+              "id": "31eeebfb-d3ea-4256-9d96-f9c0d984dc6d",
+              "name": "Remove unwanted fields from the log structure",
+              "description": "{\n    \"logRecord\": {\n        \"attributes\": {\n            \"@timestamp\": \"2025-08-14T09:30:13.154821701Z\",\n            \"container-name\": \"main\",\n            \"k8s-cluster-name\": \"hs-eks-nonprod-api-aps1\",\n            \"message_obj\": \"{\\\"level\\\":\\\"error\\\",\\\"service\\\":\\\"hs-core-plugins\\\",\\\"env\\\":\\\"preprod\\\",\\\"X-Hs-Request-Id\\\":\\\"3B5F2826-1F89-4B2C-8B9B-2A086D67E632\\\",\\\"api_path\\\":\\\"/v2/widget-type-instance/:widget_type_instance_name\\\",\\\"country\\\":\\\"in\\\",\\\"domain_team\\\":\\\"personalisation\\\",\\\"honeycomb_env\\\":\\\"pp\\\",\\\"otel_service_name\\\":\\\"hs-core-page-compositor\\\",\\\"platform\\\":\\\"ios\\\",\\\"plugin_type\\\":\\\"hashicorp\\\",\\\"span_id\\\":\\\"428a8cd5a8999935\\\",\\\"trace_id\\\":\\\"fc4b5ce5602b10793f7c968f6d29e940\\\",\\\"widget_instance_name\\\":\\\"ContentCollection\\\",\\\"widget_template_name\\\":\\\"ScrollableTrayWidget\\\",\\\"widget_type_instance\\\":\\\"ContentCollection\\\",\\\"error\\\":\\\"unable to fetch page name from requestCtx\\\",\\\"time\\\":1755163813,\\\"message\\\":\\\"unable to fetch page name from requestCtx\\\"}\",\n            \"source\": \"page-compositor-gql-657b9d5d75-qr8d7\"\n        },\n        \"body\": \"\",\n        \"observedTimeUnixNano\": 1755163813347301000,\n        \"timeUnixNano\": 1755163813154821600\n    },\n    \"resource\": {\n        \"attributes\": {\n            \"k8s.deployment.name\": \"page-compositor-gql\",\n            \"k8s.namespace.name\": \"hs-core\"\n        }\n    },\n    \"scope\": {\n        \"attributes\": {}\n    }\n}",
+              "sourceField": "text",
+              "parameters": {
+                "removeFieldsParameters": {
+                  "fields": [
+                    "cx_rum.browser_sdk.version"
+                  ]
+                }
+              },
+              "enabled": false,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 1
+        },
+        {
+          "id": "38602874-2ecd-49fe-aa09-282feefb8a12",
+          "rules": [
+            {
+              "id": "3c014808-afc3-4f96-89bc-c88558946301",
+              "name": "Extract attributes",
+              "description": "{\n  \"@timestamp\": \"2025-08-14T09:30:13.154821701Z\",\n  \"container-name\": \"main\",\n  \"k8s-cluster-name\": \"hs-eks-nonprod-api-aps1\",\n  \"message_obj\": \"{\\\"level\\\":\\\"error\\\",\\\"service\\\":\\\"hs-core-plugins\\\",\\\"env\\\":\\\"preprod\\\",\\\"X-Hs-Request-Id\\\":\\\"3B5F2826-1F89-4B2C-8B9B-2A086D67E632\\\",\\\"api_path\\\":\\\"/v2/widget-type-instance/:widget_type_instance_name\\\",\\\"country\\\":\\\"in\\\",\\\"domain_team\\\":\\\"personalisation\\\",\\\"honeycomb_env\\\":\\\"pp\\\",\\\"otel_service_name\\\":\\\"hs-core-page-compositor\\\",\\\"platform\\\":\\\"ios\\\",\\\"plugin_type\\\":\\\"hashicorp\\\",\\\"span_id\\\":\\\"428a8cd5a8999935\\\",\\\"trace_id\\\":\\\"fc4b5ce5602b10793f7c968f6d29e940\\\",\\\"widget_instance_name\\\":\\\"ContentCollection\\\",\\\"widget_template_name\\\":\\\"ScrollableTrayWidget\\\",\\\"widget_type_instance\\\":\\\"ContentCollection\\\",\\\"error\\\":\\\"unable to fetch page name from requestCtx\\\",\\\"time\\\":1755163813,\\\"message\\\":\\\"unable to fetch page name from requestCtx\\\"}\",\n  \"source\": \"page-compositor-gql-657b9d5d75-qr8d7\"\n}",
+              "sourceField": "text",
+              "parameters": {
+                "jsonExtractParameters": {
+                  "destinationFieldType": "DESTINATION_FIELD_TEXT",
+                  "rule": "logRecord.attributes",
+                  "destinationFieldText": "text"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 2
+        }
+      ],
+      "order": 1
+    },
+    {
+      "id": "f91c80f2-1ab2-4eda-8b02-6d857c5aeb36",
+      "name": "k8s Opentelemetry parsing",
+      "description": "k8s Opentelemetry extension pack",
+      "creator": "k8s Opentelemetry extension pack",
+      "enabled": true,
+      "hidden": false,
+      "ruleMatchers": [],
+      "ruleSubgroups": [
+        {
+          "id": "12391152-5eb6-47c5-be6d-1bfe9e783835",
+          "rules": [
+            {
+              "id": "45cf2cf5-fb01-4834-8ea0-bac442bc61cc",
+              "name": "Stringify logRecord",
+              "description": "",
+              "sourceField": "text.logRecord",
+              "parameters": {
+                "jsonStringifyParameters": {
+                  "destinationField": "text.logRecord_tmp",
+                  "deleteSource": true
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 1
+        },
+        {
+          "id": "0c9817dd-fcd1-4c02-a240-bc4f736e9ac9",
+          "rules": [
+            {
+              "id": "e08b761b-74ef-4526-a217-cf1f0cfcebac",
+              "name": "Parse json logRecord_tmp",
+              "description": "",
+              "sourceField": "text.logRecord_tmp",
+              "parameters": {
+                "jsonParseParameters": {
+                  "destinationField": "text",
+                  "deleteSource": true,
+                  "escapedValue": null,
+                  "overrideDest": false
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 2
+        },
+        {
+          "id": "9a497f76-28f9-45d0-93fd-e3303b27af22",
+          "rules": [
+            {
+              "id": "e416e040-2acf-428f-a9f0-6bb6c544d59a",
+              "name": "Stringify body",
+              "description": "",
+              "sourceField": "text.body",
+              "parameters": {
+                "jsonStringifyParameters": {
+                  "destinationField": "text.body_tmp",
+                  "deleteSource": true
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 3
+        },
+        {
+          "id": "4748bca2-e448-467e-892c-0f9394d4b503",
+          "rules": [
+            {
+              "id": "5daa027f-33fd-4b9c-85c2-7d7ca3c99857",
+              "name": "Parse json body",
+              "description": "",
+              "sourceField": "text.body",
+              "parameters": {
+                "jsonParseParameters": {
+                  "destinationField": "text",
+                  "deleteSource": true,
+                  "escapedValue": null,
+                  "overrideDest": false
+                }
+              },
+              "enabled": true,
+              "order": 1
+            },
+            {
+              "id": "cb8874ce-afb7-4c78-92d5-aaecc8a9b6aa",
+              "name": "Parse json body_tmp",
+              "description": "",
+              "sourceField": "text.body_tmp",
+              "parameters": {
+                "jsonParseParameters": {
+                  "destinationField": "text",
+                  "deleteSource": true,
+                  "escapedValue": null,
+                  "overrideDest": false
+                }
+              },
+              "enabled": true,
+              "order": 2
+            }
+          ],
+          "enabled": true,
+          "order": 4
+        },
+        {
+          "id": "e21c31a8-eb4e-4e44-b316-d4ad11808d2d",
+          "rules": [
+            {
+              "id": "b09b3d3f-bb2e-47b1-a8bd-6dab2f709b03",
+              "name": "Replacing all dots within field names with underscores",
+              "description": "",
+              "sourceField": "text",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "text",
+                  "replaceNewVal": "\"${1}_${2}_${3}_${4}_${5}_${6}_${7}_${8}_${9}_${10}\":",
+                  "rule": "\"([a-zA-Z\\d\\_]+)\\.([a-zA-Z\\d\\_]+)(?:\\.([a-zA-Z\\d\\_]+))?(?:\\.([a-zA-Z\\d\\_]+))?(?:\\.([a-zA-Z\\d\\_]+))?(?:\\.([a-zA-Z\\d\\_]+))?(?:\\.([a-zA-Z\\d\\_]+))?(?:\\.([a-zA-Z\\d\\_]+))?(?:\\.([a-zA-Z\\d\\_]+))?(?:\\.([a-zA-Z\\d\\_]+))?\":"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 5
+        },
+        {
+          "id": "451d22fd-f1ba-4312-a1b0-85ecc562f1b2",
+          "rules": [
+            {
+              "id": "eb69b34d-7494-4e57-93fa-933f1c7823fb",
+              "name": "Remove trailing underscores",
+              "description": "",
+              "sourceField": "text",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "text",
+                  "replaceNewVal": "\"$1\":",
+                  "rule": "\"([^\"]+?)\\_+\":"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 6
+        },
+        {
+          "id": "52a834ff-6f51-4a75-a243-bd6e318afd43",
+          "rules": [
+            {
+              "id": "376077f3-2273-4c5a-95da-8c9321187374",
+              "name": "map deprecatedLastTimestamp, eventTime as datetime fields",
+              "description": "",
+              "sourceField": "text",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "text",
+                  "replaceNewVal": "\"${1}_custom_timestamp\":\"",
+                  "rule": "\"(deprecatedLastTimestamp|eventTime)\":\""
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 7
+        },
+        {
+          "id": "6b1b4f86-d95b-4a9f-b5fd-40d4898a5b7a",
+          "rules": [
+            {
+              "id": "dc4ec506-b78b-46d9-b5d0-8bec16b32202",
+              "name": "fix mapping exception for infra collector empty f:annotations",
+              "description": "",
+              "sourceField": "text",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "text",
+                  "replaceNewVal": "${1}\"f:workflow\":{",
+                  "rule": "(\"f:annotations\":\\{.*?)\"\\.\":\\{"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 8
+        },
+        {
+          "id": "6de3def5-25b5-4303-acf9-6b97861efe5d",
+          "rules": [
+            {
+              "id": "96db9534-95cd-4b8c-aab3-c83342b8dd38",
+              "name": "Parse common logs from k8s containers",
+              "description": "This rule parses containers: kube-apiserver, kube-controller-manager, kube-proxy, kube-scheduler, storage-provisioner.",
+              "sourceField": "text",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "text",
+                  "replaceNewVal": "\"level\":\"$level\",\"timestamp\":\"$timestamp\",\"caller\":\"$caller\",\"message\":\"$message\"",
+                  "rule": "\"body\":\"(?P<level>[A-Z])(?P<timestamp>\\d{4} \\d{2}:\\d{2}:\\d{2}\\.\\d+)\\s*1 (?P<caller>[^\\]]+)\\] (?P<message>(?:\\\\\"|[^\"])+?)(?:\\\\n)?\""
+                }
+              },
+              "enabled": true,
+              "order": 1
+            },
+            {
+              "id": "f92649ad-b505-439d-abbc-032c8663ad7e",
+              "name": "Replace body with kvPairs when body is a kv pairs message starts with time",
+              "description": "",
+              "sourceField": "text",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "text",
+                  "replaceNewVal": "\"kvPairs\":\"${1}\"",
+                  "rule": "\"body\":\"(time=\\\\\"(?:\\\\\"|[^\"])+?)(?:\\\\n)?\""
+                }
+              },
+              "enabled": true,
+              "order": 2
+            },
+            {
+              "id": "b72c3857-afcd-43d3-a1c9-34403b024bb4",
+              "name": "Replace body with kvPairs when body is a kv pairs message starts with ts",
+              "description": "",
+              "sourceField": "text",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "text",
+                  "replaceNewVal": "\"kvPairs\":\"${1}\"",
+                  "rule": "\"body\":\"(ts=\\d{4}(?:\\\\\"|[^\"])+?)(?:\\\\n)?\""
+                }
+              },
+              "enabled": true,
+              "order": 3
+            }
+          ],
+          "enabled": true,
+          "order": 9
+        },
+        {
+          "id": "4e6a3d27-6260-48f4-bf1f-45da0ff49243",
+          "rules": [
+            {
+              "id": "51b07878-26a8-4bb7-acb7-45fab6819613",
+              "name": "Extract msg from kvPairs",
+              "description": "",
+              "sourceField": "text.kvPairs",
+              "parameters": {
+                "extractParameters": {
+                  "rule": "msg=\\\\\"(?P<msg>(?:\\\\\\\\\"|[^\"])+)\\\\\""
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 10
+        },
+        {
+          "id": "96bbd736-87e0-4d02-a406-a1f6b79e9666",
+          "rules": [
+            {
+              "id": "7b117750-1213-4973-8bd4-ad7e6de723eb",
+              "name": "Remove msg from kvPairs",
+              "description": "",
+              "sourceField": "text.kvPairs",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "text.kvPairs",
+                  "replaceNewVal": "",
+                  "rule": "\\smsg=\\\\\"(?P<msg>(?:\\\\\\\\\"|[^\"])+)\\\\\""
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 11
+        },
+        {
+          "id": "a2cb7a91-32b0-4cdc-ac9a-11ba949d614f",
+          "rules": [
+            {
+              "id": "cfea819f-8b57-4fe0-80dc-9b2a9b4a58d4",
+              "name": "Jsonizing key/vals when val is enclosed with double quotes",
+              "description": "",
+              "sourceField": "text.kvPairs",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "text.kvPairs",
+                  "replaceNewVal": "\u00a7$1\u00a7:\u00a7$2\u00a7,",
+                  "rule": "([\\w\\.\\-]+)=\\\\\\\\\\\\\"((?:\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"|[^\"])+)\\\\\\\\\\\\\""
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 12
+        },
+        {
+          "id": "8cdb4c26-3752-450e-be40-19655a424ab0",
+          "rules": [
+            {
+              "id": "a5c19308-234c-452d-8517-76958bf02feb",
+              "name": "Remove any remaining backslashes followed by double quotes",
+              "description": "",
+              "sourceField": "text.kvPairs",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "text.kvPairs",
+                  "replaceNewVal": "",
+                  "rule": "\\\\+\""
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 13
+        },
+        {
+          "id": "9064d7f3-bb5e-4573-90d2-206568fa4a3c",
+          "rules": [
+            {
+              "id": "dac00477-483b-475d-b70b-ba6cdb822b2c",
+              "name": "Jsonizing rest of key/vals",
+              "description": "",
+              "sourceField": "text.kvPairs",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "text.kvPairs",
+                  "replaceNewVal": "\u00a7$1\u00a7:\u00a7$2\u00a7,",
+                  "rule": "([\\w\\.\\-]+)=((?:$|[^ \\xA7])+)?(?: |$)"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 14
+        },
+        {
+          "id": "4957bf06-a49a-4efa-ac19-757f8a423b8d",
+          "rules": [
+            {
+              "id": "41e8e629-59de-46b0-a748-146591981f0b",
+              "name": "Removing last Comma and wrapping with curly brackets",
+              "description": "",
+              "sourceField": "text.kvPairs",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "text.kvPairs",
+                  "replaceNewVal": "{$1}",
+                  "rule": "(.*),"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 15
+        },
+        {
+          "id": "f93311d9-f8c0-44d5-93cf-330d0627219c",
+          "rules": [
+            {
+              "id": "fa3d8257-7eaa-419c-97e6-0d824751aab4",
+              "name": "Replacing \u00a7 with double quotes in order to get a valid JSON",
+              "description": "",
+              "sourceField": "text.kvPairs",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "text.kvPairs",
+                  "replaceNewVal": "\"",
+                  "rule": "\\xA7"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 16
+        },
+        {
+          "id": "c2acc73f-3bcd-4dab-9f98-092a7754e8c0",
+          "rules": [
+            {
+              "id": "f7b195df-0fd0-4b42-b722-99296d26d396",
+              "name": "reformat kvPairs field back to an escaped JSON string format",
+              "description": "",
+              "sourceField": "text.kvPairs",
+              "parameters": {
+                "jsonStringifyParameters": {
+                  "destinationField": "text.kvPairs_tmp",
+                  "deleteSource": true
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 17
+        },
+        {
+          "id": "5f66871e-7fd4-487b-836c-8962f56467c1",
+          "rules": [
+            {
+              "id": "0fa6d41e-f594-447c-bafd-af6fa331d232",
+              "name": "Parse kvPairs_tmp as JSON to root",
+              "description": "",
+              "sourceField": "text.kvPairs_tmp",
+              "parameters": {
+                "jsonParseParameters": {
+                  "destinationField": "text",
+                  "deleteSource": true,
+                  "escapedValue": null,
+                  "overrideDest": false
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 18
+        }
+      ],
+      "order": 2
+    },
+    {
+      "id": "5451f052-69cf-42ab-a2d5-7163477a999c",
+      "name": "Aws status events rules",
+      "description": "Aws-status extension pack",
+      "creator": "Aws-status extension pack",
+      "enabled": true,
+      "hidden": false,
+      "ruleMatchers": [
+        {
+          "applicationName": {
+            "value": "adtech"
+          }
+        },
+        {
+          "subsystemName": {
+            "value": "ab-ingestor"
+          }
+        }
+      ],
+      "ruleSubgroups": [
+        {
+          "id": "05c2a30d-4e15-4f43-9947-7b1cb2e4f758",
+          "rules": [
+            {
+              "id": "5fa659da-9124-48f1-808c-24900d5b55c8",
+              "name": "Extract service & region details from Aws-status uri",
+              "description": "",
+              "sourceField": "text.aws.uri",
+              "parameters": {
+                "extractParameters": {
+                  "rule": "^http:\\/\\/status\\.aws\\.amazon\\.com\\/#(?P<service>\\w+)\\-(?P<region>[^_]+)_"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 1
+        },
+        {
+          "id": "3ce28ac0-00b4-4c46-a72e-d490461f0910",
+          "rules": [
+            {
+              "id": "8a4ff764-53b7-4d55-a70d-4fcd60db46ab",
+              "name": "assign INFO severity for AWS status logs",
+              "description": "This rule modifies the Coralogix severity to INFO for all events",
+              "sourceField": "text.source_system",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "severity",
+                  "replaceNewVal": "info",
+                  "rule": "aws"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 2
+        }
+      ],
+      "order": 3
+    },
+    {
+      "id": "c1ace08a-8915-43ed-a4f7-291847c160c6",
+      "name": "Mapping exception for message field",
+      "description": "",
+      "creator": "",
+      "enabled": true,
+      "hidden": false,
+      "ruleMatchers": [],
+      "ruleSubgroups": [
+        {
+          "id": "ab4e4881-c908-4f09-b023-4af415336495",
+          "rules": [
+            {
+              "id": "81b4add4-0add-4da7-be17-245c886c3595",
+              "name": "message to message_object",
+              "description": "",
+              "sourceField": "text",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "text",
+                  "replaceNewVal": "\"message_object\":{",
+                  "rule": "\"message\"\\s*:\\s*{"
+                }
+              },
+              "enabled": true,
+              "order": 22192
+            }
+          ],
+          "enabled": true,
+          "order": 2241
+        }
+      ],
+      "order": 4
+    },
+    {
+      "id": "8e0faa52-c783-4cf0-a04a-dea508e6018d",
+      "name": "Loggregation fix: Extract nested message from message_object",
+      "description": "Loggregation fix: Extract nested message from message_object",
+      "creator": "bot@coralogix.com",
+      "enabled": true,
+      "hidden": false,
+      "ruleMatchers": [
+        {
+          "applicationName": {
+            "value": "cms-in-prod-apse1"
+          }
+        },
+        {
+          "subsystemName": {
+            "value": "cms-osiris"
+          }
+        }
+      ],
+      "ruleSubgroups": [
+        {
+          "id": "21d4dcfd-cdcd-4659-97eb-345437f2dc90",
+          "rules": [
+            {
+              "id": "85ae9279-7791-4199-aeae-00293fbbf1e8",
+              "name": "Extract message_object.message --> root",
+              "description": "{\"@timestamp\":\"2021-09-16T05:23:04.528Z\",\"k8s-cluster-name\":\"nonprod-aps1.pp.hotstar-labs.com\",\"message_object\":{\"timestamp\":\"1631769784528\",\"level\":\"INFO\",\"thread\":\"pool-35-thread-1\",\"mdc\":{\"tenantId\":\"in\",\"uuid\":\"41b48d98-69a0-4c34-8335-90e3677fc019\"},\"logger\":\"com.hotstar.service.apiservice.RuleService\",\"message\":\"doc size to be indexed:1\",\"context\":\"default\"},\"source\":\"cms-osiris-6fdd5bb8d9-56r4h\"}",
+              "sourceField": "text.message_object.message",
+              "parameters": {
+                "extractParameters": {
+                  "rule": "(?P<message>.+)"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 1
+        },
+        {
+          "id": "4f49c4eb-d0a4-458d-9e90-f75532f398f4",
+          "rules": [
+            {
+              "id": "b3028cf5-2f5d-4bea-b8ff-7024efb7528f",
+              "name": "Remove message_object.message",
+              "description": "{\"@timestamp\":\"2021-09-16T05:23:04.528Z\",\"k8s-cluster-name\":\"nonprod-aps1.pp.hotstar-labs.com\",\"message_object\":{\"timestamp\":\"1631769784528\",\"level\":\"INFO\",\"thread\":\"pool-35-thread-1\",\"mdc\":{\"tenantId\":\"in\",\"uuid\":\"41b48d98-69a0-4c34-8335-90e3677fc019\"},\"logger\":\"com.hotstar.service.apiservice.RuleService\",\"message\":\"doc size to be indexed:1\",\"context\":\"default\"},\"source\":\"cms-osiris-6fdd5bb8d9-56r4h\"}",
+              "sourceField": "text",
+              "parameters": {
+                "removeFieldsParameters": {
+                  "fields": [
+                    "message_object.message"
+                  ]
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 2
+        }
+      ],
+      "order": 5
+    },
+    {
+      "id": "13a6a5f1-fb95-4e62-9ee4-b89de5c48ed4",
+      "name": "Severity Rules",
+      "description": "",
+      "creator": "souvik.sarkhel@hotstar.com",
+      "enabled": true,
+      "hidden": false,
+      "ruleMatchers": [],
+      "ruleSubgroups": [
+        {
+          "id": "83e96e65-9be5-49f2-b216-a72eb5cde26b",
+          "rules": [
+            {
+              "id": "8e59c778-3db0-406e-b92b-dd55d54262c1",
+              "name": "Severity Rule",
+              "description": "Look for default severity text",
+              "sourceField": "text",
+              "parameters": {
+                "extractParameters": {
+                  "rule": "\\b(?P<severity>DEBUG|TRACE|INFO|WARN|ERROR|FATAL|EXCEPTION|[I|i]nfo|[W|w]arn|[E|e]rror|[E|e]xception)\\b"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            },
+            {
+              "id": "702883db-0646-4ced-bc67-d57f6c2fbc01",
+              "name": "Severity Rule for Argus",
+              "description": "{\"@timestamp\":\"2024-10-10T14:18:13.369Z\",\"k8s-cluster-name\":\"hs-eks-prod5-api-apse1\",\"source\":\"argus-heartbeat-processor-55867bb84d-tpn7n\",\"container-name\":\"argus-heartbeat-processor\",\"message\":\"2024-10-10T14:18:13.368904868Z\\twarn\\tapi\\/abexp.go:74\\tEmpty ab experiment: \\t{\\\"id\\\": \\\"695smn\\\", \\\"abData\\\": {\\\"key\\\":\\\"\\\",\\\"value\\\":\\\"\\\"}}\"}",
+              "sourceField": "text",
+              "parameters": {
+                "extractParameters": {
+                  "rule": "(?P<severity>warn)"
+                }
+              },
+              "enabled": true,
+              "order": 2
+            }
+          ],
+          "enabled": true,
+          "order": 1
+        }
+      ],
+      "order": 6
+    },
+    {
+      "id": "61f571b9-0981-452b-9efb-91f1dc6b1a6d",
+      "name": "Block PC Unwanted Logs",
+      "description": "Block PC Unwanted Logs",
+      "creator": "Ishank@hotstar.com",
+      "enabled": true,
+      "hidden": false,
+      "ruleMatchers": [
+        {
+          "applicationName": {
+            "value": "playback"
+          }
+        },
+        {
+          "subsystemName": {
+            "value": "playback-composite"
+          }
+        },
+        {
+          "subsystemName": {
+            "value": "playback-composite-rocky"
+          }
+        },
+        {
+          "subsystemName": {
+            "value": "playback-composite-debug"
+          }
+        },
+        {
+          "subsystemName": {
+            "value": "playback-composite-v5-sgp"
+          }
+        },
+        {
+          "subsystemName": {
+            "value": "playback-aggregator"
+          }
+        }
+      ],
+      "ruleSubgroups": [
+        {
+          "id": "635750ed-5fb1-4a89-bf78-cf4d7c97099a",
+          "rules": [
+            {
+              "id": "1daa3cc6-e5bc-452d-ab54-c857a3f08b01",
+              "name": "Block \"Value fetched from the Launch Darkly\"",
+              "description": "Block \"Value fetched from the Launch Darkly\"",
+              "sourceField": "text",
+              "parameters": {
+                "blockParameters": {
+                  "keepBlockedLogs": false,
+                  "rule": "Value fetched from the Launch Darkly"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            },
+            {
+              "id": "95551e09-1af0-4070-ac46-391a59f630e4",
+              "name": "Block \"Unable to fetch config from Launch Darkly returning default\"",
+              "description": "Block \"Unable to fetch config from Launch Darkly returning default\"",
+              "sourceField": "text",
+              "parameters": {
+                "blockParameters": {
+                  "keepBlockedLogs": false,
+                  "rule": "Unable to fetch config from Launch Darkly returning default"
+                }
+              },
+              "enabled": true,
+              "order": 2
+            },
+            {
+              "id": "5eacbc68-eccc-4f83-859e-603e860cfb9e",
+              "name": "Block \"Load shedding flag\"",
+              "description": "Block \"Load shedding flag\"",
+              "sourceField": "text",
+              "parameters": {
+                "blockParameters": {
+                  "keepBlockedLogs": false,
+                  "rule": "Load shedding flag"
+                }
+              },
+              "enabled": true,
+              "order": 3
+            },
+            {
+              "id": "487b11a0-4ef1-4123-81f3-87c8867585b6",
+              "name": "Block PC Logs",
+              "description": "Blocking \"Received playback details request for content-id\" ",
+              "sourceField": "text",
+              "parameters": {
+                "blockParameters": {
+                  "keepBlockedLogs": false,
+                  "rule": "Received playback details request for content-id"
+                }
+              },
+              "enabled": false,
+              "order": 4
+            }
+          ],
+          "enabled": true,
+          "order": 1
+        },
+        {
+          "id": "60d95701-b68b-454c-bc56-13561631b369",
+          "rules": [
+            {
+              "id": "cf7106e2-6a78-430d-94e8-37b6755b8c8f",
+              "name": "Block PC logs",
+              "description": "Blocking \"Received request in GetPlaybackURL of graphql service for content id\"",
+              "sourceField": "text",
+              "parameters": {
+                "blockParameters": {
+                  "keepBlockedLogs": false,
+                  "rule": "Received request in GetPlaybackURL of graphql service for content id"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            },
+            {
+              "id": "a07453b5-d88c-4eee-81e9-670720d2c452",
+              "name": "Block PC logs",
+              "description": "Blocking \"Service : CDDS-LIB , Request for language preference calculation\"",
+              "sourceField": "text",
+              "parameters": {
+                "blockParameters": {
+                  "keepBlockedLogs": false,
+                  "rule": "Service : CDDS-LIB , Request for language preference calculation"
+                }
+              },
+              "enabled": true,
+              "order": 2
+            },
+            {
+              "id": "e8e1c37c-adaa-4cb6-8b82-e57e901634c7",
+              "name": "Block PC logs",
+              "description": "Block \"Service: CDDS-LIB, response - sorted language list\"",
+              "sourceField": "text",
+              "parameters": {
+                "blockParameters": {
+                  "keepBlockedLogs": false,
+                  "rule": "Service: CDDS-LIB, response - sorted language list"
+                }
+              },
+              "enabled": true,
+              "order": 3
+            },
+            {
+              "id": "9dda382c-67d0-4d2e-8234-ddd49b178ae4",
+              "name": "Block PC CDDS lib logs",
+              "description": "Block \"Service: CDDS-LIB, getSortedLanguageListByLPV before sorting\"",
+              "sourceField": "text",
+              "parameters": {
+                "blockParameters": {
+                  "keepBlockedLogs": false,
+                  "rule": "Service: CDDS-LIB, getSortedLanguageListByLPV before sorting"
+                }
+              },
+              "enabled": true,
+              "order": 4
+            },
+            {
+              "id": "4527cf44-5b13-4843-8a2e-1465d0939095",
+              "name": "Block PC CDDS lib logs",
+              "description": "Block \"Service: CDDS-LIB, transformUsingDialectMap, getSortedLanguageListByLPV input\"",
+              "sourceField": "text",
+              "parameters": {
+                "blockParameters": {
+                  "keepBlockedLogs": false,
+                  "rule": "Service: CDDS-LIB, transformUsingDialectMap, getSortedLanguageListByLPV input"
+                }
+              },
+              "enabled": true,
+              "order": 5
+            },
+            {
+              "id": "f18c0fd2-d938-439f-bf26-9b4a68453853",
+              "name": "Block PC CDDS lib logs",
+              "description": "Block \"Service: CDDS-LIB, Lpv sorted languages list for request\"",
+              "sourceField": "text",
+              "parameters": {
+                "blockParameters": {
+                  "keepBlockedLogs": false,
+                  "rule": "Service: CDDS-LIB, Lpv sorted languages list for request"
+                }
+              },
+              "enabled": true,
+              "order": 6
+            },
+            {
+              "id": "e1ce900c-3973-4a8f-8b25-6bdda595dce2",
+              "name": "Block PC Ent SDK log",
+              "description": "Block \"Got empty allocation group for vod free preview\"",
+              "sourceField": "text",
+              "parameters": {
+                "blockParameters": {
+                  "keepBlockedLogs": false,
+                  "rule": "Got empty allocation group for vod free preview"
+                }
+              },
+              "enabled": true,
+              "order": 7
+            },
+            {
+              "id": "201123ad-c9fd-4361-a0a4-ee0637362754",
+              "name": "Block PC Ent SDK logs",
+              "description": "Block \"Vod free preview is not enabled for the user and the content\"",
+              "sourceField": "text",
+              "parameters": {
+                "blockParameters": {
+                  "keepBlockedLogs": false,
+                  "rule": "Vod free preview is not enabled for the user and the content"
+                }
+              },
+              "enabled": true,
+              "order": 8
+            },
+            {
+              "id": "6109b89e-6b7d-499f-9e96-b06e4080835d",
+              "name": "Block PC Ent SDK logs",
+              "description": "Block \"[vod_free_preview] calling the entitlements\"",
+              "sourceField": "text",
+              "parameters": {
+                "blockParameters": {
+                  "keepBlockedLogs": false,
+                  "rule": "calling the entitlements"
+                }
+              },
+              "enabled": true,
+              "order": 9
+            },
+            {
+              "id": "aa802e58-ff92-4881-9ddb-dc745a01c920",
+              "name": "Block PC CDDS lib logs",
+              "description": "Block \"Service: CDDS-LIB, Lpv sorted languages list by preference for request\"",
+              "sourceField": "text",
+              "parameters": {
+                "blockParameters": {
+                  "keepBlockedLogs": false,
+                  "rule": "Service: CDDS-LIB, Lpv sorted languages list by preference for request"
+                }
+              },
+              "enabled": true,
+              "order": 10
+            },
+            {
+              "id": "f9665ef5-4881-40fe-8a56-da84d4bc99b0",
+              "name": "PC CDDS lib blocks for SEA, PH",
+              "description": "Block \"Service: CDDS-LIB, passport ulp is empty\"",
+              "sourceField": "text.message",
+              "parameters": {
+                "blockParameters": {
+                  "keepBlockedLogs": false,
+                  "rule": "Service: CDDS-LIB, passport ulp is empty"
+                }
+              },
+              "enabled": true,
+              "order": 11
+            },
+            {
+              "id": "9acc80c8-d298-4e47-bf73-536f0c5cacfa",
+              "name": "PC - PA lib block fallback duplicate log",
+              "description": "Block \"No safest fallback set found for content\"",
+              "sourceField": "text",
+              "parameters": {
+                "blockParameters": {
+                  "keepBlockedLogs": false,
+                  "rule": "No safest fallback set found for content"
+                }
+              },
+              "enabled": true,
+              "order": 12
+            },
+            {
+              "id": "74d6f868-1543-469a-8e46-79658d2ae9d6",
+              "name": "Token found with empty device id",
+              "description": "Token found with empty device id",
+              "sourceField": "text",
+              "parameters": {
+                "blockParameters": {
+                  "keepBlockedLogs": false,
+                  "rule": "Token found with empty device id"
+                }
+              },
+              "enabled": true,
+              "order": 13
+            },
+            {
+              "id": "74d06048-6f9b-4101-be73-454b7b01bde8",
+              "name": "Unable to fetch config from Launch Darkly returning default",
+              "description": "Unable to fetch config from Launch Darkly returning default",
+              "sourceField": "text",
+              "parameters": {
+                "blockParameters": {
+                  "keepBlockedLogs": false,
+                  "rule": "Unable to fetch config from Launch Darkly returning default"
+                }
+              },
+              "enabled": true,
+              "order": 14
+            },
+            {
+              "id": "7211c474-a539-49a9-a457-20504e5f39ec",
+              "name": "ZPlay additional headers from LD config",
+              "description": "ZPlay additional headers from LD config\n",
+              "sourceField": "text",
+              "parameters": {
+                "blockParameters": {
+                  "keepBlockedLogs": false,
+                  "rule": "ZPlay additional headers from LD config"
+                }
+              },
+              "enabled": true,
+              "order": 15
+            },
+            {
+              "id": "99ba35c1-27d7-4556-8063-4d769c33bfb6",
+              "name": "capability aggregation handler executed",
+              "description": "capability aggregation handler executed",
+              "sourceField": "text",
+              "parameters": {
+                "blockParameters": {
+                  "keepBlockedLogs": false,
+                  "rule": "capability aggregation handler executed"
+                }
+              },
+              "enabled": true,
+              "order": 16
+            },
+            {
+              "id": "63eba997-1890-4994-88e6-6cf2448942fa",
+              "name": "validate handler executed",
+              "description": "validate handler executed",
+              "sourceField": "text",
+              "parameters": {
+                "blockParameters": {
+                  "keepBlockedLogs": false,
+                  "rule": "validate handler executed"
+                }
+              },
+              "enabled": true,
+              "order": 17
+            },
+            {
+              "id": "1a49aaa7-39cd-4bbb-9d37-023f20f63bd2",
+              "name": "context enrichment handler executed",
+              "description": "context enrichment handler executed",
+              "sourceField": "text",
+              "parameters": {
+                "blockParameters": {
+                  "keepBlockedLogs": false,
+                  "rule": "context enrichment handler executed"
+                }
+              },
+              "enabled": true,
+              "order": 18
+            },
+            {
+              "id": "27cd74f3-19a2-4ab8-a17c-6cad9df4eb66",
+              "name": "freemium eligibility handler executed",
+              "description": "freemium eligibility handler executed",
+              "sourceField": "text",
+              "parameters": {
+                "blockParameters": {
+                  "keepBlockedLogs": false,
+                  "rule": "freemium eligibility handler executed"
+                }
+              },
+              "enabled": true,
+              "order": 19
+            },
+            {
+              "id": "193050bb-8fb0-4ef2-8cd1-5967adf1e7cf",
+              "name": "filter package handler executed",
+              "description": "filter package handler executed",
+              "sourceField": "text",
+              "parameters": {
+                "blockParameters": {
+                  "keepBlockedLogs": false,
+                  "rule": "filter package handler executed"
+                }
+              },
+              "enabled": true,
+              "order": 20
+            },
+            {
+              "id": "35b78196-f590-41f4-a9c9-5ca2870a395c",
+              "name": "subs fallback handler executed",
+              "description": "subs fallback handler executed",
+              "sourceField": "text",
+              "parameters": {
+                "blockParameters": {
+                  "keepBlockedLogs": false,
+                  "rule": "subs fallback handler executed"
+                }
+              },
+              "enabled": true,
+              "order": 21
+            },
+            {
+              "id": "bed9a2b2-a9e0-4e7f-b9c6-66053c8f4dec",
+              "name": "response enrichment handler executed",
+              "description": "response enrichment handler executed",
+              "sourceField": "text",
+              "parameters": {
+                "blockParameters": {
+                  "keepBlockedLogs": false,
+                  "rule": "response enrichment handler executed"
+                }
+              },
+              "enabled": true,
+              "order": 22
+            },
+            {
+              "id": "6150a697-23d2-404a-ab73-b265564c9b15",
+              "name": "free preview handler executed",
+              "description": "free preview handler executed",
+              "sourceField": "text",
+              "parameters": {
+                "blockParameters": {
+                  "keepBlockedLogs": false,
+                  "rule": "free preview handler executed"
+                }
+              },
+              "enabled": true,
+              "order": 23
+            },
+            {
+              "id": "8f746730-d48f-4804-aacd-4bac9a145395",
+              "name": "Experiment Groups",
+              "description": "Experiment Groups",
+              "sourceField": "text",
+              "parameters": {
+                "blockParameters": {
+                  "keepBlockedLogs": false,
+                  "rule": "ExperimentGroups present are"
+                }
+              },
+              "enabled": true,
+              "order": 24
+            }
+          ],
+          "enabled": true,
+          "order": 2
+        }
+      ],
+      "order": 7
+    },
+    {
+      "id": "754d4a13-d440-48d1-a04b-dd266d55470c",
+      "name": "Block PA unwanted logs",
+      "description": "Blocking PA unwanted logs",
+      "creator": "Jyoti.kumar@hotstar.com",
+      "enabled": true,
+      "hidden": false,
+      "ruleMatchers": [
+        {
+          "applicationName": {
+            "value": "playback"
+          }
+        },
+        {
+          "subsystemName": {
+            "value": "playback-aggregator"
+          }
+        }
+      ],
+      "ruleSubgroups": [
+        {
+          "id": "dd27b1b2-5366-4473-9873-994596d9ac4d",
+          "rules": [
+            {
+              "id": "ada6130b-84dc-43c8-a5c2-8ad1783b5c14",
+              "name": "Block PA load shedder logs",
+              "description": "Blocking \"decrement counter executed\"",
+              "sourceField": "text",
+              "parameters": {
+                "blockParameters": {
+                  "keepBlockedLogs": false,
+                  "rule": "decrement counter executed"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            },
+            {
+              "id": "9b26e444-1a87-496a-8abc-25813f5f66a0",
+              "name": "Block PA load shedder logs",
+              "description": "Blocking \"Number of active requests count\"",
+              "sourceField": "text",
+              "parameters": {
+                "blockParameters": {
+                  "keepBlockedLogs": false,
+                  "rule": "Number of active requests count"
+                }
+              },
+              "enabled": true,
+              "order": 2
+            },
+            {
+              "id": "e11f51e2-4521-4d09-825a-c5ed99c64a7f",
+              "name": "Block PA load shedder logs",
+              "description": "Blocking \"increment counter executed\"",
+              "sourceField": "text",
+              "parameters": {
+                "blockParameters": {
+                  "keepBlockedLogs": false,
+                  "rule": "increment counter executed"
+                }
+              },
+              "enabled": true,
+              "order": 3
+            },
+            {
+              "id": "98ce9a56-ab6a-4b81-8f5b-c77a46e24a17",
+              "name": "Block PA load shedder logs",
+              "description": "Blocking \"PA Load shedding flag true\"",
+              "sourceField": "text",
+              "parameters": {
+                "blockParameters": {
+                  "keepBlockedLogs": false,
+                  "rule": "PA Load shedding flag true"
+                }
+              },
+              "enabled": true,
+              "order": 4
+            }
+          ],
+          "enabled": true,
+          "order": 1
+        }
+      ],
+      "order": 8
+    },
+    {
+      "id": "2ad68365-a043-4ad2-b37a-db6bb851f87c",
+      "name": "PC rocky unwanted logs ",
+      "description": "PC rocky unwanted logs",
+      "creator": "mohit.garg@hotstar.com",
+      "enabled": true,
+      "hidden": false,
+      "ruleMatchers": [
+        {
+          "applicationName": {
+            "value": "playback"
+          }
+        },
+        {
+          "subsystemName": {
+            "value": "playback-composite-rocky"
+          }
+        }
+      ],
+      "ruleSubgroups": [
+        {
+          "id": "6d97b03d-1517-4686-aeca-2cdee07ce212",
+          "rules": [
+            {
+              "id": "ca0381ec-082c-4af8-8884-36f66345170c",
+              "name": "Block Info log",
+              "description": "Block \"Received request in GetPlaybackURL for content id\"",
+              "sourceField": "text",
+              "parameters": {
+                "blockParameters": {
+                  "keepBlockedLogs": false,
+                  "rule": "Received request in GetPlaybackURL for content id"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            },
+            {
+              "id": "6c5faf13-44e5-4e3e-982a-856a3b8977d8",
+              "name": "Block Load shedder logs",
+              "description": "Block \"Load shedding flag\"",
+              "sourceField": "text",
+              "parameters": {
+                "blockParameters": {
+                  "keepBlockedLogs": false,
+                  "rule": "Load shedding flag"
+                }
+              },
+              "enabled": true,
+              "order": 2
+            },
+            {
+              "id": "22c57336-a37c-426b-a2a3-f8d2a6db1b03",
+              "name": "block ent sdk logs",
+              "description": "Block \"User plan attributes is missing from the passport\"",
+              "sourceField": "text",
+              "parameters": {
+                "blockParameters": {
+                  "keepBlockedLogs": false,
+                  "rule": "User plan attributes is missing from the passport"
+                }
+              },
+              "enabled": true,
+              "order": 3
+            },
+            {
+              "id": "079e4c15-2874-418f-8723-d5b9f4f3d4f4",
+              "name": "Token found with empty device id",
+              "description": "Token found with empty device id",
+              "sourceField": "text",
+              "parameters": {
+                "blockParameters": {
+                  "keepBlockedLogs": false,
+                  "rule": "Token found with empty device id"
+                }
+              },
+              "enabled": true,
+              "order": 4
+            }
+          ],
+          "enabled": true,
+          "order": 1
+        }
+      ],
+      "order": 9
+    },
+    {
+      "id": "25b7a8ed-1068-4a3c-9d4b-feb0c6ccde6b",
+      "name": "SSAI Block Failed to Fetch Manifest HTTP 404 Error Logs",
+      "description": "SSAI Block Failed to Fetch Manifest HTTP 404 Error Logs",
+      "creator": "manavd@hotstar.com",
+      "enabled": true,
+      "hidden": false,
+      "ruleMatchers": [
+        {
+          "applicationName": {
+            "value": "playback"
+          }
+        }
+      ],
+      "ruleSubgroups": [
+        {
+          "id": "f02ba173-01d9-4f1b-a2b3-11def764b909",
+          "rules": [
+            {
+              "id": "9dfdc256-be82-44cc-ba4a-2dbfa4d203a3",
+              "name": "SSAI Block Failed to Fetch Manifest HTTP 404 Error Logs",
+              "description": "SSAI Block Failed to Fetch Manifest HTTP 404 Error Logs",
+              "sourceField": "text",
+              "parameters": {
+                "blockParameters": {
+                  "keepBlockedLogs": false,
+                  "rule": "^(.*Failed to fetch Manifest)(.*HTTP: 404).*"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 1
+        }
+      ],
+      "order": 10
+    },
+    {
+      "id": "593d9086-3f96-44d9-a14f-c49a403c9689",
+      "name": "Severity Rules",
+      "description": "",
+      "creator": "anubhav.chaudhary@hotstar.com",
+      "enabled": true,
+      "hidden": false,
+      "ruleMatchers": [
+        {
+          "subsystemName": {
+            "value": "fastly-dev"
+          }
+        },
+        {
+          "subsystemName": {
+            "value": "fastly-prod"
+          }
+        }
+      ],
+      "ruleSubgroups": [
+        {
+          "id": "34887fe3-665e-4c6c-8bd6-a0b49865d18d",
+          "rules": [
+            {
+              "id": "ff875920-4a7c-41bd-a368-d97094e2dfcf",
+              "name": "Response Code Extract",
+              "description": "Used to map response code to severity",
+              "sourceField": "text",
+              "parameters": {
+                "jsonExtractParameters": {
+                  "destinationFieldType": "DESTINATION_FIELD_SEVERITY",
+                  "rule": "response_status",
+                  "destinationFieldText": null
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 1
+        }
+      ],
+      "order": 11
+    },
+    {
+      "id": "85d98b8a-db05-47ef-8ef9-9979dd8168db",
+      "name": "Ceph MDS",
+      "description": "Monitor Ceph MDS logs",
+      "creator": "qian.chang@hotstar.com",
+      "enabled": true,
+      "hidden": false,
+      "ruleMatchers": [
+        {
+          "applicationName": {
+            "value": "rook-ceph"
+          }
+        },
+        {
+          "subsystemName": {
+            "value": "rook-ceph-mds"
+          }
+        },
+        {
+          "severity": {
+            "value": "VALUE_WARNING"
+          }
+        },
+        {
+          "severity": {
+            "value": "VALUE_ERROR"
+          }
+        },
+        {
+          "severity": {
+            "value": "VALUE_CRITICAL"
+          }
+        },
+        {
+          "severity": {
+            "value": "VALUE_DEBUG_OR_UNSPECIFIED"
+          }
+        },
+        {
+          "severity": {
+            "value": "VALUE_INFO"
+          }
+        },
+        {
+          "severity": {
+            "value": "VALUE_VERBOSE"
+          }
+        }
+      ],
+      "ruleSubgroups": [
+        {
+          "id": "85de2989-539c-4932-a4b8-8443df73c160",
+          "rules": [
+            {
+              "id": "8f04ba56-6ac3-4d54-964d-58a6f14c5c63",
+              "name": "slow_requests",
+              "description": "",
+              "sourceField": "text.message",
+              "parameters": {
+                "extractParameters": {
+                  "rule": "(?P<slow_requests>\\d+) slow requests"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 1
+        }
+      ],
+      "order": 12
+    },
+    {
+      "id": "9fbb880d-0f16-4c29-846d-b2575482be5b",
+      "name": "New Group",
+      "description": "",
+      "creator": "souvik.sarkhel@hotstar.com",
+      "enabled": true,
+      "hidden": false,
+      "ruleMatchers": [
+        {
+          "applicationName": {
+            "value": "audience-platform"
+          }
+        },
+        {
+          "applicationName": {
+            "value": "audienceplatform-in-dev-aps1"
+          }
+        },
+        {
+          "applicationName": {
+            "value": "ap-in-prod-apse1"
+          }
+        },
+        {
+          "applicationName": {
+            "value": "audienceplatform-in-prod-use1"
+          }
+        },
+        {
+          "applicationName": {
+            "value": "audienceplatform-in-qa-aps1"
+          }
+        }
+      ],
+      "ruleSubgroups": [
+        {
+          "id": "fb496777-db82-4a11-b706-f99128a2712c",
+          "rules": [
+            {
+              "id": "fb61bce1-2583-46cd-9e9d-8e65ccaebacf",
+              "name": "JSON Severity",
+              "description": "Extract Severity from JSON Log",
+              "sourceField": "text",
+              "parameters": {
+                "jsonExtractParameters": {
+                  "destinationFieldType": "DESTINATION_FIELD_SEVERITY",
+                  "rule": "severity",
+                  "destinationFieldText": null
+                }
+              },
+              "enabled": false,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 1
+        }
+      ],
+      "order": 13
+    },
+    {
+      "id": "d4e48043-32ff-4955-bf9c-3d76e1aea531",
+      "name": "Extract server API Error",
+      "description": "",
+      "creator": "souvik.sarkhel@hotstar.com",
+      "enabled": true,
+      "hidden": false,
+      "ruleMatchers": [
+        {
+          "applicationName": {
+            "value": "flink-in-prod-apse1"
+          }
+        },
+        {
+          "applicationName": {
+            "value": "adtech-in-prod-apse1"
+          }
+        },
+        {
+          "applicationName": {
+            "value": "adtech-in-prod-aps1"
+          }
+        },
+        {
+          "applicationName": {
+            "value": "platform-in-prod-apse1"
+          }
+        },
+        {
+          "applicationName": {
+            "value": "adtech"
+          }
+        },
+        {
+          "applicationName": {
+            "value": "adtech-beta-in-prod-apse1"
+          }
+        }
+      ],
+      "ruleSubgroups": [
+        {
+          "id": "aebda1d5-ea4b-4a2b-b77b-e6c8e9f87158",
+          "rules": [
+            {
+              "id": "d0c59ed5-aeff-428f-aed5-192b809ca788",
+              "name": "extract server api error",
+              "description": "",
+              "sourceField": "text",
+              "parameters": {
+                "extractParameters": {
+                  "rule": "(?P<ServerApiError>AdServerApICallFailed\\s*For\\s*CA[0-9]+\\s*Campaign)"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 1
+        }
+      ],
+      "order": 14
+    },
+    {
+      "id": "bc86a8af-4c97-4585-b56d-e892b3e87cc5",
+      "name": "Severity Rules for non prod",
+      "description": "Do not migrate",
+      "creator": "souvik.sarkhel@hotstar.com",
+      "enabled": true,
+      "hidden": false,
+      "ruleMatchers": [
+        {
+          "applicationName": {
+            "value": "adtech-in-dev-aps1"
+          }
+        },
+        {
+          "applicationName": {
+            "value": "adtech-in-preprod-apse1"
+          }
+        },
+        {
+          "applicationName": {
+            "value": "flink-in-pp-aps1"
+          }
+        },
+        {
+          "applicationName": {
+            "value": "adsselfservelego-pp"
+          }
+        },
+        {
+          "applicationName": {
+            "value": "feature-env"
+          }
+        },
+        {
+          "applicationName": {
+            "value": "adtech-in-pp-aps1"
+          }
+        },
+        {
+          "applicationName": {
+            "value": "adtech-in-qa-aps1"
+          }
+        }
+      ],
+      "ruleSubgroups": [
+        {
+          "id": "f0bae77d-ca96-401d-a63d-b003c331f44b",
+          "rules": [
+            {
+              "id": "faff26ab-fc7a-49f0-aef2-0cf9a781622b",
+              "name": "Severity Rule",
+              "description": "Look for default severity text",
+              "sourceField": "text",
+              "parameters": {
+                "extractParameters": {
+                  "rule": "\\b(?P<severity>DEBUG|TRACE|INFO|WARN|ERROR|FATAL|EXCEPTION|[I|i]nfo|[W|w]arn|[E|e]rror|[E|e]xception)\\b"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 1
+        }
+      ],
+      "order": 15
+    },
+    {
+      "id": "735b27e2-046c-40c8-8503-2e6b87cf8533",
+      "name": "Extract server API Error for non prod",
+      "description": "Do not migrate",
+      "creator": "souvik.sarkhel@hotstar.com",
+      "enabled": true,
+      "hidden": false,
+      "ruleMatchers": [
+        {
+          "applicationName": {
+            "value": "adtech-in-dev-aps1"
+          }
+        },
+        {
+          "applicationName": {
+            "value": "adtech-in-preprod-apse1"
+          }
+        },
+        {
+          "applicationName": {
+            "value": "flink-in-pp-aps1"
+          }
+        },
+        {
+          "applicationName": {
+            "value": "adtech-in-qa-aps1"
+          }
+        },
+        {
+          "applicationName": {
+            "value": "adsselfservelego-pp"
+          }
+        },
+        {
+          "applicationName": {
+            "value": "feature-env"
+          }
+        },
+        {
+          "applicationName": {
+            "value": "adtech-in-pp-aps1"
+          }
+        }
+      ],
+      "ruleSubgroups": [
+        {
+          "id": "e2d262a9-8cf1-4d22-9066-c25599cc80bd",
+          "rules": [
+            {
+              "id": "cc151ff5-3db0-4039-9d91-b3a55c1f4cf3",
+              "name": "extract server api error",
+              "description": "",
+              "sourceField": "text",
+              "parameters": {
+                "extractParameters": {
+                  "rule": "(?P<ServerApiError>AdServerApICallFailed\\s*For\\s*CA[0-9]+\\s*Campaign)"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 1
+        }
+      ],
+      "order": 16
+    },
+    {
+      "id": "92808d53-84db-4cae-b276-e92b05fffebe",
+      "name": "mygroup",
+      "description": "",
+      "creator": "souvik.sarkhel@hotstar.com",
+      "enabled": true,
+      "hidden": false,
+      "ruleMatchers": [
+        {
+          "applicationName": {
+            "value": "downloads"
+          }
+        },
+        {
+          "applicationName": {
+            "value": "umsp"
+          }
+        },
+        {
+          "applicationName": {
+            "value": "umsp-eu-prod-euw1"
+          }
+        },
+        {
+          "applicationName": {
+            "value": "umsp-na-prod-use1"
+          }
+        },
+        {
+          "applicationName": {
+            "value": "umsp-in-prod-apse1"
+          }
+        },
+        {
+          "applicationName": {
+            "value": "gcp"
+          }
+        },
+        {
+          "applicationName": {
+            "value": "umfoundation"
+          }
+        },
+        {
+          "applicationName": {
+            "value": "payment"
+          }
+        },
+        {
+          "applicationName": {
+            "value": "aws"
+          }
+        }
+      ],
+      "ruleSubgroups": [
+        {
+          "id": "64795878-f509-4adf-a700-a7f6ff69c03b",
+          "rules": [
+            {
+              "id": "2cf8b3c8-32ab-4df2-a5c6-29131baf581f",
+              "name": "New Rule",
+              "description": "logs from catalina.out",
+              "sourceField": "text",
+              "parameters": {
+                "blockParameters": {
+                  "keepBlockedLogs": false,
+                  "rule": "tomcat"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 1
+        }
+      ],
+      "order": 17
+    },
+    {
+      "id": "74f50ba5-caec-487c-942c-8004b1996a8b",
+      "name": "fix mapping exception for message with Object",
+      "description": "",
+      "creator": "souvik.sarkhel@hotstar.com",
+      "enabled": true,
+      "hidden": false,
+      "ruleMatchers": [
+        {
+          "applicationName": {
+            "value": "gcp"
+          }
+        },
+        {
+          "applicationName": {
+            "value": "downloads"
+          }
+        },
+        {
+          "applicationName": {
+            "value": "umsp-eu-prod-euw1"
+          }
+        },
+        {
+          "applicationName": {
+            "value": "umsp-na-prod-use1"
+          }
+        },
+        {
+          "applicationName": {
+            "value": "umfoundation"
+          }
+        },
+        {
+          "applicationName": {
+            "value": "umsp"
+          }
+        },
+        {
+          "applicationName": {
+            "value": "umsp-in-prod-apse1"
+          }
+        },
+        {
+          "applicationName": {
+            "value": "payment"
+          }
+        },
+        {
+          "applicationName": {
+            "value": "aws"
+          }
+        }
+      ],
+      "ruleSubgroups": [
+        {
+          "id": "fb1121fe-8a4d-4e9e-b583-ebee9220ddb9",
+          "rules": [
+            {
+              "id": "82d35923-6632-455e-b5e4-3e13388948b8",
+              "name": "fix mapping exception for message with Object",
+              "description": "",
+              "sourceField": "text",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "text",
+                  "replaceNewVal": "\"messageObject\":{",
+                  "rule": "\"message\"\\s*:\\s*\\{"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 1
+        }
+      ],
+      "order": 18
+    },
+    {
+      "id": "3592eae4-4566-435a-a0b1-1a6ebb34925c",
+      "name": "UM-Concurrency-rule",
+      "description": "",
+      "creator": "souvik.sarkhel@hotstar.com",
+      "enabled": true,
+      "hidden": false,
+      "ruleMatchers": [
+        {
+          "applicationName": {
+            "value": "umsp-eu-prod-euw1"
+          }
+        },
+        {
+          "applicationName": {
+            "value": "downloads"
+          }
+        },
+        {
+          "applicationName": {
+            "value": "umsp-na-prod-use1"
+          }
+        },
+        {
+          "applicationName": {
+            "value": "umsp"
+          }
+        },
+        {
+          "applicationName": {
+            "value": "umsp-in-prod-apse1"
+          }
+        }
+      ],
+      "ruleSubgroups": [
+        {
+          "id": "f7e8da7c-5280-49ae-b754-319eae28e0c0",
+          "rules": [
+            {
+              "id": "a9c03dab-cc05-4d01-9d0a-ce68748e088a",
+              "name": "Block JWT Expired exception",
+              "description": "",
+              "sourceField": "text",
+              "parameters": {
+                "blockParameters": {
+                  "keepBlockedLogs": false,
+                  "rule": "Method verifyToken, exception JWT expired"
+                }
+              },
+              "enabled": false,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 1
+        }
+      ],
+      "order": 19
+    },
+    {
+      "id": "1d3b0767-c1e9-43ea-9766-1a974c45b83b",
+      "name": "Block LaunchDarkly Warning Logs",
+      "description": "Block LaunchDarkly Warning Logs allFlagsState",
+      "creator": "aditya.kadam@hotstar.com",
+      "enabled": true,
+      "hidden": false,
+      "ruleMatchers": [
+        {
+          "applicationName": {
+            "value": "umsp-in-prod-apse1"
+          }
+        },
+        {
+          "subsystemName": {
+            "value": "ums-concurrency"
+          }
+        },
+        {
+          "severity": {
+            "value": "VALUE_WARNING"
+          }
+        }
+      ],
+      "ruleSubgroups": [
+        {
+          "id": "a788168a-42ca-4aeb-b950-22ad6e0f0e2d",
+          "rules": [
+            {
+              "id": "93471345-46b7-4ee0-a642-8b93326392bb",
+              "name": "Block LaunchDarkly Warning Logs allFlagsState",
+              "description": "Block LaunchDarkly Warning Logs allFlagsState",
+              "sourceField": "text.message",
+              "parameters": {
+                "blockParameters": {
+                  "keepBlockedLogs": false,
+                  "rule": ".*allFlagsState.*"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 1
+        }
+      ],
+      "order": 20
+    },
+    {
+      "id": "1f8d3f4c-d11c-4c28-a85f-263c94f353fb",
+      "name": "[PC]: blocking \"Empty or null maturityLevel in userToken\"",
+      "description": "",
+      "creator": "swaroop.chand@hotstar.com",
+      "enabled": true,
+      "hidden": false,
+      "ruleMatchers": [
+        {
+          "applicationName": {
+            "value": "umsp-in-prod-apse1"
+          }
+        },
+        {
+          "applicationName": {
+            "value": "umsp"
+          }
+        },
+        {
+          "subsystemName": {
+            "value": "ums-authorization"
+          }
+        },
+        {
+          "subsystemName": {
+            "value": "ums-authorization-x"
+          }
+        },
+        {
+          "severity": {
+            "value": "VALUE_ERROR"
+          }
+        }
+      ],
+      "ruleSubgroups": [
+        {
+          "id": "88a39e19-18c0-4811-8841-dad3c666cd57",
+          "rules": [
+            {
+              "id": "4186e96f-f565-416b-ab76-2cdd01e48901",
+              "name": "Blocking \"Empty or null maturityLevel in userToken\" error logs",
+              "description": "",
+              "sourceField": "text",
+              "parameters": {
+                "blockParameters": {
+                  "keepBlockedLogs": false,
+                  "rule": "Empty or null maturityLevel in userToken"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 1
+        }
+      ],
+      "order": 21
+    },
+    {
+      "id": "992daedf-6829-4b60-993a-95d88cd547f7",
+      "name": "Received GetPlaybackURL request with passport data",
+      "description": "Block the high memory consuming info log from hs-umsp",
+      "creator": "swaroop.chand@hotstar.com",
+      "enabled": true,
+      "hidden": false,
+      "ruleMatchers": [
+        {
+          "applicationName": {
+            "value": "umsp"
+          }
+        },
+        {
+          "subsystemName": {
+            "value": "ums-authorization-x"
+          }
+        },
+        {
+          "subsystemName": {
+            "value": "ums-authorization"
+          }
+        },
+        {
+          "severity": {
+            "value": "VALUE_INFO"
+          }
+        }
+      ],
+      "ruleSubgroups": [
+        {
+          "id": "c36bf728-6772-4285-9890-ac684bf6f164",
+          "rules": [
+            {
+              "id": "346699b7-d3df-4634-96b2-d7a121f53e6c",
+              "name": "Recieved GetPlaybackURL request with passport data",
+              "description": "https://hotstar.atlassian.net/browse/PLAY-1881",
+              "sourceField": "text.message",
+              "parameters": {
+                "blockParameters": {
+                  "keepBlockedLogs": false,
+                  "rule": "Recieved GetPlaybackURL request with passport data"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 1
+        }
+      ],
+      "order": 22
+    },
+    {
+      "id": "d126d736-fe76-4d8e-b322-412101246d4a",
+      "name": "Received request in GetPlaybackURL of graphql service",
+      "description": "https://hotstar.atlassian.net/browse/PLAY-1960",
+      "creator": "swaroop.chand@hotstar.com",
+      "enabled": true,
+      "hidden": false,
+      "ruleMatchers": [
+        {
+          "applicationName": {
+            "value": "umsp"
+          }
+        },
+        {
+          "subsystemName": {
+            "value": "ums-authorization-x"
+          }
+        },
+        {
+          "severity": {
+            "value": "VALUE_INFO"
+          }
+        }
+      ],
+      "ruleSubgroups": [
+        {
+          "id": "d0f90384-69a8-42f1-b968-58505b269e30",
+          "rules": [
+            {
+              "id": "579f37c2-ae00-40b5-9a62-83fd8e4d3d4e",
+              "name": "Received request in GetPlaybackURL of graphql service",
+              "description": "",
+              "sourceField": "text",
+              "parameters": {
+                "blockParameters": {
+                  "keepBlockedLogs": false,
+                  "rule": "Received request in GetPlaybackURL of graphql service"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 1
+        }
+      ],
+      "order": 23
+    },
+    {
+      "id": "d8f10ce2-17c3-4cb4-8c35-70f92afffdbd",
+      "name": "Blocking communication otp logs",
+      "description": "",
+      "creator": "swaroop.chand@hotstar.com",
+      "enabled": true,
+      "hidden": false,
+      "ruleMatchers": [
+        {
+          "applicationName": {
+            "value": "umsp"
+          }
+        },
+        {
+          "applicationName": {
+            "value": "umsp-in-prod-apse1"
+          }
+        },
+        {
+          "applicationName": {
+            "value": "umsp-eu-prod-euw1"
+          }
+        },
+        {
+          "applicationName": {
+            "value": "umsp-na-prod-use1"
+          }
+        },
+        {
+          "subsystemName": {
+            "value": "communications-api-server"
+          }
+        },
+        {
+          "subsystemName": {
+            "value": "communications-consumer"
+          }
+        },
+        {
+          "severity": {
+            "value": "VALUE_ERROR"
+          }
+        }
+      ],
+      "ruleSubgroups": [
+        {
+          "id": "1738b86e-d28a-491f-a78d-1981948959c5",
+          "rules": [
+            {
+              "id": "b37a1f83-3745-4365-87cc-4088419a7549",
+              "name": "Blocking communication otp logs",
+              "description": "",
+              "sourceField": "text.message",
+              "parameters": {
+                "blockParameters": {
+                  "keepBlockedLogs": false,
+                  "rule": "%verificationCode not present, failed sending request%"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 1
+        }
+      ],
+      "order": 24
+    },
+    {
+      "id": "a7326dd4-0344-426e-8252-ff624127b2f1",
+      "name": "Block PC UnWanted Logs",
+      "description": "Block PC UnWanted Logs",
+      "creator": "mohit.garg@hotstar.com",
+      "enabled": true,
+      "hidden": false,
+      "ruleMatchers": [
+        {
+          "applicationName": {
+            "value": "umsp"
+          }
+        },
+        {
+          "applicationName": {
+            "value": "umsp-in-prod-apse1"
+          }
+        },
+        {
+          "subsystemName": {
+            "value": "ums-authorization"
+          }
+        },
+        {
+          "subsystemName": {
+            "value": "ums-authorization-x"
+          }
+        }
+      ],
+      "ruleSubgroups": [
+        {
+          "id": "cc5f4280-e04c-452d-a08e-3445ef02e9c7",
+          "rules": [
+            {
+              "id": "142b4972-56b3-480a-97c6-a279563f3ded",
+              "name": "PC Unwanted Logs",
+              "description": "PC Unwanted Logs",
+              "sourceField": "text",
+              "parameters": {
+                "blockParameters": {
+                  "keepBlockedLogs": false,
+                  "rule": "Value fetched from the Launch Darkly"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            },
+            {
+              "id": "b9a063ba-6747-4417-a9f2-9ed8df33315f",
+              "name": "PC Unwanted Logs",
+              "description": "PC Unwanted Logs",
+              "sourceField": "text",
+              "parameters": {
+                "blockParameters": {
+                  "keepBlockedLogs": false,
+                  "rule": "Unable to fetch config from Launch Darkly returning default"
+                }
+              },
+              "enabled": true,
+              "order": 2
+            },
+            {
+              "id": "a739e3b3-58cf-4d61-b2f9-d666c2f2dd72",
+              "name": "PC Unwanted Logs",
+              "description": "PC Unwanted Logs",
+              "sourceField": "text",
+              "parameters": {
+                "blockParameters": {
+                  "keepBlockedLogs": false,
+                  "rule": "Load shedding flag"
+                }
+              },
+              "enabled": true,
+              "order": 3
+            },
+            {
+              "id": "aced0cf0-72d4-46df-b09b-5cbf78979822",
+              "name": "Pc Unwanted logs",
+              "description": "",
+              "sourceField": "text",
+              "parameters": {
+                "blockParameters": {
+                  "keepBlockedLogs": false,
+                  "rule": "User plan attributes is missing from the passport"
+                }
+              },
+              "enabled": true,
+              "order": 4
+            }
+          ],
+          "enabled": true,
+          "order": 1
+        }
+      ],
+      "order": 25
+    },
+    {
+      "id": "aa0e718c-88f1-4d3a-a37b-fb39537ee3e6",
+      "name": "Parse HS-core Logs",
+      "description": "",
+      "creator": "Keshav.Bhattad@jiostar.com",
+      "enabled": true,
+      "hidden": false,
+      "ruleMatchers": [
+        {
+          "subsystemName": {
+            "value": "page-compositor-gql-fleet-2"
+          }
+        },
+        {
+          "subsystemName": {
+            "value": "page-compositor-gql-fleet-3"
+          }
+        },
+        {
+          "subsystemName": {
+            "value": "page-compositor-gql-fleet-1"
+          }
+        },
+        {
+          "subsystemName": {
+            "value": "page-compositor-gql"
+          }
+        },
+        {
+          "subsystemName": {
+            "value": "page-compositor-gql-fleet-1-canary"
+          }
+        },
+        {
+          "subsystemName": {
+            "value": "page-compositor-gql-fleet-3-canary"
+          }
+        },
+        {
+          "subsystemName": {
+            "value": "page-compositor-gql-canary"
+          }
+        },
+        {
+          "subsystemName": {
+            "value": "page-compositor-gql-fleet-2-canary"
+          }
+        },
+        {
+          "subsystemName": {
+            "value": "assistant-service"
+          }
+        },
+        {
+          "subsystemName": {
+            "value": "layout-service"
+          }
+        },
+        {
+          "subsystemName": {
+            "value": "layout-service-nginx"
+          }
+        },
+        {
+          "subsystemName": {
+            "value": "integration-daemonset"
+          }
+        }
+      ],
+      "ruleSubgroups": [
+        {
+          "id": "05bc4e85-56e2-4f55-9e6e-c18497638841",
+          "rules": [
+            {
+              "id": "dde58abb-374b-4bcb-b232-281bd0f01b37",
+              "name": "message to message_obj",
+              "description": "",
+              "sourceField": "text",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "text",
+                  "replaceNewVal": "\"message_obj\":\"{",
+                  "rule": "\"message\"\\s*:\\s*\"{"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 1
+        },
+        {
+          "id": "6f7e6b77-6cf9-4447-9a87-d552bf013e0f",
+          "rules": [
+            {
+              "id": "73935438-b588-4882-b788-d4cfea8f7d41",
+              "name": "JSONify message Field",
+              "description": "",
+              "sourceField": "text.message_obj",
+              "parameters": {
+                "jsonParseParameters": {
+                  "destinationField": "text",
+                  "deleteSource": true,
+                  "escapedValue": null,
+                  "overrideDest": false
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 2
+        }
+      ],
+      "order": 26
+    },
+    {
+      "id": "be2ab1e6-2c0d-4973-8153-98933fbf3b51",
+      "name": "Block specific logs",
+      "description": "",
+      "creator": "amarnath.verma@jiostar.com",
+      "enabled": true,
+      "hidden": false,
+      "ruleMatchers": [],
+      "ruleSubgroups": [
+        {
+          "id": "6867afd3-173e-48b3-9e14-769338c837fb",
+          "rules": [
+            {
+              "id": "06d6d01a-ef6c-469f-a518-88955d26481e",
+              "name": "Block \"allocation result is nil in ab client to get user group\" logs",
+              "description": "",
+              "sourceField": "text.message",
+              "parameters": {
+                "blockParameters": {
+                  "keepBlockedLogs": false,
+                  "rule": "allocation result is nil in ab client to get user group"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            },
+            {
+              "id": "dc4dcc65-cad1-4672-8a40-3e8e8c10e729",
+              "name": "Block \"error in getting ab experiment details for\" logs",
+              "description": "",
+              "sourceField": "text.message",
+              "parameters": {
+                "blockParameters": {
+                  "keepBlockedLogs": false,
+                  "rule": "error in getting ab experiment details for"
+                }
+              },
+              "enabled": true,
+              "order": 2
+            },
+            {
+              "id": "4c987b84-d3f7-4391-9dee-d203d245ecc7",
+              "name": "Block \"query not found\" logs",
+              "description": "",
+              "sourceField": "text.message",
+              "parameters": {
+                "blockParameters": {
+                  "keepBlockedLogs": false,
+                  "rule": "query not found"
+                }
+              },
+              "enabled": true,
+              "order": 3
+            },
+            {
+              "id": "2d9a9a7b-953e-432f-814d-b6a8715e8299",
+              "name": "Block error in get binder",
+              "description": "",
+              "sourceField": "text.binder_id",
+              "parameters": {
+                "blockParameters": {
+                  "keepBlockedLogs": false,
+                  "rule": "(?i)seospace\\+seo|watchoverlayspace\\+watch_overlay|adaptivetabcontainerspace\\+adaptive_tab_container|playerspace\\+player|footerspace\\+footer|headerspace\\+header|logospace\\+logo|nonscrollabletrayspace\\+non_scrollable_tray|submenuspace\\+sub_menu"
+                }
+              },
+              "enabled": true,
+              "order": 4
+            }
+          ],
+          "enabled": true,
+          "order": 1
+        }
+      ],
+      "order": 27
+    },
+    {
+      "id": "6a3c5b43-c4db-4ba3-ab9b-916f1ba29696",
+      "name": "Sample logs",
+      "description": "Drop logs if they fall in the sample. We match request id character to a range and drop if there is a match",
+      "creator": "Keshav.Bhattad@jiostar.com",
+      "enabled": true,
+      "hidden": false,
+      "ruleMatchers": [
+        {
+          "subsystemName": {
+            "value": "page-compositor-gql"
+          }
+        },
+        {
+          "subsystemName": {
+            "value": "page-compositor-gql-fleet-1"
+          }
+        },
+        {
+          "subsystemName": {
+            "value": "page-compositor-gql-fleet-2"
+          }
+        },
+        {
+          "subsystemName": {
+            "value": "hs-core-config-store"
+          }
+        },
+        {
+          "subsystemName": {
+            "value": "hs-core-config-store-prod-eu"
+          }
+        },
+        {
+          "subsystemName": {
+            "value": "layout-service-nginx"
+          }
+        },
+        {
+          "subsystemName": {
+            "value": "layout-service"
+          }
+        },
+        {
+          "subsystemName": {
+            "value": "page-compositor-gql-fleet-3"
+          }
+        },
+        {
+          "severity": {
+            "value": "VALUE_ERROR"
+          }
+        },
+        {
+          "severity": {
+            "value": "VALUE_DEBUG_OR_UNSPECIFIED"
+          }
+        },
+        {
+          "severity": {
+            "value": "VALUE_INFO"
+          }
+        },
+        {
+          "severity": {
+            "value": "VALUE_WARNING"
+          }
+        },
+        {
+          "severity": {
+            "value": "VALUE_VERBOSE"
+          }
+        }
+      ],
+      "ruleSubgroups": [
+        {
+          "id": "794efadd-336f-4fff-8acf-ef4cf792d5a1",
+          "rules": [
+            {
+              "id": "39fb9403-c312-4dd3-bedc-e2a85a95875e",
+              "name": "Drop log if request id regex match",
+              "description": "",
+              "sourceField": "text.X-Hs-Request-Id",
+              "parameters": {
+                "blockParameters": {
+                  "keepBlockedLogs": true,
+                  "rule": "^[!2-9a-zA-Z].*"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            },
+            {
+              "id": "76e6780c-b62f-492d-ac29-6ee733d394e5",
+              "name": "Block if request ID is not present in the log",
+              "description": "",
+              "sourceField": "text.X-Hs-Request-Id",
+              "parameters": {
+                "blockParameters": {
+                  "keepBlockedLogs": true,
+                  "rule": "^$"
+                }
+              },
+              "enabled": true,
+              "order": 2
+            }
+          ],
+          "enabled": true,
+          "order": 1
+        }
+      ],
+      "order": 28
+    },
+    {
+      "id": "9568901f-668a-464c-a7fb-8cc72f3394f3",
+      "name": "zplay-rules",
+      "description": "",
+      "creator": "souvik.sarkhel@hotstar.com",
+      "enabled": true,
+      "hidden": false,
+      "ruleMatchers": [
+        {
+          "applicationName": {
+            "value": "pubsub-qa"
+          }
+        },
+        {
+          "applicationName": {
+            "value": "pubsub-dev"
+          }
+        },
+        {
+          "applicationName": {
+            "value": "liveops"
+          }
+        },
+        {
+          "applicationName": {
+            "value": "social"
+          }
+        },
+        {
+          "applicationName": {
+            "value": "gameengine"
+          }
+        },
+        {
+          "applicationName": {
+            "value": "config-service-pp"
+          }
+        },
+        {
+          "applicationName": {
+            "value": "consumption"
+          }
+        },
+        {
+          "applicationName": {
+            "value": "config-service-load"
+          }
+        },
+        {
+          "applicationName": {
+            "value": "pubsub-prod"
+          }
+        },
+        {
+          "applicationName": {
+            "value": "pubsub-pp"
+          }
+        },
+        {
+          "applicationName": {
+            "value": "cms-in-prod-apse1"
+          }
+        },
+        {
+          "applicationName": {
+            "value": "config-service-dev"
+          }
+        },
+        {
+          "applicationName": {
+            "value": "config-service-qa"
+          }
+        },
+        {
+          "applicationName": {
+            "value": "liveops-in-dev-aps1"
+          }
+        },
+        {
+          "applicationName": {
+            "value": "liveops-in-prod-apse1"
+          }
+        },
+        {
+          "applicationName": {
+            "value": "live-stream-pipeline"
+          }
+        },
+        {
+          "applicationName": {
+            "value": "social-in-prod-apse1"
+          }
+        }
+      ],
+      "ruleSubgroups": [
+        {
+          "id": "274ab40a-434c-40f5-8aec-91ce7292a253",
+          "rules": [
+            {
+              "id": "b9f5d23d-db8c-4775-aec4-6864171481d7",
+              "name": "host --> host_object",
+              "description": "fix up the json log entries",
+              "sourceField": "text",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "text",
+                  "replaceNewVal": "\"host_object\":{",
+                  "rule": "\"host\"\\s*:\\s*{"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 1
+        }
+      ],
+      "order": 29
+    },
+    {
+      "id": "4df090a2-3150-4cd4-af59-c2e4ccb95f43",
+      "name": "Fix Mapping Exception",
+      "description": "",
+      "creator": "souvik.sarkhel@hotstar.com",
+      "enabled": true,
+      "hidden": false,
+      "ruleMatchers": [
+        {
+          "applicationName": {
+            "value": "gcp"
+          }
+        },
+        {
+          "applicationName": {
+            "value": "hspay-eu-prod-euw1"
+          }
+        },
+        {
+          "applicationName": {
+            "value": "hspay-na-prod-use1"
+          }
+        },
+        {
+          "applicationName": {
+            "value": "hspay"
+          }
+        },
+        {
+          "applicationName": {
+            "value": "aws"
+          }
+        },
+        {
+          "applicationName": {
+            "value": "hspay-in-prod-apse1"
+          }
+        }
+      ],
+      "ruleSubgroups": [
+        {
+          "id": "032a58de-dcad-43e8-99b6-8bf7a48ee179",
+          "rules": [
+            {
+              "id": "99a4f39c-3307-45ab-a40c-5ce6f1302b74",
+              "name": "Fix mapping exception for message when object",
+              "description": "",
+              "sourceField": "text",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "text",
+                  "replaceNewVal": "\"message_object\":{",
+                  "rule": "\"message\"\\s*:\\s*\\{"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 1
+        }
+      ],
+      "order": 30
+    },
+    {
+      "id": "f40817c8-bf9e-4919-890e-81cb9d242a47",
+      "name": "Subscription | Block country backfill logs And Block Offer Service Logs in subs",
+      "description": "Block Offer Service Logs in subs",
+      "creator": "himanshu.gupta@jiostar.com",
+      "enabled": true,
+      "hidden": false,
+      "ruleMatchers": [
+        {
+          "applicationName": {
+            "value": "hspay-in-prod-apse1"
+          }
+        }
+      ],
+      "ruleSubgroups": [
+        {
+          "id": "d812bb90-3c15-45dd-b7ec-25fdc9e74fef",
+          "rules": [
+            {
+              "id": "91c5e8c3-63cb-4dbf-9773-1320d0645732",
+              "name": "Block kafka tenant expections",
+              "description": "",
+              "sourceField": "text",
+              "parameters": {
+                "blockParameters": {
+                  "keepBlockedLogs": true,
+                  "rule": "Tenant: null is not found in regional list"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 1
+        },
+        {
+          "id": "728a5610-410c-4e31-8e48-ac6070033510",
+          "rules": [
+            {
+              "id": "37d74462-151f-4719-be89-9ec6792aa738",
+              "name": "Block Offer Service Logs in subs",
+              "description": "Block Offer Service Logs in subs",
+              "sourceField": "text",
+              "parameters": {
+                "blockParameters": {
+                  "keepBlockedLogs": false,
+                  "rule": "Request to offer service for getting the best offer"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 2
+        }
+      ],
+      "order": 31
+    },
+    {
+      "id": "83366f71-b3ee-459c-bad0-e210f7f01af7",
+      "name": "Block Country Code Fallback Logs | For Different PGs",
+      "description": "Block Country Code Fallback Logs | For Different PGs",
+      "creator": "mohit.garg@hotstar.com",
+      "enabled": true,
+      "hidden": false,
+      "ruleMatchers": [
+        {
+          "applicationName": {
+            "value": "hspay-in-prod-apse1"
+          }
+        },
+        {
+          "subsystemName": {
+            "value": "payment-service"
+          }
+        },
+        {
+          "subsystemName": {
+            "value": "payment-service-worker"
+          }
+        }
+      ],
+      "ruleSubgroups": [
+        {
+          "id": "2da9bb14-e454-4a3e-bd8c-d3894d1a1b1d",
+          "rules": [
+            {
+              "id": "97bf0145-0f38-4910-b00b-b1be9c2cb678",
+              "name": "RazorPay Webhook CountryCode Fallback Log  Block",
+              "description": "RazorPay Webhook CountryCode Fallback Log  Block",
+              "sourceField": "text",
+              "parameters": {
+                "blockParameters": {
+                  "keepBlockedLogs": true,
+                  "rule": "Setting country based on default tenant: handler=:=razorpayWebhook"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            },
+            {
+              "id": "3570b9c0-e486-4b13-91b1-dc629715eee3",
+              "name": "PhonePe Webhook CountryCode Fallback Log  Block",
+              "description": "PhonePe Webhook CountryCode Fallback Log  Block",
+              "sourceField": "text",
+              "parameters": {
+                "blockParameters": {
+                  "keepBlockedLogs": true,
+                  "rule": "Setting country based on default tenant: handler=:=phonepeWebhook"
+                }
+              },
+              "enabled": true,
+              "order": 2
+            },
+            {
+              "id": "baa177b9-30e3-4a1a-a1d9-112a8c0e9a89",
+              "name": "Paytm Webhook CountryCode Fallback Log  Block",
+              "description": "Paytm Webhook CountryCode Fallback Log  Block",
+              "sourceField": "text",
+              "parameters": {
+                "blockParameters": {
+                  "keepBlockedLogs": true,
+                  "rule": "Setting country based on default tenant: handler=:=paytmWebhook"
+                }
+              },
+              "enabled": true,
+              "order": 3
+            },
+            {
+              "id": "62468b99-4df0-4937-9356-29f60fef0255",
+              "name": "PayU Webhook CountryCode Fallback Log  Block",
+              "description": "PayU Webhook CountryCode Fallback Log  Block",
+              "sourceField": "text",
+              "parameters": {
+                "blockParameters": {
+                  "keepBlockedLogs": true,
+                  "rule": "Setting country based on default tenant: handler=:=payuWebhook"
+                }
+              },
+              "enabled": true,
+              "order": 4
+            }
+          ],
+          "enabled": true,
+          "order": 1
+        }
+      ],
+      "order": 32
+    },
+    {
+      "id": "77991d61-5240-4b4a-b18c-3c09b175a904",
+      "name": "Block Coupon Service GetOffer Logs",
+      "description": "Block Coupon Service GetOffer Logs",
+      "creator": "mohit.garg@hotstar.com",
+      "enabled": true,
+      "hidden": false,
+      "ruleMatchers": [
+        {
+          "applicationName": {
+            "value": "hspay-in-prod-apse1"
+          }
+        },
+        {
+          "subsystemName": {
+            "value": "coupon-service"
+          }
+        }
+      ],
+      "ruleSubgroups": [
+        {
+          "id": "04603c9e-84e8-4e54-80e3-0d1232b3cec0",
+          "rules": [
+            {
+              "id": "f4a2add8-8b01-49c5-a8ab-ff045c12e25c",
+              "name": "Block Coupon Service GetOffer Logs",
+              "description": "Block Coupon Service GetOffer Logs",
+              "sourceField": "text",
+              "parameters": {
+                "blockParameters": {
+                  "keepBlockedLogs": false,
+                  "rule": "getOffers status=:=200"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 1
+        }
+      ],
+      "order": 33
+    },
+    {
+      "id": "6d80bd83-20e3-4686-881c-ac98bda007a9",
+      "name": "Hspay Debug and Info Log",
+      "description": "",
+      "creator": "davendar.ojha@hotstar.com",
+      "enabled": true,
+      "hidden": false,
+      "ruleMatchers": [
+        {
+          "applicationName": {
+            "value": "hspay"
+          }
+        },
+        {
+          "subsystemName": {
+            "value": "hspay-paywall-service"
+          }
+        },
+        {
+          "subsystemName": {
+            "value": "hspay-offer-dds"
+          }
+        },
+        {
+          "severity": {
+            "value": "VALUE_DEBUG_OR_UNSPECIFIED"
+          }
+        },
+        {
+          "severity": {
+            "value": "VALUE_INFO"
+          }
+        }
+      ],
+      "ruleSubgroups": [
+        {
+          "id": "77f6b101-f28d-4359-b8d9-acbd8ba02475",
+          "rules": [
+            {
+              "id": "0da6be39-8239-48c3-a3e6-f7b0f1fefad6",
+              "name": "All Debug and Info Logs",
+              "description": "",
+              "sourceField": "text",
+              "parameters": {
+                "blockParameters": {
+                  "keepBlockedLogs": false,
+                  "rule": ".*"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 1
+        }
+      ],
+      "order": 34
+    },
+    {
+      "id": "7c646b45-e8c6-4eec-b9ff-694b7ef9a64c",
+      "name": "Block unwanted subs info/error logs",
+      "description": "",
+      "creator": "davendar.ojha@hotstar.com",
+      "enabled": true,
+      "hidden": false,
+      "ruleMatchers": [
+        {
+          "applicationName": {
+            "value": "hspay"
+          }
+        },
+        {
+          "applicationName": {
+            "value": "hspay-na-prod-use1"
+          }
+        },
+        {
+          "applicationName": {
+            "value": "hspay-eu-prod-euw1"
+          }
+        },
+        {
+          "subsystemName": {
+            "value": "hs-partner-subscription-service"
+          }
+        },
+        {
+          "subsystemName": {
+            "value": "hs-subscription-service-read"
+          }
+        },
+        {
+          "subsystemName": {
+            "value": "subscription-service-worker"
+          }
+        },
+        {
+          "subsystemName": {
+            "value": "subscription-service-read-me"
+          }
+        },
+        {
+          "subsystemName": {
+            "value": "subscription-service"
+          }
+        },
+        {
+          "subsystemName": {
+            "value": "hs-subscription-service-read-p0"
+          }
+        },
+        {
+          "subsystemName": {
+            "value": "subs-notify-consumer"
+          }
+        },
+        {
+          "subsystemName": {
+            "value": "subscription-service-me"
+          }
+        },
+        {
+          "subsystemName": {
+            "value": "hs-subscription-service"
+          }
+        },
+        {
+          "subsystemName": {
+            "value": "hs-subscription-service-worker"
+          }
+        },
+        {
+          "subsystemName": {
+            "value": "hs-subscription-service-deferred-worker"
+          }
+        },
+        {
+          "subsystemName": {
+            "value": "hs-subscription-service-renewal-worker"
+          }
+        },
+        {
+          "severity": {
+            "value": "VALUE_INFO"
+          }
+        },
+        {
+          "severity": {
+            "value": "VALUE_ERROR"
+          }
+        }
+      ],
+      "ruleSubgroups": [
+        {
+          "id": "ddd421b0-b22d-4a89-8793-efe750f72c6c",
+          "rules": [
+            {
+              "id": "153454e9-d93c-4b40-9f52-0c773d7343c6",
+              "name": "Block log",
+              "description": "",
+              "sourceField": "text",
+              "parameters": {
+                "blockParameters": {
+                  "keepBlockedLogs": false,
+                  "rule": "Subscription Configuration list not found for key"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            },
+            {
+              "id": "a65acbb6-282a-4915-90a0-056c80bcc5cd",
+              "name": "Block log",
+              "description": "",
+              "sourceField": "text",
+              "parameters": {
+                "blockParameters": {
+                  "keepBlockedLogs": false,
+                  "rule": "Can not get min order amount for country"
+                }
+              },
+              "enabled": true,
+              "order": 2
+            },
+            {
+              "id": "d64647c3-c352-459b-8572-d98a75efbd10",
+              "name": "Block log",
+              "description": "",
+              "sourceField": "text",
+              "parameters": {
+                "blockParameters": {
+                  "keepBlockedLogs": false,
+                  "rule": "Country not present in config map"
+                }
+              },
+              "enabled": true,
+              "order": 3
+            },
+            {
+              "id": "20240e35-f3aa-4ccd-9634-d241895226d2",
+              "name": "Received null domain event",
+              "description": "",
+              "sourceField": "text",
+              "parameters": {
+                "blockParameters": {
+                  "keepBlockedLogs": false,
+                  "rule": "Received null domain event"
+                }
+              },
+              "enabled": true,
+              "order": 4
+            },
+            {
+              "id": "32ba39fd-a9de-4791-8f29-112a475ccfe3",
+              "name": "Worker Revamp Enabled skipping DB scan",
+              "description": "",
+              "sourceField": "text",
+              "parameters": {
+                "blockParameters": {
+                  "keepBlockedLogs": false,
+                  "rule": "Worker Revamp Enabled skipping DB scan"
+                }
+              },
+              "enabled": true,
+              "order": 5
+            },
+            {
+              "id": "7f5ab4c8-ac31-4830-925d-c13d8f2ed6cf",
+              "name": "bankIdentificationNumber:",
+              "description": "",
+              "sourceField": "text",
+              "parameters": {
+                "blockParameters": {
+                  "keepBlockedLogs": false,
+                  "rule": "bankIdentificationNumber:"
+                }
+              },
+              "enabled": true,
+              "order": 6
+            }
+          ],
+          "enabled": true,
+          "order": 1
+        }
+      ],
+      "order": 35
+    },
+    {
+      "id": "949b292b-42df-49ce-b9f8-5735f811f729",
+      "name": "Parse Useful Fields from Adtech",
+      "description": "",
+      "creator": "bot@coralogix.com",
+      "enabled": true,
+      "hidden": false,
+      "ruleMatchers": [
+        {
+          "applicationName": {
+            "value": "adtech"
+          }
+        }
+      ],
+      "ruleSubgroups": [
+        {
+          "id": "db2e2f02-13fa-4c61-9778-82c2ce6c871b",
+          "rules": [
+            {
+              "id": "148e29c9-a56f-45d2-8087-c6273915ec60",
+              "name": "Extract Status",
+              "description": "{\"@timestamp\":\"2024-05-31T07:21:07.738Z\",\"message\":\"INFO  2024-05-31 07:21:07,738 [AssetSnsController] [e237afbb-1184-45fc-8b2b-242958c5146e] [e237afbb-1184-45fc-8b2b-242958c5146e]: Updating asset status for: HesAssetCallbackRequest(s3Path=s3://adtech-ams-video-prod-ap-south-1/SOURCE/LIVE-VOD/cd-2024-05-31/dff4efb4-4fb4-4e72-ac1f-7f782292d1e7-076ec2c1-4b31-47c0-b9fc-39cc0ffd0254.mp4, duration=0.0, status=QC_FAILED, assetPlacementType=null, type=VIDEO, reason={error=Resource: input error FPS 30.0 is not supported. It should be 25.0}, assets=[]) \",\"k8s-cluster-name\":\"hs-eks-prod7-api-apse1\",\"source\":\"hs-adtech-ss-lego-fd4bbf8dc-8x2fg\",\"container-name\":\"main\"}\n\n{\"@timestamp\":\"2024-05-31T11:50:49.515Z\",\"message\":\"INFO  2024-05-31 11:50:49,515 [AssetSnsController] [0c65c333-943e-47b8-9750-d97af46b7f9c] [0c65c333-943e-47b8-9750-d97af46b7f9c]: Updating asset status for: HesAssetCallbackRequest(s3Path=s3://adtech-ams-video-prod-ap-south-1/SOURCE/VOD/cd-2024-05-31/GEC088649-206eeda8-0904-40f1-a5b7-0de9d92b4f20.mp4, duration=0.0, status=INGESTION_READY, assetPlacementType=null, type=VIDEO, reason={aspect ratio=16:9, blackframe=[], container format=mp4, fps=25/1, resolution=1920x1080}, assets=[]) \",\"k8s-cluster-name\":\"hs-eks-prod7-api-apse1\",\"source\":\"hs-adtech-ss-lego-fd4bbf8dc-8x2fg\",\"container-name\":\"main\"}",
+              "sourceField": "text.message",
+              "parameters": {
+                "extractParameters": {
+                  "rule": "status=(?P<status>\\w+)"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 1
+        },
+        {
+          "id": "88f33fc5-d15a-4e2f-bca5-735fb712e765",
+          "rules": [
+            {
+              "id": "99f93652-6f55-4324-bbf7-6f2de1c7f813",
+              "name": "Parse method, uri, payloadm logger",
+              "description": "DEBUG 2024-06-11 07:40:34,977 [RequestResponseLoggingFilter] [] []: [6c5e80ac-ed5e-48d8-9510-e4f97f2a74a7] [65] RequestLogger: method=:=PUT uri=:=/api/v3/blaze/ad-set/28024?null payload=:={\\\"impressionTarget\\\": 1507537, \\\"priority\\\": 3, \\\"enabled\\\": true, \\\"maximiseReach\\\": false, \\\"goalType\\\": \\\"VIDEO\\\", \\\"overridePreviousAdBreak\\\": false, \\\"automateDelivery\\\": true, \\\"streamTargetingRequest\\\": {\\\"ruleType\\\": \\\"Exclude\\\", \\\"streamTargetingRuleClauses\\\": [], \\\"tenant\\\": \\\"India\\\", \\\"id\\\": 2109}, \\\"breakTargetingRequest\\\": null, \\\"name\\\": \\\"SS_841592_The Media Ant_Aptronix_ Aptronix\\\", \\\"campaignId\\\": \\\"15539\\\", \\\"customId\\\": 841592, \\\"contentTargetingRequest\\\": {\\\"contentTargetingRuleClauses\\\": [{\\\"contentId\\\": \\\"1540029848\\\", \\\"impressionTarget\\\": 1507537}], \\\"id\\\": 1849958}, \\\"languageIdList\\\": [2], \\\"audienceTargetingRequest\\\": {\\\"audienceTargetingRuleClauses\\\": [{\\\"ruleType\\\": \\\"Include\\\", \\\"attributeId\\\": 2, \\\"valueIds\\\": [402]}, {\\\"ruleType\\\": \\\"Include\\\", \\\"attributeId\\\": 16, \\\"valueIds\\\": [1601]}], \\\"id\\\": 22778}, \\\"budgetAbs\\\": 300000, \\\"oldCpm\\\": 199, \\\"newCpm\\\": 280, \\\"extraBudget\\\": 0, \\\"id\\\": \\\"28024\\\"}\n\nDEBUG 2024-06-12 13:40:41,709 [RequestResponseLoggingFilter] [] []: [9a5ad8b0-3831-4274-a193-36647d1b484d] [60] ResponseLogger: method=:=POST status=:=200 uri=:=/api/v3/blaze/booking/forecast-search/ad-placement/midroll?reallocate=false payload=:={\\\"status\\\":\\\"failed\\\",\\\"totalReach\\\":null,\\\"totalAvailableImpression\\\":null,\\\"inventoryAllocationType\\\":null,\\\"errorCode\\\":\\\"INVENTORY_UNAVAILABLE\\\",\\\"errorReason\\\":\\\"Inventory is not available.\\\",\\\"extraInfo\\\":{\\\"detailedInfo\\\":[{\\\"adsetId\\\":\\\"830473\\\",\\\"status\\\":false,\\\"past\\\":{\\\"reach\\\":870000,\\\"impression\\\":4062448},\\\"future\\\":{\\\"reach\\\":1430000,\\\"impression\\\":17043079},\\\"totalAvailableImpression\\\":null,\\\"inventoryAllocationType\\\":null}]}}",
+              "sourceField": "text.message",
+              "parameters": {
+                "extractParameters": {
+                  "rule": "\\[(?P<service_str>\\w+)\\].*(?P<logger_str>RequestLogger|ResponseLogger).*method=:=(?P<method_str>\\w+).*\\suri=:=(?P<uri_str>.+)\\s(payload|handler|body)"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 2
+        }
+      ],
+      "order": 36
+    },
+    {
+      "id": "32359cfd-7a76-4005-90ca-3c7b8a75331a",
+      "name": "Parse Useful Fields from CMS",
+      "description": "",
+      "creator": "bot@coralogix.com",
+      "enabled": true,
+      "hidden": false,
+      "ruleMatchers": [
+        {
+          "applicationName": {
+            "value": "cms"
+          }
+        }
+      ],
+      "ruleSubgroups": [
+        {
+          "id": "1a4b2c93-51ea-4531-8123-037bf0c4e36b",
+          "rules": [
+            {
+              "id": "66bfce55-86b3-4e41-954c-d50373e5d73c",
+              "name": "extract message from message",
+              "description": "{\"@timestamp\":\"2024-05-31T12:40:00.007Z\",\"k8s-cluster-name\":\"hs-eks-prod5-api-apse1\",\"source\":\"osiris-6889746579-m9p95\",\"container-name\":\"main\",\"message\":\"{\\\"timestamp\\\":\\\"1717159200007\\\",\\\"level\\\":\\\"WARN\\\",\\\"thread\\\":\\\"pool-103-thread-13\\\",\\\"mdc\\\":{\\\"tenantId\\\":\\\"in\\\",\\\"uuid\\\":\\\"ad97ae1c-550d-4dcc-832e-4cf7b1027bd1\\\"},\\\"logger\\\":\\\"com.hotstar.controller.core.DevController\\\",\\\"message\\\":\\\"STARTING SYNC for schedulePublish tenantId : in \\\",\\\"context\\\":\\\"default\\\"}\"}",
+              "sourceField": "text.message",
+              "parameters": {
+                "extractParameters": {
+                  "rule": "\\\\\"message\\\\\":\\\\\"(?P<message_str>[^\\\\]+)"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 1
+        }
+      ],
+      "order": 37
+    },
+    {
+      "id": "d92df179-7d99-48eb-acd1-cafcb35fb57d",
+      "name": "Block Prefetch Service",
+      "description": "",
+      "creator": "shaokun.wang@hotstar.com",
+      "enabled": true,
+      "hidden": false,
+      "ruleMatchers": [
+        {
+          "applicationName": {
+            "value": "adtech"
+          }
+        },
+        {
+          "subsystemName": {
+            "value": "adtech-blaze-prefetch-service"
+          }
+        },
+        {
+          "severity": {
+            "value": "VALUE_ERROR"
+          }
+        }
+      ],
+      "ruleSubgroups": [
+        {
+          "id": "688f8082-360c-431c-a610-e0d3352e01d0",
+          "rules": [
+            {
+              "id": "1e44e91c-38e6-4ca9-90c6-1b44e100381e",
+              "name": "Empty vast",
+              "description": "",
+              "sourceField": "text",
+              "parameters": {
+                "blockParameters": {
+                  "keepBlockedLogs": false,
+                  "rule": "com.hotstar.adtech.vast.exception.VastException: empty"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 1
+        }
+      ],
+      "order": 38
+    },
+    {
+      "id": "4d6ded56-56e8-465f-ae34-df195aabd56c",
+      "name": "Block Programmatic decision service",
+      "description": "",
+      "creator": "shaokun.wang@hotstar.com",
+      "enabled": true,
+      "hidden": false,
+      "ruleMatchers": [
+        {
+          "applicationName": {
+            "value": "adtech"
+          }
+        },
+        {
+          "subsystemName": {
+            "value": "shifu-ad-decision-programmatic-service"
+          }
+        }
+      ],
+      "ruleSubgroups": [
+        {
+          "id": "38745ceb-19a9-46be-a8a4-947f7d83dbc7",
+          "rules": [
+            {
+              "id": "2ba4147f-2660-492e-a466-be5f51f894e2",
+              "name": "block LD",
+              "description": "",
+              "sourceField": "text",
+              "parameters": {
+                "blockParameters": {
+                  "keepBlockedLogs": false,
+                  "rule": "com.hotstar.launchdarkly.LdConfigStore"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            },
+            {
+              "id": "0adca6c7-5b9e-48f7-a7d7-858762b57057",
+              "name": "Block LD2",
+              "description": "",
+              "sourceField": "text",
+              "parameters": {
+                "blockParameters": {
+                  "keepBlockedLogs": false,
+                  "rule": "but got NUMBER"
+                }
+              },
+              "enabled": true,
+              "order": 2
+            },
+            {
+              "id": "62872940-abdc-4f01-9654-4a24e96734be",
+              "name": "Block Empty VAST response",
+              "description": "",
+              "sourceField": "text",
+              "parameters": {
+                "blockParameters": {
+                  "keepBlockedLogs": false,
+                  "rule": "Programmatic.*Exception"
+                }
+              },
+              "enabled": true,
+              "order": 3
+            }
+          ],
+          "enabled": true,
+          "order": 1
+        }
+      ],
+      "order": 39
+    },
+    {
+      "id": "d33894b9-ce94-4ff4-9c81-51c74e7855bb",
+      "name": "Block lp service",
+      "description": "",
+      "creator": "shaokun.wang@hotstar.com",
+      "enabled": true,
+      "hidden": false,
+      "ruleMatchers": [
+        {
+          "applicationName": {
+            "value": "adtech"
+          }
+        },
+        {
+          "subsystemName": {
+            "value": "shifu-ad-decision-lp-service"
+          }
+        }
+      ],
+      "ruleSubgroups": [
+        {
+          "id": "8990f22a-413d-4eea-b2ad-860a4db0645c",
+          "rules": [
+            {
+              "id": "5128531c-ae7d-4427-a3d1-4b39aad8656c",
+              "name": "Block Ld log",
+              "description": "",
+              "sourceField": "text",
+              "parameters": {
+                "blockParameters": {
+                  "keepBlockedLogs": false,
+                  "rule": "com.hotstar.launchdarkly.LdConfigStore"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            },
+            {
+              "id": "da738438-7bee-4348-9ef1-6b3449be761f",
+              "name": "Block LD v2",
+              "description": "",
+              "sourceField": "text",
+              "parameters": {
+                "blockParameters": {
+                  "keepBlockedLogs": false,
+                  "rule": "but got NUMBER"
+                }
+              },
+              "enabled": true,
+              "order": 2
+            }
+          ],
+          "enabled": true,
+          "order": 1
+        }
+      ],
+      "order": 40
+    },
+    {
+      "id": "efc46ab3-4b00-4c1b-b0dd-13824017185f",
+      "name": "Parse useful field for Consumption application",
+      "description": "",
+      "creator": "bot@coralogix.com",
+      "enabled": true,
+      "hidden": false,
+      "ruleMatchers": [
+        {
+          "applicationName": {
+            "value": "consumption"
+          }
+        }
+      ],
+      "ruleSubgroups": [
+        {
+          "id": "b0f3bb0e-e777-4c65-ac92-4d4df99d5ad5",
+          "rules": [
+            {
+              "id": "d3d32fba-f7f6-40d4-8d63-919508ad4215",
+              "name": "extract msg field from message field",
+              "description": "{\\\"level\\\":\\\"error\\\",\\\"time\\\":1717715658.7121499,\\\"caller\\\":\\\"keymoments/keymoment.go:111\\\",\\\"func\\\":\\\"github.com/hotstar/consumption-service/common/service/keymoments.(*Worker).harvestKeymoment\\\",\\\"msg\\\":\\\"failed to create keymoment clip on consumption\\\",\\\"content_id\\\":\\\"1540029938\\\",\\\"category\\\":\\\"cricket\\\",\\\"keymoment_message\\\":{\\\"_id\\\":\\\"666241e39d3dd1bb2e2870ae\\\",\\\"scene_no\\\":1717695399,\\\"keymomentId\\\":\\\"new_6rPSAkwwR\\\",\\\"caption\\\":\\\"\\\",\\\"icon\\\":\\\"https://hotstar-toch.s3.ap-south-1.amazonaws.com/key_moments_poster/mp4Dl4Ad-HotMoment.png\\\",\\\"title\\\":\\\"Match Ends!\\\",\\\"description\\\":\\\"Scotland wins by 5 wickets\\\",\\\"thumbnail_url\\\":\\\"https://hotstar-toch.s3.ap-south-1.amazonaws.com/hotstar-toch/vendor/bK1a3AYJfbK1a3AYJf/666241e39d3dd1bb2e2870ae/23d1d8d4-b118-4b2d-af3e-8eea16f4317f.jpg\\\",\\\"attributes\\\":[{\\\"attribute_name\\\":\\\"innings_no\\\",\\\"attribute_value\\\":\\\"2\\\"},{\\\"attribute_name\\\":\\\"outcome\\\",\\\"attribute_value\\\":\\\"hb\\\"},{\\\"attribute_name\\\":\\\"bowler\\\",\\\"attribute_value\\\":\\\"\\\"},{\\\"attribute_name\\\":\\\"player\\\",\\\"attribute_value\\\":\\\"\\\"},{\\\"attribute_name\\\":\\\"display_over\\\",\\\"attribute_value\\\":\\\"18.3\\\"}],\\\"clips\\\":[{\\\"language\\\":\\\"en\\\",\\\"tenant\\\":\\\"in\\\",\\\"stream_start_time\\\":1717693800,\\\"stream_end_time\\\":0,\\\"start_time\\\":\\\"05:16:06\\\",\\\"end_time\\\":\\\"05:16:21\\\"}]},\\\"worker_id\\\":\\\"t5mfs:d9397c60-0775-48d8-a4ae-3ec1ca2524e6\\\",\\\"task_id\\\":3094,\\\"iteration_id\\\":\\\"d6a91c2a-105d-4ac1-aa8d-feef73540faf\\\",\\\"task_config\\\":\\\"\\\",\\\"error\\\":\\\"no content found for given content id\\\",\\\"parent_content_id\\\":\\\"1540029938\\\"}",
+              "sourceField": "text.message",
+              "parameters": {
+                "extractParameters": {
+                  "rule": "\\\\\"msg\\\\\":\\\\\"(?P<msg_str>[^\"\\\\,]+)"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 1
+        }
+      ],
+      "order": 41
+    },
+    {
+      "id": "cc9fafdf-650e-4b2b-92f1-657d1efde6e3",
+      "name": "Block empty gam id log",
+      "description": "",
+      "creator": "Ishank@hotstar.com",
+      "enabled": true,
+      "hidden": false,
+      "ruleMatchers": [
+        {
+          "applicationName": {
+            "value": "adtech"
+          }
+        },
+        {
+          "subsystemName": {
+            "value": "adtech-blaze-fuse-cohosted"
+          }
+        }
+      ],
+      "ruleSubgroups": [
+        {
+          "id": "edd39252-4fc1-4f5d-9b1a-402a1d184ed9",
+          "rules": [
+            {
+              "id": "40abe1ad-7a26-4caa-8fdc-c001954420ad",
+              "name": "block empty gam id",
+              "description": "",
+              "sourceField": "text",
+              "parameters": {
+                "blockParameters": {
+                  "keepBlockedLogs": false,
+                  "rule": "received empty gam ids"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 1
+        }
+      ],
+      "order": 42
+    },
+    {
+      "id": "4b6650e9-cc38-4b48-8711-8ec180b658e9",
+      "name": "Extract ERR_PB_*  errors from logs ",
+      "description": "",
+      "creator": "bot@coralogix.com",
+      "enabled": true,
+      "hidden": false,
+      "ruleMatchers": [
+        {
+          "severity": {
+            "value": "VALUE_ERROR"
+          }
+        }
+      ],
+      "ruleSubgroups": [
+        {
+          "id": "6be2f544-3d75-44a2-bd6a-7876f7529025",
+          "rules": [
+            {
+              "id": "8d720f04-e44f-4271-94d0-58f721a82da9",
+              "name": "Extract ERR_PB_*  errors from logs ",
+              "description": "{\"country\":\"in\",\"source\":\"page-compositor-gql-85966d54fb-w42gn\",\"X-Hs-Request-Id\":\"046b9957-eab3-4207-821f-8380050cde37\",\"error\":\"get err from dds response, code:ERR_PB_1423 errdetail:map[]\",\"api_path\":\"/v2/pages/:page_id/spaces/:space_id/widgets/*any\",\"platform\":\"androidtv\",\"widget_template_name\":\"AutoplayWidget\",\"domain_team\":\"personalisation\",\"page_id\":666,\"spaceId\":334,\"widget_id\":0,\"otel_service_name\":\"hs-core-page-compositor\",\"trace_id\":\"ed74ce80c68f0411ea6a555a53179a14\",\"span_id\":\"84424ec12352c7bc\",\"level\":\"error\",\"container-name\":\"main\",\"message\":\"err in binding data\",\"env\":\"prod\",\"widget_type_instance\":\"AutoPlay\",\"@timestamp\":\"2024-09-13T12:39:04.389Z\",\"k8s-cluster-name\":\"hs-eks-prod-api-apse1\",\"service\":\"hs-core-page-compositor\",\"plugin_type\":\"hashicorp\",\"honeycomb_env\":\"prod-in\",\"time\":\"2024-09-13T12:39:04Z\"}",
+              "sourceField": "text",
+              "parameters": {
+                "extractParameters": {
+                  "rule": "(?P<error_code>ERR_PB_[0-9]+)"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 1
+        }
+      ],
+      "order": 43
+    },
+    {
+      "id": "c790d3b1-6ff9-412d-8c42-e4c1eb9cdead",
+      "name": "Suppress com.hotstar.lp.validator.Validator",
+      "description": "",
+      "creator": "shaokun.wang@hotstar.com",
+      "enabled": true,
+      "hidden": false,
+      "ruleMatchers": [
+        {
+          "applicationName": {
+            "value": "adtech"
+          }
+        },
+        {
+          "subsystemName": {
+            "value": "shifu-ad-dds"
+          }
+        },
+        {
+          "subsystemName": {
+            "value": "shifu-ad-dds-video"
+          }
+        },
+        {
+          "subsystemName": {
+            "value": "shifu-ad-dds-feed"
+          }
+        }
+      ],
+      "ruleSubgroups": [
+        {
+          "id": "ff323707-cf8d-4cbc-b4b7-c4ac68a55dcb",
+          "rules": [
+            {
+              "id": "d47cd168-3333-4248-b319-ff0b37d79a4c",
+              "name": "com.hotstar.lp.validator.Validator",
+              "description": "",
+              "sourceField": "text",
+              "parameters": {
+                "blockParameters": {
+                  "keepBlockedLogs": false,
+                  "rule": "com.hotstar.lp.validator.Validator"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 1
+        }
+      ],
+      "order": 44
+    },
+    {
+      "id": "0f624923-fac7-4682-967e-df6bbf064c2f",
+      "name": "Cx-Teodor |\u00a0Fixing mapping exception for PageLayoutFilters",
+      "description": "",
+      "creator": "bot@coralogix.com",
+      "enabled": false,
+      "hidden": false,
+      "ruleMatchers": [
+        {
+          "applicationName": {
+            "value": "hs-core"
+          }
+        },
+        {
+          "subsystemName": {
+            "value": "page-compositor-gql"
+          }
+        }
+      ],
+      "ruleSubgroups": [
+        {
+          "id": "118f20b3-a64c-4220-8a16-8f29a7e58d20",
+          "rules": [
+            {
+              "id": "d7cf94e1-7e1a-4d7f-b50f-8cc9a8129316",
+              "name": "PageLayoutFilters to PageLayoutFilters_obj",
+              "description": "{\"@timestamp\":\"2025-01-10T10:12:00.972Z\",\"source\":\"page-compositor-gql-bcb75df45-khlnz\",\"pageName :\":\"detail\",\"slugMeta :\":{\"PageName\":\"detail\",\"PathParams\":{\"content_id\":\"s-1008\",\"country_code\":\"qa\",\"resolved_path\":\"/qa/shows/durga/s-1008\",\"show_id\":\"s-1008\",\"show_title\":\"durga\"},\"ContentType\":\"SHOW\",\"PageLayoutFilters\":{\"Filters\":[{\"Key\":1,\"Value\":11}],\"FiltersV2\":null}},\"service\":\"hs-core-page-compositor\",\"error\":\"\",\"message\":\"error in getting page response\",\"time\":\"2025-01-10T10:12:00Z\",\"env\":\"prod\",\"level\":\"error\",\"container-name\":\"main\",\"k8s-cluster-name\":\"hs-eks-prod-api-euw1\"}",
+              "sourceField": "text",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "text",
+                  "replaceNewVal": "\"PageLayoutFilters_obj\":{",
+                  "rule": "\"PageLayoutFilters\"\\s*:\\s*{"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 1
+        }
+      ],
+      "order": 45
+    },
+    {
+      "id": "8ae9dd8c-0851-4cdc-80e4-9770839debf2",
+      "name": "Block Trivial logs",
+      "description": "Trivial logs Block",
+      "creator": "Davendar.Ojha@jiostar.com",
+      "enabled": true,
+      "hidden": false,
+      "ruleMatchers": [
+        {
+          "applicationName": {
+            "value": "hspay"
+          }
+        },
+        {
+          "subsystemName": {
+            "value": "hs-subscription-service-read"
+          }
+        },
+        {
+          "subsystemName": {
+            "value": "hs-subscription-service-read-p0"
+          }
+        },
+        {
+          "subsystemName": {
+            "value": "hs-subscription-service-worker"
+          }
+        },
+        {
+          "subsystemName": {
+            "value": "hs-subscription-service-renewal-worker"
+          }
+        },
+        {
+          "subsystemName": {
+            "value": "hs-subscription-service-deferred-worker"
+          }
+        },
+        {
+          "subsystemName": {
+            "value": "subs-failure-notify-consumer"
+          }
+        },
+        {
+          "subsystemName": {
+            "value": "subs-notify-consumer"
+          }
+        },
+        {
+          "subsystemName": {
+            "value": "hs-partner-subscription-service"
+          }
+        },
+        {
+          "subsystemName": {
+            "value": "hs-subscription-service"
+          }
+        },
+        {
+          "subsystemName": {
+            "value": "order-init-consumer"
+          }
+        },
+        {
+          "subsystemName": {
+            "value": "hspay-paywall-service"
+          }
+        },
+        {
+          "subsystemName": {
+            "value": "hs-pay-dds"
+          }
+        },
+        {
+          "severity": {
+            "value": "VALUE_INFO"
+          }
+        },
+        {
+          "severity": {
+            "value": "VALUE_ERROR"
+          }
+        },
+        {
+          "severity": {
+            "value": "VALUE_WARNING"
+          }
+        }
+      ],
+      "ruleSubgroups": [
+        {
+          "id": "679bc24f-b4bb-4df6-a1e7-ddf68df96b07",
+          "rules": [
+            {
+              "id": "b1a645fb-82ec-40a1-9e1a-193aa8540119",
+              "name": "AbstractWorker",
+              "description": "",
+              "sourceField": "text",
+              "parameters": {
+                "blockParameters": {
+                  "keepBlockedLogs": false,
+                  "rule": "AbstractWorker"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            },
+            {
+              "id": "183ebcea-5032-42bf-8537-1b25fa51eb41",
+              "name": "SpotlightException",
+              "description": "",
+              "sourceField": "text",
+              "parameters": {
+                "blockParameters": {
+                  "keepBlockedLogs": false,
+                  "rule": "SpotlightException"
+                }
+              },
+              "enabled": true,
+              "order": 2
+            },
+            {
+              "id": "0c399d13-5bdb-4290-a540-a2a3e1e36b2e",
+              "name": "SpotlightDataValidator",
+              "description": "",
+              "sourceField": "text",
+              "parameters": {
+                "blockParameters": {
+                  "keepBlockedLogs": false,
+                  "rule": "SpotlightDataValidator"
+                }
+              },
+              "enabled": true,
+              "order": 3
+            },
+            {
+              "id": "018391bc-9444-4bd2-9b06-d58cad044aa0",
+              "name": "no_of_experiments_fetched",
+              "description": "",
+              "sourceField": "text",
+              "parameters": {
+                "blockParameters": {
+                  "keepBlockedLogs": false,
+                  "rule": "no_of_experiments_fetched"
+                }
+              },
+              "enabled": true,
+              "order": 4
+            },
+            {
+              "id": "ff34022a-34be-489b-9b0a-1f0b81b22e6c",
+              "name": "Difference in calculation of proration",
+              "description": "",
+              "sourceField": "text",
+              "parameters": {
+                "blockParameters": {
+                  "keepBlockedLogs": false,
+                  "rule": "Difference in calculation of proration"
+                }
+              },
+              "enabled": true,
+              "order": 5
+            },
+            {
+              "id": "254d841e-c5fc-422c-8906-0a948c3bb5f9",
+              "name": "InMemoryCacheLoaderImpl",
+              "description": "",
+              "sourceField": "text",
+              "parameters": {
+                "blockParameters": {
+                  "keepBlockedLogs": false,
+                  "rule": "InMemoryCacheLoaderImpl"
+                }
+              },
+              "enabled": true,
+              "order": 6
+            },
+            {
+              "id": "f576f8f3-1e54-4bbf-8d5b-0356b0a7c747",
+              "name": "PjpAfterCommitRunnable",
+              "description": "",
+              "sourceField": "text",
+              "parameters": {
+                "blockParameters": {
+                  "keepBlockedLogs": false,
+                  "rule": "PjpAfterCommitRunnable"
+                }
+              },
+              "enabled": true,
+              "order": 7
+            },
+            {
+              "id": "31a75bd3-2586-4163-85cd-d0797521ca7c",
+              "name": "OrderItemStatusUpdateConsumer",
+              "description": "",
+              "sourceField": "text",
+              "parameters": {
+                "blockParameters": {
+                  "keepBlockedLogs": false,
+                  "rule": "OrderItemStatusUpdateConsumer"
+                }
+              },
+              "enabled": true,
+              "order": 8
+            },
+            {
+              "id": "aa15d62b-8bda-4509-8c6c-230e2c651ab4",
+              "name": "InvoiceGenerationListener",
+              "description": "",
+              "sourceField": "text",
+              "parameters": {
+                "blockParameters": {
+                  "keepBlockedLogs": false,
+                  "rule": "InvoiceGenerationListener"
+                }
+              },
+              "enabled": true,
+              "order": 9
+            },
+            {
+              "id": "b534db28-6440-4732-8ac4-c82d530fb7b3",
+              "name": "AB service sync running",
+              "description": "",
+              "sourceField": "text",
+              "parameters": {
+                "blockParameters": {
+                  "keepBlockedLogs": false,
+                  "rule": "AB service sync running"
+                }
+              },
+              "enabled": true,
+              "order": 10
+            },
+            {
+              "id": "d17d70c6-cc1f-4d0e-9c53-826033e7055b",
+              "name": "RefreshTokenEventListener",
+              "description": "",
+              "sourceField": "text",
+              "parameters": {
+                "blockParameters": {
+                  "keepBlockedLogs": false,
+                  "rule": "RefreshTokenEventListener"
+                }
+              },
+              "enabled": true,
+              "order": 11
+            },
+            {
+              "id": "2844d9ff-ccff-4f1e-a492-699ecd235d24",
+              "name": "No template config found in DB for the given parameters. Notification type",
+              "description": "",
+              "sourceField": "text",
+              "parameters": {
+                "blockParameters": {
+                  "keepBlockedLogs": false,
+                  "rule": "No template config found in DB for the given parameters. Notification type"
+                }
+              },
+              "enabled": true,
+              "order": 12
+            },
+            {
+              "id": "f9782e12-b922-42cc-9ea8-bb0e78e9f0a5",
+              "name": "AwsFutureEventScheduler",
+              "description": "",
+              "sourceField": "text",
+              "parameters": {
+                "blockParameters": {
+                  "keepBlockedLogs": false,
+                  "rule": "AwsFutureEventScheduler"
+                }
+              },
+              "enabled": true,
+              "order": 13
+            },
+            {
+              "id": "12135b23-af5b-4409-b4e4-cd7a47b6df1e",
+              "name": "RevokeGoogleIapSubscriptionConsumer",
+              "description": "",
+              "sourceField": "text",
+              "parameters": {
+                "blockParameters": {
+                  "keepBlockedLogs": false,
+                  "rule": "RevokeGoogleIapSubscriptionConsumer"
+                }
+              },
+              "enabled": true,
+              "order": 14
+            },
+            {
+              "id": "83d96b28-d649-4749-b2db-d53b2cf2f67a",
+              "name": "SubscriptionInvoiceService",
+              "description": "",
+              "sourceField": "text",
+              "parameters": {
+                "blockParameters": {
+                  "keepBlockedLogs": false,
+                  "rule": "SubscriptionInvoiceService"
+                }
+              },
+              "enabled": true,
+              "order": 15
+            },
+            {
+              "id": "36ecee80-ba36-4a29-bfa6-ee95723aae05",
+              "name": "Communicator",
+              "description": "",
+              "sourceField": "text",
+              "parameters": {
+                "blockParameters": {
+                  "keepBlockedLogs": false,
+                  "rule": "om.hotstar.subscription.notification.Communicator"
+                }
+              },
+              "enabled": true,
+              "order": 16
+            },
+            {
+              "id": "9b403cd2-33b4-4615-8725-c923d8600869",
+              "name": "unable to parse given version in filter pattern",
+              "description": "unable to parse given version in filter pattern",
+              "sourceField": "text",
+              "parameters": {
+                "blockParameters": {
+                  "keepBlockedLogs": false,
+                  "rule": "unable to parse given version in filter pattern"
+                }
+              },
+              "enabled": true,
+              "order": 17
+            },
+            {
+              "id": "e10ff5a8-be24-4592-98a5-55efb253cd3a",
+              "name": "Passport Message",
+              "description": "",
+              "sourceField": "text",
+              "parameters": {
+                "blockParameters": {
+                  "keepBlockedLogs": false,
+                  "rule": "\"message\":\"passport -"
+                }
+              },
+              "enabled": true,
+              "order": 18
+            }
+          ],
+          "enabled": true,
+          "order": 1
+        }
+      ],
+      "order": 46
+    },
+    {
+      "id": "f8d7ba57-c392-4674-8205-2a043f989632",
+      "name": "Block audience platform hedwig logs",
+      "description": "application: audience-platform, subsystem: hedwig, severity: info",
+      "creator": "himanshu.gupta@hotstar.com",
+      "enabled": true,
+      "hidden": false,
+      "ruleMatchers": [
+        {
+          "applicationName": {
+            "value": "audience-platform"
+          }
+        },
+        {
+          "subsystemName": {
+            "value": "hedwig"
+          }
+        },
+        {
+          "severity": {
+            "value": "VALUE_INFO"
+          }
+        }
+      ],
+      "ruleSubgroups": [
+        {
+          "id": "4ed5652c-80e6-4449-b247-14d5cd9ac582",
+          "rules": [
+            {
+              "id": "76bfb57c-3e01-455e-a4b2-165cdabe9ff3",
+              "name": "Bloom filter and redis block logs",
+              "description": "",
+              "sourceField": "text",
+              "parameters": {
+                "blockParameters": {
+                  "keepBlockedLogs": false,
+                  "rule": "id [a-zA-Z0-9]+ is contained in (bloom filter|redis)"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 1
+        }
+      ],
+      "order": 47
+    },
+    {
+      "id": "bba4001e-4ffd-4cb4-89e8-5a7c359dec71",
+      "name": "Block CMS multi-get queue lenght health check log",
+      "description": "application: cms, subsystem: multi-get, cms-multi-get",
+      "creator": "bot@coralogix.com",
+      "enabled": true,
+      "hidden": false,
+      "ruleMatchers": [
+        {
+          "applicationName": {
+            "value": "cms"
+          }
+        },
+        {
+          "subsystemName": {
+            "value": "multi-get"
+          }
+        },
+        {
+          "subsystemName": {
+            "value": "cms-multi-get"
+          }
+        },
+        {
+          "severity": {
+            "value": "VALUE_ERROR"
+          }
+        },
+        {
+          "severity": {
+            "value": "VALUE_DEBUG_OR_UNSPECIFIED"
+          }
+        },
+        {
+          "severity": {
+            "value": "VALUE_WARNING"
+          }
+        },
+        {
+          "severity": {
+            "value": "VALUE_INFO"
+          }
+        }
+      ],
+      "ruleSubgroups": [
+        {
+          "id": "273faf59-0401-4304-8e18-935c7039e218",
+          "rules": [
+            {
+              "id": "963f49f4-8f1c-4e00-8446-04b087308270",
+              "name": "Block CMS queue length health logs",
+              "description": "",
+              "sourceField": "text",
+              "parameters": {
+                "blockParameters": {
+                  "keepBlockedLogs": false,
+                  "rule": "Service UP  Queue Length"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 1
+        }
+      ],
+      "order": 48
+    },
+    {
+      "id": "2eb6d3a8-8b8a-448f-8c72-60d65030970c",
+      "name": "Shifu Cohort CTR Block",
+      "description": "",
+      "creator": "Ishank@hotstar.com",
+      "enabled": true,
+      "hidden": false,
+      "ruleMatchers": [
+        {
+          "applicationName": {
+            "value": "adtech"
+          }
+        },
+        {
+          "subsystemName": {
+            "value": "adtech-shifu-cohort-ctr"
+          }
+        },
+        {
+          "severity": {
+            "value": "VALUE_INFO"
+          }
+        }
+      ],
+      "ruleSubgroups": [
+        {
+          "id": "0b16c7ef-f985-4df5-b078-1856caecbe4c",
+          "rules": [
+            {
+              "id": "9d80b034-7b12-4182-b18d-51cae3f136e6",
+              "name": "Block ALL",
+              "description": "",
+              "sourceField": "text",
+              "parameters": {
+                "blockParameters": {
+                  "keepBlockedLogs": false,
+                  "rule": ".*"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 1
+        }
+      ],
+      "order": 49
+    },
+    {
+      "id": "ab20e0e5-4661-4624-9eaa-4a1eb52eeb60",
+      "name": "Block FCAP",
+      "description": "",
+      "creator": "Ishank@hotstar.com",
+      "enabled": true,
+      "hidden": false,
+      "ruleMatchers": [
+        {
+          "applicationName": {
+            "value": "adtech"
+          }
+        },
+        {
+          "subsystemName": {
+            "value": "shifu-frequency-cap-processor"
+          }
+        }
+      ],
+      "ruleSubgroups": [
+        {
+          "id": "a87c3c54-c2e7-4ce5-9305-046fc5606cb9",
+          "rules": [
+            {
+              "id": "ddedf6f0-c225-4fa8-8b19-2d26d8a21fb9",
+              "name": "Block ALL",
+              "description": "",
+              "sourceField": "text",
+              "parameters": {
+                "blockParameters": {
+                  "keepBlockedLogs": false,
+                  "rule": "*"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 1
+        }
+      ],
+      "order": 50
+    },
+    {
+      "id": "6301ad65-9646-45f3-97e7-dc94b6828aff",
+      "name": "CX-Stefaena",
+      "description": "Block X-Hs-Request-Id",
+      "creator": "Keshav.Bhattad@jiostar.com",
+      "enabled": true,
+      "hidden": false,
+      "ruleMatchers": [
+        {
+          "applicationName": {
+            "value": "hs-core"
+          }
+        },
+        {
+          "subsystemName": {
+            "value": "page-compositor-gql-fleet-1"
+          }
+        },
+        {
+          "subsystemName": {
+            "value": "page-compositor-gql"
+          }
+        },
+        {
+          "subsystemName": {
+            "value": "page-compositor-gql-fleet-3"
+          }
+        },
+        {
+          "subsystemName": {
+            "value": "page-compositor-gql-fleet-2"
+          }
+        }
+      ],
+      "ruleSubgroups": [
+        {
+          "id": "374c17c0-ae91-4a45-a8ff-a47001320b35",
+          "rules": [
+            {
+              "id": "f787bc4f-3ac8-4f15-8dba-c5e420670331",
+              "name": "CX-Stefaena (Block X-Hs-Request-Id)",
+              "description": "--Kept--\n{\"country\":\"in\",\"trace_id\":\"827ab8dbe25815f242bd781b4de56dfb\",\"span_id\":\"c7ab4fb309b4adfb\",\"level\":\"error\",\"source\":\"page-compositor-gql-fleet-1-6cc6564c47-dvf85\",\"container-name\":\"main\",\"X-Hs-Request-Id\":\"0a11c7b5-3bcc-4b29-add4-a63137888a76\",\"message\":\"failed get LD key consumption.watch.maxview_v3_ad_swipeable_exp\",\"env\":\"prod\",\"error\":\"unknown feature key: consumption.watch.maxview_v3_ad_swipeable_exp. Verify that this feature key exists. Returning default value\",\"api_path\":\"/v2/pages/:page_id\",\"platform\":\"android\",\"domain_team\":\"consumption\",\"page_id\":\"watch\",\"@timestamp\":\"2025-08-20T13:17:46.221772385Z\",\"binder_id\":\"WatchPage+watch\",\"k8s-cluster-name\":\"hs-eks-prod-api-apse1\",\"service\":\"hs-core-plugins\",\"page_name\":\"watch\",\"honeycomb_env\":\"prod-in\",\"plugin_type\":\"hashicorp\",\"time\":1755695866,\"otel_service_name\":\"hs-core-page-compositor\"}\n\n--BLOCKED--\n{\"@timestamp\":\"2025-08-20T13:46:55.637663355Z\",\"k8s-cluster-name\":\"hs-eks-prod-api-apse1\",\"level\":\"error\",\"service\":\"hs-core-page-compositor\",\"source\":\"page-compositor-gql-fleet-1-6cc6564c47-67fd7\",\"time\":1755697615,\"container-name\":\"main\",\"error\":\"no client info is available in header\",\"message\":\"unable to get app version from header to get caching confi\",\"env\":\"prod\"}\n\n{\"@timestamp\":\"2025-08-20T13:46:54.722166904Z\",\"k8s-cluster-name\":\"hs-eks-prod-api-apse1\",\"source\":\"page-compositor-gql-66885b7899-74xsm\",\"container-name\":\"main\",\"message\":\"\"}\n\n{\"@timestamp\":\"2025-08-20T13:46:54.372756975Z\",\"k8s-cluster-name\":\"hs-eks-prod-api-apse1\",\"level\":\"error\",\"service\":\"hs-core-page-compositor\",\"source\":\"page-compositor-gql-fleet-1-6cc6564c47-4587c\",\"time\":1755697614,\"container-name\":\"main\",\"error\":\"no client info is available in header\",\"message\":\"unable to get app version from header to get caching confi\",\"env\":\"prod\"}\n",
+              "sourceField": "text",
+              "parameters": {
+                "allowParameters": {
+                  "keepBlockedLogs": true,
+                  "rule": "X\\-Hs\\-Request\\-Id"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 1
+        }
+      ],
+      "order": 51
+    },
+    {
+      "id": "fba9480b-a990-483c-b50a-0c7aa6ffd58d",
+      "name": "Extract trace_id and span_id from all application logs or transform traceId/spanId",
+      "description": "",
+      "creator": "bot@coralogix.com",
+      "enabled": true,
+      "hidden": false,
+      "ruleMatchers": [],
+      "ruleSubgroups": [
+        {
+          "id": "5216ed00-636e-4ef3-8287-821626e55baa",
+          "rules": [
+            {
+              "id": "8a14547d-c943-4cca-8a7b-63ea28297ce5",
+              "name": "Extract trace_id",
+              "description": "{\"@timestamp\":\"2025-09-15T09:49:57.412Z\",\"k8s-cluster-name\":\"hs-eks-prod4-api-apse1\",\"source\":\"hs-partner-subscription-service-6496df8bc5-9j942\",\"container-name\":\"main\",\"message\":\"{\\\"timestamp\\\":\\\"1757929797412\\\",\\\"level\\\":\\\"INFO\\\",\\\"thread\\\":\\\"http-nio-8080-exec-192\\\",\\\"mdc\\\":{\\\"traceId\\\":\\\"f737892cfcca91e2\\\",\\\"spanId\\\":\\\"6f049b5c402b85dc\\\",\\\"spanExportable\\\":\\\"false\\\",\\\"X-Span-Export\\\":\\\"false\\\",\\\"requestContext\\\":\\\"{\\\\\\\"hid\\\\\\\":null,\\\\\\\"countryCode\\\\\\\":\\\\\\\"IN\\\\\\\",\\\\\\\"deviceId\\\\\\\":null,\\\\\\\"phoneHash\\\\\\\":null,\\\\\\\"requestHeaders\\\\\\\":null,\\\\\\\"dataSourceType\\\\\\\":null,\\\\\\\"collectedData\\\\\\\":null}\\\",\\\"X-B3-SpanId\\\":\\\"6f049b5c402b85dc\\\",\\\"X-B3-ParentSpanId\\\":\\\"171a6dfaf904fda7\\\",\\\"X-B3-TraceId\\\":\\\"f737892cfcca91e2\\\",\\\"parentId\\\":\\\"171a6dfaf904fda7\\\",\\\"tenant\\\":\\\"IN\\\",\\\"trace_id\\\":\\\"7e47fb8930bd5ded7f6fa0c101691398\\\",\\\"trace_flags\\\":\\\"01\\\",\\\"span_id\\\":\\\"bbceb4093c9ad856\\\"},\\\"logger\\\":\\\"com.hotstar.subscription.business.orchestrator.PartnerOrchestrator\\\",\\\"message\\\":\\\"Partner trying to recur subscription through create subscription API SubscriptionDTO(id=8a240bbe99196c1201991a1f715e4306, status=ACTIVE, hid=cf2174c112834bd68ee2444dfb60dcad, expiryTime=2025-10-12 10:29:59.0, partnerPlanId=257270fa88414e7bb02a1459eb94fe59, latestOrderId=c5b69882804c44c4accb9b71e3caf103, createdOn=2025-09-05 13:44:52.0, updatedOn=2025-09-10 19:53:58.0, msgId=jio_stb-6302975289, countryCode=IN)\\\",\\\"context\\\":\\\"default\\\"}\"}\n",
+              "sourceField": "text",
+              "parameters": {
+                "extractParameters": {
+                  "rule": "(?:(?:\\\\+\"trace_id\\\\+\":\\\\+\")|(?:\\s+trace_id=))(?P<trace_id>[0-9a-f]+)"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 1
+        },
+        {
+          "id": "87cf6810-b587-477f-975e-a229d597ffb2",
+          "rules": [
+            {
+              "id": "ce960355-d0f5-43ec-a090-e70b3d679952",
+              "name": "Extract span_id",
+              "description": "{\"@timestamp\":\"2025-09-15T09:49:57.412Z\",\"k8s-cluster-name\":\"hs-eks-prod4-api-apse1\",\"source\":\"hs-partner-subscription-service-6496df8bc5-9j942\",\"container-name\":\"main\",\"message\":\"{\\\"timestamp\\\":\\\"1757929797412\\\",\\\"level\\\":\\\"INFO\\\",\\\"thread\\\":\\\"http-nio-8080-exec-192\\\",\\\"mdc\\\":{\\\"traceId\\\":\\\"f737892cfcca91e2\\\",\\\"spanId\\\":\\\"6f049b5c402b85dc\\\",\\\"spanExportable\\\":\\\"false\\\",\\\"X-Span-Export\\\":\\\"false\\\",\\\"requestContext\\\":\\\"{\\\\\\\"hid\\\\\\\":null,\\\\\\\"countryCode\\\\\\\":\\\\\\\"IN\\\\\\\",\\\\\\\"deviceId\\\\\\\":null,\\\\\\\"phoneHash\\\\\\\":null,\\\\\\\"requestHeaders\\\\\\\":null,\\\\\\\"dataSourceType\\\\\\\":null,\\\\\\\"collectedData\\\\\\\":null}\\\",\\\"X-B3-SpanId\\\":\\\"6f049b5c402b85dc\\\",\\\"X-B3-ParentSpanId\\\":\\\"171a6dfaf904fda7\\\",\\\"X-B3-TraceId\\\":\\\"f737892cfcca91e2\\\",\\\"parentId\\\":\\\"171a6dfaf904fda7\\\",\\\"tenant\\\":\\\"IN\\\",\\\"trace_id\\\":\\\"7e47fb8930bd5ded7f6fa0c101691398\\\",\\\"trace_flags\\\":\\\"01\\\",\\\"span_id\\\":\\\"bbceb4093c9ad856\\\"},\\\"logger\\\":\\\"com.hotstar.subscription.business.orchestrator.PartnerOrchestrator\\\",\\\"message\\\":\\\"Partner trying to recur subscription through create subscription API SubscriptionDTO(id=8a240bbe99196c1201991a1f715e4306, status=ACTIVE, hid=cf2174c112834bd68ee2444dfb60dcad, expiryTime=2025-10-12 10:29:59.0, partnerPlanId=257270fa88414e7bb02a1459eb94fe59, latestOrderId=c5b69882804c44c4accb9b71e3caf103, createdOn=2025-09-05 13:44:52.0, updatedOn=2025-09-10 19:53:58.0, msgId=jio_stb-6302975289, countryCode=IN)\\\",\\\"context\\\":\\\"default\\\"}\"}\n",
+              "sourceField": "text",
+              "parameters": {
+                "extractParameters": {
+                  "rule": "(?:(?:\\\\+\"span_id\\\\+\":\\\\+\")|(?:\\s+span_id=))(?P<span_id>[0-9a-f]+)"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 2
+        },
+        {
+          "id": "d7f5b8ef-33b1-4f65-a5a3-606b2800bc97",
+          "rules": [
+            {
+              "id": "1e64a286-cfac-4814-9172-551008f17b88",
+              "name": "traceId/spanId to trace_id/span_id",
+              "description": "{\"@timestamp\":\"2025-09-15T07:09:06.494Z\",\"caller\":\"DocumentRedisDal.java:238\",\"container-name\":\"main\",\"k8s-cluster-name\":\"hs-eks-prod6-api-apse1\",\"level\":\"INFO\",\"logger\":\"com.hotstar.cms.sniper.core.redis.doc.DocumentRedisDal\",\"message\":\"Document cache stats: CacheStats{hitCount=0, missCount=0, loadSuccessCount=0, loadFailureCount=0, totalLoadTime=0, evictionCount=0, evictionWeight=0}, hit rate: N/A\",\"source\":\"sniper-admin-5c8778d7dc-bgd57\",\"spanId\":\"2d06ef8726658119\",\"thread\":\"scheduling-1\",\"traceId\":\"2d06ef8726658119\"}\n",
+              "sourceField": "text",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "text",
+                  "replaceNewVal": "\"${1}_id\":\"$2\"",
+                  "rule": "\"(trace|span)Id\":\"([^\"]+)\""
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 3
+        }
+      ],
+      "order": 52
+    },
+    {
+      "id": "bb923d38-b443-40e1-826a-6bd2b4e7947b",
+      "name": "Block Consumption log message",
+      "description": "",
+      "creator": "amarnath.verma@jiostar.com",
+      "enabled": true,
+      "hidden": false,
+      "ruleMatchers": [
+        {
+          "applicationName": {
+            "value": "consumption"
+          }
+        }
+      ],
+      "ruleSubgroups": [
+        {
+          "id": "5a9de005-8914-41ed-8049-31866c1ac3cc",
+          "rules": [
+            {
+              "id": "8300120c-c9f6-4308-a669-49fc6c2d16dc",
+              "name": "ScoreCardWidget got empty score card from",
+              "description": "ScoreCardWidget got empty score card from",
+              "sourceField": "text.message",
+              "parameters": {
+                "blockParameters": {
+                  "keepBlockedLogs": false,
+                  "rule": "ScoreCardWidget got empty score card from"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            },
+            {
+              "id": "faa40a72-f52d-4978-bdc4-9ac71bbae16c",
+              "name": "invalid / empty content rating data from DDS for PlayerRatingCardWidget",
+              "description": "",
+              "sourceField": "text.message",
+              "parameters": {
+                "blockParameters": {
+                  "keepBlockedLogs": false,
+                  "rule": "invalid / empty content rating data from DDS for PlayerRatingCardWidget"
+                }
+              },
+              "enabled": true,
+              "order": 2
+            },
+            {
+              "id": "8b814aba-1e3c-48b1-b2d0-afd4b6335dd3",
+              "name": "ab experiment returned error",
+              "description": "",
+              "sourceField": "text.message",
+              "parameters": {
+                "blockParameters": {
+                  "keepBlockedLogs": false,
+                  "rule": "ab experiment returned error"
+                }
+              },
+              "enabled": true,
+              "order": 3
+            }
+          ],
+          "enabled": true,
+          "order": 1
+        }
+      ],
+      "order": 53
+    },
+    {
+      "id": "217c9113-beae-4cb0-8f55-ea6baf158a01",
+      "name": "Parse Inner message json fields",
+      "description": "",
+      "creator": "ganesh.kumar@coralogix.com",
+      "enabled": true,
+      "hidden": false,
+      "ruleMatchers": [
+        {
+          "subsystemName": {
+            "value": "hspay-paywall-service"
+          }
+        }
+      ],
+      "ruleSubgroups": [
+        {
+          "id": "1b5c928a-0595-477f-ac14-68f8a112ee00",
+          "rules": [
+            {
+              "id": "c2fcc356-f92c-4812-bac9-08d63442861d",
+              "name": "Rename the message field",
+              "description": "{\"@timestamp\":\"2025-10-10T12:52:53.944Z\",\"k8s-cluster-name\":\"hs-eks-prod4-api-apse1\",\"source\":\"hspay-paywall-service-579b5bdd8b-vlvqj\",\"container-name\":\"hspay-subs-paywall-service\",\"message\":\"{\\\"level\\\":\\\"error\\\",\\\"env\\\":\\\"prod\\\",\\\"HID\\\":\\\"83fb7b8d89144c868af8bbd75cbf9e75\\\",\\\"X-Country-Code\\\":\\\"fr\\\",\\\"X-HS-Client\\\":\\\"platform:android;app_id:com.disneyplus.ph;app_version:25.09.22.2;os:Android;os_version:15;schema_version:0.0.1581;brand:samsung;model:SM-A346M;carrier:;network_data:UNKNOWN\\\",\\\"X-HS-Platform\\\":\\\"android\\\",\\\"X-Hs-Request-Id\\\":\\\"2d99ce74-9a47-4267-83b4-b1c9c8712ae6\\\",\\\"time\\\":\\\"2025-10-10T12:52:53Z\\\",\\\"message\\\":\\\" : get-subscription : header-validate : country code is not supported : fr\\\"}\"}",
+              "sourceField": "text",
+              "parameters": {
+                "replaceParameters": {
+                  "destinationField": "text",
+                  "replaceNewVal": "\"message_obj\":\"{",
+                  "rule": "\"message\":\\s*\"{"
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 1
+        },
+        {
+          "id": "575a574a-879f-4a35-bf87-ff5caf3c9be7",
+          "rules": [
+            {
+              "id": "6f306c5b-d4e8-41a4-afac-edda72ce8a0d",
+              "name": "parse the message_obj field",
+              "description": "{\n  \"@timestamp\": \"2025-10-10T12:52:53.944Z\",\n  \"k8s-cluster-name\": \"hs-eks-prod4-api-apse1\",\n  \"source\": \"hspay-paywall-service-579b5bdd8b-vlvqj\",\n  \"container-name\": \"hspay-subs-paywall-service\",\n  \"message_obj\": \"{\\\"level\\\":\\\"error\\\",\\\"env\\\":\\\"prod\\\",\\\"HID\\\":\\\"83fb7b8d89144c868af8bbd75cbf9e75\\\",\\\"X-Country-Code\\\":\\\"fr\\\",\\\"X-HS-Client\\\":\\\"platform:android;app_id:com.disneyplus.ph;app_version:25.09.22.2;os:Android;os_version:15;schema_version:0.0.1581;brand:samsung;model:SM-A346M;carrier:;network_data:UNKNOWN\\\",\\\"X-HS-Platform\\\":\\\"android\\\",\\\"X-Hs-Request-Id\\\":\\\"2d99ce74-9a47-4267-83b4-b1c9c8712ae6\\\",\\\"time\\\":\\\"2025-10-10T12:52:53Z\\\",\\\"message\\\":\\\" : get-subscription : header-validate : country code is not supported : fr\\\"}\"\n}",
+              "sourceField": "text.message_obj",
+              "parameters": {
+                "jsonParseParameters": {
+                  "destinationField": "text",
+                  "deleteSource": true,
+                  "escapedValue": null,
+                  "overrideDest": false
+                }
+              },
+              "enabled": true,
+              "order": 1
+            }
+          ],
+          "enabled": true,
+          "order": 2
+        }
+      ],
+      "order": 54
+    }
+  ],
+  "count": 54,
+  "resource_identifiers": [
+    "OTEL -> filebeat",
+    "k8s Opentelemetry parsing",
+    "Aws status events rules",
+    "Mapping exception for message field",
+    "Loggregation fix: Extract nested message from message_object",
+    "Severity Rules",
+    "Block PC Unwanted Logs",
+    "Block PA unwanted logs",
+    "PC rocky unwanted logs ",
+    "SSAI Block Failed to Fetch Manifest HTTP 404 Error Logs",
+    "Severity Rules",
+    "Ceph MDS",
+    "New Group",
+    "Extract server API Error",
+    "Severity Rules for non prod",
+    "Extract server API Error for non prod",
+    "mygroup",
+    "fix mapping exception for message with Object",
+    "UM-Concurrency-rule",
+    "Block LaunchDarkly Warning Logs",
+    "[PC]: blocking \"Empty or null maturityLevel in userToken\"",
+    "Received GetPlaybackURL request with passport data",
+    "Received request in GetPlaybackURL of graphql service",
+    "Blocking communication otp logs",
+    "Block PC UnWanted Logs",
+    "Parse HS-core Logs",
+    "Block specific logs",
+    "Sample logs",
+    "zplay-rules",
+    "Fix Mapping Exception",
+    "Subscription | Block country backfill logs And Block Offer Service Logs in subs",
+    "Block Country Code Fallback Logs | For Different PGs",
+    "Block Coupon Service GetOffer Logs",
+    "Hspay Debug and Info Log",
+    "Block unwanted subs info/error logs",
+    "Parse Useful Fields from Adtech",
+    "Parse Useful Fields from CMS",
+    "Block Prefetch Service",
+    "Block Programmatic decision service",
+    "Block lp service",
+    "Parse useful field for Consumption application",
+    "Block empty gam id log",
+    "Extract ERR_PB_*  errors from logs ",
+    "Suppress com.hotstar.lp.validator.Validator",
+    "Cx-Teodor |\u00a0Fixing mapping exception for PageLayoutFilters",
+    "Block Trivial logs",
+    "Block audience platform hedwig logs",
+    "Block CMS multi-get queue lenght health check log",
+    "Shifu Cohort CTR Block",
+    "Block FCAP",
+    "CX-Stefaena",
+    "Extract trace_id and span_id from all application logs or transform traceId/spanId",
+    "Block Consumption log message",
+    "Parse Inner message json fields"
+  ]
+}

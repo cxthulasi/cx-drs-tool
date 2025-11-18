@@ -1,0 +1,913 @@
+{
+  "dashboard": {
+    "annotations": {
+      "list": [
+        {
+          "builtIn": 1,
+          "datasource": {
+            "type": "datasource",
+            "uid": "grafana"
+          },
+          "enable": true,
+          "hide": true,
+          "iconColor": "rgba(0, 211, 255, 1)",
+          "name": "Annotations & Alerts",
+          "target": {
+            "limit": 100,
+            "matchAny": false,
+            "tags": [],
+            "type": "dashboard"
+          },
+          "type": "dashboard"
+        }
+      ]
+    },
+    "description": "",
+    "editable": true,
+    "fiscalYearStartMonth": 0,
+    "graphTooltip": 0,
+    "links": [],
+    "liveNow": false,
+    "panels": [
+      {
+        "datasource": {
+          "type": "elasticsearch",
+          "uid": "-FPVVLa7zz"
+        },
+        "description": "",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              }
+            },
+            "mappings": [],
+            "unit": "decbytes"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 14,
+          "w": 9,
+          "x": 0,
+          "y": 0
+        },
+        "id": 2,
+        "options": {
+          "displayLabels": [],
+          "legend": {
+            "displayMode": "table",
+            "placement": "right",
+            "showLegend": true,
+            "values": [
+              "value",
+              "percent"
+            ]
+          },
+          "pieType": "donut",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": true
+          },
+          "tooltip": {
+            "mode": "single",
+            "sort": "none"
+          }
+        },
+        "pluginVersion": "8.2.6",
+        "targets": [
+          {
+            "alias": "",
+            "bucketAggs": [
+              {
+                "field": "widget_type_instance.keyword",
+                "id": "4",
+                "settings": {
+                  "min_doc_count": "1",
+                  "order": "desc",
+                  "orderBy": "1",
+                  "size": "10"
+                },
+                "type": "terms"
+              },
+              {
+                "field": "coralogix.timestamp",
+                "id": "3",
+                "settings": {
+                  "interval": "1d",
+                  "min_doc_count": "0",
+                  "trimEdges": "0"
+                },
+                "type": "date_histogram"
+              }
+            ],
+            "datasource": {
+              "type": "elasticsearch",
+              "uid": "-FPVVLa7zz"
+            },
+            "metrics": [
+              {
+                "field": "_size",
+                "id": "1",
+                "type": "sum"
+              }
+            ],
+            "query": "binder_id!=\"\"",
+            "refId": "A",
+            "timeField": "coralogix.timestamp"
+          }
+        ],
+        "title": "Log size per day per binder_id",
+        "type": "piechart"
+      },
+      {
+        "datasource": {
+          "type": "elasticsearch",
+          "uid": "-FPVVLa7zz"
+        },
+        "description": "",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              }
+            },
+            "mappings": [],
+            "unit": "decbytes"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 14,
+          "w": 9,
+          "x": 9,
+          "y": 0
+        },
+        "id": 12,
+        "options": {
+          "displayLabels": [],
+          "legend": {
+            "displayMode": "table",
+            "placement": "right",
+            "showLegend": true,
+            "values": [
+              "value",
+              "percent"
+            ]
+          },
+          "pieType": "donut",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": true
+          },
+          "tooltip": {
+            "mode": "single",
+            "sort": "none"
+          }
+        },
+        "pluginVersion": "8.2.6",
+        "targets": [
+          {
+            "alias": "",
+            "bucketAggs": [
+              {
+                "field": "binder_id.keyword",
+                "id": "4",
+                "settings": {
+                  "min_doc_count": "1",
+                  "order": "desc",
+                  "orderBy": "1",
+                  "size": "10"
+                },
+                "type": "terms"
+              },
+              {
+                "field": "coralogix.timestamp",
+                "id": "3",
+                "settings": {
+                  "interval": "1d",
+                  "min_doc_count": "0",
+                  "trimEdges": "0"
+                },
+                "type": "date_histogram"
+              }
+            ],
+            "datasource": {
+              "type": "elasticsearch",
+              "uid": "-FPVVLa7zz"
+            },
+            "metrics": [
+              {
+                "field": "_size",
+                "id": "1",
+                "type": "sum"
+              }
+            ],
+            "query": "binder_id!=\"\"",
+            "refId": "A",
+            "timeField": "coralogix.timestamp"
+          }
+        ],
+        "title": "Log size per day per binder_id",
+        "type": "piechart"
+      },
+      {
+        "datasource": {
+          "type": "elasticsearch",
+          "uid": "-FPVVLa7zz"
+        },
+        "description": "",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              }
+            },
+            "mappings": [],
+            "unit": "decbytes"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 14,
+          "w": 6,
+          "x": 18,
+          "y": 0
+        },
+        "id": 7,
+        "options": {
+          "legend": {
+            "displayMode": "table",
+            "placement": "right",
+            "showLegend": true,
+            "values": [
+              "value",
+              "percent"
+            ]
+          },
+          "pieType": "donut",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "tooltip": {
+            "mode": "single",
+            "sort": "none"
+          }
+        },
+        "pluginVersion": "8.2.6",
+        "targets": [
+          {
+            "alias": "page/space binder logs",
+            "bucketAggs": [
+              {
+                "field": "coralogix.timestamp",
+                "id": "3",
+                "settings": {
+                  "interval": "1d",
+                  "min_doc_count": "0",
+                  "trimEdges": "0"
+                },
+                "type": "date_histogram"
+              }
+            ],
+            "datasource": {
+              "type": "elasticsearch",
+              "uid": "-FPVVLa7zz"
+            },
+            "metrics": [
+              {
+                "field": "_size",
+                "id": "1",
+                "type": "sum"
+              }
+            ],
+            "query": "_exists_:binder_id",
+            "refId": "A",
+            "timeField": "coralogix.timestamp"
+          },
+          {
+            "alias": "other logs",
+            "bucketAggs": [
+              {
+                "field": "coralogix.timestamp",
+                "id": "3",
+                "settings": {
+                  "interval": "1d",
+                  "min_doc_count": "0",
+                  "trimEdges": "0"
+                },
+                "type": "date_histogram"
+              }
+            ],
+            "datasource": {
+              "type": "elasticsearch",
+              "uid": "-FPVVLa7zz"
+            },
+            "hide": false,
+            "metrics": [
+              {
+                "field": "_size",
+                "id": "1",
+                "type": "sum"
+              }
+            ],
+            "query": "!(_exists_:binder_id) && !(_exists_:widget_type_instance)",
+            "refId": "B",
+            "timeField": "coralogix.timestamp"
+          },
+          {
+            "alias": "total",
+            "bucketAggs": [
+              {
+                "field": "coralogix.timestamp",
+                "id": "3",
+                "settings": {
+                  "interval": "1d",
+                  "min_doc_count": "0",
+                  "trimEdges": "0"
+                },
+                "type": "date_histogram"
+              }
+            ],
+            "datasource": {
+              "type": "elasticsearch",
+              "uid": "-FPVVLa7zz"
+            },
+            "hide": false,
+            "metrics": [
+              {
+                "field": "_size",
+                "id": "1",
+                "type": "sum"
+              }
+            ],
+            "query": "",
+            "refId": "C",
+            "timeField": "coralogix.timestamp"
+          },
+          {
+            "alias": "widget binder logs",
+            "bucketAggs": [
+              {
+                "field": "coralogix.timestamp",
+                "id": "3",
+                "settings": {
+                  "interval": "1d",
+                  "min_doc_count": "0",
+                  "trimEdges": "0"
+                },
+                "type": "date_histogram"
+              }
+            ],
+            "datasource": {
+              "type": "elasticsearch",
+              "uid": "-FPVVLa7zz"
+            },
+            "hide": false,
+            "metrics": [
+              {
+                "field": "_size",
+                "id": "1",
+                "type": "sum"
+              }
+            ],
+            "query": "_exists_:widget_type_instance",
+            "refId": "D",
+            "timeField": "coralogix.timestamp"
+          }
+        ],
+        "title": "binder vs other logs",
+        "type": "piechart"
+      },
+      {
+        "datasource": {
+          "type": "elasticsearch",
+          "uid": "-FPVVLa7zz"
+        },
+        "description": "",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            },
+            "unit": "decbytes"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 14,
+          "w": 9,
+          "x": 0,
+          "y": 14
+        },
+        "id": 8,
+        "options": {
+          "displayMode": "lcd",
+          "minVizHeight": 10,
+          "minVizWidth": 0,
+          "orientation": "horizontal",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "showUnfilled": true,
+          "text": {},
+          "valueMode": "color"
+        },
+        "pluginVersion": "10.1.2",
+        "targets": [
+          {
+            "alias": "",
+            "bucketAggs": [
+              {
+                "field": "api_path.keyword",
+                "id": "4",
+                "settings": {
+                  "min_doc_count": "1",
+                  "order": "desc",
+                  "orderBy": "1",
+                  "size": "10"
+                },
+                "type": "terms"
+              },
+              {
+                "field": "coralogix.timestamp",
+                "id": "3",
+                "settings": {
+                  "interval": "1d",
+                  "min_doc_count": "0",
+                  "trimEdges": "0"
+                },
+                "type": "date_histogram"
+              }
+            ],
+            "datasource": {
+              "type": "elasticsearch",
+              "uid": "-FPVVLa7zz"
+            },
+            "metrics": [
+              {
+                "field": "_size",
+                "id": "1",
+                "type": "sum"
+              }
+            ],
+            "query": "",
+            "refId": "A",
+            "timeField": "coralogix.timestamp"
+          }
+        ],
+        "title": "Logs per API",
+        "type": "bargauge"
+      },
+      {
+        "datasource": {
+          "type": "elasticsearch",
+          "uid": "-FPVVLa7zz"
+        },
+        "description": "",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            },
+            "unit": "decbytes"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 14,
+          "w": 15,
+          "x": 9,
+          "y": 14
+        },
+        "id": 11,
+        "options": {
+          "displayMode": "lcd",
+          "minVizHeight": 10,
+          "minVizWidth": 0,
+          "orientation": "horizontal",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "showUnfilled": true,
+          "text": {},
+          "valueMode": "color"
+        },
+        "pluginVersion": "10.1.2",
+        "targets": [
+          {
+            "alias": "",
+            "bucketAggs": [
+              {
+                "field": "error.keyword",
+                "id": "4",
+                "settings": {
+                  "min_doc_count": "1",
+                  "order": "desc",
+                  "orderBy": "1",
+                  "size": "7"
+                },
+                "type": "terms"
+              },
+              {
+                "field": "coralogix.timestamp",
+                "id": "3",
+                "settings": {
+                  "interval": "1d",
+                  "min_doc_count": "0",
+                  "trimEdges": "0"
+                },
+                "type": "date_histogram"
+              }
+            ],
+            "datasource": {
+              "type": "elasticsearch",
+              "uid": "-FPVVLa7zz"
+            },
+            "metrics": [
+              {
+                "field": "_size",
+                "id": "1",
+                "type": "sum"
+              }
+            ],
+            "query": "",
+            "refId": "A",
+            "timeField": "coralogix.timestamp"
+          }
+        ],
+        "title": "Top Error recurring logs",
+        "type": "bargauge"
+      },
+      {
+        "datasource": {
+          "type": "elasticsearch",
+          "uid": "-FPVVLa7zz"
+        },
+        "description": "",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              }
+            },
+            "mappings": [],
+            "unit": "decbytes"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 11,
+          "w": 9,
+          "x": 0,
+          "y": 28
+        },
+        "id": 4,
+        "options": {
+          "legend": {
+            "displayMode": "table",
+            "placement": "right",
+            "showLegend": true,
+            "values": [
+              "value",
+              "percent"
+            ]
+          },
+          "pieType": "donut",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "tooltip": {
+            "mode": "single"
+          }
+        },
+        "pluginVersion": "8.2.6",
+        "targets": [
+          {
+            "alias": "",
+            "bucketAggs": [
+              {
+                "field": "coralogix.metadata.subsystemName",
+                "id": "4",
+                "settings": {
+                  "min_doc_count": "1",
+                  "order": "desc",
+                  "orderBy": "1",
+                  "size": "10"
+                },
+                "type": "terms"
+              },
+              {
+                "field": "coralogix.timestamp",
+                "id": "3",
+                "settings": {
+                  "interval": "1d",
+                  "min_doc_count": "0",
+                  "trimEdges": "0"
+                },
+                "type": "date_histogram"
+              }
+            ],
+            "datasource": {
+              "type": "elasticsearch",
+              "uid": "-FPVVLa7zz"
+            },
+            "metrics": [
+              {
+                "field": "_size",
+                "id": "1",
+                "type": "sum"
+              }
+            ],
+            "query": "",
+            "refId": "A",
+            "timeField": "coralogix.timestamp"
+          }
+        ],
+        "title": "Log size per day per app ",
+        "type": "piechart"
+      },
+      {
+        "datasource": {
+          "type": "elasticsearch",
+          "uid": "-FPVVLa7zz"
+        },
+        "description": "",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green"
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            },
+            "unit": "decbytes"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 11,
+          "w": 8,
+          "x": 9,
+          "y": 28
+        },
+        "id": 10,
+        "options": {
+          "displayMode": "lcd",
+          "orientation": "horizontal",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "showUnfilled": true,
+          "text": {}
+        },
+        "pluginVersion": "8.2.6",
+        "targets": [
+          {
+            "alias": "",
+            "bucketAggs": [
+              {
+                "field": "api_path.keyword",
+                "id": "4",
+                "settings": {
+                  "min_doc_count": "1",
+                  "order": "desc",
+                  "orderBy": "1",
+                  "size": "5"
+                },
+                "type": "terms"
+              },
+              {
+                "field": "coralogix.timestamp",
+                "id": "3",
+                "settings": {
+                  "interval": "1d",
+                  "min_doc_count": "0",
+                  "trimEdges": "0"
+                },
+                "type": "date_histogram"
+              }
+            ],
+            "datasource": {
+              "type": "elasticsearch",
+              "uid": "-FPVVLa7zz"
+            },
+            "metrics": [
+              {
+                "field": "_size",
+                "id": "1",
+                "type": "sum"
+              }
+            ],
+            "query": "_exists_:binder_id",
+            "refId": "A",
+            "timeField": "coralogix.timestamp"
+          }
+        ],
+        "title": "binder logs per api",
+        "type": "bargauge"
+      },
+      {
+        "datasource": {
+          "type": "elasticsearch",
+          "uid": "-FPVVLa7zz"
+        },
+        "description": "",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green"
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            },
+            "unit": "decbytes"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 11,
+          "w": 7,
+          "x": 17,
+          "y": 28
+        },
+        "id": 9,
+        "options": {
+          "displayMode": "lcd",
+          "orientation": "horizontal",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "showUnfilled": true,
+          "text": {}
+        },
+        "pluginVersion": "8.2.6",
+        "targets": [
+          {
+            "alias": "",
+            "bucketAggs": [
+              {
+                "field": "api_path.keyword",
+                "id": "4",
+                "settings": {
+                  "min_doc_count": "1",
+                  "order": "desc",
+                  "orderBy": "1",
+                  "size": "5"
+                },
+                "type": "terms"
+              },
+              {
+                "field": "coralogix.timestamp",
+                "id": "3",
+                "settings": {
+                  "interval": "1d",
+                  "min_doc_count": "0",
+                  "trimEdges": "0"
+                },
+                "type": "date_histogram"
+              }
+            ],
+            "datasource": {
+              "type": "elasticsearch",
+              "uid": "-FPVVLa7zz"
+            },
+            "metrics": [
+              {
+                "field": "_size",
+                "id": "1",
+                "type": "sum"
+              }
+            ],
+            "query": "!(_exists_:binder_id)",
+            "refId": "A",
+            "timeField": "coralogix.timestamp"
+          }
+        ],
+        "title": "non binder logs per api",
+        "type": "bargauge"
+      }
+    ],
+    "refresh": "",
+    "schemaVersion": 38,
+    "style": "dark",
+    "tags": [],
+    "templating": {
+      "list": []
+    },
+    "time": {
+      "from": "now-24h",
+      "to": "now"
+    },
+    "timepicker": {},
+    "timezone": "",
+    "title": "HS-Core log size distribution",
+    "uid": "FHwZnNJ4k",
+    "version": 1,
+    "weekStart": ""
+  },
+  "folderUid": "",
+  "overwrite": true
+}

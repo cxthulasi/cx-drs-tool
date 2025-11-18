@@ -66,6 +66,34 @@ class Config(BaseModel):
         default="./logs",
         description="Path to store log files"
     )
+
+    # Safety Configuration
+    safety_storage_path: str = Field(
+        default="./safety",
+        description="Path to store safety checkpoints and data"
+    )
+    min_resources_threshold: int = Field(
+        default=1,
+        description="Minimum number of resources expected from TeamA"
+    )
+    max_zero_results_window_hours: int = Field(
+        default=24,
+        description="Maximum hours to track zero results history"
+    )
+    require_confirmation_for_mass_delete: bool = Field(
+        default=True,
+        description="Require confirmation for mass deletion operations"
+    )
+
+    # Versioning Configuration
+    versions_storage_path: str = Field(
+        default="./versions",
+        description="Path to store version snapshots"
+    )
+    max_versions_to_keep: int = Field(
+        default=10,
+        description="Maximum number of versions to keep per service"
+    )
     
     def __init__(self, **kwargs):
         # Load environment variables
@@ -86,6 +114,12 @@ class Config(BaseModel):
             'snapshots_storage_path': os.getenv('SNAPSHOTS_STORAGE_PATH', './snapshots'),
             'outputs_storage_path': os.getenv('OUTPUTS_STORAGE_PATH', './outputs'),
             'logs_storage_path': os.getenv('LOGS_STORAGE_PATH', './logs'),
+            'safety_storage_path': os.getenv('SAFETY_STORAGE_PATH', './safety'),
+            'versions_storage_path': os.getenv('VERSIONS_STORAGE_PATH', './versions'),
+            'min_resources_threshold': int(os.getenv('MIN_RESOURCES_THRESHOLD', '1')),
+            'max_zero_results_window_hours': int(os.getenv('MAX_ZERO_RESULTS_WINDOW_HOURS', '24')),
+            'require_confirmation_for_mass_delete': os.getenv('REQUIRE_CONFIRMATION_FOR_MASS_DELETE', 'true').lower() == 'true',
+            'max_versions_to_keep': int(os.getenv('MAX_VERSIONS_TO_KEEP', '10')),
         }
         
         # Remove None values
