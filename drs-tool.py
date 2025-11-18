@@ -22,6 +22,7 @@ from utils.migration_summary import MigrationSummaryCollector
 from services.parsing_rules import ParsingRulesService
 from services.recording_rules import RecordingRulesService
 from services.enrichments import EnrichmentsService
+from services.general_enrichments import GeneralEnrichmentsService
 from services.events2metrics import Events2MetricsService
 from services.custom_dashboards import CustomDashboardsService
 from services.grafana_dashboards import GrafanaDashboardsService
@@ -40,6 +41,7 @@ def create_service(service_name: str, config: Config, logger):
         'parsing-rules': ParsingRulesService,
         'recording-rules': RecordingRulesService,
         'enrichments': EnrichmentsService,
+        'general-enrichments': GeneralEnrichmentsService,
         'events2metrics': Events2MetricsService,
         'custom-dashboards': CustomDashboardsService,
         'grafana-dashboards': GrafanaDashboardsService,
@@ -165,7 +167,7 @@ def extract_service_statistics(service, service_name: str, result, success: bool
 def run_all_services(config: Config, logger, dry_run: bool = False, force: bool = False, exclude_services: list = None):
     """Run migration for all services with meaningful separation."""
     all_services = [
-        'parsing-rules', 'recording-rules', 'enrichments', 'events2metrics', 'custom-dashboards',
+        'parsing-rules', 'recording-rules', 'enrichments', 'general-enrichments', 'events2metrics', 'custom-dashboards',
          'grafana-dashboards', 'views', 'custom-actions', 'slo', 'tco'
     ]
 
@@ -312,7 +314,7 @@ Examples:
     
     # Service commands
     services = [
-        'parsing-rules', 'recording-rules', 'enrichments', 'events2metrics',
+        'parsing-rules', 'recording-rules', 'enrichments', 'general-enrichments', 'events2metrics',
         'custom-dashboards', 'grafana-dashboards', 'views', 'custom-actions',
         'webhooks', 'alerts', 'slo', 'slo-grpc', 'tco'
     ]

@@ -1,0 +1,25 @@
+{
+  "timestamp": "2025-11-19T01:37:35.900376",
+  "total_failed": 1,
+  "failed_enrichments": [
+    {
+      "timestamp": "2025-11-19T01:37:35.900319",
+      "enrichment_field": "cx_rum.session_context.user_metaData.accountId_enriched",
+      "operation": "create",
+      "error": "API request failed: Client error '429 Too Many Requests' for url 'https://api.ap1.coralogix.com/mgmt/openapi/latest/enrichment-rules/enrichment-rules/v1'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429 - Response: Resource Exhausted: Tried to add 1 new enrichments but only 0 more are allowed\n",
+      "enrichment_data": {
+        "id": 127162,
+        "fieldName": "cx_rum.session_context.user_metaData.accountId",
+        "enrichmentType": {
+          "customEnrichment": {
+            "id": 2741
+          }
+        },
+        "enrichedFieldName": "cx_rum.session_context.user_metaData.accountId_enriched",
+        "selectedColumns": [
+          "name"
+        ]
+      }
+    }
+  ]
+}

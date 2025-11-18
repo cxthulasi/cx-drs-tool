@@ -1,0 +1,22 @@
+{
+  "timestamp": "2025-11-19T01:37:23.795453",
+  "total_failed": 1,
+  "failed_enrichments": [
+    {
+      "timestamp": "2025-11-19T01:37:23.794874",
+      "enrichment_field": "Unknown",
+      "operation": "create",
+      "error": "API request failed: Client error '404 Not Found' for url 'https://api.ap1.coralogix.com/mgmt/openapi/latest/enrichment-rules/enrichment-rules/v1'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/404 - Response: 404 page not found\n",
+      "enrichment_data": {
+        "id": 118647,
+        "fieldName": "responseElements.instancesSet.items[].instanceId",
+        "enrichmentType": {
+          "aws": {
+            "resourceType": "aws:ec2:instance"
+          }
+        },
+        "selectedColumns": []
+      }
+    }
+  ]
+}
