@@ -206,6 +206,108 @@ class MigrationSummaryCollector:
         filename = f"migration-summary-{mode_suffix}-latest.json"
         return self.save_json(filename)
 
+    def save_coralogix_logs(self) -> str:
+        """
+        Save migration statistics as individual log entries for Coralogix.
+        Each service and summary component is saved as a separate JSON line.
+
+        Returns:
+            Path to the saved log file
+        """
+        timestamp = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
+        mode_suffix = "dry-run" if "DRY" in self.mode else "migration"
+        filename = f"coralogix-logs-{mode_suffix}-{timestamp}.jsonl"
+        filepath = self.output_dir / filename
+
+        summary = self.get_summary()
+
+        with open(filepath, 'w') as f:
+            # Write overall summary log
+            overall_log = {
+                "log_type": "migration_summary",
+                "mode": summary['mode'],
+                "timestamp": summary['timestamp'],
+                "duration_seconds": summary['duration_seconds'],
+                "total_services": summary['summary']['total_services'],
+                "successful_services": summary['summary']['successful_services'],
+                "failed_services": summary['summary']['failed_services'],
+                "success_rate": summary['summary']['success_rate']
+            }
+            f.write(json.dumps(overall_log) + '\n')
+
+            # Write failed services log (if any)
+            if summary['failed_service_names']:
+                failed_log = {
+                    "log_type": "failed_services",
+                    "mode": summary['mode'],
+                    "timestamp": summary['timestamp'],
+                    "failed_service_names": summary['failed_service_names'],
+                    "failed_count": len(summary['failed_service_names'])
+                }
+                f.write(json.dumps(failed_log) + '\n')
+
+            # Write individual service logs
+            for service_stats in summary['services']:
+                service_log = {
+                    "log_type": "service_detail",
+                    "mode": summary['mode'],
+                    "timestamp": summary['timestamp'],
+                    **service_stats  # Unpack all service stats
+                }
+                f.write(json.dumps(service_log) + '\n')
+
+        return str(filepath)
+
+    def save_coralogix_logs_latest(self) -> str:
+        """
+        Save migration statistics as individual log entries for Coralogix to a 'latest' file.
+
+        Returns:
+            Path to the saved log file
+        """
+        mode_suffix = "dry-run" if "DRY" in self.mode else "migration"
+        filename = f"coralogix-logs-{mode_suffix}-latest.jsonl"
+        filepath = self.output_dir / filename
+
+        summary = self.get_summary()
+
+        with open(filepath, 'w') as f:
+            # Write overall summary log
+            overall_log = {
+                "log_type": "migration_summary",
+                "mode": summary['mode'],
+                "timestamp": summary['timestamp'],
+                "duration_seconds": summary['duration_seconds'],
+                "total_services": summary['summary']['total_services'],
+                "successful_services": summary['summary']['successful_services'],
+                "failed_services": summary['summary']['failed_services'],
+                "success_rate": summary['summary']['success_rate']
+            }
+            f.write(json.dumps(overall_log) + '\n')
+
+            # Write failed services log (if any)
+            if summary['failed_service_names']:
+                failed_log = {
+                    "log_type": "failed_services",
+                    "mode": summary['mode'],
+                    "timestamp": summary['timestamp'],
+                    "failed_service_names": summary['failed_service_names'],
+                    "failed_count": len(summary['failed_service_names'])
+                }
+                f.write(json.dumps(failed_log) + '\n')
+
+            # Write individual service logs
+            for service_stats in summary['services']:
+                service_log = {
+                    "log_type": "service_detail",
+                    "mode": summary['mode'],
+                    "timestamp": summary['timestamp'],
+                    **service_stats  # Unpack all service stats
+                }
+                f.write(json.dumps(service_log) + '\n')
+
+        return str(filepath)
+
     def display_and_save(self):
         """Display table and save JSON files."""
         self.display_table()
@@ -217,5 +319,13 @@ class MigrationSummaryCollector:
         # Save latest version
         latest_file = self.save_latest_json()
         print(f"📄 Latest summary saved to: {latest_file}")
+
+        # Save Coralogix-friendly logs
+        coralogix_file = self.save_coralogix_logs()
+        print(f"📄 Coralogix logs saved to: {coralogix_file}")
+
+        # Save Coralogix-friendly logs (latest)
+        coralogix_latest_file = self.save_coralogix_logs_latest()
+        print(f"📄 Coralogix logs (latest) saved to: {coralogix_latest_file}")
         print("")
 

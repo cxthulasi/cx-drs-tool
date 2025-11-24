@@ -54,6 +54,8 @@ state/
 snapshots/
 backups/
 documentation/
+cloudformation/
+k8s/
 aichatbot/
 tests/
 git

@@ -30,11 +30,27 @@ class GrafanaDashboardsService(BaseService):
         self.scripts_dir = Path(__file__).parent.parent / "scripts"
         self.import_script = self.scripts_dir / "import.sh"
         self.export_script = self.scripts_dir / "exports.sh"
-        self.import_to_teamb_script = self.scripts_dir / "import_to_teamb.sh"
+
+        # Use parallel script for better performance with large datasets
+        self.import_to_teamb_script = self.scripts_dir / "import_to_teamb_parallel.sh"
+
+        # Fallback to original script if parallel script doesn't exist
+        if not self.import_to_teamb_script.exists():
+            self.import_to_teamb_script = self.scripts_dir / "import_to_teamb.sh"
+            self.logger.warning("Parallel script not found, using original import_to_teamb.sh")
 
         # Output directories for scripts
         self.dashboards_dir = self.scripts_dir / "dashboards"
         self.folders_dir = self.scripts_dir / "folders"
+
+        # Timeout configuration - increased for large migrations
+        self.script_timeout = int(os.getenv('GRAFANA_SCRIPT_TIMEOUT', '1800'))  # 30 minutes default
+
+        # Log configuration
+        script_type = "PARALLEL" if "parallel" in str(self.import_to_teamb_script) else "SEQUENTIAL"
+        self.logger.info(f"Grafana service initialized with {script_type} processing")
+        self.logger.info(f"Script timeout: {self.script_timeout}s")
+        self.logger.info(f"Using script: {self.import_to_teamb_script.name}")
 
     @property
     def service_name(self) -> str:
@@ -115,13 +131,18 @@ class GrafanaDashboardsService(BaseService):
             # Make script executable
             os.chmod(script_path, 0o755)
 
-            # Run the script
+            # Run the script with configurable timeout
+            # Use self.script_timeout for import_to_teamb scripts, shorter timeout for others
+            timeout = self.script_timeout if 'import_to_teamb' in str(script_path) else 300
+
+            self.logger.info(f"Running script with {timeout}s timeout")
+
             result = subprocess.run(
                 [str(script_path)],
                 cwd=str(script_path.parent),
                 capture_output=True,
                 text=True,
-                timeout=300  # 5 minute timeout
+                timeout=timeout
             )
 
             success = result.returncode == 0
@@ -141,9 +162,11 @@ class GrafanaDashboardsService(BaseService):
 
             return success, stdout, stderr
 
-        except subprocess.TimeoutExpired:
-            error_msg = f"{script_name} script timed out after 5 minutes"
+        except subprocess.TimeoutExpired as e:
+            timeout_duration = e.timeout if hasattr(e, 'timeout') else 'unknown'
+            error_msg = f"{script_name} script timed out after {timeout_duration} seconds"
             self.logger.error(error_msg)
+            self.logger.error("Consider increasing GRAFANA_SCRIPT_TIMEOUT environment variable")
             return False, "", error_msg
         except Exception as e:
             error_msg = f"Failed to run {script_name} script: {e}"
@@ -298,16 +321,87 @@ class GrafanaDashboardsService(BaseService):
         """
         self.logger.info("Fetching Grafana dashboards and folders from Team B")
 
-        # For Team B, we expect empty results since the API returns empty arrays
-        # This is normal - Team B has no dashboards/folders currently
-        self.logger.info("Team B API returns empty results - no dashboards or folders found")
+        # Create a separate temporary directory for Team B exports
+        # This avoids overwriting Team A data that may already be in dashboards/folders dirs
+        import tempfile
+        import shutil
 
-        # Return empty list with just the General folder
-        folders = self._ensure_general_folder([])
-        all_resources = folders  # No dashboards from Team B
+        temp_output_dir = Path(tempfile.mkdtemp(prefix="teamb_export_"))
+        temp_dashboards_dir = temp_output_dir / "dashboards"
+        temp_folders_dir = temp_output_dir / "folders"
 
-        self.logger.info(f"Team B has 0 dashboards and {len(folders)} folders (including General)")
-        return all_resources
+        # Create the output directories
+        temp_dashboards_dir.mkdir(parents=True, exist_ok=True)
+        temp_folders_dir.mkdir(parents=True, exist_ok=True)
+
+        try:
+            # Create a wrapper script that changes to temp directory before running exports.sh
+            # This way exports.sh will create dashboards/folders in the temp directory
+            wrapper_script = temp_output_dir / "run_export.sh"
+            with open(wrapper_script, 'w') as f:
+                f.write(f"""#!/bin/bash
+cd "{temp_output_dir}"
+exec "{self.export_script}"
+""")
+
+            os.chmod(wrapper_script, 0o755)
+
+            # Run the wrapper script
+            self.logger.info(f"Running export script with output to: {temp_output_dir}")
+
+            result = subprocess.run(
+                [str(wrapper_script)],
+                cwd=str(self.scripts_dir),  # Run from scripts dir so .env is found
+                capture_output=True,
+                text=True,
+                timeout=300
+            )
+
+            success = result.returncode == 0
+            stdout = result.stdout.strip()
+            stderr = result.stderr.strip()
+
+            if stdout:
+                self.logger.info(f"Export script output: {stdout[:500]}")  # First 500 chars
+            if stderr:
+                self.logger.warning(f"Export script stderr: {stderr[:500]}")
+
+            if not success:
+                self.logger.warning(f"Export script failed with return code {result.returncode}")
+                self.logger.warning("Assuming Team B has no resources")
+                # Return empty list with just the General folder
+                folders = self._ensure_general_folder([])
+                return folders
+
+            # Load dashboards and folders from temp directory
+            self.logger.info(f"Loading Team B resources from {temp_output_dir}")
+
+            dashboards = self._load_json_files_from_directory(temp_dashboards_dir, "dashboard")
+            folders = self._load_json_files_from_directory(temp_folders_dir, "folder")
+
+            # Ensure General folder is included
+            folders = self._ensure_general_folder(folders)
+
+            # Combine all resources
+            all_resources = dashboards + folders
+
+            self.logger.info(f"Fetched {len(dashboards)} dashboards and {len(folders)} folders from Team B")
+            return all_resources
+
+        except subprocess.TimeoutExpired:
+            self.logger.error("Export script timed out after 300 seconds")
+            folders = self._ensure_general_folder([])
+            return folders
+        except Exception as e:
+            self.logger.error(f"Failed to fetch Team B resources: {e}")
+            import traceback
+            self.logger.error(f"Traceback: {traceback.format_exc()}")
+            folders = self._ensure_general_folder([])
+            return folders
+        finally:
+            # Clean up temporary directory
+            if temp_output_dir.exists():
+                shutil.rmtree(temp_output_dir)
 
     def create_resource_in_teamb(self, resource: Dict[str, Any]) -> Dict[str, Any]:
         """
