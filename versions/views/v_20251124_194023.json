@@ -1,0 +1,126 @@
+{
+  "version_id": "v_20251124_194023",
+  "timestamp": "2025-11-24T19:40:23.851677",
+  "service": "views",
+  "version_type": "post_migration",
+  "teama": {
+    "count": 2,
+    "resources": [
+      {
+        "id": 106115,
+        "name": "sampleview",
+        "searchQuery": {
+          "query": "body:\"200\"  AND body:\"\\/health\"",
+          "syntaxType": "SYNTAX_TYPE_LUCENE"
+        },
+        "timeSelection": {
+          "quickSelection": {
+            "caption": "Last 15 minutes",
+            "seconds": 900
+          }
+        },
+        "filters": {
+          "filters": [
+            {
+              "name": "applicationName",
+              "selectedValues": {
+                "otel": true
+              }
+            },
+            {
+              "name": "subsystemName",
+              "selectedValues": {}
+            },
+            {
+              "name": "operationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "serviceName",
+              "selectedValues": {}
+            },
+            {
+              "name": "severity",
+              "selectedValues": {
+                "3": true,
+                "4": true
+              }
+            }
+          ]
+        },
+        "isCompactMode": false,
+        "viewType": "VIEW_TYPE_LOGS"
+      },
+      {
+        "id": "ca007eba-685d-42d0-95ad-eba7583507e8",
+        "name": "samplefolder"
+      }
+    ],
+    "resource_identifiers": [
+      "sampleview",
+      "samplefolder"
+    ]
+  },
+  "teamb": {
+    "count": 2,
+    "resources": [
+      {
+        "id": 110167,
+        "name": "sampleview",
+        "searchQuery": {
+          "query": "body:\"200\"  AND body:\"\\/health\"",
+          "syntaxType": "SYNTAX_TYPE_LUCENE"
+        },
+        "timeSelection": {
+          "quickSelection": {
+            "caption": "Last 15 minutes",
+            "seconds": 900
+          }
+        },
+        "filters": {
+          "filters": [
+            {
+              "name": "applicationName",
+              "selectedValues": {
+                "otel": true
+              }
+            },
+            {
+              "name": "subsystemName",
+              "selectedValues": {}
+            },
+            {
+              "name": "operationName",
+              "selectedValues": {}
+            },
+            {
+              "name": "serviceName",
+              "selectedValues": {}
+            },
+            {
+              "name": "severity",
+              "selectedValues": {
+                "3": true,
+                "4": true
+              }
+            }
+          ]
+        },
+        "isCompactMode": false,
+        "viewType": "VIEW_TYPE_LOGS"
+      },
+      {
+        "id": "359cc819-978a-4df8-a028-5ac6517f0aa9",
+        "name": "samplefolder"
+      }
+    ],
+    "resource_identifiers": [
+      "sampleview",
+      "samplefolder"
+    ]
+  },
+  "metadata": {
+    "created_by": "version_manager",
+    "purpose": "post_migration_snapshot"
+  }
+}

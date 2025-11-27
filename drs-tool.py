@@ -158,6 +158,10 @@ def extract_service_statistics(service, service_name: str, result, success: bool
                 stats['created'] = stats['teamb_after_count']
                 stats['updated'] = 0
 
+        # Adjust teama_count for parsing-rules to exclude default Quota rule group
+        if service_name == 'parsing-rules' and stats['teama_count'] > 0:
+            stats['teama_count'] -= 1
+
     except Exception as e:
         stats['error_message'] = f"Failed to extract statistics: {str(e)}"
 
@@ -167,7 +171,7 @@ def extract_service_statistics(service, service_name: str, result, success: bool
 def run_all_services(config: Config, logger, dry_run: bool = False, force: bool = False, exclude_services: list = None):
     """Run migration for all services with meaningful separation."""
     all_services = [
-        'parsing-rules', 'recording-rules', 'enrichments', 'general-enrichments', 'events2metrics', 'custom-dashboards',
+        'parsing-rules', 'recording-rules',  'general-enrichments', 'events2metrics', 'custom-dashboards',
          'grafana-dashboards', 'views', 'custom-actions', 'slo'
     ]
 
