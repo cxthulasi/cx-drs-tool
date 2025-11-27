@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: cx-drs
+  labels:
+    name: cx-drs
+    app: coralogix-drs-tool
+

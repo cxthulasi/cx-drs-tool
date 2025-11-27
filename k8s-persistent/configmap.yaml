@@ -1,0 +1,33 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cx-drs-config
+  namespace: cx-drs
+  labels:
+    app: cx-drs-tool
+data:
+  # Team A Configuration (Source - Read Only)
+  CX_API_URL_TEAMA: "https://api.ap1.coralogix.com/mgmt/openapi"
+  TEAMA_HOST: "https://ng-api-http.ap1.coralogix.com/grafana"
+  CX_TEAMA_URL: "https://cs-task-thulasiram.app.coralogix.in"
+  
+  # Team B Configuration (Target - Full Access)
+  CX_API_URL_TEAMB: "https://api.ap1.coralogix.com/mgmt/openapi"
+  TEAMB_HOST: "https://ng-api-http.ap1.coralogix.com/grafana"
+  CX_TEAMB_URL: "https://cx-coe-test.app.coralogix.in"
+  
+  # Logging Configuration
+  LOG_LEVEL: "ERROR"
+  LOGS_STORAGE_PATH: "/app/logs"
+  
+  # API Rate Limiting
+  API_RATE_LIMIT_PER_SECOND: "10"
+  API_RETRY_MAX_ATTEMPTS: "3"
+  API_RETRY_BACKOFF_FACTOR: "2"
+
+  # Cron Schedule Configuration (HH:MM format in UTC)
+  # Change these values to adjust schedule without rebuilding Docker image
+  S3_SYNC_SCHEDULE: "00:30"      # S3 sync time (default: 12:30 AM UTC)
+  MIGRATION_SCHEDULE: "01:30"    # Migration time (default: 1:30 AM UTC)
+  CHECK_INTERVAL: "30"           # Seconds between schedule checks (default: 30)
+

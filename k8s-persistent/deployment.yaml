@@ -1,0 +1,115 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cx-drs-tool
+  namespace: cx-drs
+  labels:
+    app: cx-drs-tool
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cx-drs-tool
+  template:
+    metadata:
+      labels:
+        app: cx-drs-tool
+    spec:
+      containers:
+      - name: drs-tool
+        image: ramthulsi12/cx-drs-tool:persistent
+        imagePullPolicy: Always
+        
+        # Environment variables from ConfigMap
+        envFrom:
+        - configMapRef:
+            name: cx-drs-config
+        
+        # Environment variables from Secret
+        env:
+        - name: CX_API_KEY_TEAMA
+          valueFrom:
+            secretKeyRef:
+              name: cx-drs-secrets
+              key: CX_API_KEY_TEAMA
+        - name: CX_API_KEY_TEAMB
+          valueFrom:
+            secretKeyRef:
+              name: cx-drs-secrets
+              key: CX_API_KEY_TEAMB
+
+        # Cron schedule configuration (from ConfigMap - can be changed without rebuilding image)
+        - name: S3_SYNC_SCHEDULE
+          valueFrom:
+            configMapKeyRef:
+              name: cx-drs-config
+              key: S3_SYNC_SCHEDULE
+        - name: MIGRATION_SCHEDULE
+          valueFrom:
+            configMapKeyRef:
+              name: cx-drs-config
+              key: MIGRATION_SCHEDULE
+        - name: CHECK_INTERVAL
+          valueFrom:
+            configMapKeyRef:
+              name: cx-drs-config
+              key: CHECK_INTERVAL
+        
+        # Resource limits
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "250m"
+          limits:
+            memory: "2Gi"
+            cpu: "1000m"
+        
+        # Volume mounts for persistent storage
+        volumeMounts:
+        - name: outputs
+          mountPath: /app/outputs
+        - name: logs
+          mountPath: /app/logs
+        - name: state
+          mountPath: /app/state
+        - name: snapshots
+          mountPath: /app/snapshots
+        
+        # Liveness probe - check if container is alive
+        livenessProbe:
+          exec:
+            command:
+            - /bin/bash
+            - -c
+            - "ps aux | grep -v grep | grep -q entrypoint.sh"
+          initialDelaySeconds: 30
+          periodSeconds: 60
+          timeoutSeconds: 5
+          failureThreshold: 3
+        
+        # Readiness probe - check if container is ready
+        readinessProbe:
+          exec:
+            command:
+            - /bin/bash
+            - -c
+            - "test -f /app/logs/cron.log"
+          initialDelaySeconds: 10
+          periodSeconds: 30
+          timeoutSeconds: 5
+          failureThreshold: 3
+      
+      # Volumes using emptyDir (data persists during pod lifetime)
+      volumes:
+      - name: outputs
+        emptyDir: {}
+      - name: logs
+        emptyDir: {}
+      - name: state
+        emptyDir: {}
+      - name: snapshots
+        emptyDir: {}
+      
+      # Restart policy
+      restartPolicy: Always
+
