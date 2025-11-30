@@ -6,6 +6,7 @@ migration statistics across all services in both tabular and JSON formats.
 """
 
 import json
+import uuid
 from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, Any, Optional
@@ -18,7 +19,7 @@ class MigrationSummaryCollector:
     def __init__(self, output_dir: str = "outputs/migration-summary"):
         """
         Initialize the migration summary collector.
-        
+
         Args:
             output_dir: Directory to save summary files
         """
@@ -28,17 +29,22 @@ class MigrationSummaryCollector:
         self.start_time: Optional[datetime] = None
         self.end_time: Optional[datetime] = None
         self.mode: str = "MIGRATION"  # or "DRY RUN"
-        
+        self.runtime_id: str = ""  # Will be set in start_collection
+
     def start_collection(self, mode: str = "MIGRATION"):
         """
         Start collecting migration statistics.
-        
+
         Args:
             mode: Either "MIGRATION" or "DRY RUN"
         """
         self.start_time = datetime.now()
         self.mode = mode
         self.services_stats = []
+        # Generate runtime ID: YYYY-MM-DD-HH-MM-SS-uuid
+        timestamp_str = self.start_time.strftime("%Y-%m-%d-%H-%M-%S")
+        uuid_str = str(uuid.uuid4())[:8]  # Use first 8 characters of UUID
+        self.runtime_id = f"{timestamp_str}-{uuid_str}"
         
     def add_service_stats(self, service_name: str, success: bool, 
                          teama_count: int = 0, teamb_before_count: int = 0,
@@ -225,6 +231,7 @@ class MigrationSummaryCollector:
             # Write overall summary log
             overall_log = {
                 "log_type": "migration_summary",
+                "runtime": self.runtime_id,
                 "mode": summary['mode'],
                 "timestamp": summary['timestamp'],
                 "duration_seconds": summary['duration_seconds'],
@@ -239,6 +246,7 @@ class MigrationSummaryCollector:
             if summary['failed_service_names']:
                 failed_log = {
                     "log_type": "failed_services",
+                    "runtime": self.runtime_id,
                     "mode": summary['mode'],
                     "timestamp": summary['timestamp'],
                     "failed_service_names": summary['failed_service_names'],
@@ -250,6 +258,7 @@ class MigrationSummaryCollector:
             for service_stats in summary['services']:
                 service_log = {
                     "log_type": "service_detail",
+                    "runtime": self.runtime_id,
                     "mode": summary['mode'],
                     "timestamp": summary['timestamp'],
                     **service_stats  # Unpack all service stats
@@ -275,6 +284,7 @@ class MigrationSummaryCollector:
             # Write overall summary log
             overall_log = {
                 "log_type": "migration_summary",
+                "runtime": self.runtime_id,
                 "mode": summary['mode'],
                 "timestamp": summary['timestamp'],
                 "duration_seconds": summary['duration_seconds'],
@@ -289,6 +299,7 @@ class MigrationSummaryCollector:
             if summary['failed_service_names']:
                 failed_log = {
                     "log_type": "failed_services",
+                    "runtime": self.runtime_id,
                     "mode": summary['mode'],
                     "timestamp": summary['timestamp'],
                     "failed_service_names": summary['failed_service_names'],
@@ -300,6 +311,7 @@ class MigrationSummaryCollector:
             for service_stats in summary['services']:
                 service_log = {
                     "log_type": "service_detail",
+                    "runtime": self.runtime_id,
                     "mode": summary['mode'],
                     "timestamp": summary['timestamp'],
                     **service_stats  # Unpack all service stats

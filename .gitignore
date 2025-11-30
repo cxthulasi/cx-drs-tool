@@ -52,6 +52,8 @@ Thumbs.db
 # Project specific
 state/
 snapshots/
+logs/
+outputs/
 backups/
 documentation/
 cloudformation/

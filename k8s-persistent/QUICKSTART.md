@@ -6,8 +6,8 @@
 
 ```bash
 # From repository root
-docker build -f k8s-persistent/Dockerfile -t ramthulsi12/cx-drs-tool:persistent .
-docker push ramthulsi12/cx-drs-tool:persistent
+docker build -f k8s-persistent/Dockerfile -t your-docker-hub-login/cx-drs-tool:persistent .
+docker push your-docker-hub-login/cx-drs-tool:persistent
 ```
 
 ### Step 2: Configure Secrets

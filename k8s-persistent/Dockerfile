@@ -1,5 +1,5 @@
 # Multi-stage build for Coralogix DRS Tool with Cron
-FROM python:3.11-slim as builder
+FROM python:3.11-slim AS builder
 
 WORKDIR /build
 
@@ -18,22 +18,40 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
-# Install runtime dependencies including cron
+# Install runtime dependencies including supercronic, AWS CLI, and utilities
 RUN apt-get update && apt-get install -y --no-install-recommends \
     bash \
     curl \
     ca-certificates \
+    unzip \
+    procps \
     cron \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy Python packages from builder
+# Copy Python packages from builder FIRST (before installing other tools)
 COPY --from=builder /usr/local/lib/python3.11/site-packages /usr/local/lib/python3.11/site-packages
-COPY --from=builder /usr/local/bin /usr/local/bin
+
+# Install supercronic (cron for containers)
+RUN curl -fsSLO https://github.com/aptible/supercronic/releases/download/v0.2.29/supercronic-linux-amd64 \
+    && chmod +x supercronic-linux-amd64 \
+    && mv supercronic-linux-amd64 /usr/local/bin/supercronic
+
+# Install AWS CLI v2 (detect architecture)
+RUN ARCH=$(uname -m) && \
+    if [ "$ARCH" = "aarch64" ]; then \
+        curl "https://awscli.amazonaws.com/awscli-exe-linux-aarch64.zip" -o "awscliv2.zip"; \
+    else \
+        curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"; \
+    fi && \
+    unzip awscliv2.zip && \
+    ./aws/install && \
+    rm -rf aws awscliv2.zip
 
 # Copy application code
 COPY drs-tool.py .
 COPY src/ ./src/
 COPY scripts/ ./scripts/
+COPY k8s-persistent/ ./k8s-persistent/
 
 # Create necessary directories
 RUN mkdir -p /app/outputs/migration-summary \

@@ -18,8 +18,8 @@ This deployment strategy runs a **persistent pod** that stays running continuous
 From the repository root:
 
 ```bash
-docker build -f k8s-persistent/Dockerfile -t ramthulsi12/cx-drs-tool:persistent .
-docker push ramthulsi12/cx-drs-tool:persistent
+docker build -f k8s-persistent/Dockerfile -t your-docker-hub-login/cx-drs-tool:persistent .
+docker push your-docker-hub-login/cx-drs-tool:persistent
 ```
 
 ### 2. Configure Secrets and ConfigMap
@@ -168,8 +168,8 @@ kubectl rollout restart deployment cx-drs-tool -n cx-drs
 
 ```bash
 # Rebuild and push new image
-docker build -f k8s-persistent/Dockerfile -t ramthulsi12/cx-drs-tool:persistent .
-docker push ramthulsi12/cx-drs-tool:persistent
+docker build -f k8s-persistent/Dockerfile -t your-docker-hub-login/cx-drs-tool:persistent .
+docker push your-docker-hub-login/cx-drs-tool:persistent
 
 # Force pod to pull new image
 kubectl rollout restart deployment cx-drs-tool -n cx-drs

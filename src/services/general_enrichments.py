@@ -122,14 +122,15 @@ class GeneralEnrichmentsService(BaseService):
             self.logger.error(f"Unexpected error fetching general enrichment rules from Team B: {e}")
             raise
     
-    def create_resource_in_teamb(self, resource: Dict[str, Any]) -> Dict[str, Any]:
+    def create_resource_in_teamb(self, resource: Dict[str, Any], skip_validation: bool = False) -> Dict[str, Any]:
         """Create a general enrichment rule in Team B with exponential backoff and delay."""
         try:
             # Remove fields that shouldn't be included in creation
+            # This also removes customEnrichment.id references
             create_data = self._prepare_resource_for_creation(resource)
             enrichment_name = create_data.get('enrichedFieldName', 'Unknown')
 
-            self.logger.info(f"Creating general enrichment rule in Team B: {enrichment_name}")
+            self.logger.info("Creating general enrichment rule in Team B", enrichment_name=enrichment_name)
 
             # Add delay before creation to avoid overwhelming the API
             self._add_creation_delay()
@@ -149,6 +150,12 @@ class GeneralEnrichmentsService(BaseService):
 
             # Return the enrichment from the response
             return response
+
+        except CoralogixAPIError as e:
+            enrichment_name = resource.get('enrichedFieldName', 'Unknown')
+            self._log_failed_enrichment(resource, 'create', str(e))
+            self.log_resource_action("create", "general_enrichment", enrichment_name, False, str(e))
+            raise
 
         except Exception as e:
             enrichment_name = resource.get('enrichedFieldName', 'Unknown')
@@ -177,12 +184,49 @@ class GeneralEnrichmentsService(BaseService):
             return False
 
     def delete_all_resources_from_teamb(self) -> bool:
-        """Delete all general enrichment rules from Team B using bulk delete."""
+        """Delete all general enrichment rules from Team B by ID."""
         try:
             self.logger.info("Deleting all general enrichment rules from Team B")
 
-            # Delete all enrichments using the DELETE endpoint
-            self.teamb_client.delete(self.api_endpoint)
+            # First, fetch all enrichments to get their IDs
+            enrichments = self.fetch_resources_from_teamb()
+
+            if not enrichments:
+                self.logger.info("No enrichments to delete from Team B")
+                return True
+
+            # Delete each enrichment by ID using query parameter
+            deleted_count = 0
+            failed_count = 0
+
+            for enrichment in enrichments:
+                enrichment_id = enrichment.get('id')
+                enrichment_name = enrichment.get('enrichedFieldName', 'Unknown')
+
+                if not enrichment_id:
+                    self.logger.warning(f"Enrichment '{enrichment_name}' has no ID, skipping")
+                    failed_count += 1
+                    continue
+
+                try:
+                    # Delete using query parameter: ?enrichment_ids={id}
+                    delete_endpoint = f"{self.api_endpoint}?enrichment_ids={enrichment_id}"
+                    self.teamb_client.delete(delete_endpoint)
+
+                    self.logger.info(f"✅ Deleted enrichment: {enrichment_name} (ID: {enrichment_id})")
+                    deleted_count += 1
+
+                    # Add small delay between deletions
+                    time.sleep(0.3)
+
+                except Exception as e:
+                    self.logger.error(f"❌ Failed to delete enrichment {enrichment_name} (ID: {enrichment_id}): {e}")
+                    failed_count += 1
+
+            self.logger.info(f"Deletion summary: {deleted_count} deleted, {failed_count} failed")
+
+            if failed_count > 0:
+                raise RuntimeError(f"Failed to delete {failed_count} enrichments from Team B")
 
             self.log_resource_action("delete_all", "general_enrichments", "all", True)
             return True
@@ -248,10 +292,33 @@ class GeneralEnrichmentsService(BaseService):
         except Exception as e:
             self.logger.error(f"Failed to write failed enrichments log: {e}")
 
+    def _can_migrate_enrichment(self, resource: Dict[str, Any]) -> tuple[bool, str]:
+        """
+        Check if an enrichment can be migrated.
+
+        Enrichments that reference custom enrichments (custom data sources) cannot be migrated
+        because the custom enrichment IDs from Team A don't exist in Team B.
+
+        Returns:
+            Tuple of (can_migrate, reason)
+        """
+        enrichment_type = resource.get('enrichmentType', {})
+
+        # Check if this enrichment references a custom enrichment
+        if 'customEnrichment' in enrichment_type:
+            custom_id = enrichment_type.get('customEnrichment', {}).get('id')
+            if custom_id:
+                return False, f"References custom enrichment ID {custom_id} which doesn't exist in Team B"
+
+        return True, ""
+
     def _prepare_resource_for_creation(self, resource: Dict[str, Any]) -> Dict[str, Any]:
         """
         Prepare a general enrichment resource for creation by removing fields that
         shouldn't be included in the create request.
+
+        This includes removing:
+        - Top-level system-generated fields (id, teamId, etc.)
         """
         # Fields to exclude from creation (read-only or system-generated)
         exclude_fields = {
@@ -305,24 +372,24 @@ class GeneralEnrichmentsService(BaseService):
             self.log_migration_start(self.service_name, dry_run=False)
 
             # Step 1: Fetch resources from both teams
-            self.logger.info("Fetching general enrichment rules from Team A...")
+            self.logger.info("Fetching general enrichment rules from Team A")
             teama_resources = self.fetch_resources_from_teama()  # This includes safety checks
 
-            self.logger.info("Fetching general enrichment rules from Team B...")
+            self.logger.info("Fetching general enrichment rules from Team B")
             teamb_resources = self.fetch_resources_from_teamb()
 
             # Step 2: Create pre-migration version snapshot
-            self.logger.info("Creating pre-migration version snapshot...")
+            self.logger.info("Creating pre-migration version snapshot")
             pre_migration_version = self.version_manager.create_version_snapshot(
                 teama_resources, teamb_resources, 'pre_migration'
             )
-            self.logger.info(f"Pre-migration snapshot created: {pre_migration_version}")
+            self.logger.info("Pre-migration snapshot created", version=pre_migration_version)
 
             # Step 3: Export artifacts
-            self.logger.info("Saving Team A artifacts...")
+            self.logger.info("Saving Team A artifacts")
             self.save_artifacts(teama_resources, "teama")
 
-            self.logger.info("Saving Team B artifacts...")
+            self.logger.info("Saving Team B artifacts")
             self.save_artifacts(teamb_resources, "teamb")
 
             # Step 4: Perform mass deletion safety check
@@ -354,67 +421,129 @@ class GeneralEnrichmentsService(BaseService):
             error_count = 0
 
             # Step 5: Delete ALL existing enrichments from Team B
-            self.logger.info("🗑️ Deleting ALL existing general enrichment rules from Team B...")
+            self.logger.info("Deleting ALL existing general enrichment rules from Team B")
 
             if teamb_resources:
                 try:
                     if self.delete_all_resources_from_teamb():
                         delete_count = len(teamb_resources)
-                        self.logger.info(f"✅ Successfully deleted all {delete_count} enrichments from Team B")
+                        self.logger.info("Successfully deleted all enrichments from Team B", count=delete_count)
+
+                        # Add delay to allow API to process the deletion
+                        self.logger.info("Waiting for deletion to propagate")
+                        time.sleep(3)  # 3 second delay for API to process deletion
                 except Exception as e:
-                    self.logger.error(f"Failed to delete enrichments from Team B: {e}")
+                    self.logger.error("Failed to delete enrichments from Team B", error=str(e))
                     error_count += 1
                     raise
 
-                # Step 5.1: Verify deletion completed - fetch fresh TeamB state
-                self.logger.info("🔍 Verifying all enrichments were deleted from Team B...")
-                verification_teamb_resources = self.fetch_resources_from_teamb()
+                # Step 5.1: Verify deletion completed - fetch fresh TeamB state with retries
+                self.logger.info("Verifying all enrichments were deleted from Team B")
 
-                if verification_teamb_resources:
-                    self.logger.error(f"❌ Deletion verification failed: {len(verification_teamb_resources)} enrichments still exist in Team B")
-                    raise RuntimeError(f"Failed to delete all enrichments from Team B. {len(verification_teamb_resources)} still remain.")
-                else:
-                    self.logger.info("✅ Deletion verification passed: Team B is now empty")
+                # Retry verification up to 3 times with delays
+                max_verification_attempts = 3
+                verification_teamb_resources = None
+
+                for attempt in range(max_verification_attempts):
+                    verification_teamb_resources = self.fetch_resources_from_teamb()
+
+                    if not verification_teamb_resources:
+                        self.logger.info("Deletion verification passed: Team B is now empty")
+                        break
+
+                    if attempt < max_verification_attempts - 1:
+                        wait_time = 2 * (attempt + 1)  # 2s, 4s
+                        self.logger.warning("Verification attempt - enrichments still exist",
+                                          attempt=attempt + 1,
+                                          max_attempts=max_verification_attempts,
+                                          remaining_count=len(verification_teamb_resources),
+                                          wait_time_seconds=wait_time)
+                        time.sleep(wait_time)
+                    else:
+                        self.logger.error("Deletion verification failed after max attempts",
+                                        max_attempts=max_verification_attempts,
+                                        remaining_count=len(verification_teamb_resources))
+                        raise RuntimeError(f"Failed to delete all enrichments from Team B. {len(verification_teamb_resources)} still remain after {max_verification_attempts} verification attempts.")
             else:
-                self.logger.info("ℹ️ Team B already has no enrichments - skipping deletion")
+                self.logger.info("Team B already has no enrichments - skipping deletion")
 
-            # Step 6: Create ALL enrichments from Team A
-            self.logger.info("📄 Creating ALL general enrichment rules from Team A...")
+            # Step 6: Create enrichments from Team A (skip those that can't be migrated)
+            self.logger.info("Creating general enrichment rules from Team A")
 
+            skipped_count = 0
             if teama_resources:
                 for teama_resource in teama_resources:
-                    try:
-                        resource_name = teama_resource.get('enrichedFieldName', 'Unknown')
+                    resource_name = teama_resource.get('enrichedFieldName', 'Unknown')
 
-                        self.logger.info(f"Creating enrichment: {resource_name}")
+                    # Check if this enrichment can be migrated
+                    can_migrate, skip_reason = self._can_migrate_enrichment(teama_resource)
+
+                    if not can_migrate:
+                        self.logger.warning("Skipping enrichment - cannot migrate",
+                                          enrichment_name=resource_name,
+                                          reason=skip_reason)
+                        skipped_count += 1
+                        continue
+
+                    try:
+                        self.logger.info("Creating enrichment", enrichment_name=resource_name)
                         self.create_resource_in_teamb(teama_resource)
                         create_success_count += 1
 
                     except Exception as e:
-                        self.logger.error(f"Failed to create enrichment {teama_resource.get('enrichedFieldName', 'Unknown')}: {e}")
+                        self.logger.error("Failed to create enrichment",
+                                        enrichment_name=resource_name,
+                                        error=str(e))
                         error_count += 1
 
                 # Step 6.1: Verify creation completed - fetch final TeamB state
-                self.logger.info("🔍 Verifying all enrichments were created in Team B...")
+                self.logger.info("Verifying enrichments were created in Team B")
                 final_teamb_resources = self.fetch_resources_from_teamb()
 
-                expected_count = len(teama_resources)
+                expected_count = len(teama_resources) - skipped_count
                 actual_count = len(final_teamb_resources)
 
+                if skipped_count > 0:
+                    self.logger.warning("Enrichments were skipped - reference custom data sources",
+                                      skipped_count=skipped_count)
+
                 if actual_count != expected_count:
-                    self.logger.error(f"❌ Creation verification failed: Expected {expected_count} enrichments, but found {actual_count} in Team B")
+                    self.logger.error("Creation verification failed",
+                                    expected_count=expected_count,
+                                    actual_count=actual_count,
+                                    skipped_count=skipped_count,
+                                    created_count=create_success_count,
+                                    error_count=error_count)
                     raise RuntimeError(f"Creation verification failed: Expected {expected_count} enrichments, but found {actual_count}")
                 else:
-                    self.logger.info(f"✅ Creation verification passed: {actual_count} enrichments successfully created in Team B")
+                    self.logger.info("Creation verification passed",
+                                   count=actual_count,
+                                   skipped_count=skipped_count if skipped_count > 0 else None)
 
                     # Save final state to outputs
-                    self.logger.info("💾 Saving final Team B state to outputs...")
+                    self.logger.info("Saving final Team B state to outputs")
                     self.save_artifacts(final_teamb_resources, "teamb_final")
             else:
-                self.logger.info("ℹ️ Team A has no enrichments - skipping creation")
+                self.logger.info("Team A has no enrichments - skipping creation")
                 final_teamb_resources = []
 
-            # Step 7: Create post-migration version snapshot
+            # Step 7: Save migration statistics for summary table
+            # Save a stats file that includes skipped count for the summary table
+            stats_file = self.outputs_dir / f"{self.service_name}_stats_latest.json"
+            stats_data = {
+                'teama_total': len(teama_resources),
+                'teama_migratable': len(teama_resources) - skipped_count,
+                'skipped': skipped_count,
+                'teamb_before': len(teamb_resources),
+                'teamb_after': len(final_teamb_resources),
+                'created': create_success_count,
+                'deleted': delete_count,
+                'failed': error_count
+            }
+            with open(stats_file, 'w') as f:
+                json.dump(stats_data, f, indent=2)
+
+            # Step 8: Create post-migration version snapshot
             try:
                 self.logger.info("Creating post-migration version snapshot...")
                 # Use the already verified final TeamB resources
@@ -438,20 +567,31 @@ class GeneralEnrichmentsService(BaseService):
             print("\n" + "=" * 60)
             print("MIGRATION RESULTS - GENERAL ENRICHMENT RULES")
             print("=" * 60)
-            print(f"📊 Team A enrichments: {len(teama_resources)}")
+            migratable_count = len(teama_resources) - skipped_count
+            print(f"📊 Team A enrichments (migratable): {migratable_count}")
             print(f"📊 Team B enrichments (before): {len(teamb_resources)}")
             print(f"📊 Team B enrichments (after): {len(final_teamb_resources)}")
             print(f"🗑️  Deleted from Team B: {delete_count}")
             print(f"✅ Successfully created: {create_success_count}")
+            if skipped_count > 0:
+                print(f"⚠️  Skipped (custom data sources): {skipped_count}")
             if error_count > 0:
                 print(f"❌ Failed: {error_count}")
-            print(f"📋 Total operations: {delete_count + create_success_count + error_count}")
+            print(f"📋 Total operations: {delete_count + create_success_count + skipped_count + error_count}")
 
             if migration_success:
-                print("\n✅ Migration completed successfully!")
+                if skipped_count > 0:
+                    print("\n✅ Migration completed successfully!")
+                    print(f"   ⚠️  Note: {skipped_count} enrichment(s) were skipped because they reference")
+                    print(f"   custom data sources that don't exist in Team B.")
+                    print(f"   You need to migrate the custom enrichments (data sources) first.")
+                else:
+                    print("\n✅ Migration completed successfully!")
             else:
                 print("\n❌ Migration completed with errors!")
                 print(f"   {error_count} enrichment(s) failed to create")
+                if skipped_count > 0:
+                    print(f"   {skipped_count} enrichment(s) were skipped (custom data sources)")
 
             print("=" * 60 + "\n")
 
@@ -482,30 +622,68 @@ class GeneralEnrichmentsService(BaseService):
             self.logger.info("Saving Team B artifacts...")
             self.save_artifacts(teamb_enrichments, "teamb")
 
-            # Calculate what would be done
-            total_operations = len(teamb_enrichments) + len(teama_enrichments)
+            # Calculate what would be done - check for skippable enrichments
+            skipped_count = 0
+            migratable_enrichments = []
+            for enrichment in teama_enrichments:
+                can_migrate, _ = self._can_migrate_enrichment(enrichment)
+                if can_migrate:
+                    migratable_enrichments.append(enrichment)
+                else:
+                    skipped_count += 1
+
+            migratable_count = len(migratable_enrichments)
+            total_operations = len(teamb_enrichments) + migratable_count + skipped_count
 
             # Print dry-run summary
             print("\n" + "=" * 60)
             print("DRY RUN - GENERAL ENRICHMENT RULES MIGRATION")
             print("=" * 60)
-            print(f"📊 Team A enrichments: {len(teama_enrichments)}")
+            print(f"📊 Team A enrichments (migratable): {migratable_count}")
             print(f"📊 Team B enrichments (current): {len(teamb_enrichments)}")
             print("\n🔄 Planned Operations:")
             print(f"   🗑️  Delete ALL {len(teamb_enrichments)} enrichments from Team B")
-            print(f"   ✅ Create {len(teama_enrichments)} enrichments from Team A")
+            print(f"   ✅ Create {migratable_count} enrichments from Team A")
+            if skipped_count > 0:
+                print(f"   ⚠️  Skip {skipped_count} enrichments (custom data sources)")
             print(f"\n📋 Total operations: {total_operations}")
             print("=" * 60 + "\n")
 
-            # Display sample enrichments
-            if teama_enrichments:
-                print("Sample enrichments from Team A (first 5):")
-                for i, enrichment in enumerate(teama_enrichments[:5], 1):
+            # Display sample migratable enrichments
+            if migratable_enrichments:
+                print(f"Sample migratable enrichments from Team A (first 5):")
+                for i, enrichment in enumerate(migratable_enrichments[:5], 1):
                     field_name = enrichment.get('enrichedFieldName', 'Unknown')
                     source_field = enrichment.get('fieldName', 'Unknown')
                     enrichment_type = list(enrichment.get('enrichmentType', {}).keys())[0] if enrichment.get('enrichmentType') else 'Unknown'
                     print(f"  {i}. {field_name} (from: {source_field}, type: {enrichment_type})")
                 print()
+
+            # Display skipped enrichments if any
+            if skipped_count > 0:
+                print(f"⚠️  {skipped_count} enrichment(s) will be skipped (reference custom data sources):")
+                skipped_enrichments = [e for e in teama_enrichments if not self._can_migrate_enrichment(e)[0]]
+                for i, enrichment in enumerate(skipped_enrichments[:5], 1):
+                    field_name = enrichment.get('enrichedFieldName', 'Unknown')
+                    enrichment_type = enrichment.get('enrichmentType', {})
+                    custom_id = enrichment_type.get('customEnrichment', {}).get('id', 'Unknown')
+                    print(f"  {i}. {field_name} (references custom enrichment ID: {custom_id})")
+                print()
+
+            # Save migration statistics for summary table
+            stats_file = self.outputs_dir / f"{self.service_name}_stats_latest.json"
+            stats_data = {
+                'teama_total': len(teama_enrichments),
+                'teama_migratable': migratable_count,
+                'skipped': skipped_count,
+                'teamb_before': len(teamb_enrichments),
+                'teamb_after': len(teamb_enrichments),  # No change in dry run
+                'created': 0,  # Dry run doesn't create
+                'deleted': 0,  # Dry run doesn't delete
+                'failed': 0
+            }
+            with open(stats_file, 'w') as f:
+                json.dump(stats_data, f, indent=2)
 
             self.log_migration_complete(self.service_name, True, 0, 0)
             return True

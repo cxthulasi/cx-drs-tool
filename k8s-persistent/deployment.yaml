@@ -37,6 +37,16 @@ spec:
             secretKeyRef:
               name: cx-drs-secrets
               key: CX_API_KEY_TEAMB
+        - name: AWS_ACCESS_KEY_ID
+          valueFrom:
+            secretKeyRef:
+              name: cx-drs-secrets
+              key: AWS_ACCESS_KEY_ID
+        - name: AWS_SECRET_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              name: cx-drs-secrets
+              key: AWS_SECRET_ACCESS_KEY
 
         # Cron schedule configuration (from ConfigMap - can be changed without rebuilding image)
         - name: S3_SYNC_SCHEDULE
@@ -54,6 +64,16 @@ spec:
             configMapKeyRef:
               name: cx-drs-config
               key: CHECK_INTERVAL
+        - name: S3_BUCKET_NAME
+          valueFrom:
+            configMapKeyRef:
+              name: cx-drs-config
+              key: S3_BUCKET_NAME
+        - name: AWS_DEFAULT_REGION
+          valueFrom:
+            configMapKeyRef:
+              name: cx-drs-config
+              key: AWS_DEFAULT_REGION
         
         # Resource limits
         resources:
@@ -81,7 +101,7 @@ spec:
             command:
             - /bin/bash
             - -c
-            - "ps aux | grep -v grep | grep -q entrypoint.sh"
+            - "ps aux | grep -v grep | grep -q supercronic"
           initialDelaySeconds: 30
           periodSeconds: 60
           timeoutSeconds: 5

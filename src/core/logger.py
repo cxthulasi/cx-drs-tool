@@ -13,27 +13,28 @@ from rich.console import Console
 from rich.logging import RichHandler
 
 
-def setup_logger(service_name: str, feature: str, log_level: str = "INFO") -> structlog.stdlib.BoundLogger:
+def setup_logger(service_name: str, feature: str, log_level: str = "INFO", json_console: bool = False) -> structlog.stdlib.BoundLogger:
     """
     Set up structured logging for the DR tool.
-    
+
     Args:
         service_name: Name of the service (e.g., 'parsing-rules')
         feature: Feature name for log file organization
         log_level: Logging level
-    
+        json_console: If True, output single-line JSON to console (for Coralogix ingestion)
+
     Returns:
         Configured logger instance
     """
     # Create logs directory structure
     logs_dir = Path("logs") / feature
     logs_dir.mkdir(parents=True, exist_ok=True)
-    
+
     # Generate log filename with timestamp
     timestamp = datetime.now().strftime("%Y-%m-%d-%H")
     log_filename = f"cx-dr-log-{service_name}-{timestamp}.log"
     log_filepath = logs_dir / log_filename
-    
+
     # Configure structlog
     structlog.configure(
         processors=[
@@ -52,45 +53,54 @@ def setup_logger(service_name: str, feature: str, log_level: str = "INFO") -> st
         wrapper_class=structlog.stdlib.BoundLogger,
         cache_logger_on_first_use=True,
     )
-    
+
     # Configure standard library logging
     logging.basicConfig(
         format="%(message)s",
         stream=sys.stdout,
         level=getattr(logging, log_level.upper()),
     )
-    
+
     # Create logger
     logger = structlog.get_logger(service_name)
-    
-    # Add file handler for persistent logging
+
+    # Add file handler for persistent logging (always JSON)
     file_handler = logging.FileHandler(log_filepath)
     file_handler.setLevel(getattr(logging, log_level.upper()))
-    
-    # Add console handler with rich formatting
-    console_handler = RichHandler(
-        console=Console(stderr=True),
-        show_time=True,
-        show_path=False,
-        markup=True,
-        rich_tracebacks=True
-    )
-    console_handler.setLevel(getattr(logging, log_level.upper()))
-    
+
     # Get the root logger and add handlers
     root_logger = logging.getLogger()
     root_logger.addHandler(file_handler)
+
+    # Add console handler - either JSON or Rich formatting
+    if json_console:
+        # Single-line JSON output for Coralogix ingestion
+        console_handler = logging.StreamHandler(sys.stdout)
+        console_handler.setLevel(getattr(logging, log_level.upper()))
+        console_handler.setFormatter(logging.Formatter('%(message)s'))
+    else:
+        # Rich formatting for human-readable output
+        console_handler = RichHandler(
+            console=Console(stderr=True),
+            show_time=True,
+            show_path=False,
+            markup=True,
+            rich_tracebacks=True
+        )
+        console_handler.setLevel(getattr(logging, log_level.upper()))
+
     root_logger.addHandler(console_handler)
-    
+
     # Log initial setup information
     logger.info(
         "Logger initialized",
         service=service_name,
         feature=feature,
         log_file=str(log_filepath),
-        log_level=log_level
+        log_level=log_level,
+        json_console=json_console
     )
-    
+
     return logger
 
 

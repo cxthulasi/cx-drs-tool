@@ -10,12 +10,10 @@ echo ""
 # Read cron schedules from environment variables with defaults
 S3_SYNC_SCHEDULE="${S3_SYNC_SCHEDULE:-00:30}"
 MIGRATION_SCHEDULE="${MIGRATION_SCHEDULE:-01:30}"
-CHECK_INTERVAL="${CHECK_INTERVAL:-30}"
 
 echo "📅 Cron schedule configured from environment variables:"
 echo "  - S3 Sync:   Daily at ${S3_SYNC_SCHEDULE} UTC"
 echo "  - Migration: Daily at ${MIGRATION_SCHEDULE} UTC"
-echo "  - Check Interval: Every ${CHECK_INTERVAL} seconds"
 echo ""
 
 # Validate time format (HH:MM)
@@ -30,68 +28,78 @@ validate_time() {
 validate_time "$S3_SYNC_SCHEDULE"
 validate_time "$MIGRATION_SCHEDULE"
 
-echo "🔄 Starting continuous monitoring mode..."
+# Convert HH:MM to cron format (MM HH * * *)
+S3_HOUR=$(echo $S3_SYNC_SCHEDULE | cut -d: -f1)
+S3_MINUTE=$(echo $S3_SYNC_SCHEDULE | cut -d: -f2)
+MIGRATION_HOUR=$(echo $MIGRATION_SCHEDULE | cut -d: -f1)
+MIGRATION_MINUTE=$(echo $MIGRATION_SCHEDULE | cut -d: -f2)
+
+# Remove leading zeros for cron (08 -> 8)
+S3_HOUR=$((10#$S3_HOUR))
+S3_MINUTE=$((10#$S3_MINUTE))
+MIGRATION_HOUR=$((10#$MIGRATION_HOUR))
+MIGRATION_MINUTE=$((10#$MIGRATION_MINUTE))
+
+echo "🔄 Setting up cron jobs..."
 echo "📝 Logs will be written to: /app/logs/cron.log"
+echo ""
+
+# Configure AWS CLI if credentials are provided
+if [ -n "$AWS_ACCESS_KEY_ID" ] && [ -n "$AWS_SECRET_ACCESS_KEY" ]; then
+    echo "🔐 Configuring AWS CLI with provided credentials..."
+    mkdir -p ~/.aws
+    cat > ~/.aws/credentials << AWSCREDS
+[default]
+aws_access_key_id = ${AWS_ACCESS_KEY_ID}
+aws_secret_access_key = ${AWS_SECRET_ACCESS_KEY}
+AWSCREDS
+
+    cat > ~/.aws/config << AWSCONFIG
+[default]
+region = ${AWS_DEFAULT_REGION:-us-east-1}
+AWSCONFIG
+    echo "✅ AWS CLI configured"
+else
+    echo "ℹ️  No AWS credentials provided - assuming IAM role is attached"
+fi
 echo ""
 
 # Create log file
 touch /app/logs/cron.log
+touch /app/logs/drs-s3.log
 
-# Function to run scheduled tasks
-run_scheduled_tasks() {
-    # Track last run dates to avoid duplicate runs
-    LAST_S3_RUN=""
-    LAST_MIGRATION_RUN=""
+# Create crontab file for supercronic
+cat > /app/crontab << EOF
+# Coralogix DRS Tool Scheduled Jobs
+# Logs are written to /app/logs/
 
-    while true; do
-        CURRENT_TIME=$(date +"%H:%M")
-        CURRENT_DATE=$(date +"%Y-%m-%d")
-        CURRENT_DATETIME="${CURRENT_DATE} ${CURRENT_TIME}"
+# S3 Sync - Daily at ${S3_SYNC_SCHEDULE} UTC
+${S3_MINUTE} ${S3_HOUR} * * * /usr/local/bin/aws s3 sync /app ${S3_BUCKET_NAME} --exclude ".*" --exclude "*/.*" >> /app/logs/drs-s3.log 2>&1
 
-        # Check if it's S3 sync time
-        if [ "$CURRENT_TIME" = "$S3_SYNC_SCHEDULE" ]; then
-            # Only run if we haven't run today
-            if [ "$LAST_S3_RUN" != "$CURRENT_DATE" ]; then
-                echo "[$CURRENT_DATETIME] Starting S3 sync job..." | tee -a /app/logs/cron.log
-                cd /app && /usr/local/bin/python3 /app/drs-tool.py s3-sync >> /app/logs/cron.log 2>&1
-                echo "[$CURRENT_DATETIME] S3 sync job completed" | tee -a /app/logs/cron.log
-                LAST_S3_RUN="$CURRENT_DATE"
-                # Sleep for 2 minutes to avoid checking again immediately
-                sleep 120
-            fi
-        fi
+# Migration - Daily at ${MIGRATION_SCHEDULE} UTC
+${MIGRATION_MINUTE} ${MIGRATION_HOUR} * * * cd /app && /usr/local/bin/python3 /app/drs-tool.py all >> /app/logs/cron.log 2>&1
 
-        # Check if it's Migration time
-        if [ "$CURRENT_TIME" = "$MIGRATION_SCHEDULE" ]; then
-            # Only run if we haven't run today
-            if [ "$LAST_MIGRATION_RUN" != "$CURRENT_DATE" ]; then
-                echo "[$CURRENT_DATETIME] Starting migration job..." | tee -a /app/logs/cron.log
-                cd /app && /usr/local/bin/python3 /app/drs-tool.py all >> /app/logs/cron.log 2>&1
-                echo "[$CURRENT_DATETIME] Migration job completed" | tee -a /app/logs/cron.log
-                LAST_MIGRATION_RUN="$CURRENT_DATE"
-                # Sleep for 2 minutes to avoid checking again immediately
-                sleep 120
-            fi
-        fi
+EOF
 
-        # Check at configured interval
-        sleep "$CHECK_INTERVAL"
-    done
-}
+# Display crontab
+echo "✅ Crontab configured:"
+cat /app/crontab
+echo ""
 
-# Print initial status
 echo "✅ DRS Tool is running in persistent mode"
-echo "⏰ Waiting for scheduled times..."
+echo "⏰ Supercronic will execute jobs at scheduled times"
 echo ""
 echo "To view logs, run:"
 echo "  kubectl logs -n cx-drs <pod-name> -f"
 echo "  kubectl exec -n cx-drs <pod-name> -- tail -f /app/logs/cron.log"
+echo ""
+echo "To view crontab:"
+echo "  kubectl exec -n cx-drs <pod-name> -- cat /app/crontab"
 echo ""
 echo "To manually trigger a migration:"
 echo "  kubectl exec -n cx-drs <pod-name> -- python3 /app/drs-tool.py all"
 echo ""
 echo "=========================================="
 
-# Run the scheduler
-run_scheduled_tasks
-
+# Start supercronic in foreground (works perfectly with non-root users)
+exec supercronic /app/crontab

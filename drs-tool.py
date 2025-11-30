@@ -93,38 +93,51 @@ def extract_service_statistics(service, service_name: str, result, success: bool
 
         # Try to get counts from artifact files
         if outputs_dir.exists():
-            # Team A count
-            teama_file = outputs_dir / f"{service_name}_teama_latest.json"
-            if teama_file.exists():
-                with open(teama_file, 'r') as f:
-                    teama_data = json.load(f)
-                    if isinstance(teama_data, list):
-                        stats['teama_count'] = len(teama_data)
-                    elif isinstance(teama_data, dict):
-                        stats['teama_count'] = teama_data.get('count', len(teama_data.get('resources', [])))
-
-            # Team B count (before)
-            teamb_file = outputs_dir / f"{service_name}_teamb_latest.json"
-            if teamb_file.exists():
-                with open(teamb_file, 'r') as f:
-                    teamb_data = json.load(f)
-                    if isinstance(teamb_data, list):
-                        stats['teamb_before_count'] = len(teamb_data)
-                    elif isinstance(teamb_data, dict):
-                        stats['teamb_before_count'] = teamb_data.get('count', len(teamb_data.get('resources', [])))
-
-            # Team B count (after) - for actual migrations
-            teamb_after_file = outputs_dir / f"{service_name}_teamb_final_latest.json"
-            if teamb_after_file.exists():
-                with open(teamb_after_file, 'r') as f:
-                    teamb_after_data = json.load(f)
-                    if isinstance(teamb_after_data, list):
-                        stats['teamb_after_count'] = len(teamb_after_data)
-                    elif isinstance(teamb_after_data, dict):
-                        stats['teamb_after_count'] = teamb_after_data.get('count', len(teamb_after_data.get('resources', [])))
+            # For general-enrichments, check if stats file exists (includes skipped count)
+            stats_file = outputs_dir / f"{service_name}_stats_latest.json"
+            if service_name == 'general-enrichments' and stats_file.exists():
+                with open(stats_file, 'r') as f:
+                    stats_data = json.load(f)
+                    stats['teama_count'] = stats_data.get('teama_migratable', stats_data.get('teama_total', 0))
+                    stats['teamb_before_count'] = stats_data.get('teamb_before', 0)
+                    stats['teamb_after_count'] = stats_data.get('teamb_after', 0)
+                    stats['created'] = stats_data.get('created', 0)
+                    stats['deleted'] = stats_data.get('deleted', 0)
+                    stats['failed'] = stats_data.get('failed', 0)
+                    stats['skipped'] = stats_data.get('skipped', 0)
             else:
-                # If no after file, use before count for dry runs
-                stats['teamb_after_count'] = stats['teamb_before_count']
+                # Team A count
+                teama_file = outputs_dir / f"{service_name}_teama_latest.json"
+                if teama_file.exists():
+                    with open(teama_file, 'r') as f:
+                        teama_data = json.load(f)
+                        if isinstance(teama_data, list):
+                            stats['teama_count'] = len(teama_data)
+                        elif isinstance(teama_data, dict):
+                            stats['teama_count'] = teama_data.get('count', len(teama_data.get('resources', [])))
+
+                # Team B count (before)
+                teamb_file = outputs_dir / f"{service_name}_teamb_latest.json"
+                if teamb_file.exists():
+                    with open(teamb_file, 'r') as f:
+                        teamb_data = json.load(f)
+                        if isinstance(teamb_data, list):
+                            stats['teamb_before_count'] = len(teamb_data)
+                        elif isinstance(teamb_data, dict):
+                            stats['teamb_before_count'] = teamb_data.get('count', len(teamb_data.get('resources', [])))
+
+                # Team B count (after) - for actual migrations
+                teamb_after_file = outputs_dir / f"{service_name}_teamb_final_latest.json"
+                if teamb_after_file.exists():
+                    with open(teamb_after_file, 'r') as f:
+                        teamb_after_data = json.load(f)
+                        if isinstance(teamb_after_data, list):
+                            stats['teamb_after_count'] = len(teamb_after_data)
+                        elif isinstance(teamb_after_data, dict):
+                            stats['teamb_after_count'] = teamb_after_data.get('count', len(teamb_after_data.get('resources', [])))
+                else:
+                    # If no after file, use before count for dry runs
+                    stats['teamb_after_count'] = stats['teamb_before_count']
 
         # Try to extract from result if it's a dictionary (dry_run returns dict)
         if isinstance(result, dict):
@@ -212,12 +225,9 @@ def run_all_services(config: Config, logger, dry_run: bool = False, force: bool 
 
         try:
             # Create service-specific logger for better organization
-            service_logger = setup_logger(service_name, 'main', config.log_level)
+            service_logger = setup_logger(service_name, 'main', config.log_level, config.json_console)
 
-            logger.info("")
-            logger.info("─" * 80)
-            logger.info(f"🔧 SERVICE {index}/{total_services}: {service_name.upper()}")
-            logger.info("─" * 80)
+            logger.info("Service migration starting", service=service_name, index=index, total=total_services)
 
             # Create and run service
             service = create_service(service_name, config, service_logger)
@@ -390,10 +400,9 @@ Examples:
             service_name = 'all-services'
         else:
             service_name = 'dr-tool'
-        logger = setup_logger(service_name, 'main', config.log_level)
-        
-        logger.info(f"Starting DR tool - Command: {args.command}")
-        logger.info(f"Dry run: {getattr(args, 'dry_run', False)}")
+        logger = setup_logger(service_name, 'main', config.log_level, config.json_console)
+
+        logger.info("Starting DR tool", command=args.command, dry_run=getattr(args, 'dry_run', False))
         
         if args.command == 'status':
             # TODO: Implement status command

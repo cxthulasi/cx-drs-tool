@@ -22,12 +22,16 @@ data:
   
   # API Rate Limiting
   API_RATE_LIMIT_PER_SECOND: "10"
-  API_RETRY_MAX_ATTEMPTS: "3"
-  API_RETRY_BACKOFF_FACTOR: "2"
+  API_RETRY_MAX_ATTEMPTS: "2"
+  API_RETRY_BACKOFF_FACTOR: "1"
 
   # Cron Schedule Configuration (HH:MM format in UTC)
   # Change these values to adjust schedule without rebuilding Docker image
-  S3_SYNC_SCHEDULE: "00:30"      # S3 sync time (default: 12:30 AM UTC)
-  MIGRATION_SCHEDULE: "01:30"    # Migration time (default: 1:30 AM UTC)
+  S3_SYNC_SCHEDULE: "01:30"      # S3 sync time (default: 12:30 AM UTC)
+  MIGRATION_SCHEDULE: "00:30"    # Migration time (default: 1:30 AM UTC)
   CHECK_INTERVAL: "30"           # Seconds between schedule checks (default: 30)
+
+  # S3 Backup Configuration
+  S3_BUCKET_NAME: "s3://cx-coe-jiostar-drtool-backup-bucket"  # S3 bucket for backups
+  AWS_DEFAULT_REGION: "us-east-1"  # AWS region for S3 bucket
 

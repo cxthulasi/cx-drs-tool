@@ -28,6 +28,7 @@ class Config(BaseModel):
     # Logging Configuration
     log_level: str = Field(default="INFO", description="Logging level")
     log_format: str = Field(default="json", description="Log format (json or text)")
+    json_console: bool = Field(default=False, description="Output single-line JSON to console for Coralogix ingestion")
 
     # Service Exclusions Configuration
     exclude_services: Optional[str] = Field(
@@ -107,6 +108,7 @@ class Config(BaseModel):
             'cx_api_url_teamb': os.getenv('CX_API_URL_TEAMB', 'https://api.coralogix.com/mgmt'),
             'log_level': os.getenv('LOG_LEVEL', 'INFO'),
             'log_format': os.getenv('LOG_FORMAT', 'json'),
+            'json_console': os.getenv('JSON_CONSOLE', 'false').lower() == 'true',
             'api_rate_limit_per_second': int(os.getenv('API_RATE_LIMIT_PER_SECOND', '10')),
             'api_retry_max_attempts': int(os.getenv('API_RETRY_MAX_ATTEMPTS', '3')),
             'api_retry_backoff_factor': float(os.getenv('API_RETRY_BACKOFF_FACTOR', '2.0')),
