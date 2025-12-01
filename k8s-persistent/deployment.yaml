@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: cx-drs-tool
-  namespace: cx-drs
+  namespace: cx-drs-new
   labels:
     app: cx-drs-tool
 spec:
@@ -19,13 +19,12 @@ spec:
       - name: drs-tool
         image: ramthulsi12/cx-drs-tool:persistent
         imagePullPolicy: Always
-        
-        # Environment variables from ConfigMap
+
+        # Pull all env from ConfigMap + selective overrides
         envFrom:
         - configMapRef:
             name: cx-drs-config
-        
-        # Environment variables from Secret
+
         env:
         - name: CX_API_KEY_TEAMA
           valueFrom:
@@ -47,8 +46,6 @@ spec:
             secretKeyRef:
               name: cx-drs-secrets
               key: AWS_SECRET_ACCESS_KEY
-
-        # Cron schedule configuration (from ConfigMap - can be changed without rebuilding image)
         - name: S3_SYNC_SCHEDULE
           valueFrom:
             configMapKeyRef:
@@ -74,8 +71,7 @@ spec:
             configMapKeyRef:
               name: cx-drs-config
               key: AWS_DEFAULT_REGION
-        
-        # Resource limits
+
         resources:
           requests:
             memory: "512Mi"
@@ -83,8 +79,7 @@ spec:
           limits:
             memory: "2Gi"
             cpu: "1000m"
-        
-        # Volume mounts for persistent storage
+
         volumeMounts:
         - name: outputs
           mountPath: /app/outputs
@@ -94,8 +89,10 @@ spec:
           mountPath: /app/state
         - name: snapshots
           mountPath: /app/snapshots
-        
-        # Liveness probe - check if container is alive
+        - name: varlogpods
+          mountPath: /var/log/pods
+          readOnly: true
+
         livenessProbe:
           exec:
             command:
@@ -106,8 +103,7 @@ spec:
           periodSeconds: 60
           timeoutSeconds: 5
           failureThreshold: 3
-        
-        # Readiness probe - check if container is ready
+
         readinessProbe:
           exec:
             command:
@@ -118,9 +114,11 @@ spec:
           periodSeconds: 30
           timeoutSeconds: 5
           failureThreshold: 3
-      
-      # Volumes using emptyDir (data persists during pod lifetime)
+
       volumes:
+      - name: varlogpods
+        hostPath:
+          path: /var/log/pods
       - name: outputs
         emptyDir: {}
       - name: logs
@@ -129,7 +127,5 @@ spec:
         emptyDir: {}
       - name: snapshots
         emptyDir: {}
-      
-      # Restart policy
-      restartPolicy: Always
 
+      restartPolicy: Always

@@ -1,8 +1,8 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: cx-drs
+  name: cx-drs-new
   labels:
-    name: cx-drs
+    name: cx-drs-new
     app: coralogix-drs-tool
 
