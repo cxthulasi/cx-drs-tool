@@ -1,0 +1,241 @@
+{
+  "version_id": "v_20251201_003211",
+  "timestamp": "2025-12-01T00:32:11.527557",
+  "service": "recording-rules",
+  "version_type": "pre_migration",
+  "teama": {
+    "count": 2,
+    "resources": [
+      {
+        "id": "01K7M1MPWM8XFPNCKJ67X6ZB4Y",
+        "groups": [
+          {
+            "name": "somegroup",
+            "interval": 60,
+            "limit": "0",
+            "rules": [
+              {
+                "record": "somemetric",
+                "expr": "sum(amazonaws_com_AWS_ApplicationELB_ActiveConnectionCount_avg)",
+                "labels": {},
+                "lastEvalDurationMs": "41"
+              }
+            ],
+            "lastEvalAt": "1764529265",
+            "version": 0,
+            "id": "01K7M1MPWN6MKGJ9SN5BZCXJ7B"
+          }
+        ],
+        "name": "samplegroup"
+      },
+      {
+        "id": "01K87VPWWYCZKT0DP470GPYN0K",
+        "groups": [
+          {
+            "name": "cx_slo_hourly_status",
+            "interval": 3600,
+            "limit": "0",
+            "rules": [
+              {
+                "record": "cx:slo:statuses:hourly",
+                "expr": "count_values(\"status\", ceil(clamp(1- ((((count_over_time(cx:slo:window{slo_id=\"76af8c83-2b65-476f-8f04-d3df1fd954f0\",revision=\"1\"}[28d:1m]) - sum_over_time(cx:slo:window{slo_id=\"76af8c83-2b65-476f-8f04-d3df1fd954f0\",revision=\"1\"}[28d:1m])) / count_over_time(cx:slo:window{slo_id=\"76af8c83-2b65-476f-8f04-d3df1fd954f0\",revision=\"1\"}[28d:1m])) or on() vector(0))) / (1-(99.95/100)) , 0, 1) * 4))",
+                "labels": {
+                  "revision": "1",
+                  "slo_id": "76af8c83-2b65-476f-8f04-d3df1fd954f0",
+                  "slo_time_window": "28d"
+                },
+                "lastEvalDurationMs": "142"
+              }
+            ],
+            "lastEvalAt": "1764526934",
+            "version": 1,
+            "id": "01K87VPWX082HMK3DTTY2HBTYM"
+          },
+          {
+            "name": "cx_slo_window_based",
+            "interval": 60,
+            "limit": "0",
+            "rules": [
+              {
+                "record": "cx:slo:window",
+                "expr": "((clamp(histogram_quantile(0.95, sum(increase(duration_ms_bucket[1m])) by (service_name, le)) > 65, 1, 1)) or on() vector(0)) and count(histogram_quantile(0.95, sum(increase(duration_ms_bucket[1m])) by (service_name, le))[60]) by (service_name) > 0",
+                "labels": {
+                  "revision": "1",
+                  "slo_id": "76af8c83-2b65-476f-8f04-d3df1fd954f0",
+                  "slo_time_window": "28d"
+                },
+                "lastEvalDurationMs": "9"
+              },
+              {
+                "record": "cx:slo:target",
+                "expr": "99.95",
+                "labels": {
+                  "revision": "1",
+                  "slo_id": "76af8c83-2b65-476f-8f04-d3df1fd954f0",
+                  "slo_time_window": "28d"
+                },
+                "lastEvalDurationMs": "0"
+              }
+            ],
+            "lastEvalAt": "1764529274",
+            "version": 1,
+            "id": "01K87VPWWZ5ZX651SVJE9XK7AC"
+          }
+        ],
+        "name": "cx:slo:76af8c83-2b65-476f-8f04-d3df1fd954f0"
+      }
+    ],
+    "resource_identifiers": [
+      "samplegroup",
+      "cx:slo:76af8c83-2b65-476f-8f04-d3df1fd954f0"
+    ]
+  },
+  "teamb": {
+    "count": 3,
+    "resources": [
+      {
+        "id": "01KBB22KDDCCVGSFCXN01Z5NFM",
+        "groups": [
+          {
+            "name": "somegroup",
+            "interval": 60,
+            "limit": "0",
+            "rules": [
+              {
+                "record": "somemetric",
+                "expr": "sum(amazonaws_com_AWS_ApplicationELB_ActiveConnectionCount_avg)",
+                "labels": {},
+                "lastEvalDurationMs": "2"
+              }
+            ],
+            "lastEvalAt": "1764529278",
+            "version": 0,
+            "id": "01KBB22KDF0DCV0TNRBZK6KWPV"
+          }
+        ],
+        "name": "samplegroup"
+      },
+      {
+        "id": "01KBB22KZZN1EV9VGY045JQ98R",
+        "groups": [
+          {
+            "name": "cx_slo_hourly_status",
+            "interval": 3600,
+            "limit": "0",
+            "rules": [
+              {
+                "record": "cx:slo:statuses:hourly",
+                "expr": "count_values(\"status\", ceil(clamp(1- ((((count_over_time(cx:slo:window{slo_id=\"76af8c83-2b65-476f-8f04-d3df1fd954f0\",revision=\"1\"}[28d:1m]) - sum_over_time(cx:slo:window{slo_id=\"76af8c83-2b65-476f-8f04-d3df1fd954f0\",revision=\"1\"}[28d:1m])) / count_over_time(cx:slo:window{slo_id=\"76af8c83-2b65-476f-8f04-d3df1fd954f0\",revision=\"1\"}[28d:1m])) or on() vector(0))) / (1-(99.95/100)) , 0, 1) * 4))",
+                "labels": {
+                  "revision": "1",
+                  "slo_id": "76af8c83-2b65-476f-8f04-d3df1fd954f0",
+                  "slo_time_window": "28d"
+                },
+                "lastEvalDurationMs": "54"
+              }
+            ],
+            "lastEvalAt": "1764529098",
+            "version": 0,
+            "id": "01KBB22M01NR7TCBMATG0EK4HM"
+          },
+          {
+            "name": "cx_slo_window_based",
+            "interval": 60,
+            "limit": "0",
+            "rules": [
+              {
+                "record": "cx:slo:window",
+                "expr": "((clamp(histogram_quantile(0.95, sum(increase(duration_ms_bucket[1m])) by (service_name, le)) > 65, 1, 1)) or on() vector(0)) and count(histogram_quantile(0.95, sum(increase(duration_ms_bucket[1m])) by (service_name, le))[60]) by (service_name) > 0",
+                "labels": {
+                  "revision": "1",
+                  "slo_id": "76af8c83-2b65-476f-8f04-d3df1fd954f0",
+                  "slo_time_window": "28d"
+                },
+                "lastEvalDurationMs": "41"
+              },
+              {
+                "record": "cx:slo:target",
+                "expr": "99.95",
+                "labels": {
+                  "revision": "1",
+                  "slo_id": "76af8c83-2b65-476f-8f04-d3df1fd954f0",
+                  "slo_time_window": "28d"
+                },
+                "lastEvalDurationMs": "0"
+              }
+            ],
+            "lastEvalAt": "1764529278",
+            "version": 0,
+            "id": "01KBB22M02MES74FBXC51C905R"
+          }
+        ],
+        "name": "cx:slo:76af8c83-2b65-476f-8f04-d3df1fd954f0"
+      },
+      {
+        "id": "01KBB24A9ZA0JSAQ824CJ823PE",
+        "groups": [
+          {
+            "name": "cx_slo_hourly_status",
+            "interval": 3600,
+            "limit": "0",
+            "rules": [
+              {
+                "record": "cx:slo:statuses:hourly",
+                "expr": "count_values(\"status\", ceil(clamp(1- ((((count_over_time(cx:slo:window{slo_id=\"975cbcdf-4214-4c43-af5a-802792997e83\",revision=\"1\"}[28d:1m]) - sum_over_time(cx:slo:window{slo_id=\"975cbcdf-4214-4c43-af5a-802792997e83\",revision=\"1\"}[28d:1m])) / count_over_time(cx:slo:window{slo_id=\"975cbcdf-4214-4c43-af5a-802792997e83\",revision=\"1\"}[28d:1m])) or on() vector(0))) / (1-(99.95/100)) , 0, 1) * 4))",
+                "labels": {
+                  "revision": "1",
+                  "slo_id": "975cbcdf-4214-4c43-af5a-802792997e83",
+                  "slo_time_window": "28d"
+                },
+                "lastEvalDurationMs": "59"
+              }
+            ],
+            "lastEvalAt": "1764529154",
+            "version": 0,
+            "id": "01KBB24AA2PK6WFJNPRDHXSG54"
+          },
+          {
+            "name": "cx_slo_window_based",
+            "interval": 60,
+            "limit": "0",
+            "rules": [
+              {
+                "record": "cx:slo:window",
+                "expr": "((clamp(histogram_quantile(0.95, sum(increase(duration_ms_bucket[1m])) by (service_name, le)) > 65, 1, 1)) or on() vector(0)) and count(histogram_quantile(0.95, sum(increase(duration_ms_bucket[1m])) by (service_name, le))[60]) by (service_name) > 0",
+                "labels": {
+                  "revision": "1",
+                  "slo_id": "975cbcdf-4214-4c43-af5a-802792997e83",
+                  "slo_time_window": "28d"
+                },
+                "lastEvalDurationMs": "2"
+              },
+              {
+                "record": "cx:slo:target",
+                "expr": "99.95",
+                "labels": {
+                  "revision": "1",
+                  "slo_id": "975cbcdf-4214-4c43-af5a-802792997e83",
+                  "slo_time_window": "28d"
+                },
+                "lastEvalDurationMs": "0"
+              }
+            ],
+            "lastEvalAt": "1764529274",
+            "version": 0,
+            "id": "01KBB24AA12VBN2YN67AR4DY20"
+          }
+        ],
+        "name": "cx:slo:975cbcdf-4214-4c43-af5a-802792997e83"
+      }
+    ],
+    "resource_identifiers": [
+      "samplegroup",
+      "cx:slo:76af8c83-2b65-476f-8f04-d3df1fd954f0",
+      "cx:slo:975cbcdf-4214-4c43-af5a-802792997e83"
+    ]
+  },
+  "metadata": {
+    "created_by": "version_manager",
+    "purpose": "pre_migration_snapshot"
+  }
+}

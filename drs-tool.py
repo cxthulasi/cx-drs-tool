@@ -93,18 +93,22 @@ def extract_service_statistics(service, service_name: str, result, success: bool
 
         # Try to get counts from artifact files
         if outputs_dir.exists():
-            # For general-enrichments, check if stats file exists (includes skipped count)
+            # For services with stats files (general-enrichments, recording-rules, events2metrics), use those
             stats_file = outputs_dir / f"{service_name}_stats_latest.json"
-            if service_name == 'general-enrichments' and stats_file.exists():
+            if service_name in ['general-enrichments', 'recording-rules', 'events2metrics'] and stats_file.exists():
                 with open(stats_file, 'r') as f:
                     stats_data = json.load(f)
-                    stats['teama_count'] = stats_data.get('teama_migratable', stats_data.get('teama_total', 0))
+                    # For general-enrichments, use migratable count; for others use regular count
+                    if service_name == 'general-enrichments':
+                        stats['teama_count'] = stats_data.get('teama_migratable', stats_data.get('teama_total', 0))
+                        stats['skipped'] = stats_data.get('skipped', 0)
+                    else:
+                        stats['teama_count'] = stats_data.get('teama_count', 0)
                     stats['teamb_before_count'] = stats_data.get('teamb_before', 0)
                     stats['teamb_after_count'] = stats_data.get('teamb_after', 0)
                     stats['created'] = stats_data.get('created', 0)
                     stats['deleted'] = stats_data.get('deleted', 0)
                     stats['failed'] = stats_data.get('failed', 0)
-                    stats['skipped'] = stats_data.get('skipped', 0)
             else:
                 # Team A count
                 teama_file = outputs_dir / f"{service_name}_teama_latest.json"
@@ -114,7 +118,24 @@ def extract_service_statistics(service, service_name: str, result, success: bool
                         if isinstance(teama_data, list):
                             stats['teama_count'] = len(teama_data)
                         elif isinstance(teama_data, dict):
-                            stats['teama_count'] = teama_data.get('count', len(teama_data.get('resources', [])))
+                            resources = teama_data.get('resources', [])
+
+                            # Special handling for general-enrichments: calculate migratable count
+                            if service_name == 'general-enrichments':
+                                total_count = len(resources)
+                                skipped_count = 0
+
+                                # Count enrichments with customEnrichment references (non-migratable)
+                                for enrichment in resources:
+                                    enrichment_type = enrichment.get('enrichmentType', {})
+                                    if 'customEnrichment' in enrichment_type:
+                                        skipped_count += 1
+
+                                # Use migratable count (total - skipped)
+                                stats['teama_count'] = total_count - skipped_count
+                                stats['skipped'] = skipped_count
+                            else:
+                                stats['teama_count'] = teama_data.get('count', len(resources))
 
                 # Team B count (before)
                 teamb_file = outputs_dir / f"{service_name}_teamb_latest.json"
@@ -165,8 +186,8 @@ def extract_service_statistics(service, service_name: str, result, success: bool
             elif stats['teamb_after_count'] < stats['teamb_before_count']:
                 stats['deleted'] = stats['teamb_before_count'] - stats['teamb_after_count']
 
-            # For delete-all + recreate-all pattern (parsing-rules, recording-rules, slo, custom-actions, views)
-            if service_name in ['parsing-rules', 'recording-rules', 'slo', 'custom-actions', 'views']:
+            # For delete-all + recreate-all pattern (parsing-rules, recording-rules, events2metrics, slo, custom-actions, views)
+            if service_name in ['parsing-rules', 'recording-rules', 'events2metrics', 'slo', 'custom-actions', 'views']:
                 stats['deleted'] = stats['teamb_before_count']
                 stats['created'] = stats['teamb_after_count']
                 stats['updated'] = 0

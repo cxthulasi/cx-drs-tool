@@ -13,6 +13,8 @@ It supports:
 
 from typing import Dict, List, Any
 from pathlib import Path
+import json
+import time
 
 from core.base_service import BaseService
 from core.config import Config
@@ -351,14 +353,13 @@ class RecordingRulesService(BaseService):
 
     def migrate(self) -> bool:
         """
-        Perform the actual recording rule group sets migration with enhanced safety checks.
+        Perform the actual recording rule group sets migration using delete & recreate all pattern.
 
-        Enhanced Implementation:
-        1. Create pre-migration version snapshot
-        2. Fetch rule group sets from Team A and Team B with safety checks
-        3. Perform mass deletion safety check
-        4. Execute migration operations
-        5. Create post-migration version snapshot
+        This approach ensures perfect synchronization by:
+        1. Deleting ALL existing rule group sets from Team B
+        2. Recreating ALL rule group sets from Team A
+
+        This is the same approach as parsing-rules and guarantees consistency.
 
         Returns:
             True if migration completed successfully
@@ -382,44 +383,13 @@ class RecordingRulesService(BaseService):
             previous_version = self.version_manager.get_previous_version()
             previous_teama_count = previous_version.get('teama', {}).get('count') if previous_version else None
 
-            # Save artifacts
+            # Step 3: Save artifacts
             self.save_artifacts(teama_resources, 'teama')
             self.save_artifacts(teamb_resources, 'teamb')
 
-            # Compare resources to identify changes
-            comparison = self._compare_rule_group_sets(teama_resources, teamb_resources)
-
-            # Check if any operations are needed
-            total_operations = len(comparison['new_in_teama']) + len(comparison['changed_resources']) + len(comparison['deleted_from_teama'])
-
-            if total_operations == 0:
-                self.logger.info("No recording rule group sets migration needed - teams are in sync")
-
-                # Display migration results even when no operations are needed
-                self._display_migration_results_table({
-                    'total_teama_resources': len(teama_resources),
-                    'total_teamb_resources': len(teamb_resources),
-                    'new_resources': 0,
-                    'changed_resources': 0,
-                    'deleted_resources': 0,
-                    'successful_operations': 0,
-                    'failed_operations': 0,
-                    'total_operations': 0
-                })
-
-                # Still create post-migration snapshot for consistency
-                self.version_manager.create_version_snapshot(
-                    teama_resources, teamb_resources, 'post_migration'
-                )
-                self.log_migration_complete(self.service_name, True, 0, 0)
-                return True
-
-            # Step 3: Perform mass deletion safety check
-            # Calculate total resources that would be deleted (including recreations)
-            resources_to_delete = comparison['deleted_from_teama'] + [teamb_resource for _, teamb_resource in comparison['changed_resources']]
-
+            # Step 4: Perform mass deletion safety check (deleting ALL TeamB resources)
             mass_deletion_check = self.safety_manager.check_mass_deletion_safety(
-                resources_to_delete, len(teamb_resources), len(teama_resources), previous_teama_count
+                teamb_resources, len(teamb_resources), len(teama_resources), previous_teama_count
             )
 
             if not mass_deletion_check.is_safe:
@@ -428,78 +398,108 @@ class RecordingRulesService(BaseService):
                 raise RuntimeError(f"Mass deletion safety check failed: {mass_deletion_check.reason}")
 
             self.logger.info(
-                "Migration plan",
+                "Migration plan - Delete ALL + Recreate ALL",
                 total_teama_resources=len(teama_resources),
                 total_teamb_resources=len(teamb_resources),
-                new_resources=len(comparison['new_in_teama']),
-                changed_resources=len(comparison['changed_resources']),
-                deleted_resources=len(comparison['deleted_from_teama'])
+                to_delete=len(teamb_resources),
+                to_create=len(teama_resources)
             )
 
-            success_count = 0
+            delete_count = 0
+            create_success_count = 0
             error_count = 0
 
-            # Handle deleted resources (exist in Team B but not in Team A)
-            for teamb_resource in comparison['deleted_from_teama']:
-                try:
-                    resource_id = teamb_resource.get('id')
-                    if resource_id:
-                        self.delete_resource_from_teamb(resource_id)
-                        success_count += 1
-                except Exception as e:
-                    self.logger.error(f"Failed to delete resource {teamb_resource.get('name', 'Unknown')}: {e}")
-                    error_count += 1
+            # Step 5: Delete ALL existing rule group sets from Team B
+            self.logger.info("🗑️ Deleting ALL existing recording rule group sets from Team B...")
 
-            # Handle changed resources (delete and recreate)
-            for teama_resource, teamb_resource in comparison['changed_resources']:
-                resource_name = teama_resource.get('name', 'Unknown')
+            if teamb_resources:
+                for teamb_resource in teamb_resources:
+                    try:
+                        resource_id = teamb_resource.get('id')
+                        resource_name = teamb_resource.get('name', 'Unknown')
 
-                try:
-                    # Delete existing resource in Team B
-                    teamb_id = teamb_resource.get('id')
-                    if teamb_id:
-                        self.delete_resource_from_teamb(teamb_id)
+                        if resource_id:
+                            self.delete_resource_from_teamb(resource_id)
+                            self.logger.info(f"Deleted rule group set: {resource_name}")
+                            delete_count += 1
+                        else:
+                            self.logger.error(f"Failed to delete rule group set: {resource_name} - no ID found")
+                            error_count += 1
 
-                    # Create new resource in Team B
-                    self.create_resource_in_teamb(teama_resource)
-                    success_count += 1
+                    except Exception as e:
+                        self.logger.error(f"Failed to delete rule group set {teamb_resource.get('name', 'Unknown')}: {e}")
+                        error_count += 1
 
-                except Exception as e:
-                    self.logger.error(f"Failed to recreate changed resource {resource_name}: {e}")
-                    error_count += 1
+                # Step 5.1: Verify deletion completed
+                self.logger.info("🔍 Verifying all rule group sets were deleted from Team B...")
+                time.sleep(2)  # Brief delay for API consistency
+                verification_teamb_resources = self.fetch_resources_from_teamb()
 
-            # Handle new resources (exist in Team A but not in Team B)
-            for teama_resource in comparison['new_in_teama']:
-                resource_name = teama_resource.get('name', 'Unknown')
+                if verification_teamb_resources:
+                    self.logger.error(f"❌ Deletion verification failed: {len(verification_teamb_resources)} rule group sets still exist in Team B")
+                    for remaining in verification_teamb_resources:
+                        self.logger.error(f"   Remaining: {remaining.get('name', 'Unknown')} (ID: {remaining.get('id', 'N/A')})")
+                    raise RuntimeError(f"Failed to delete all rule group sets from Team B. {len(verification_teamb_resources)} still remain.")
+                else:
+                    self.logger.info("✅ Deletion verification passed: Team B is now empty")
+            else:
+                self.logger.info("ℹ️ Team B already has no rule group sets - skipping deletion")
 
-                try:
-                    self.create_resource_in_teamb(teama_resource)
-                    success_count += 1
-                except Exception as e:
-                    self.logger.error(f"Failed to create new resource {resource_name}: {e}")
-                    error_count += 1
+            # Step 6: Create ALL rule group sets from Team A
+            self.logger.info("📄 Creating ALL recording rule group sets from Team A...")
 
-            # Display migration results in tabular format
-            self._display_migration_results_table({
-                'total_teama_resources': len(teama_resources),
-                'total_teamb_resources': len(teamb_resources),
-                'new_resources': len(comparison['new_in_teama']),
-                'changed_resources': len(comparison['changed_resources']),
-                'deleted_resources': len(comparison['deleted_from_teama']),
-                'successful_operations': success_count,
-                'failed_operations': error_count,
-                'total_operations': len(comparison['new_in_teama']) + len(comparison['changed_resources']) + len(comparison['deleted_from_teama'])
-            })
+            if teama_resources:
+                for teama_resource in teama_resources:
+                    try:
+                        resource_name = teama_resource.get('name', 'Unknown')
 
-            # Step 4: Create post-migration version snapshot
+                        self.logger.info(f"Creating rule group set: {resource_name}")
+                        self.create_resource_in_teamb(teama_resource)
+                        create_success_count += 1
+
+                    except Exception as e:
+                        self.logger.error(f"Failed to create rule group set {teama_resource.get('name', 'Unknown')}: {e}")
+                        error_count += 1
+
+                # Step 6.1: Verify creation completed
+                self.logger.info("🔍 Verifying all rule group sets were created in Team B...")
+                time.sleep(2)  # Brief delay for API consistency
+                final_teamb_resources = self.fetch_resources_from_teamb()
+
+                expected_count = len(teama_resources)
+                actual_count = len(final_teamb_resources)
+
+                if actual_count != expected_count:
+                    self.logger.error(f"❌ Creation verification failed: Expected {expected_count} rule group sets, but found {actual_count} in Team B")
+                    raise RuntimeError(f"Creation verification failed: Expected {expected_count} rule group sets, but found {actual_count}")
+                else:
+                    self.logger.info(f"✅ Creation verification passed: {actual_count} rule group sets successfully created in Team B")
+
+                    # Save final state to outputs
+                    self.logger.info("💾 Saving final Team B state to outputs...")
+                    self.save_artifacts(final_teamb_resources, "teamb_final")
+            else:
+                self.logger.info("ℹ️ Team A has no rule group sets - skipping creation")
+                final_teamb_resources = []
+
+            # Step 7: Save migration statistics for summary table
+            stats_file = self.outputs_dir / f"{self.service_name}_stats_latest.json"
+            stats_data = {
+                'teama_count': len(teama_resources),
+                'teamb_before': len(teamb_resources),
+                'teamb_after': len(final_teamb_resources),
+                'created': create_success_count,
+                'deleted': delete_count,
+                'failed': error_count
+            }
+            with open(stats_file, 'w') as f:
+                json.dump(stats_data, f, indent=2)
+
+            # Step 8: Create post-migration version snapshot
             self.logger.info("📸 Creating post-migration version snapshot...")
             try:
-                # Fetch updated resources from both teams for post-migration snapshot
-                updated_teama_resources = self.fetch_resources_from_teama()
-                updated_teamb_resources = self.fetch_resources_from_teamb()
-
                 post_migration_version = self.version_manager.create_version_snapshot(
-                    updated_teama_resources, updated_teamb_resources, 'post_migration'
+                    teama_resources, final_teamb_resources, 'post_migration'
                 )
                 self.logger.info(f"Post-migration snapshot created: {post_migration_version}")
             except Exception as e:
@@ -510,14 +510,29 @@ class RecordingRulesService(BaseService):
             self.log_migration_complete(
                 self.service_name,
                 migration_success,
-                success_count,
+                create_success_count,
                 error_count
             )
 
+            # Print user-visible migration summary
+            print("\n" + "=" * 60)
+            print("MIGRATION RESULTS - RECORDING RULE GROUP SETS")
+            print("=" * 60)
+            print(f"📊 Team A rule group sets: {len(teama_resources)}")
+            print(f"📊 Team B rule group sets (before): {len(teamb_resources)}")
+            print(f"📊 Team B rule group sets (after): {len(final_teamb_resources)}")
+            print(f"🗑️  Deleted from Team B: {delete_count}")
+            print(f"✅ Successfully created: {create_success_count}")
+            if error_count > 0:
+                print(f"❌ Failed: {error_count}")
+            print(f"📋 Total operations: {delete_count + create_success_count + error_count}")
+
             if migration_success:
-                self.logger.info("🎉 Recording rule group sets migration completed successfully!")
+                print("\n✅ Migration completed successfully!")
             else:
-                self.logger.warning(f"⚠️ Recording rule group sets migration completed with {error_count} failures")
+                print(f"\n⚠️ Migration completed with {error_count} failures")
+
+            print("=" * 60 + "\n")
 
             return migration_success
 
@@ -526,13 +541,13 @@ class RecordingRulesService(BaseService):
             self.log_migration_complete(self.service_name, False, 0, 1)
             return False
 
-    def dry_run(self) -> Dict[str, Any]:
+    def dry_run(self) -> bool:
         """
-        Perform a dry run of the recording rule group sets migration.
+        Perform a dry run of the recording rule group sets migration using delete & recreate all pattern.
         Shows what would be done without making actual changes.
 
         Returns:
-            Dictionary containing dry run results
+            True if dry run completed successfully
         """
         try:
             self.log_migration_start(self.service_name, dry_run=True)
@@ -548,43 +563,50 @@ class RecordingRulesService(BaseService):
             self.save_artifacts(teama_resources, 'teama')
             self.save_artifacts(teamb_resources, 'teamb')
 
-            # Compare resources to identify changes
-            comparison = self._compare_rule_group_sets(teama_resources, teamb_resources)
+            # Calculate what would be done (delete all + recreate all)
+            total_operations = len(teamb_resources) + len(teama_resources)
 
-            # Prepare results
-            results = {
+            # Print dry-run summary
+            print("\n" + "=" * 60)
+            print("DRY RUN - RECORDING RULE GROUP SETS MIGRATION")
+            print("=" * 60)
+            print(f"📊 Team A rule group sets: {len(teama_resources)}")
+            print(f"📊 Team B rule group sets (current): {len(teamb_resources)}")
+            print("\n🔄 Planned Operations:")
+            print(f"   🗑️  Delete ALL {len(teamb_resources)} rule group sets from Team B")
+            print(f"   ✅ Create {len(teama_resources)} rule group sets from Team A")
+            print(f"\n📋 Total operations: {total_operations}")
+            print("=" * 60 + "\n")
+
+            # Display sample rule group sets
+            if teama_resources:
+                print("Sample rule group sets from Team A (first 5):")
+                for i, resource in enumerate(teama_resources[:5], 1):
+                    name = resource.get('name', 'Unknown')
+                    resource_id = resource.get('id', 'N/A')
+                    print(f"  {i}. {name} (ID: {resource_id})")
+                print()
+
+            # Save migration statistics for summary table
+            stats_file = self.outputs_dir / f"{self.service_name}_stats_latest.json"
+            stats_data = {
                 'teama_count': len(teama_resources),
-                'teamb_count': len(teamb_resources),
-                'to_create': comparison['new_in_teama'],
-                'to_recreate': comparison['changed_resources'],
-                'to_delete': comparison['deleted_from_teama'],
-                'total_operations': len(comparison['new_in_teama']) + len(comparison['changed_resources']) + len(comparison['deleted_from_teama'])
+                'teamb_before': len(teamb_resources),
+                'teamb_after': len(teamb_resources),  # No change in dry run
+                'created': 0,  # Dry run doesn't create
+                'deleted': 0,  # Dry run doesn't delete
+                'failed': 0
             }
+            with open(stats_file, 'w') as f:
+                json.dump(stats_data, f, indent=2)
 
-            # Log summary
-            self.logger.info(f"Dry run completed:")
-            self.logger.info(f"  Team A rule group sets: {len(teama_resources)}")
-            self.logger.info(f"  Team B rule group sets: {len(teamb_resources)}")
-            self.logger.info(f"  New rule group sets to create: {len(comparison['new_in_teama'])}")
-            self.logger.info(f"  Changed rule group sets to recreate: {len(comparison['changed_resources'])}")
-            self.logger.info(f"  Rule group sets to delete: {len(comparison['deleted_from_teama'])}")
-            self.logger.info(f"  Total operations: {results['total_operations']}")
-
-            self.log_migration_complete(self.service_name, True, len(teama_resources), 0)
-            return results
+            self.log_migration_complete(self.service_name, True, 0, 0)
+            return True
 
         except Exception as e:
             self.logger.error(f"Dry run failed: {e}")
             self.log_migration_complete(self.service_name, False, 0, 1)
-            return {
-                'teama_count': 0,
-                'teamb_count': 0,
-                'to_create': [],
-                'to_recreate': [],
-                'to_delete': [],
-                'total_operations': 0,
-                'error': str(e)
-            }
+            return False
 
     def display_dry_run_results(self, results: Dict[str, Any]):
         """

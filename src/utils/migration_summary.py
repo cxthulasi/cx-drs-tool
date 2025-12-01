@@ -71,7 +71,13 @@ class MigrationSummaryCollector:
         total_operations = created + updated + deleted + skipped
         success_rate = 0.0
         if total_operations > 0:
-            success_rate = ((created + updated + deleted) / total_operations) * 100
+            # For dry-runs or when no actual operations were performed, base success on whether there were failures
+            if created == 0 and updated == 0 and deleted == 0:
+                # Dry-run or no operations: success rate is 100% if no failures, 0% if there were failures
+                success_rate = 0.0 if failed > 0 else 100.0
+            else:
+                # Actual migration: calculate based on successful operations vs total
+                success_rate = ((created + updated + deleted) / total_operations) * 100
         
         stats = {
             'service': service_name,

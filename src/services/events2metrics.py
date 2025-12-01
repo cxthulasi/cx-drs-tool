@@ -13,6 +13,8 @@ It supports:
 
 from typing import Dict, List, Any
 from pathlib import Path
+import json
+import time
 
 from core.base_service import BaseService
 from core.config import Config
@@ -253,71 +255,72 @@ class Events2MetricsService(BaseService):
                 return e2m
         return None
 
-    def dry_run(self) -> Dict[str, Any]:
+    def dry_run(self) -> bool:
         """
-        Perform a dry run to show what would be migrated without making changes.
+        Perform a dry run of the Events2Metrics migration using delete & recreate all pattern.
+        Shows what would be done without making actual changes.
 
         Returns:
-            Dictionary containing dry run results
+            True if dry run completed successfully
         """
-        self.logger.info("Starting Events2Metrics dry run...")
+        try:
+            self.log_migration_start(self.service_name, dry_run=True)
 
-        # Fetch E2Ms from both teams
-        teama_e2ms = self.fetch_resources_from_teama()
-        teamb_e2ms = self.fetch_resources_from_teamb()
+            # Fetch current resources from both teams
+            self.logger.info("Fetching resources from Team A...")
+            teama_e2ms = self.fetch_resources_from_teama()
 
-        # Analyze what needs to be done
-        to_create = []
-        to_recreate = []
-        to_delete = []
+            self.logger.info("Fetching resources from Team B...")
+            teamb_e2ms = self.fetch_resources_from_teamb()
 
-        # Create name-to-E2M mappings for easier lookup
-        teamb_e2ms_by_name = {e2m.get('name'): e2m for e2m in teamb_e2ms}
-        teama_e2ms_by_name = {e2m.get('name'): e2m for e2m in teama_e2ms}
+            # Save artifacts for comparison
+            self.save_artifacts(teama_e2ms, 'teama')
+            self.save_artifacts(teamb_e2ms, 'teamb')
 
-        # Check what needs to be created or recreated
-        for e2m_a in teama_e2ms:
-            name = e2m_a.get('name')
-            if not name:
-                continue
+            # Calculate what would be done (delete all + recreate all)
+            total_operations = len(teamb_e2ms) + len(teama_e2ms)
 
-            e2m_b = teamb_e2ms_by_name.get(name)
-            if not e2m_b:
-                # E2M doesn't exist in Team B, needs to be created
-                to_create.append(e2m_a)
-            elif not self._compare_e2m(e2m_a, e2m_b):
-                # E2M exists but is different, needs to be recreated
-                to_recreate.append((e2m_a, e2m_b))
+            # Print dry-run summary
+            print("\n" + "=" * 60)
+            print("DRY RUN - EVENTS2METRICS MIGRATION")
+            print("=" * 60)
+            print(f"📊 Team A E2Ms: {len(teama_e2ms)}")
+            print(f"📊 Team B E2Ms (current): {len(teamb_e2ms)}")
+            print("\n🔄 Planned Operations:")
+            print(f"   🗑️  Delete ALL {len(teamb_e2ms)} E2Ms from Team B")
+            print(f"   ✅ Create {len(teama_e2ms)} E2Ms from Team A")
+            print(f"\n📋 Total operations: {total_operations}")
+            print("=" * 60 + "\n")
 
-        # Check what needs to be deleted (exists in Team B but not in Team A)
-        for e2m_b in teamb_e2ms:
-            name = e2m_b.get('name')
-            if name and name not in teama_e2ms_by_name:
-                to_delete.append(e2m_b)
+            # Display sample E2Ms
+            if teama_e2ms:
+                print("Sample E2Ms from Team A (first 5):")
+                for i, e2m in enumerate(teama_e2ms[:5], 1):
+                    name = e2m.get('name', 'Unknown')
+                    e2m_id = e2m.get('id', 'N/A')
+                    print(f"  {i}. {name} (ID: {e2m_id})")
+                print()
 
-        # Calculate total operations
-        total_operations = len(to_create) + len(to_recreate) + len(to_delete)
+            # Save migration statistics for summary table
+            stats_file = self.outputs_dir / f"{self.service_name}_stats_latest.json"
+            stats_data = {
+                'teama_count': len(teama_e2ms),
+                'teamb_before': len(teamb_e2ms),
+                'teamb_after': len(teamb_e2ms),  # No change in dry run
+                'created': 0,  # Dry run doesn't create
+                'deleted': 0,  # Dry run doesn't delete
+                'failed': 0
+            }
+            with open(stats_file, 'w') as f:
+                json.dump(stats_data, f, indent=2)
 
-        # Prepare results
-        results = {
-            'teama_count': len(teama_e2ms),
-            'teamb_count': len(teamb_e2ms),
-            'to_create': to_create,
-            'to_recreate': to_recreate,
-            'to_delete': to_delete,
-            'total_operations': total_operations
-        }
+            self.log_migration_complete(self.service_name, True, 0, 0)
+            return True
 
-        # Log summary
-        self.logger.info(f"Dry run completed:")
-        self.logger.info(f"  Team A E2Ms: {len(teama_e2ms)}")
-        self.logger.info(f"  Team B E2Ms: {len(teamb_e2ms)}")
-        self.logger.info(f"  New E2Ms to create: {len(to_create)}")
-        self.logger.info(f"  Changed E2Ms to recreate: {len(to_recreate)}")
-        self.logger.info(f"  E2Ms to delete: {len(to_delete)}")
-        self.logger.info(f"  Total operations: {total_operations}")
-
-        return results
+        except Exception as e:
+            self.logger.error(f"Dry run failed: {e}")
+            self.log_migration_complete(self.service_name, False, 0, 1)
+            return False
 
     def display_dry_run_results(self, results: Dict[str, Any]):
         """
@@ -359,14 +362,13 @@ class Events2MetricsService(BaseService):
 
     def migrate(self) -> bool:
         """
-        Perform the actual Events2Metrics migration with enhanced safety checks.
+        Perform the actual Events2Metrics migration using delete & recreate all pattern.
 
-        Enhanced Implementation:
-        1. Create pre-migration version snapshot
-        2. Fetch E2Ms from Team A and Team B with safety checks
-        3. Perform mass deletion safety check
-        4. Execute migration operations
-        5. Create post-migration version snapshot
+        This approach ensures perfect synchronization by:
+        1. Deleting ALL existing E2Ms from Team B
+        2. Recreating ALL E2Ms from Team A
+
+        This is the same approach as parsing-rules and guarantees consistency.
 
         Returns:
             True if migration completed successfully, False otherwise
@@ -374,6 +376,8 @@ class Events2MetricsService(BaseService):
         self.logger.info("Starting Events2Metrics migration...")
 
         try:
+            self.log_migration_start(self.service_name, dry_run=False)
+
             # Step 1: Fetch resources from both teams (with safety checks for TeamA)
             self.logger.info("📥 Fetching Events2Metrics from both teams...")
             teama_e2ms = self.fetch_resources_from_teama()  # This includes safety checks
@@ -390,23 +394,13 @@ class Events2MetricsService(BaseService):
             previous_version = self.version_manager.get_previous_version()
             previous_teama_count = previous_version.get('teama', {}).get('count') if previous_version else None
 
-            # Get dry run results to know what to do
-            dry_run_results = self.dry_run()
+            # Step 3: Save artifacts
+            self.save_artifacts(teama_e2ms, 'teama')
+            self.save_artifacts(teamb_e2ms, 'teamb')
 
-            if dry_run_results['total_operations'] == 0:
-                self.logger.info("No Events2Metrics migration needed - teams are in sync")
-                # Still create post-migration snapshot for consistency
-                self.version_manager.create_version_snapshot(
-                    teama_e2ms, teamb_e2ms, 'post_migration'
-                )
-                return True
-
-            # Step 3: Perform mass deletion safety check
-            # Calculate total resources that would be deleted (including recreations)
-            resources_to_delete = dry_run_results['to_delete'] + [e2m_b for _, e2m_b in dry_run_results['to_recreate']]
-
+            # Step 4: Perform mass deletion safety check (deleting ALL TeamB resources)
             mass_deletion_check = self.safety_manager.check_mass_deletion_safety(
-                resources_to_delete, len(teamb_e2ms), len(teama_e2ms), previous_teama_count
+                teamb_e2ms, len(teamb_e2ms), len(teama_e2ms), previous_teama_count
             )
 
             if not mass_deletion_check.is_safe:
@@ -414,152 +408,188 @@ class Events2MetricsService(BaseService):
                 self.logger.error(f"Safety check details: {mass_deletion_check.details}")
                 raise RuntimeError(f"Mass deletion safety check failed: {mass_deletion_check.reason}")
 
-            # Track migration statistics
-            stats = {
-                'created': 0,
-                'recreated': 0,
-                'deleted': 0,
-                'failed': 0
-            }
+            self.logger.info(
+                "Migration plan - Delete ALL + Recreate ALL",
+                total_teama_e2ms=len(teama_e2ms),
+                total_teamb_e2ms=len(teamb_e2ms),
+                to_delete=len(teamb_e2ms),
+                to_create=len(teama_e2ms)
+            )
 
+            delete_count = 0
+            create_success_count = 0
+            error_count = 0
             failed_operations = []
 
-            # Delete E2Ms that exist in Team B but not in Team A
-            for e2m_to_delete in dry_run_results['to_delete']:
-                try:
-                    self._add_creation_delay()
-                    success = self._retry_with_exponential_backoff(
-                        lambda: self.delete_resource_from_teamb(e2m_to_delete['id']),
-                        f"delete E2M '{e2m_to_delete.get('name', 'Unknown')}'"
-                    )
-                    if success:
-                        stats['deleted'] += 1
-                    else:
-                        stats['failed'] += 1
+            # Step 5: Delete ALL existing E2Ms from Team B
+            self.logger.info("🗑️ Deleting ALL existing Events2Metrics from Team B...")
+
+            if teamb_e2ms:
+                for e2m in teamb_e2ms:
+                    try:
+                        e2m_id = e2m.get('id')
+                        e2m_name = e2m.get('name', 'Unknown')
+
+                        if e2m_id:
+                            self._add_creation_delay()
+                            success = self._retry_with_exponential_backoff(
+                                lambda: self.delete_resource_from_teamb(e2m_id),
+                                f"delete E2M '{e2m_name}'"
+                            )
+                            if success:
+                                self.logger.info(f"Deleted E2M: {e2m_name}")
+                                delete_count += 1
+                            else:
+                                self.logger.error(f"Failed to delete E2M: {e2m_name} after retries")
+                                error_count += 1
+                                failed_operations.append({
+                                    'operation': 'delete',
+                                    'e2m_name': e2m_name,
+                                    'e2m_id': e2m_id,
+                                    'error': 'Delete operation failed after retries'
+                                })
+                        else:
+                            self.logger.error(f"Failed to delete E2M: {e2m_name} - no ID found")
+                            error_count += 1
+
+                    except Exception as e:
+                        self.logger.error(f"Failed to delete E2M {e2m.get('name', 'Unknown')}: {e}")
+                        error_count += 1
                         failed_operations.append({
                             'operation': 'delete',
-                            'e2m_name': e2m_to_delete.get('name', 'Unknown'),
-                            'e2m_id': e2m_to_delete.get('id', 'Unknown'),
-                            'error': 'Delete operation failed after retries'
+                            'e2m_name': e2m.get('name', 'Unknown'),
+                            'e2m_id': e2m.get('id', 'Unknown'),
+                            'error': str(e)
                         })
-                except Exception as e:
-                    stats['failed'] += 1
-                    failed_operations.append({
-                        'operation': 'delete',
-                        'e2m_name': e2m_to_delete.get('name', 'Unknown'),
-                        'e2m_id': e2m_to_delete.get('id', 'Unknown'),
-                        'error': str(e)
-                    })
 
-            # Recreate changed E2Ms (delete + create)
-            for e2m_a, e2m_b in dry_run_results['to_recreate']:
-                try:
-                    # First delete the existing E2M
-                    self._add_creation_delay()
-                    delete_success = self._retry_with_exponential_backoff(
-                        lambda: self.delete_resource_from_teamb(e2m_b['id']),
-                        f"delete E2M '{e2m_b.get('name', 'Unknown')}' for recreation"
-                    )
+                # Step 5.1: Verify deletion completed
+                self.logger.info("🔍 Verifying all E2Ms were deleted from Team B...")
+                time.sleep(2)  # Brief delay for API consistency
+                verification_teamb_e2ms = self.fetch_resources_from_teamb()
 
-                    if delete_success:
-                        # Then create the new version
+                if verification_teamb_e2ms:
+                    self.logger.error(f"❌ Deletion verification failed: {len(verification_teamb_e2ms)} E2Ms still exist in Team B")
+                    for remaining in verification_teamb_e2ms:
+                        self.logger.error(f"   Remaining: {remaining.get('name', 'Unknown')} (ID: {remaining.get('id', 'N/A')})")
+                    raise RuntimeError(f"Failed to delete all E2Ms from Team B. {len(verification_teamb_e2ms)} still remain.")
+                else:
+                    self.logger.info("✅ Deletion verification passed: Team B is now empty")
+            else:
+                self.logger.info("ℹ️ Team B already has no E2Ms - skipping deletion")
+
+            # Step 6: Create ALL E2Ms from Team A
+            self.logger.info("📄 Creating ALL Events2Metrics from Team A...")
+
+            if teama_e2ms:
+                for e2m in teama_e2ms:
+                    try:
+                        e2m_name = e2m.get('name', 'Unknown')
+
+                        self.logger.info(f"Creating E2M: {e2m_name}")
                         self._add_creation_delay()
-                        create_success = self._retry_with_exponential_backoff(
-                            lambda: self.create_resource_in_teamb(e2m_a),
-                            f"recreate E2M '{e2m_a.get('name', 'Unknown')}'"
+                        success = self._retry_with_exponential_backoff(
+                            lambda: self.create_resource_in_teamb(e2m),
+                            f"create E2M '{e2m_name}'"
                         )
-
-                        if create_success:
-                            stats['recreated'] += 1
+                        if success:
+                            create_success_count += 1
                         else:
-                            stats['failed'] += 1
+                            error_count += 1
                             failed_operations.append({
-                                'operation': 'recreate',
-                                'e2m_name': e2m_a.get('name', 'Unknown'),
-                                'e2m_data': e2m_a,
-                                'error': 'Create operation failed after retries during recreation'
+                                'operation': 'create',
+                                'e2m_name': e2m_name,
+                                'e2m_data': e2m,
+                                'error': 'Create operation failed after retries'
                             })
-                    else:
-                        stats['failed'] += 1
-                        failed_operations.append({
-                            'operation': 'recreate',
-                            'e2m_name': e2m_a.get('name', 'Unknown'),
-                            'e2m_data': e2m_a,
-                            'error': 'Delete operation failed during recreation'
-                        })
 
-                except Exception as e:
-                    stats['failed'] += 1
-                    failed_operations.append({
-                        'operation': 'recreate',
-                        'e2m_name': e2m_a.get('name', 'Unknown'),
-                        'e2m_data': e2m_a,
-                        'error': str(e)
-                    })
-
-            # Create new E2Ms
-            for e2m_to_create in dry_run_results['to_create']:
-                try:
-                    self._add_creation_delay()
-                    success = self._retry_with_exponential_backoff(
-                        lambda: self.create_resource_in_teamb(e2m_to_create),
-                        f"create E2M '{e2m_to_create.get('name', 'Unknown')}'"
-                    )
-                    if success:
-                        stats['created'] += 1
-                    else:
-                        stats['failed'] += 1
+                    except Exception as e:
+                        self.logger.error(f"Failed to create E2M {e2m.get('name', 'Unknown')}: {e}")
+                        error_count += 1
                         failed_operations.append({
                             'operation': 'create',
-                            'e2m_name': e2m_to_create.get('name', 'Unknown'),
-                            'e2m_data': e2m_to_create,
-                            'error': 'Create operation failed after retries'
+                            'e2m_name': e2m.get('name', 'Unknown'),
+                            'e2m_data': e2m,
+                            'error': str(e)
                         })
-                except Exception as e:
-                    stats['failed'] += 1
-                    failed_operations.append({
-                        'operation': 'create',
-                        'e2m_name': e2m_to_create.get('name', 'Unknown'),
-                        'e2m_data': e2m_to_create,
-                        'error': str(e)
-                    })
+
+                # Step 6.1: Verify creation completed
+                self.logger.info("🔍 Verifying all E2Ms were created in Team B...")
+                time.sleep(2)  # Brief delay for API consistency
+                final_teamb_e2ms = self.fetch_resources_from_teamb()
+
+                expected_count = len(teama_e2ms)
+                actual_count = len(final_teamb_e2ms)
+
+                if actual_count != expected_count:
+                    self.logger.error(f"❌ Creation verification failed: Expected {expected_count} E2Ms, but found {actual_count} in Team B")
+                    raise RuntimeError(f"Creation verification failed: Expected {expected_count} E2Ms, but found {actual_count}")
+                else:
+                    self.logger.info(f"✅ Creation verification passed: {actual_count} E2Ms successfully created in Team B")
+
+                    # Save final state to outputs
+                    self.logger.info("💾 Saving final Team B state to outputs...")
+                    self.save_artifacts(final_teamb_e2ms, "teamb_final")
+            else:
+                self.logger.info("ℹ️ Team A has no E2Ms - skipping creation")
+                final_teamb_e2ms = []
 
             # Log failed operations if any
             if failed_operations:
                 self._log_failed_e2ms(failed_operations)
 
-            # Log final statistics
-            total_attempted = stats['created'] + stats['recreated'] + stats['deleted'] + stats['failed']
-            success_rate = ((total_attempted - stats['failed']) / total_attempted * 100) if total_attempted > 0 else 100
+            # Step 7: Save migration statistics for summary table
+            stats_file = self.outputs_dir / f"{self.service_name}_stats_latest.json"
+            stats_data = {
+                'teama_count': len(teama_e2ms),
+                'teamb_before': len(teamb_e2ms),
+                'teamb_after': len(final_teamb_e2ms),
+                'created': create_success_count,
+                'deleted': delete_count,
+                'failed': error_count
+            }
+            with open(stats_file, 'w') as f:
+                json.dump(stats_data, f, indent=2)
 
-            self.logger.info("Events2Metrics migration completed:")
-            self.logger.info(f"  Created: {stats['created']}")
-            self.logger.info(f"  Recreated: {stats['recreated']}")
-            self.logger.info(f"  Deleted: {stats['deleted']}")
-            self.logger.info(f"  Failed: {stats['failed']}")
-            self.logger.info(f"  Success rate: {success_rate:.1f}%")
-
-            # Step 4: Create post-migration version snapshot
+            # Step 8: Create post-migration version snapshot
             self.logger.info("📸 Creating post-migration version snapshot...")
             try:
-                # Fetch updated resources from both teams for post-migration snapshot
-                updated_teama_e2ms = self.fetch_resources_from_teama()
-                updated_teamb_e2ms = self.fetch_resources_from_teamb()
-
                 post_migration_version = self.version_manager.create_version_snapshot(
-                    updated_teama_e2ms, updated_teamb_e2ms, 'post_migration'
+                    teama_e2ms, final_teamb_e2ms, 'post_migration'
                 )
                 self.logger.info(f"Post-migration snapshot created: {post_migration_version}")
             except Exception as e:
                 self.logger.warning(f"Failed to create post-migration snapshot: {e}")
 
-            success = stats['failed'] == 0
-            if success:
-                self.logger.info("🎉 Events2Metrics migration completed successfully!")
-            else:
-                self.logger.warning(f"⚠️ Events2Metrics migration completed with {stats['failed']} failures")
+            # Log completion
+            migration_success = error_count == 0
+            self.log_migration_complete(
+                self.service_name,
+                migration_success,
+                create_success_count,
+                error_count
+            )
 
-            return success
+            # Print user-visible migration summary
+            print("\n" + "=" * 60)
+            print("MIGRATION RESULTS - EVENTS2METRICS")
+            print("=" * 60)
+            print(f"📊 Team A E2Ms: {len(teama_e2ms)}")
+            print(f"📊 Team B E2Ms (before): {len(teamb_e2ms)}")
+            print(f"📊 Team B E2Ms (after): {len(final_teamb_e2ms)}")
+            print(f"🗑️  Deleted from Team B: {delete_count}")
+            print(f"✅ Successfully created: {create_success_count}")
+            if error_count > 0:
+                print(f"❌ Failed: {error_count}")
+            print(f"📋 Total operations: {delete_count + create_success_count + error_count}")
+
+            if migration_success:
+                print("\n✅ Migration completed successfully!")
+            else:
+                print(f"\n⚠️ Migration completed with {error_count} failures")
+
+            print("=" * 60 + "\n")
+
+            return migration_success
 
         except Exception as e:
             self.logger.error(f"Events2Metrics migration failed with error: {e}")
@@ -568,6 +598,7 @@ class Events2MetricsService(BaseService):
             if 'failed_operations' in locals() and failed_operations:
                 self._log_failed_e2ms(failed_operations)
 
+            self.log_migration_complete(self.service_name, False, 0, 1)
             return False
 
     def _log_failed_e2ms(self, failed_operations: List[Dict[str, Any]]):
