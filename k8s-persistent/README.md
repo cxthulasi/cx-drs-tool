@@ -65,12 +65,25 @@ kubectl get deployment -n cx-drs-new
 
 ## 📅 Scheduled Jobs
 
-The pod runs two scheduled jobs internally. **Schedules are configurable via ConfigMap** (no image rebuild required).
+The pod runs three scheduled jobs internally. **Schedules are configurable via ConfigMap** (no image rebuild required).
 
 | Job | Default Schedule | Command | ConfigMap Key |
 |-----|------------------|---------|---------------|
-| **S3 Sync** | 12:30 AM UTC daily | `aws s3 sync /app ${S3_BUCKET_NAME}` | `S3_SYNC_SCHEDULE` |
-| **Migration** | 1:30 AM UTC daily | `python3 drs-tool.py all` | `MIGRATION_SCHEDULE` |
+| **S3 Sync** | 01:30 UTC daily | `aws s3 sync /app ${S3_BUCKET_NAME}` | `S3_SYNC_SCHEDULE` |
+| **Migration** | 00:30 UTC daily | `python3 drs-tool.py all` | `MIGRATION_SCHEDULE` |
+| **Cleanup** | 14:00 UTC daily | Delete files older than 7 days | `CLEANUP_SCHEDULE` |
+
+### Cleanup Job Details
+
+The cleanup job runs daily at 2:00 PM UTC (configurable) and deletes files older than 7 days from:
+- `/app/logs` - Log files
+- `/app/outputs` - Output files
+- `/app/snapshots` - Snapshot files
+- `/app/state` - State files
+- `/app/src/scripts/dashboards` - Downloaded dashboard files
+- `/app/src/scripts/folders` - Downloaded folder files
+
+This prevents disk space issues from accumulating old files.
 
 ### View Current Schedule
 
@@ -78,6 +91,7 @@ The pod runs two scheduled jobs internally. **Schedules are configurable via Con
 # View schedule from ConfigMap
 kubectl get configmap cx-drs-config -n cx-drs-new -o jsonpath='{.data.S3_SYNC_SCHEDULE}'
 kubectl get configmap cx-drs-config -n cx-drs-new -o jsonpath='{.data.MIGRATION_SCHEDULE}'
+kubectl get configmap cx-drs-config -n cx-drs-new -o jsonpath='{.data.CLEANUP_SCHEDULE}'
 
 # View schedule from running pod logs
 kubectl logs -n cx-drs-new -l app=cx-drs-tool | grep "Cron schedule configured"

@@ -14,6 +14,8 @@ It supports:
 from typing import Dict, List, Any
 from pathlib import Path
 import uuid
+import json
+import time
 
 from core.base_service import BaseService
 from core.config import Config
@@ -534,6 +536,19 @@ class CustomDashboardsService(BaseService):
             create_data['folderId'] = dashboard['folderId']
             self.logger.debug(f"Preserving folderId for dashboard '{dashboard.get('name', 'Unknown')}': {dashboard['folderId']}")
 
+        # Fix variablesV2 allOption fields - API requires these to be set, not null
+        if 'variablesV2' in create_data and create_data['variablesV2']:
+            for variable in create_data['variablesV2']:
+                if 'source' in variable and 'query' in variable['source']:
+                    query = variable['source']['query']
+                    if 'allOption' in query and query['allOption']:
+                        # Ensure includeAll and label are set (not null)
+                        if query['allOption'].get('includeAll') is None:
+                            query['allOption']['includeAll'] = False
+                        if query['allOption'].get('label') is None:
+                            query['allOption']['label'] = "All"
+            self.logger.debug(f"Fixed variablesV2 allOption fields for dashboard '{dashboard.get('name', 'Unknown')}'")
+
         return create_data
 
     def _update_dashboard_folder_id(self, dashboard: Dict[str, Any], folder_id_mapping: Dict[str, str]) -> Dict[str, Any]:
@@ -684,17 +699,14 @@ class CustomDashboardsService(BaseService):
 
     def migrate(self) -> bool:
         """
-        Perform the actual custom dashboards migration with enhanced safety checks.
+        Perform the actual custom dashboards migration using delete & recreate all pattern.
 
-        Implementation:
-        1. Fetch dashboard folders from Team A and ensure they exist in Team B
-        2. Fetch dashboards from Team A and Team B with safety checks
-        3. Create pre-migration version snapshot
-        4. Perform mass deletion safety check
-        5. Compare to identify new, changed, and deleted dashboards
-        6. Delete changed/deleted dashboards from Team B
-        7. Create new/changed dashboards in Team B with proper folder assignments
-        8. Create post-migration version snapshot
+        This approach ensures perfect synchronization by:
+        1. Synchronizing dashboard folders from Team A to Team B
+        2. Deleting ALL existing dashboards from Team B
+        3. Recreating ALL dashboards from Team A
+
+        This is the same approach as parsing-rules and guarantees consistency.
 
         Returns:
             True if migration completed successfully
@@ -735,15 +747,9 @@ class CustomDashboardsService(BaseService):
             self.save_artifacts(teama_resources, 'teama')
             self.save_artifacts(teamb_resources, 'teamb')
 
-            # Compare resources to identify changes
-            comparison = self._compare_dashboards(teama_resources, teamb_resources)
-
-            # Identify dashboards that would be deleted (for mass deletion safety check)
-            dashboards_to_delete = comparison['deleted_from_teama'] + [tb for ta, tb in comparison['changed_resources']]
-
-            # Perform mass deletion safety check
+            # Step 4: Perform mass deletion safety check (deleting ALL TeamB dashboards)
             mass_deletion_check = self.safety_manager.check_mass_deletion_safety(
-                dashboards_to_delete, len(teamb_resources), len(teama_resources), previous_teama_count
+                teamb_resources, len(teamb_resources), len(teama_resources), previous_teama_count
             )
 
             if not mass_deletion_check.is_safe:
@@ -751,170 +757,156 @@ class CustomDashboardsService(BaseService):
                 self.logger.error(f"Safety check details: {mass_deletion_check.details}")
                 raise RuntimeError(f"Mass deletion safety check failed: {mass_deletion_check.reason}")
 
-            # Display comprehensive migration statistics
-            # Calculate folders to create more accurately
-            teamb_folders = self.fetch_dashboard_folders_from_teamb()
-            teamb_folder_names = {f['name'] for f in teamb_folders}
-            folders_to_create = len([f for f in teama_folders if f['name'] not in teamb_folder_names]) if teama_folders else 0
+            self.logger.info(
+                "Migration plan - Delete ALL + Recreate ALL",
+                total_teama_dashboards=len(teama_resources),
+                total_teamb_dashboards=len(teamb_resources),
+                to_delete=len(teamb_resources),
+                to_create=len(teama_resources)
+            )
 
-            self.logger.info("📋 Migration Plan:")
-            self.logger.info(f"  📁 Team A folders: {len(teama_folders) if teama_folders else 0}")
-            self.logger.info(f"  📁 Team B folders: {len(teamb_folders)}")
-            self.logger.info(f"  📁 Folders to create: {folders_to_create}")
-            self.logger.info(f"  📊 Team A dashboards: {len(teama_resources)}")
-            self.logger.info(f"  📊 Team B dashboards: {len(teamb_resources)}")
-            self.logger.info(f"  📊 New dashboards to create: {len(comparison['new_in_teama'])}")
-            self.logger.info(f"  📊 Changed dashboards to recreate: {len(comparison['changed_resources'])}")
-            self.logger.info(f"  📊 Dashboards to delete: {len(comparison['deleted_from_teama'])}")
-            total_operations = folders_to_create + len(comparison['new_in_teama']) + len(comparison['changed_resources']) + len(comparison['deleted_from_teama'])
-            self.logger.info(f"  🔄 Total operations planned: {total_operations}")
-
-            if total_operations == 0:
-                self.logger.info("✅ No changes needed - all dashboards and folders are already synchronized!")
-                # Still create post-migration snapshot even if no changes
-                teamb_resources_after = self.fetch_resources_from_teamb()
-                post_migration_version = self.version_manager.create_version_snapshot(
-                    teama_resources, teamb_resources_after, 'post_migration'
-                )
-                return True
-
-            # Initialize counters for detailed statistics
-            success_count = 0
-            error_count = 0
-            # Use actual folder creation count from the folder synchronization step
+            # Initialize counters
             folders_created = getattr(self, '_folders_created_count', 0)
             folders_failed = getattr(self, '_folders_failed_count', 0)
-            dashboards_deleted = 0
-            dashboards_recreated = 0
-            dashboards_created = 0
+            delete_count = 0
+            create_success_count = 0
+            error_count = 0
 
-            # Handle deleted resources (exist in Team B but not in Team A)
-            for teamb_resource in comparison['deleted_from_teama']:
-                try:
-                    resource_id = teamb_resource.get('id')
-                    if resource_id:
-                        self.delete_resource_from_teamb(resource_id)
-                        success_count += 1
-                        dashboards_deleted += 1
-                except Exception as e:
-                    self.logger.error(f"Failed to delete resource {teamb_resource.get('name', 'Unknown')}: {e}")
-                    error_count += 1
+            # Step 5: Delete ALL existing dashboards from Team B
+            self.logger.info("🗑️ Deleting ALL existing dashboards from Team B...")
 
-            # Handle changed resources (delete and recreate)
-            for teama_resource, teamb_resource in comparison['changed_resources']:
-                resource_name = teama_resource.get('name', 'Unknown')
+            if teamb_resources:
+                for dashboard in teamb_resources:
+                    try:
+                        dashboard_id = dashboard.get('id')
+                        dashboard_name = dashboard.get('name', 'Unknown')
 
-                try:
-                    # Delete existing resource in Team B
-                    teamb_id = teamb_resource.get('id')
-                    if teamb_id:
-                        self.delete_resource_from_teamb(teamb_id)
+                        if dashboard_id:
+                            self.delete_resource_from_teamb(dashboard_id)
+                            self.logger.info(f"Deleted dashboard: {dashboard_name}")
+                            delete_count += 1
+                        else:
+                            self.logger.error(f"Failed to delete dashboard: {dashboard_name} - no ID found")
+                            error_count += 1
 
-                    # Update folder ID mapping and create new resource in Team B
-                    updated_resource = self._update_dashboard_folder_id(teama_resource.copy(), folder_id_mapping)
-                    self.create_resource_in_teamb(updated_resource)
-                    success_count += 1
-                    dashboards_recreated += 1
+                    except Exception as e:
+                        self.logger.error(f"Failed to delete dashboard {dashboard.get('name', 'Unknown')}: {e}")
+                        error_count += 1
 
-                except Exception as e:
-                    self.logger.error(f"Failed to recreate changed resource {resource_name}: {e}")
-                    error_count += 1
+                # Step 5.1: Verify deletion completed
+                self.logger.info("🔍 Verifying all dashboards were deleted from Team B...")
+                time.sleep(2)  # Brief delay for API consistency
+                verification_teamb_resources = self.fetch_resources_from_teamb()
 
-            # Handle new resources (exist in Team A but not in Team B)
-            for teama_resource in comparison['new_in_teama']:
-                resource_name = teama_resource.get('name', 'Unknown')
+                if verification_teamb_resources:
+                    self.logger.error(f"❌ Deletion verification failed: {len(verification_teamb_resources)} dashboards still exist in Team B")
+                    for remaining in verification_teamb_resources:
+                        self.logger.error(f"   Remaining: {remaining.get('name', 'Unknown')} (ID: {remaining.get('id', 'N/A')})")
+                    raise RuntimeError(f"Failed to delete all dashboards from Team B. {len(verification_teamb_resources)} still remain.")
+                else:
+                    self.logger.info("✅ Deletion verification passed: Team B is now empty")
+            else:
+                self.logger.info("ℹ️ Team B already has no dashboards - skipping deletion")
 
-                try:
-                    # Update folder ID mapping and create new resource in Team B
-                    updated_resource = self._update_dashboard_folder_id(teama_resource.copy(), folder_id_mapping)
-                    self.create_resource_in_teamb(updated_resource)
-                    success_count += 1
-                    dashboards_created += 1
-                except Exception as e:
-                    self.logger.error(f"Failed to create new resource {resource_name}: {e}")
-                    error_count += 1
+            # Step 6: Create ALL dashboards from Team A
+            self.logger.info("📄 Creating ALL dashboards from Team A...")
 
-            # Display comprehensive completion statistics in tabular format
+            if teama_resources:
+                for dashboard in teama_resources:
+                    try:
+                        dashboard_name = dashboard.get('name', 'Unknown')
+
+                        self.logger.info(f"Creating dashboard: {dashboard_name}")
+                        # Update folder ID mapping and create new resource in Team B
+                        updated_resource = self._update_dashboard_folder_id(dashboard.copy(), folder_id_mapping)
+                        self.create_resource_in_teamb(updated_resource)
+                        create_success_count += 1
+
+                    except Exception as e:
+                        self.logger.error(f"Failed to create dashboard {dashboard.get('name', 'Unknown')}: {e}")
+                        error_count += 1
+
+                # Step 6.1: Verify creation completed
+                self.logger.info("🔍 Verifying all dashboards were created in Team B...")
+                time.sleep(2)  # Brief delay for API consistency
+                final_teamb_resources = self.fetch_resources_from_teamb()
+
+                expected_count = len(teama_resources)
+                actual_count = len(final_teamb_resources)
+
+                if actual_count != expected_count:
+                    self.logger.error(f"❌ Creation verification failed: Expected {expected_count} dashboards, but found {actual_count} in Team B")
+                    raise RuntimeError(f"Creation verification failed: Expected {expected_count} dashboards, but found {actual_count}")
+                else:
+                    self.logger.info(f"✅ Creation verification passed: {actual_count} dashboards successfully created in Team B")
+
+                    # Save final state to outputs
+                    self.logger.info("💾 Saving final Team B state to outputs...")
+                    self.save_artifacts(final_teamb_resources, "teamb_final")
+            else:
+                self.logger.info("ℹ️ Team A has no dashboards - skipping creation")
+                final_teamb_resources = []
+
+            # Step 7: Save migration statistics for summary table
+            stats_file = self.outputs_dir / f"{self.service_name}_stats_latest.json"
+            stats_data = {
+                'teama_count': len(teama_resources),
+                'teamb_before': len(teamb_resources),
+                'teamb_after': len(final_teamb_resources),
+                'created': create_success_count,
+                'deleted': delete_count,
+                'failed': error_count,
+                'folders_created': folders_created,
+                'folders_failed': folders_failed
+            }
+            with open(stats_file, 'w') as f:
+                json.dump(stats_data, f, indent=2)
+
+            # Step 8: Create post-migration version snapshot
+            self.logger.info("📸 Creating post-migration version snapshot...")
+            post_migration_version = self.version_manager.create_version_snapshot(
+                teama_resources, final_teamb_resources, 'post_migration'
+            )
+            self.logger.info(f"Post-migration snapshot created: {post_migration_version}")
+
+            # Log completion
             migration_success = error_count == 0
+            self.log_migration_complete(
+                self.service_name,
+                migration_success,
+                create_success_count,
+                error_count
+            )
 
+            # Print user-visible migration summary
             print("\n" + "=" * 80)
             print("🎯 CUSTOM DASHBOARDS MIGRATION RESULTS")
             print("=" * 80)
 
-            # Prepare table data
-            table_data = []
-
-            # Folders row
+            # Folders summary
             if folders_created > 0 or folders_failed > 0:
-                folders_total = folders_created + folders_failed
-                folders_success_rate = (folders_created / folders_total * 100) if folders_total > 0 else 0
-                table_data.append({
-                    'resource_type': 'Folders',
-                    'total': folders_total,
-                    'created': folders_created,
-                    'recreated': 0,
-                    'deleted': 0,
-                    'failed': folders_failed,
-                    'success_rate': f"{folders_success_rate:.1f}%"
-                })
-
-            # Dashboards row
-            dashboards_total = dashboards_created + dashboards_recreated + dashboards_deleted
-            dashboards_failed = error_count  # Assuming all errors are dashboard-related
-            if dashboards_total > 0 or dashboards_failed > 0:
-                total_dashboard_ops = dashboards_total + dashboards_failed
-                dashboards_success_rate = (dashboards_total / total_dashboard_ops * 100) if total_dashboard_ops > 0 else 0
-                table_data.append({
-                    'resource_type': 'Dashboards',
-                    'total': total_dashboard_ops,
-                    'created': dashboards_created,
-                    'recreated': dashboards_recreated,
-                    'deleted': dashboards_deleted,
-                    'failed': dashboards_failed,
-                    'success_rate': f"{dashboards_success_rate:.1f}%"
-                })
-
-            # Display the table
-            if table_data:
-                self._display_migration_results_table(table_data)
-
-            # Summary message
-            if migration_success:
-                print("🎉 Migration completed successfully!")
-                if folders_created > 0:
-                    print(f"   📁 {folders_created} folders created with proper hierarchy")
-                if dashboards_created > 0:
-                    print(f"   📊 {dashboards_created} new dashboards created")
-                if dashboards_recreated > 0:
-                    print(f"   🔄 {dashboards_recreated} dashboards recreated (updated)")
-                if dashboards_deleted > 0:
-                    print(f"   🗑️ {dashboards_deleted} dashboards deleted")
-                if folders_created + dashboards_created + dashboards_recreated == 0:
-                    print("   ✅ All resources were already synchronized")
-            else:
-                print(f"❌ Migration completed with {error_count} errors")
+                print(f"📁 Folders:")
+                print(f"   Created: {folders_created}")
                 if folders_failed > 0:
-                    print(f"   📁 {folders_failed} folders failed to create")
-                print("   Check the logs above for detailed error information")
+                    print(f"   Failed: {folders_failed}")
 
-            print("=" * 80)
+            # Dashboards summary
+            print(f"📊 Dashboards:")
+            print(f"   Team A dashboards: {len(teama_resources)}")
+            print(f"   Team B dashboards (before): {len(teamb_resources)}")
+            print(f"   Team B dashboards (after): {len(final_teamb_resources)}")
+            print(f"   🗑️  Deleted from Team B: {delete_count}")
+            print(f"   ✅ Successfully created: {create_success_count}")
+            if error_count > 0:
+                print(f"   ❌ Failed: {error_count}")
+            print(f"   📋 Total operations: {delete_count + create_success_count + error_count}")
 
-            # Create post-migration version snapshot
-            self.logger.info("📸 Creating post-migration version snapshot...")
-            # Fetch updated Team B resources for post-migration snapshot
-            teamb_resources_after = self.fetch_resources_from_teamb()
-            post_migration_version = self.version_manager.create_version_snapshot(
-                teama_resources, teamb_resources_after, 'post_migration'
-            )
-            self.logger.info(f"Post-migration snapshot created: {post_migration_version}")
+            if migration_success:
+                print("\n✅ Migration completed successfully!")
+            else:
+                print(f"\n⚠️ Migration completed with {error_count} failures")
 
-            # Log to migration system
-            self.log_migration_complete(
-                self.service_name,
-                migration_success,
-                success_count,
-                error_count
-            )
+            print("=" * 80 + "\n")
 
             return migration_success
 
@@ -923,13 +915,13 @@ class CustomDashboardsService(BaseService):
             self.log_migration_complete(self.service_name, False, 0, 1)
             return False
 
-    def dry_run(self) -> Dict[str, Any]:
+    def dry_run(self) -> bool:
         """
-        Perform a dry run of the custom dashboards migration.
+        Perform a dry run of the custom dashboards migration using delete & recreate all pattern.
         Shows what would be done without making actual changes.
 
         Returns:
-            Dictionary containing dry run results
+            True if dry run completed successfully
         """
         try:
             self.log_migration_start(self.service_name, dry_run=True)
@@ -946,8 +938,6 @@ class CustomDashboardsService(BaseService):
                 if folder['name'] not in teamb_folder_names:
                     folders_to_create.append(folder)
 
-            self.logger.info(f"📁 Folders analysis: {len(teama_folders)} in Team A, {len(teamb_folders)} in Team B, {len(folders_to_create)} to create")
-
             # Fetch current dashboards from both teams
             self.logger.info("📊 Fetching dashboards from Team A...")
             teama_resources = self.fetch_resources_from_teama()
@@ -959,55 +949,53 @@ class CustomDashboardsService(BaseService):
             self.save_artifacts(teama_resources, 'teama')
             self.save_artifacts(teamb_resources, 'teamb')
 
-            # Compare resources to identify changes
-            comparison = self._compare_dashboards(teama_resources, teamb_resources)
+            # Calculate what would be done (delete all + recreate all)
+            total_operations = len(folders_to_create) + len(teamb_resources) + len(teama_resources)
 
-            # Prepare results
-            results = {
-                'teama_folders_count': len(teama_folders),
-                'teamb_folders_count': len(teamb_folders),
-                'folders_to_create': folders_to_create,
+            # Print dry-run summary
+            print("\n" + "=" * 80)
+            print("DRY RUN - CUSTOM DASHBOARDS MIGRATION")
+            print("=" * 80)
+
+            # Folders summary
+            if len(teama_folders) > 0 or len(teamb_folders) > 0:
+                print(f"📁 Folders:")
+                print(f"   Team A folders: {len(teama_folders)}")
+                print(f"   Team B folders: {len(teamb_folders)}")
+                print(f"   Folders to create: {len(folders_to_create)}")
+
+            # Dashboards summary
+            print(f"📊 Dashboards:")
+            print(f"   Team A dashboards: {len(teama_resources)}")
+            print(f"   Team B dashboards (current): {len(teamb_resources)}")
+            print("\n🔄 Planned Operations:")
+            print(f"   🗑️  Delete ALL {len(teamb_resources)} dashboards from Team B")
+            print(f"   ✅ Create {len(teama_resources)} dashboards from Team A")
+            print(f"\n📋 Total operations: {total_operations}")
+            print("=" * 80 + "\n")
+
+            # Save migration statistics for summary table
+            stats_file = self.outputs_dir / f"{self.service_name}_stats_latest.json"
+            stats_data = {
                 'teama_count': len(teama_resources),
-                'teamb_count': len(teamb_resources),
-                'to_create': comparison['new_in_teama'],
-                'to_recreate': comparison['changed_resources'],
-                'to_delete': comparison['deleted_from_teama'],
-                'total_operations': len(folders_to_create) + len(comparison['new_in_teama']) + len(comparison['changed_resources']) + len(comparison['deleted_from_teama'])
+                'teamb_before': len(teamb_resources),
+                'teamb_after': len(teamb_resources),  # No change in dry run
+                'created': 0,  # Dry run doesn't create
+                'deleted': 0,  # Dry run doesn't delete
+                'failed': 0,
+                'folders_created': 0,
+                'folders_failed': 0
             }
+            with open(stats_file, 'w') as f:
+                json.dump(stats_data, f, indent=2)
 
-            # Log summary
-            self.logger.info(f"📋 Dry run completed:")
-            self.logger.info(f"  📁 Team A folders: {len(teama_folders)}")
-            self.logger.info(f"  📁 Team B folders: {len(teamb_folders)}")
-            self.logger.info(f"  📁 New folders to create: {len(folders_to_create)}")
-            self.logger.info(f"  📊 Team A dashboards: {len(teama_resources)}")
-            self.logger.info(f"  📊 Team B dashboards: {len(teamb_resources)}")
-            self.logger.info(f"  📊 New dashboards to create: {len(comparison['new_in_teama'])}")
-            self.logger.info(f"  📊 Changed dashboards to recreate: {len(comparison['changed_resources'])}")
-            self.logger.info(f"  📊 Dashboards to delete: {len(comparison['deleted_from_teama'])}")
-            self.logger.info(f"  🔄 Total operations: {results['total_operations']}")
-
-            # Add summary message
-            if results['total_operations'] == 0:
-                self.logger.info("✅ No changes needed - all dashboards and folders are already synchronized!")
-            else:
-                self.logger.info("📋 Ready to migrate! Run without --dry-run to execute these changes.")
-
-            self.log_migration_complete(self.service_name, True, len(teama_resources), 0)
-            return results
+            self.log_migration_complete(self.service_name, True, 0, 0)
+            return True
 
         except Exception as e:
             self.logger.error(f"Dry run failed: {e}")
             self.log_migration_complete(self.service_name, False, 0, 1)
-            return {
-                'teama_count': 0,
-                'teamb_count': 0,
-                'to_create': [],
-                'to_recreate': [],
-                'to_delete': [],
-                'total_operations': 0,
-                'error': str(e)
-            }
+            return False
 
     def display_dry_run_results(self, results: Dict[str, Any]):
         """

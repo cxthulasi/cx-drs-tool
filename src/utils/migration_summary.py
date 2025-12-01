@@ -70,14 +70,14 @@ class MigrationSummaryCollector:
         """
         total_operations = created + updated + deleted + skipped
         success_rate = 0.0
-        if total_operations > 0:
-            # For dry-runs or when no actual operations were performed, base success on whether there were failures
-            if created == 0 and updated == 0 and deleted == 0:
-                # Dry-run or no operations: success rate is 100% if no failures, 0% if there were failures
-                success_rate = 0.0 if failed > 0 else 100.0
-            else:
-                # Actual migration: calculate based on successful operations vs total
-                success_rate = ((created + updated + deleted) / total_operations) * 100
+
+        # Calculate success rate based on operation type
+        if created == 0 and updated == 0 and deleted == 0:
+            # Dry-run or no operations: success rate is 100% if no failures and succeeded, 0% otherwise
+            success_rate = 100.0 if (success and failed == 0) else 0.0
+        elif total_operations > 0:
+            # Actual migration: calculate based on successful operations vs total
+            success_rate = ((created + updated + deleted) / total_operations) * 100
         
         stats = {
             'service': service_name,
@@ -150,17 +150,16 @@ class MigrationSummaryCollector:
                 stats['teamb_before'],
                 stats['teamb_after'],
                 stats['created'],
-                stats['updated'],
                 stats['deleted'],
                 stats['failed'],
                 stats['skipped'],
                 stats['total_operations'],
                 stats['success_rate']
             ])
-        
+
         headers = [
             'Service', 'Status', 'Team A', 'Team B\n(Before)', 'Team B\n(After)',
-            'Created', 'Updated', 'Deleted', 'Failed', 'Skipped', 'Total Ops', 'Success %'
+            'Created', 'Deleted', 'Failed', 'Skipped', 'Total Ops', 'Success %'
         ]
         
         print(tabulate(table_data, headers=headers, tablefmt='grid'))
@@ -326,6 +325,50 @@ class MigrationSummaryCollector:
 
         return str(filepath)
 
+    def print_coralogix_logs(self):
+        """
+        Print migration statistics as individual log entries to stdout.
+        This is useful for monitoring and alerting systems.
+        """
+        summary = self.get_summary()
+
+        # Print overall summary log
+        overall_log = {
+            "log_type": "migration_summary",
+            "runtime": self.runtime_id,
+            "mode": summary['mode'],
+            "timestamp": summary['timestamp'],
+            "duration_seconds": summary['duration_seconds'],
+            "total_services": summary['summary']['total_services'],
+            "successful_services": summary['summary']['successful_services'],
+            "failed_services": summary['summary']['failed_services'],
+            "success_rate": summary['summary']['success_rate']
+        }
+        print(json.dumps(overall_log))
+
+        # Print failed services log (if any)
+        if summary['failed_service_names']:
+            failed_log = {
+                "log_type": "failed_services",
+                "runtime": self.runtime_id,
+                "mode": summary['mode'],
+                "timestamp": summary['timestamp'],
+                "failed_service_names": summary['failed_service_names'],
+                "failed_count": len(summary['failed_service_names'])
+            }
+            print(json.dumps(failed_log))
+
+        # Print individual service logs
+        for service_stats in summary['services']:
+            service_log = {
+                "log_type": "service_detail",
+                "runtime": self.runtime_id,
+                "mode": summary['mode'],
+                "timestamp": summary['timestamp'],
+                **service_stats  # Unpack all service stats
+            }
+            print(json.dumps(service_log))
+
     def display_and_save(self):
         """Display table and save JSON files."""
         self.display_table()
@@ -345,5 +388,13 @@ class MigrationSummaryCollector:
         # Save Coralogix-friendly logs (latest)
         coralogix_latest_file = self.save_coralogix_logs_latest()
         print(f"📄 Coralogix logs (latest) saved to: {coralogix_latest_file}")
+        print("")
+
+        # Print Coralogix logs to stdout for monitoring/alerting
+        print("=" * 120)
+        print("📊 MIGRATION SUMMARY (JSON FORMAT FOR MONITORING)")
+        print("=" * 120)
+        self.print_coralogix_logs()
+        print("=" * 120)
         print("")
 

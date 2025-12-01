@@ -462,6 +462,20 @@ class ViewsService(BaseService):
             )
             self.logger.info(f"Post-migration snapshot created: {post_migration_version}")
 
+            # Save migration statistics for summary table
+            stats_file = Path("outputs") / self.service_name / f"{self.service_name}_stats_latest.json"
+            stats_file.parent.mkdir(parents=True, exist_ok=True)
+            stats_data = {
+                'teama_count': len(teama_resources),
+                'teamb_before': len(teamb_resources),
+                'teamb_after': len(teamb_resources_after),
+                'created': created_folders + created_views,
+                'deleted': deleted_folders + deleted_views,
+                'failed': failed_folders + failed_views
+            }
+            with open(stats_file, 'w') as f:
+                json.dump(stats_data, f, indent=2)
+
             # Display results in tabular format
             self._display_migration_results_table({
                 'folders': {'total': len(teama_folders), 'created': created_folders, 'failed': failed_folders},
@@ -569,28 +583,29 @@ class ViewsService(BaseService):
                 self.logger.info("🚀 Run without --dry-run to execute this migration plan")
                 self.logger.info("⚠️ This will completely replace Team B views and folders with Team A's")
 
-            self.log_migration_complete(self.service_name, True, total_operations, 0)
-
-            # Return data for tabular display
-            return {
-                'teama_folders': teama_folders,
-                'teama_views': teama_views,
-                'teamb_folders': teamb_folders,
-                'teamb_views': teamb_views,
-                'total_operations': total_operations
+            # Save migration statistics for summary table
+            teama_resources = teama_views + teama_folders
+            teamb_resources = teamb_views + teamb_folders
+            stats_file = Path("outputs") / self.service_name / f"{self.service_name}_stats_latest.json"
+            stats_file.parent.mkdir(parents=True, exist_ok=True)
+            stats_data = {
+                'teama_count': len(teama_resources),
+                'teamb_before': len(teamb_resources),
+                'teamb_after': len(teamb_resources),  # No change in dry run
+                'created': 0,  # Dry run doesn't create
+                'deleted': 0,  # Dry run doesn't delete
+                'failed': 0
             }
+            with open(stats_file, 'w') as f:
+                json.dump(stats_data, f, indent=2)
+
+            self.log_migration_complete(self.service_name, True, 0, 0)
+            return True
 
         except Exception as e:
             self.logger.error(f"Dry run failed: {e}")
             self.log_migration_complete(self.service_name, False, 0, 1)
-            return {
-                'teama_folders': [],
-                'teama_views': [],
-                'teamb_folders': [],
-                'teamb_views': [],
-                'total_operations': 0,
-                'error': str(e)
-            }
+            return False
 
     def _display_migration_results_table(self, migration_stats: Dict):
         """Display migration results in a nice tabular format."""

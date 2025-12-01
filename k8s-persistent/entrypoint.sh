@@ -10,10 +10,12 @@ echo ""
 # Read cron schedules from environment variables with defaults
 S3_SYNC_SCHEDULE="${S3_SYNC_SCHEDULE:-00:30}"
 MIGRATION_SCHEDULE="${MIGRATION_SCHEDULE:-01:30}"
+CLEANUP_SCHEDULE="${CLEANUP_SCHEDULE:-14:00}"
 
 echo "📅 Cron schedule configured from environment variables:"
 echo "  - S3 Sync:   Daily at ${S3_SYNC_SCHEDULE} UTC"
 echo "  - Migration: Daily at ${MIGRATION_SCHEDULE} UTC"
+echo "  - Cleanup:   Daily at ${CLEANUP_SCHEDULE} UTC"
 echo ""
 
 # Validate time format (HH:MM)
@@ -27,18 +29,23 @@ validate_time() {
 
 validate_time "$S3_SYNC_SCHEDULE"
 validate_time "$MIGRATION_SCHEDULE"
+validate_time "$CLEANUP_SCHEDULE"
 
 # Convert HH:MM to cron format (MM HH * * *)
 S3_HOUR=$(echo $S3_SYNC_SCHEDULE | cut -d: -f1)
 S3_MINUTE=$(echo $S3_SYNC_SCHEDULE | cut -d: -f2)
 MIGRATION_HOUR=$(echo $MIGRATION_SCHEDULE | cut -d: -f1)
 MIGRATION_MINUTE=$(echo $MIGRATION_SCHEDULE | cut -d: -f2)
+CLEANUP_HOUR=$(echo $CLEANUP_SCHEDULE | cut -d: -f1)
+CLEANUP_MINUTE=$(echo $CLEANUP_SCHEDULE | cut -d: -f2)
 
 # Remove leading zeros for cron (08 -> 8)
 S3_HOUR=$((10#$S3_HOUR))
 S3_MINUTE=$((10#$S3_MINUTE))
 MIGRATION_HOUR=$((10#$MIGRATION_HOUR))
 MIGRATION_MINUTE=$((10#$MIGRATION_MINUTE))
+CLEANUP_HOUR=$((10#$CLEANUP_HOUR))
+CLEANUP_MINUTE=$((10#$CLEANUP_MINUTE))
 
 echo "🔄 Setting up cron jobs..."
 echo "📝 Logs will be sent to stdout/stderr for otel collector ingestion"
@@ -79,6 +86,8 @@ ${S3_MINUTE} ${S3_HOUR} * * * /usr/local/bin/aws s3 sync /app ${S3_BUCKET_NAME} 
 # Migration - Daily at ${MIGRATION_SCHEDULE} UTC
 ${MIGRATION_MINUTE} ${MIGRATION_HOUR} * * * cd /app && /usr/local/bin/python3 /app/drs-tool.py all
 
+# Cleanup - Daily at ${CLEANUP_SCHEDULE} UTC (delete files older than 7 days)
+${CLEANUP_MINUTE} ${CLEANUP_HOUR} * * * /bin/bash -c 'echo "Starting cleanup of files & folders older than 7 days..." && find /app/logs /app/outputs /app/snapshots /app/state /app/src/scripts/dashboards /app/src/scripts/folders -mindepth 1 -mtime +7 -exec rm -rf {} + 2>/dev/null && echo "Cleanup completed"'
 EOF
 
 # Display crontab

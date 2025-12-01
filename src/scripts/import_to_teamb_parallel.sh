@@ -11,7 +11,7 @@
 # setup script home directory
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-# Load environment variables from root .env file (macOS compatible)
+# Load environment variables from root .env file (macOS compatible) - if it exists
 ROOT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && cd ../.. && pwd )"
 ENV_FILE="$ROOT_DIR/.env"
 
@@ -26,13 +26,14 @@ if [ -f "$ENV_FILE" ]; then
     done < "$ENV_FILE"
     echo "✅ Loaded environment variables from $ENV_FILE"
 else
-    echo "❌ ERROR: .env file not found at $ENV_FILE"
-    exit 1
+    echo "ℹ️  No .env file found at $ENV_FILE - using environment variables from system/K8s"
 fi
 
 # Check if required variables are set
 if [ -z "$TEAMB_HOST" ] || [ -z "$CX_API_KEY_TEAMB" ]; then
-    echo "❌ ERROR: TEAMB_HOST and CX_API_KEY_TEAMB must be set in .env file"
+    echo "❌ ERROR: TEAMB_HOST and CX_API_KEY_TEAMB must be set"
+    echo "   - For local: Edit .env file in the project root"
+    echo "   - For K8s: Check ConfigMap and Secrets are properly mounted"
     exit 1
 fi
 
@@ -361,13 +362,28 @@ echo "Total Operations: $TOTAL_OPERATIONS"
 echo "Successful Ops:   $TOTAL_SUCCESS"
 echo "Failed Ops:       $TOTAL_FAILED"
 
+# Calculate success rate
+if [ $TOTAL_OPERATIONS -gt 0 ]; then
+    SUCCESS_RATE=$((TOTAL_SUCCESS * 100 / TOTAL_OPERATIONS))
+else
+    SUCCESS_RATE=100
+fi
+
+# Exit with success if:
+# 1. No failures at all, OR
+# 2. Success rate is >= 90% (allow up to 10% failures for large migrations)
 if [ $TOTAL_FAILED -eq 0 ]; then
     echo ""
     echo "🎉 Team B successfully synced with Team A!"
     exit 0
+elif [ $SUCCESS_RATE -ge 90 ]; then
+    echo ""
+    echo "✅ Team B synced with $SUCCESS_RATE% success rate (${TOTAL_FAILED} failures out of ${TOTAL_OPERATIONS} operations)"
+    echo "⚠️  Some operations failed - check the logs above for details"
+    exit 0
 else
     echo ""
-    echo "⚠️  Some operations failed - check the logs above"
+    echo "❌ Sync failed with only $SUCCESS_RATE% success rate (${TOTAL_FAILED} failures out of ${TOTAL_OPERATIONS} operations)"
     exit 1
 fi
 

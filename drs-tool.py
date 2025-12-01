@@ -95,7 +95,7 @@ def extract_service_statistics(service, service_name: str, result, success: bool
         if outputs_dir.exists():
             # For services with stats files (general-enrichments, recording-rules, events2metrics), use those
             stats_file = outputs_dir / f"{service_name}_stats_latest.json"
-            if service_name in ['general-enrichments', 'recording-rules', 'events2metrics'] and stats_file.exists():
+            if service_name in ['general-enrichments', 'recording-rules', 'events2metrics', 'custom-dashboards', 'custom-actions', 'views'] and stats_file.exists():
                 with open(stats_file, 'r') as f:
                     stats_data = json.load(f)
                     # For general-enrichments, use migratable count; for others use regular count
@@ -186,8 +186,8 @@ def extract_service_statistics(service, service_name: str, result, success: bool
             elif stats['teamb_after_count'] < stats['teamb_before_count']:
                 stats['deleted'] = stats['teamb_before_count'] - stats['teamb_after_count']
 
-            # For delete-all + recreate-all pattern (parsing-rules, recording-rules, events2metrics, slo, custom-actions, views)
-            if service_name in ['parsing-rules', 'recording-rules', 'events2metrics', 'slo', 'custom-actions', 'views']:
+            # For delete-all + recreate-all pattern (parsing-rules, recording-rules, events2metrics, slo, custom-actions, views, custom-dashboards)
+            if service_name in ['parsing-rules', 'recording-rules', 'events2metrics', 'slo', 'custom-actions', 'views', 'custom-dashboards']:
                 stats['deleted'] = stats['teamb_before_count']
                 stats['created'] = stats['teamb_after_count']
                 stats['updated'] = 0
@@ -205,8 +205,8 @@ def extract_service_statistics(service, service_name: str, result, success: bool
 def run_all_services(config: Config, logger, dry_run: bool = False, force: bool = False, exclude_services: list = None):
     """Run migration for all services with meaningful separation."""
     all_services = [
-        'parsing-rules', 'recording-rules',  'general-enrichments', 'events2metrics', 'custom-dashboards',
-         'grafana-dashboards', 'views', 'custom-actions', 'slo'
+        'parsing-rules', 'recording-rules',  'general-enrichments', 'events2metrics',
+        'views', 'custom-actions', 'slo'
     ]
 
     # Filter out excluded services

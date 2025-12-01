@@ -12,7 +12,7 @@
 # setup script home directory
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-# Load environment variables from root .env file
+# Load environment variables from root .env file (if it exists)
 ROOT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && cd ../.. && pwd )"
 ENV_FILE="$ROOT_DIR/.env"
 
@@ -22,20 +22,20 @@ if [ -f "$ENV_FILE" ]; then
     export $(grep -v '^#' "$ENV_FILE" | grep -v '^$' | sed 's/#.*//' | xargs)
     echo "✅ Loaded environment variables from $ENV_FILE"
 else
-    echo "❌ ERROR: .env file not found at $ENV_FILE"
-    exit 1
+    echo "ℹ️  No .env file found at $ENV_FILE - using environment variables from system/K8s"
 fi
 
 # Check if required Grafana credentials are set
 if [ -z "$TEAMB_HOST" ] || [ -z "$CX_API_KEY_TEAMB" ]; then
-    echo "❌ ERROR: TEAMB_HOST and CX_API_KEY_TEAMB must be set in .env file"
+    echo "❌ ERROR: TEAMB_HOST and CX_API_KEY_TEAMB must be set"
     echo "   TEAMB_HOST: ${TEAMB_HOST:-"Not set"}"
     echo "   CX_API_KEY_TEAMB: ${CX_API_KEY_TEAMB:-"Not set"}"
     echo ""
     echo "📝 To fix this:"
-    echo "   1. Edit .env file in the project root"
-    echo "   2. Set TEAMB_HOST to your Team B Grafana URL"
-    echo "   3. Set CX_API_KEY_TEAMB to your Team B service account API key"
+    echo "   - For local: Edit .env file in the project root"
+    echo "   - For K8s: Check ConfigMap and Secrets are properly mounted"
+    echo "   1. Set TEAMB_HOST to your Team B Grafana URL"
+    echo "   2. Set CX_API_KEY_TEAMB to your Team B service account API key"
     exit 1
 fi
 

@@ -33,6 +33,7 @@ data:
   # Change these values to adjust schedule without rebuilding Docker image
   S3_SYNC_SCHEDULE: "01:30"      # S3 sync time (default: 12:30 AM UTC)
   MIGRATION_SCHEDULE: "19:45"    # Migration time (default: 1:30 AM UTC)
+  CLEANUP_SCHEDULE: "14:00"      # Cleanup time - deletes files older than 7 days (default: 2:00 PM UTC)
   CHECK_INTERVAL: "30"           # Seconds between schedule checks (default: 30)
 
   # S3 Backup Configuration

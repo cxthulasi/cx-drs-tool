@@ -44,7 +44,7 @@ class GrafanaDashboardsService(BaseService):
         self.folders_dir = self.scripts_dir / "folders"
 
         # Timeout configuration - increased for large migrations
-        self.script_timeout = int(os.getenv('GRAFANA_SCRIPT_TIMEOUT', '1800'))  # 30 minutes default
+        self.script_timeout = int(os.getenv('GRAFANA_SCRIPT_TIMEOUT', '3600'))  # 60 minutes default (was 30)
 
         # Log configuration
         script_type = "PARALLEL" if "parallel" in str(self.import_to_teamb_script) else "SEQUENTIAL"
@@ -132,8 +132,8 @@ class GrafanaDashboardsService(BaseService):
             os.chmod(script_path, 0o755)
 
             # Run the script with configurable timeout
-            # Use self.script_timeout for import_to_teamb scripts, shorter timeout for others
-            timeout = self.script_timeout if 'import_to_teamb' in str(script_path) else 300
+            # Use self.script_timeout for all scripts (import, export, import_to_teamb)
+            timeout = self.script_timeout
 
             self.logger.info(f"Running script with {timeout}s timeout")
 
@@ -354,7 +354,7 @@ exec "{self.export_script}"
                 cwd=str(self.scripts_dir),  # Run from scripts dir so .env is found
                 capture_output=True,
                 text=True,
-                timeout=300
+                timeout=self.script_timeout
             )
 
             success = result.returncode == 0
@@ -389,7 +389,8 @@ exec "{self.export_script}"
             return all_resources
 
         except subprocess.TimeoutExpired:
-            self.logger.error("Export script timed out after 300 seconds")
+            self.logger.error(f"Export script timed out after {self.script_timeout} seconds")
+            self.logger.error("Consider increasing GRAFANA_SCRIPT_TIMEOUT environment variable")
             folders = self._ensure_general_folder([])
             return folders
         except Exception as e:

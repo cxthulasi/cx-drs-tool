@@ -64,12 +64,15 @@ def setup_logger(service_name: str, feature: str, log_level: str = "INFO", json_
     # Create logger
     logger = structlog.get_logger(service_name)
 
+    # Get the root logger
+    root_logger = logging.getLogger()
+
+    # Clear existing handlers to prevent duplicate logs
+    root_logger.handlers.clear()
+
     # Add file handler for persistent logging (always JSON)
     file_handler = logging.FileHandler(log_filepath)
     file_handler.setLevel(getattr(logging, log_level.upper()))
-
-    # Get the root logger and add handlers
-    root_logger = logging.getLogger()
     root_logger.addHandler(file_handler)
 
     # Add console handler - either JSON or Rich formatting

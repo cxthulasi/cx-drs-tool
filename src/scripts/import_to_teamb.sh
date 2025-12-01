@@ -12,7 +12,7 @@
 # setup script home directory
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-# Load environment variables from root .env file
+# Load environment variables from root .env file (if it exists)
 ROOT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && cd ../.. && pwd )"
 ENV_FILE="$ROOT_DIR/.env"
 
@@ -22,15 +22,16 @@ if [ -f "$ENV_FILE" ]; then
     export $(grep -v '^#' "$ENV_FILE" | grep -v '^$' | sed 's/#.*//' | xargs)
     echo "✅ Loaded environment variables from $ENV_FILE"
 else
-    echo "❌ ERROR: .env file not found at $ENV_FILE"
-    exit 1
+    echo "ℹ️  No .env file found at $ENV_FILE - using environment variables from system/K8s"
 fi
 
 # Check if required variables are set
 if [ -z "$TEAMB_HOST" ] || [ -z "$CX_API_KEY_TEAMB" ]; then
-    echo "❌ ERROR: TEAMB_HOST and CX_API_KEY_TEAMB must be set in .env file"
+    echo "❌ ERROR: TEAMB_HOST and CX_API_KEY_TEAMB must be set"
     echo "   TEAMB_HOST: $TEAMB_HOST"
     echo "   CX_API_KEY_TEAMB: $CX_API_KEY_TEAMB"
+    echo "   - For local: Edit .env file in the project root"
+    echo "   - For K8s: Check ConfigMap and Secrets are properly mounted"
     exit 1
 fi
 

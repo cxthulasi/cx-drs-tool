@@ -525,6 +525,22 @@ class CustomActionsService(BaseService):
 
             self.logger.info(f"=" * 80)
 
+            # Save migration statistics for summary table
+            import json
+            from pathlib import Path
+            stats_file = Path("outputs") / self.service_name / f"{self.service_name}_stats_latest.json"
+            stats_file.parent.mkdir(parents=True, exist_ok=True)
+            stats_data = {
+                'teama_count': len(teama_actions),
+                'teamb_before': len(teamb_actions),
+                'teamb_after': len(teamb_actions),  # No change in dry run
+                'created': 0,  # Dry run doesn't create
+                'deleted': 0,  # Dry run doesn't delete
+                'failed': 0
+            }
+            with open(stats_file, 'w') as f:
+                json.dump(stats_data, f, indent=2)
+
             self.log_migration_complete(self.service_name, True, 0, 0)
             return True
 
@@ -626,6 +642,23 @@ class CustomActionsService(BaseService):
                 self.logger.info(f"Post-migration snapshot created: {post_migration_version}")
             except Exception as e:
                 self.logger.warning(f"Failed to create post-migration snapshot: {e}")
+                updated_teamb_actions = []
+
+            # Step 6: Save migration statistics for summary table
+            import json
+            from pathlib import Path
+            stats_file = Path("outputs") / self.service_name / f"{self.service_name}_stats_latest.json"
+            stats_file.parent.mkdir(parents=True, exist_ok=True)
+            stats_data = {
+                'teama_count': len(teama_actions),
+                'teamb_before': len(teamb_actions),
+                'teamb_after': len(updated_teamb_actions),
+                'created': migration_stats['actions']['created'],
+                'deleted': migration_stats['deleted_actions'],
+                'failed': migration_stats['actions']['failed']
+            }
+            with open(stats_file, 'w') as f:
+                json.dump(stats_data, f, indent=2)
 
             # Calculate totals
             total_created = migration_stats['actions']['created']

@@ -71,12 +71,13 @@ Logs are automatically sent to Coralogix via otel collector:
 
 ## ⏰ Schedule (Configurable!)
 
-- **S3 Sync**: 12:30 AM UTC daily (default)
-- **Migration**: 1:30 AM UTC daily (default)
+- **S3 Sync**: 01:30 UTC daily (default)
+- **Migration**: 00:30 UTC daily (default)
+- **Cleanup**: 14:00 UTC daily (deletes files older than 7 days)
 
 **Change schedule without rebuilding image:**
 ```bash
-# Edit configmap.yaml and change S3_SYNC_SCHEDULE or MIGRATION_SCHEDULE
+# Edit configmap.yaml and change S3_SYNC_SCHEDULE, MIGRATION_SCHEDULE, or CLEANUP_SCHEDULE
 kubectl apply -f configmap.yaml
 kubectl rollout restart deployment cx-drs-tool -n cx-drs-new
 ```

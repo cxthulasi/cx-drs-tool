@@ -55,6 +55,8 @@ snapshots/
 logs/
 outputs/
 backups/
+src/scripts/dashboards/
+src/scripts/folders/
 documentation/
 cloudformation/
 k8s/
