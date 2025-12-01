@@ -17,7 +17,8 @@ data:
   CX_TEAMB_URL: "https://cx-coe-test.app.coralogix.in"
   
   # Logging Configuration
-  LOG_LEVEL: "ERROR"
+  LOG_LEVEL: "INFO"  # Set to INFO to see migration tables and summaries
+  JSON_CONSOLE: "true"  # Set to true for JSON logs (required for Coralogix otel collector)
   LOGS_STORAGE_PATH: "/app/logs"
   
   # API Rate Limiting
@@ -25,10 +26,13 @@ data:
   API_RETRY_MAX_ATTEMPTS: "2"
   API_RETRY_BACKOFF_FACTOR: "1"
 
+  # Grafana Script Timeout (in seconds)
+  GRAFANA_SCRIPT_TIMEOUT: "3600"  # 60 minutes for large migrations
+
   # Cron Schedule Configuration (HH:MM format in UTC)
   # Change these values to adjust schedule without rebuilding Docker image
   S3_SYNC_SCHEDULE: "01:30"      # S3 sync time (default: 12:30 AM UTC)
-  MIGRATION_SCHEDULE: "00:30"    # Migration time (default: 1:30 AM UTC)
+  MIGRATION_SCHEDULE: "19:45"    # Migration time (default: 1:30 AM UTC)
   CHECK_INTERVAL: "30"           # Seconds between schedule checks (default: 30)
 
   # S3 Backup Configuration

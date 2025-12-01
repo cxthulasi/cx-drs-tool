@@ -5,4 +5,3 @@ metadata:
   labels:
     name: cx-drs-new
     app: coralogix-drs-tool
-

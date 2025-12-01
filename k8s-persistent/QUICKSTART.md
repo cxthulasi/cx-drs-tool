@@ -32,27 +32,42 @@ kubectl apply -f deployment.yaml
 
 ```bash
 # Check pod is running
-kubectl get pods -n cx-drs
+kubectl get pods -n cx-drs-new
 
-# View logs
-kubectl logs -n cx-drs -l app=cx-drs-tool -f
+# View all logs (migration output goes to stdout) ⭐
+kubectl logs -n cx-drs-new -l app=cx-drs-tool -f
 ```
 
 ## 📊 Common Commands
 
 ```bash
 # Get pod name
-export POD_NAME=$(kubectl get pods -n cx-drs -l app=cx-drs-tool -o jsonpath='{.items[0].metadata.name}')
+export POD_NAME=$(kubectl get pods -n cx-drs-new -l app=cx-drs-tool -o jsonpath='{.items[0].metadata.name}')
 
-# View cron logs
-kubectl exec -n cx-drs $POD_NAME -- tail -f /app/logs/cron.log
+# View all logs (includes tables and JSON summaries) ⭐
+kubectl logs -n cx-drs-new $POD_NAME -f
+
+# View last 200 lines
+kubectl logs -n cx-drs-new $POD_NAME --tail=200
 
 # Manual migration
-kubectl exec -n cx-drs $POD_NAME -- python3 /app/drs-tool.py all
+kubectl exec -n cx-drs-new $POD_NAME -- python3 /app/drs-tool.py all
+
+# Manual dry-run (redirect output to the main process stdout)
+
+kubectl exec -n cx-drs-new $POD_NAME -- sh -c 'cd /app && python3 -u /app/drs-tool.py all --dry-run 2>&1 | tee /proc/1/fd/1'
+kubectl logs -n cx-drs-new $POD_NAME --tail=300
 
 # Access shell
-kubectl exec -it -n cx-drs $POD_NAME -- /bin/bash
+kubectl exec -it -n cx-drs-new $POD_NAME -- /bin/bash
 ```
+
+## 📊 Coralogix Integration
+
+Logs are automatically sent to Coralogix via otel collector:
+- ✅ All logs go to stdout/stderr
+- ✅ JSON logs include `log_type` field
+- ✅ Search in Coralogix: `log_type:"migration_summary"`
 
 ## ⏰ Schedule (Configurable!)
 
@@ -63,7 +78,7 @@ kubectl exec -it -n cx-drs $POD_NAME -- /bin/bash
 ```bash
 # Edit configmap.yaml and change S3_SYNC_SCHEDULE or MIGRATION_SCHEDULE
 kubectl apply -f configmap.yaml
-kubectl rollout restart deployment cx-drs-tool -n cx-drs
+kubectl rollout restart deployment cx-drs-tool -n cx-drs-new
 ```
 
 ## 🎯 Key Benefits

@@ -89,9 +89,6 @@ spec:
           mountPath: /app/state
         - name: snapshots
           mountPath: /app/snapshots
-        - name: varlogpods
-          mountPath: /var/log/pods
-          readOnly: true
 
         livenessProbe:
           exec:
@@ -109,16 +106,13 @@ spec:
             command:
             - /bin/bash
             - -c
-            - "test -f /app/logs/cron.log"
+            - "ps aux | grep -v grep | grep -q supercronic"
           initialDelaySeconds: 10
           periodSeconds: 30
           timeoutSeconds: 5
           failureThreshold: 3
 
       volumes:
-      - name: varlogpods
-        hostPath:
-          path: /var/log/pods
       - name: outputs
         emptyDir: {}
       - name: logs

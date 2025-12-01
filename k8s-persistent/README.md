@@ -54,13 +54,13 @@ kubectl apply -f deployment.yaml
 
 ```bash
 # Check if pod is running
-kubectl get pods -n cx-drs
+kubectl get pods -n cx-drs-new
 
-# View pod logs
-kubectl logs -n cx-drs -l app=cx-drs-tool -f
+# View pod startup logs
+kubectl logs -n cx-drs-new -l app=cx-drs-tool -f
 
 # Check deployment status
-kubectl get deployment -n cx-drs
+kubectl get deployment -n cx-drs-new
 ```
 
 ## 📅 Scheduled Jobs
@@ -69,71 +69,112 @@ The pod runs two scheduled jobs internally. **Schedules are configurable via Con
 
 | Job | Default Schedule | Command | ConfigMap Key |
 |-----|------------------|---------|---------------|
-| **S3 Sync** | 12:30 AM UTC daily | `python3 drs-tool.py s3-sync` | `S3_SYNC_SCHEDULE` |
+| **S3 Sync** | 12:30 AM UTC daily | `aws s3 sync /app ${S3_BUCKET_NAME}` | `S3_SYNC_SCHEDULE` |
 | **Migration** | 1:30 AM UTC daily | `python3 drs-tool.py all` | `MIGRATION_SCHEDULE` |
 
 ### View Current Schedule
 
 ```bash
 # View schedule from ConfigMap
-kubectl get configmap cx-drs-config -n cx-drs -o jsonpath='{.data.S3_SYNC_SCHEDULE}'
-kubectl get configmap cx-drs-config -n cx-drs -o jsonpath='{.data.MIGRATION_SCHEDULE}'
+kubectl get configmap cx-drs-config -n cx-drs-new -o jsonpath='{.data.S3_SYNC_SCHEDULE}'
+kubectl get configmap cx-drs-config -n cx-drs-new -o jsonpath='{.data.MIGRATION_SCHEDULE}'
 
 # View schedule from running pod logs
-kubectl logs -n cx-drs -l app=cx-drs-tool | grep "Cron schedule configured"
+kubectl logs -n cx-drs-new -l app=cx-drs-tool | grep "Cron schedule configured"
 ```
 
 ## 🔍 Debugging & Monitoring
 
 ### View Live Logs
 
-```bash
-# View pod startup logs
-kubectl logs -n cx-drs -l app=cx-drs-tool -f
+**IMPORTANT:** All logs (migration output, tables, JSON summaries) are sent to **pod stdout/stderr** for Coralogix otel collector ingestion.
 
-# View cron job logs
-POD_NAME=$(kubectl get pods -n cx-drs -l app=cx-drs-tool -o jsonpath='{.items[0].metadata.name}')
-kubectl exec -n cx-drs $POD_NAME -- tail -f /app/logs/cron.log
+```bash
+# View all logs (migration + cron output) ⭐ THIS IS WHAT YOU WANT
+kubectl logs -n cx-drs-new -l app=cx-drs-tool -f
+
+# View logs from specific pod
+POD_NAME=$(kubectl get pods -n cx-drs-new -l app=cx-drs-tool -o jsonpath='{.items[0].metadata.name}')
+kubectl logs -n cx-drs-new $POD_NAME -f
+
+# View last 200 lines (includes full migration summary)
+kubectl logs -n cx-drs-new $POD_NAME --tail=200
+```
+
+### View Logs in Coralogix
+
+The migration logs are automatically ingested by the Coralogix otel collector:
+
+- ✅ **Application Name**: `cx-drs-tool` (or as configured in your otel collector)
+- ✅ **JSON Logs**: All structured logs include `log_type` field for filtering
+- ✅ **Migration Summary**: Search for `log_type: "migration_summary"`
+- ✅ **Service Details**: Search for `log_type: "service_detail"`
+
+**Coralogix Query Examples:**
+```
+# View all migration summaries
+log_type:"migration_summary"
+
+# View specific service details
+log_type:"service_detail" AND service:"parsing-rules"
+
+# View failed migrations
+log_type:"migration_summary" AND failed_services:>0
+```
+
+### View Migration Summary Tables
+
+The migration summary includes:
+- ✅ **Print statements** - Tables and summaries (visible in kubectl logs)
+- ✅ **JSON logs** - Structured logs with `log_type` field (ingested by Coralogix)
+
+```bash
+# View recent logs with tables
+POD_NAME=$(kubectl get pods -n cx-drs-new -l app=cx-drs-tool -o jsonpath='{.items[0].metadata.name}')
+kubectl logs -n cx-drs-new $POD_NAME --tail=200
+
+# Filter only JSON logs (for parsing with jq)
+kubectl logs -n cx-drs-new $POD_NAME | grep '{"log_type"' | tail -10 | jq .
 ```
 
 ### Access Pod Shell
 
 ```bash
 # Get shell access to the pod
-POD_NAME=$(kubectl get pods -n cx-drs -l app=cx-drs-tool -o jsonpath='{.items[0].metadata.name}')
-kubectl exec -it -n cx-drs $POD_NAME -- /bin/bash
+POD_NAME=$(kubectl get pods -n cx-drs-new -l app=cx-drs-tool -o jsonpath='{.items[0].metadata.name}')
+kubectl exec -it -n cx-drs-new $POD_NAME -- /bin/bash
 
 # Once inside the pod:
 cd /app
 ls -la logs/
-cat logs/cron.log
+tail -100 logs/cron.log  # View last 100 lines of migration logs
 ```
 
 ### Manual Execution
 
 ```bash
 # Trigger migration manually (without waiting for schedule)
-POD_NAME=$(kubectl get pods -n cx-drs -l app=cx-drs-tool -o jsonpath='{.items[0].metadata.name}')
-kubectl exec -n cx-drs $POD_NAME -- python3 /app/drs-tool.py all
+POD_NAME=$(kubectl get pods -n cx-drs-new -l app=cx-drs-tool -o jsonpath='{.items[0].metadata.name}')
+kubectl exec -n cx-drs-new $POD_NAME -- python3 /app/drs-tool.py all
 
-# Trigger S3 sync manually
-kubectl exec -n cx-drs $POD_NAME -- python3 /app/drs-tool.py s3-sync
+# Trigger dry-run migration
+kubectl exec -n cx-drs-new $POD_NAME -- python3 /app/drs-tool.py all --dry-run
 
 # Run specific service migration
-kubectl exec -n cx-drs $POD_NAME -- python3 /app/drs-tool.py alerts
+kubectl exec -n cx-drs-new $POD_NAME -- python3 /app/drs-tool.py parsing-rules
 ```
 
 ### Check Pod Status
 
 ```bash
 # Get detailed pod information
-kubectl describe pod -n cx-drs -l app=cx-drs-tool
+kubectl describe pod -n cx-drs-new -l app=cx-drs-tool
 
 # Check resource usage
-kubectl top pod -n cx-drs -l app=cx-drs-tool
+kubectl top pod -n cx-drs-new -l app=cx-drs-tool
 
 # View events
-kubectl get events -n cx-drs --sort-by='.lastTimestamp'
+kubectl get events -n cx-drs-new --sort-by='.lastTimestamp'
 ```
 
 ## 📂 File Structure

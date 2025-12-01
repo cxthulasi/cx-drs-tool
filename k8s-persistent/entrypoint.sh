@@ -41,8 +41,11 @@ MIGRATION_HOUR=$((10#$MIGRATION_HOUR))
 MIGRATION_MINUTE=$((10#$MIGRATION_MINUTE))
 
 echo "🔄 Setting up cron jobs..."
-echo "📝 Logs will be written to: /app/logs/cron.log"
+echo "📝 Logs will be sent to stdout/stderr for otel collector ingestion"
 echo ""
+
+# Ensure logs directory exists (for artifact files, not cron logs)
+mkdir -p /app/logs
 
 # Configure AWS CLI if credentials are provided
 if [ -n "$AWS_ACCESS_KEY_ID" ] && [ -n "$AWS_SECRET_ACCESS_KEY" ]; then
@@ -64,20 +67,17 @@ else
 fi
 echo ""
 
-# Create log file
-touch /app/logs/cron.log
-touch /app/logs/drs-s3.log
-
 # Create crontab file for supercronic
+# NOTE: Logs go to stdout/stderr so otel collector can pick them up for Coralogix
 cat > /app/crontab << EOF
 # Coralogix DRS Tool Scheduled Jobs
-# Logs are written to /app/logs/
+# Logs are sent to stdout/stderr for otel collector ingestion
 
 # S3 Sync - Daily at ${S3_SYNC_SCHEDULE} UTC
-${S3_MINUTE} ${S3_HOUR} * * * /usr/local/bin/aws s3 sync /app ${S3_BUCKET_NAME} --exclude ".*" --exclude "*/.*" >> /app/logs/drs-s3.log 2>&1
+${S3_MINUTE} ${S3_HOUR} * * * /usr/local/bin/aws s3 sync /app ${S3_BUCKET_NAME} --exclude ".*" --exclude "*/.*"
 
 # Migration - Daily at ${MIGRATION_SCHEDULE} UTC
-${MIGRATION_MINUTE} ${MIGRATION_HOUR} * * * cd /app && /usr/local/bin/python3 /app/drs-tool.py all >> /app/logs/cron.log 2>&1
+${MIGRATION_MINUTE} ${MIGRATION_HOUR} * * * cd /app && /usr/local/bin/python3 /app/drs-tool.py all
 
 EOF
 
@@ -89,15 +89,24 @@ echo ""
 echo "✅ DRS Tool is running in persistent mode"
 echo "⏰ Supercronic will execute jobs at scheduled times"
 echo ""
-echo "To view logs, run:"
-echo "  kubectl logs -n cx-drs <pod-name> -f"
-echo "  kubectl exec -n cx-drs <pod-name> -- tail -f /app/logs/cron.log"
+echo "📋 Logs are sent to stdout/stderr for Coralogix otel collector ingestion"
 echo ""
-echo "To view crontab:"
-echo "  kubectl exec -n cx-drs <pod-name> -- cat /app/crontab"
+echo "📋 To view all logs (migration + cron output):"
+echo "  kubectl logs -n cx-drs-new <pod-name> -f"
 echo ""
-echo "To manually trigger a migration:"
-echo "  kubectl exec -n cx-drs <pod-name> -- python3 /app/drs-tool.py all"
+echo "📋 To view logs in Coralogix:"
+echo "  - Logs are automatically ingested by otel collector"
+echo "  - Search for application: cx-drs-tool"
+echo "  - JSON logs include 'log_type' field for filtering"
+echo ""
+echo "📋 To view crontab:"
+echo "  kubectl exec -n cx-drs-new <pod-name> -- cat /app/crontab"
+echo ""
+echo "🔧 To manually trigger a migration:"
+echo "  kubectl exec -n cx-drs-new <pod-name> -- python3 /app/drs-tool.py all"
+echo ""
+echo "🔧 To manually trigger a dry-run:"
+echo "  kubectl exec -n cx-drs-new <pod-name> -- python3 /app/drs-tool.py all --dry-run"
 echo ""
 echo "=========================================="
 
