@@ -54,13 +54,13 @@ kubectl apply -f deployment.yaml
 
 ```bash
 # Check if pod is running
-kubectl get pods -n cx-drs-new
+kubectl get pods -n cx-drs
 
 # View pod startup logs
-kubectl logs -n cx-drs-new -l app=cx-drs-tool -f
+kubectl logs -n cx-drs -l app=cx-drs-tool -f
 
 # Check deployment status
-kubectl get deployment -n cx-drs-new
+kubectl get deployment -n cx-drs
 ```
 
 ## 📅 Scheduled Jobs
@@ -89,12 +89,12 @@ This prevents disk space issues from accumulating old files.
 
 ```bash
 # View schedule from ConfigMap
-kubectl get configmap cx-drs-config -n cx-drs-new -o jsonpath='{.data.S3_SYNC_SCHEDULE}'
-kubectl get configmap cx-drs-config -n cx-drs-new -o jsonpath='{.data.MIGRATION_SCHEDULE}'
-kubectl get configmap cx-drs-config -n cx-drs-new -o jsonpath='{.data.CLEANUP_SCHEDULE}'
+kubectl get configmap cx-drs-config -n cx-drs -o jsonpath='{.data.S3_SYNC_SCHEDULE}'
+kubectl get configmap cx-drs-config -n cx-drs -o jsonpath='{.data.MIGRATION_SCHEDULE}'
+kubectl get configmap cx-drs-config -n cx-drs -o jsonpath='{.data.CLEANUP_SCHEDULE}'
 
 # View schedule from running pod logs
-kubectl logs -n cx-drs-new -l app=cx-drs-tool | grep "Cron schedule configured"
+kubectl logs -n cx-drs -l app=cx-drs-tool | grep "Cron schedule configured"
 ```
 
 ## 🔍 Debugging & Monitoring
@@ -105,14 +105,14 @@ kubectl logs -n cx-drs-new -l app=cx-drs-tool | grep "Cron schedule configured"
 
 ```bash
 # View all logs (migration + cron output) ⭐ THIS IS WHAT YOU WANT
-kubectl logs -n cx-drs-new -l app=cx-drs-tool -f
+kubectl logs -n cx-drs -l app=cx-drs-tool -f
 
 # View logs from specific pod
-POD_NAME=$(kubectl get pods -n cx-drs-new -l app=cx-drs-tool -o jsonpath='{.items[0].metadata.name}')
-kubectl logs -n cx-drs-new $POD_NAME -f
+POD_NAME=$(kubectl get pods -n cx-drs -l app=cx-drs-tool -o jsonpath='{.items[0].metadata.name}')
+kubectl logs -n cx-drs $POD_NAME -f
 
 # View last 200 lines (includes full migration summary)
-kubectl logs -n cx-drs-new $POD_NAME --tail=200
+kubectl logs -n cx-drs $POD_NAME --tail=200
 ```
 
 ### View Logs in Coralogix
@@ -144,19 +144,19 @@ The migration summary includes:
 
 ```bash
 # View recent logs with tables
-POD_NAME=$(kubectl get pods -n cx-drs-new -l app=cx-drs-tool -o jsonpath='{.items[0].metadata.name}')
-kubectl logs -n cx-drs-new $POD_NAME --tail=200
+POD_NAME=$(kubectl get pods -n cx-drs -l app=cx-drs-tool -o jsonpath='{.items[0].metadata.name}')
+kubectl logs -n cx-drs $POD_NAME --tail=200
 
 # Filter only JSON logs (for parsing with jq)
-kubectl logs -n cx-drs-new $POD_NAME | grep '{"log_type"' | tail -10 | jq .
+kubectl logs -n cx-drs $POD_NAME | grep '{"log_type"' | tail -10 | jq .
 ```
 
 ### Access Pod Shell
 
 ```bash
 # Get shell access to the pod
-POD_NAME=$(kubectl get pods -n cx-drs-new -l app=cx-drs-tool -o jsonpath='{.items[0].metadata.name}')
-kubectl exec -it -n cx-drs-new $POD_NAME -- /bin/bash
+POD_NAME=$(kubectl get pods -n cx-drs -l app=cx-drs-tool -o jsonpath='{.items[0].metadata.name}')
+kubectl exec -it -n cx-drs $POD_NAME -- /bin/bash
 
 # Once inside the pod:
 cd /app
@@ -168,27 +168,27 @@ tail -100 logs/cron.log  # View last 100 lines of migration logs
 
 ```bash
 # Trigger migration manually (without waiting for schedule)
-POD_NAME=$(kubectl get pods -n cx-drs-new -l app=cx-drs-tool -o jsonpath='{.items[0].metadata.name}')
-kubectl exec -n cx-drs-new $POD_NAME -- python3 /app/drs-tool.py all
+POD_NAME=$(kubectl get pods -n cx-drs -l app=cx-drs-tool -o jsonpath='{.items[0].metadata.name}')
+kubectl exec -n cx-drs $POD_NAME -- python3 /app/drs-tool.py all
 
 # Trigger dry-run migration
-kubectl exec -n cx-drs-new $POD_NAME -- python3 /app/drs-tool.py all --dry-run
+kubectl exec -n cx-drs $POD_NAME -- python3 /app/drs-tool.py all --dry-run
 
 # Run specific service migration
-kubectl exec -n cx-drs-new $POD_NAME -- python3 /app/drs-tool.py parsing-rules
+kubectl exec -n cx-drs $POD_NAME -- python3 /app/drs-tool.py parsing-rules
 ```
 
 ### Check Pod Status
 
 ```bash
 # Get detailed pod information
-kubectl describe pod -n cx-drs-new -l app=cx-drs-tool
+kubectl describe pod -n cx-drs -l app=cx-drs-tool
 
 # Check resource usage
-kubectl top pod -n cx-drs-new -l app=cx-drs-tool
+kubectl top pod -n cx-drs -l app=cx-drs-tool
 
 # View events
-kubectl get events -n cx-drs-new --sort-by='.lastTimestamp'
+kubectl get events -n cx-drs --sort-by='.lastTimestamp'
 ```
 
 ## 📂 File Structure

@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: cx-drs-tool
-  namespace: cx-drs-new
+  namespace: cx-drs
   labels:
     app: cx-drs-tool
 spec:
