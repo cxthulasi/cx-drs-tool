@@ -59,6 +59,7 @@ src/scripts/dashboards/
 src/scripts/folders/
 documentation/
 cloudformation/
+versions/
 k8s/
 aichatbot/
 tests/

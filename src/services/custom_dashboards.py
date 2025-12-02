@@ -40,7 +40,7 @@ class CustomDashboardsService(BaseService):
 
     @property
     def api_endpoint(self) -> str:
-        return "/v1/dashboards"
+        return "latest/v1/dashboards"
     
     def _setup_failed_dashboards_logging(self):
         """Setup logging directory for failed custom dashboards."""
@@ -48,7 +48,7 @@ class CustomDashboardsService(BaseService):
         self.failed_dashboards_dir.mkdir(parents=True, exist_ok=True)
 
         # Dashboard folders API endpoints (correct Coralogix API path)
-        self.folders_api_endpoint = "/v1/dashboards/folders"
+        self.folders_api_endpoint = "/latest/v1/dashboards/folders"
 
     def fetch_dashboard_folders_from_teama(self) -> List[Dict[str, Any]]:
         """Fetch all dashboard folders from Team A."""
