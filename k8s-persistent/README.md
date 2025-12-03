@@ -71,7 +71,7 @@ The pod runs three scheduled jobs internally. **Schedules are configurable via C
 |-----|------------------|---------|---------------|
 | **S3 Sync** | 01:30 UTC daily | `aws s3 sync /app ${S3_BUCKET_NAME}` | `S3_SYNC_SCHEDULE` |
 | **Migration** | 00:30 UTC daily | `python3 drs-tool.py all` | `MIGRATION_SCHEDULE` |
-| **Cleanup** | 14:00 UTC daily | Delete files older than 7 days | `CLEANUP_SCHEDULE` |
+| **Cleanup** | 03:00 UTC daily | Delete files older than 7 days | `CLEANUP_SCHEDULE` |
 
 ### Cleanup Job Details
 
