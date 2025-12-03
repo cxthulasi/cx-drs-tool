@@ -32,11 +32,11 @@ data:
   # Cron Schedule Configuration (HH:MM format in UTC)
   # Change these values to adjust schedule without rebuilding Docker image
   S3_SYNC_SCHEDULE: "01:30"      # S3 sync time (default: 12:30 AM UTC)
-  MIGRATION_SCHEDULE: "19:45"    # Migration time (default: 1:30 AM UTC)
+  MIGRATION_SCHEDULE: "05:10"    # Migration time (default: 1:30 AM UTC)
   CLEANUP_SCHEDULE: "14:00"      # Cleanup time - deletes files older than 7 days (default: 2:00 PM UTC)
   CHECK_INTERVAL: "30"           # Seconds between schedule checks (default: 30)
 
   # S3 Backup Configuration
   S3_BUCKET_NAME: "s3://cx-coe-jiostar-drtool-backup-bucket"  # S3 bucket for backups
-  AWS_DEFAULT_REGION: "us-east-1"  # AWS region for S3 bucket
+  AWS_DEFAULT_REGION: "ap-south-1"  # AWS region for S3 bucket
 

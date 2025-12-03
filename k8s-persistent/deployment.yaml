@@ -14,6 +14,10 @@ spec:
     metadata:
       labels:
         app: cx-drs-tool
+      annotations:
+        # Annotations for otel collector log scraping
+        coralogix.com/application: "cx-drs-tool"
+        coralogix.com/subsystem: "migration"
     spec:
       containers:
       - name: drs-tool
