@@ -81,13 +81,13 @@ cat > /app/crontab << EOF
 # Logs are sent to stdout/stderr for otel collector ingestion
 
 # S3 Sync - Daily at ${S3_SYNC_SCHEDULE} UTC
-${S3_MINUTE} ${S3_HOUR} * * * echo "========================================" && echo "🔄 [CRON] S3 Sync Job Started at \$(date -u)" && echo "========================================" && /usr/local/bin/aws s3 sync /app ${S3_BUCKET_NAME} --exclude ".*" --exclude "*/.*"   && echo "✅ [CRON] S3 Sync Job Completed at \$(date -u)" || echo "❌ [CRON] S3 Sync Job Failed at \$(date -u)"
+${S3_MINUTE} ${S3_HOUR} * * * /usr/local/bin/aws s3 sync /app ${S3_BUCKET_NAME} --exclude ".*" --exclude "*/.*" 2>&1 | tee /proc/1/fd/1
 
 # Migration - Daily at ${MIGRATION_SCHEDULE} UTC
-${MIGRATION_MINUTE} ${MIGRATION_HOUR} * * * echo "========================================" && echo "🚀 [CRON] Migration Job Started at \$(date -u)" && echo "========================================" && cd /app && /usr/local/bin/python3 -u /app/drs-tool.py all 2>&1 | tee /proc/1/fd/1 && echo "✅ [CRON] Migration Job Completed at \$(date -u)" || echo "❌ [CRON] Migration Job Failed at \$(date -u)"
+${MIGRATION_MINUTE} ${MIGRATION_HOUR} * * * cd /app && /usr/local/bin/python3 -u /app/drs-tool.py all 2>&1 | tee /proc/1/fd/1
 
 # Cleanup - Daily at ${CLEANUP_SCHEDULE} UTC (delete files older than 7 days)
-${CLEANUP_MINUTE} ${CLEANUP_HOUR} * * * echo "========================================" && echo "🧹 [CRON] Cleanup Job Started at \$(date -u)" && echo "========================================" && /bin/bash -c 'find /app/logs /app/outputs /app/snapshots /app/state /app/src/scripts/dashboards /app/src/scripts/folders -mindepth 1 -mtime +7 -exec rm -rf {} + 2>/dev/null' && echo "✅ [CRON] Cleanup Job Completed at \$(date -u)" || echo "❌ [CRON] Cleanup Job Failed at \$(date -u)"
+${CLEANUP_MINUTE} ${CLEANUP_HOUR} * * * /bin/bash -c 'find /app/logs /app/outputs /app/snapshots /app/state /app/src/scripts/dashboards /app/src/scripts/folders -mindepth 1 -mtime +7 -exec rm -rf {} + 2>/dev/null'
 EOF
 
 # Display crontab
