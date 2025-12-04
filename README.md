@@ -587,9 +587,7 @@ Total Duration:                      4.7s
 ========================================================================================================================
 ```
 
-Sample Summary Output:
 
-![][image1]
 
 If no errors then run the first synchronization from Team A to Team B.
 
@@ -604,7 +602,7 @@ logs – stores logs for each service;
 src – contains service definitions, helper scripts, and core API logic;  
 outputs – holds Team A/Team B service configs and migration summary stats for each run.
 
-## ![][image2]
+
 
 ### Set the process to run every day {#set-the-process-to-run-every-day}
 
