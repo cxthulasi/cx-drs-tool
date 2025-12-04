@@ -1,673 +1,220 @@
+# Coralogix Disaster Recovery procedure
 
+[**Description	3**](#description)
 
-# 🚀 Coralogix DR Migration Tool
+[**Prerequisites	3**](#prerequisites)
 
-A comprehensive disaster recovery migration tool for Coralogix that helps you migrate configurations, policies, and resources between different Coralogix teams/environments.
+[**Preparation	3**](#preparation)
 
+[Limitations	4](#limitations)
 
-⚠️ **NOTE (IMPORTANT) TOOL DELETES/UPDATES RESOURCES IN TEAMB**
+[**Disaster Recovery Syncing (DRS) tool	4**](#disaster-recovery-syncing-\(drs\)-tool)
 
-**This tool should be used *ONLY* for Disaster Recovery (DR) scenarios — specifically to sync Team A with Team B.**
+[Overview	4](#overview)
 
-🚧 *A separate version of this tool for one-time migrations will be created later.*
+[Key Features:	4](#key-features:)
 
-A disaster recovery SYNC tool for Coralogix that helps you migrate configurations, policies, and resources between two different Coralogix teams/environments.
+[Prerequisites	4](#prerequisites-1)
 
----
+[Create API Keys	5](#create-api-keys)
 
-## 📋 Table of Contents
+[Disaster Recovery Tool on EC2 instance	6](#disaster-recovery-tool-on-ec2-instance)
 
-- [Overview](#overview)
-- [Prerequisites](#prerequisites)
-- [Installation](#installation)
-- [Configuration](#configuration)
-- [Quick Start](#quick-start)
-- [Available Services](#available-services)
-- [Usage Examples](#usage-examples)
-- [Understanding Output](#understanding-output)
-- [Advanced Features](#advanced-features)
-- [AI Assistant](#ai-assistant)
-- [Troubleshooting](#troubleshooting)
-- [Best Practices](#best-practices)
+[Cloudformation for EC2 with Opentelemetry Collector and prerequisites installed.	6](#cloudformation-for-ec2-with-opentelemetry-collector-and-prerequisites-installed.)
 
----
+[Installation	8](#installation)
 
-## 🎯 **Overview**
+[Configuration	8](#configuration)
 
-The DR Migration Tool automates the process of migrating Coralogix configurations between teams, ensuring disaster recovery readiness and environment synchronization.
+[The first synchronization	9](#the-first-synchronization)
 
-**Key Features:**
+[Important Directories and Files	19](#important-directories-and-files)
 
-- 🧪 **Dry Run Mode** – Preview changes before execution
-- 📜 **Comprehensive Logging** – Detailed operation logs
-- 🔁 **Error Recovery** – Retry logic with exponential backoff
-- 📊 **Tabular Statistics** – Clear migration results
-- 💾 **Artifact Export** – Save configurations for comparison
+[Set the process to run every day	20](#set-the-process-to-run-every-day)
 
----
+[**Disaster Recovery Tool on K8s cluster	21**](#disaster-recovery-tool-on-k8s-cluster)
 
-## 🔧 **Prerequisites**
+[Safety Check Process	22](#safety-check-process)
 
-- 🐍 Python 3.10+, pip, grpcurl installed
-- 🔑 Coralogix API Keys for both source (Team A) and destination (Team B)
-- 🌐 Network access to Coralogix APIs
-- 👩‍💻 Sufficient permissions to read from Team A and write to Team B
+[Troubleshooting	22](#troubleshooting)
 
-### 🧾 Production Checklist
+[**Dashboard	23**](#dashboard)
 
-- [ ]  Valid API keys
-- [ ]  Dry runs passed
-- [ ]  Backup completed
-- [ ]  Maintenance window approved
-- [ ]  Monitoring in place
+[**Create alert	24**](#create-alert)
 
-## 🚫 **Not Supported Resources that needs manual setup**
+[Alert 1	24](#alert-1)
 
-- **Team B Creation:** Must be created manually before using the DR tool.
-- **API Keys:** Migration requires specific API keys with read/write permissions — these must be created manually.
-- **Groups, Scopes & Custom Roles:** System roles and SSO must be configured manually during the team creation process. *(SCIM integration may be considered in the future.)*
-- **Archives:** Team B archives must be configured on a region **different** from Team A’s archives.
-- **Quota & Plan Alignment:** Team B should start with a minimal plan that matches Team A’s plan at the beginning of Disaster Recovery.
-- **Parsing Rule, Enrichment & Alert Limits:** These limits must be manually set on Team B to match Team A’s configuration.
-- **Opensearch Dashboards:** Need to be **manually migrated** into Custom Dashboards.
-- **Alerts & Outbound Webhooks:** Excluded from the DR tool as they are managed via **Terraform and the customer’s CI/CD pipeline**.
-- **Notification Center:** Supported by Terraform, but **manual routing setup** is still required (only two routing rules: *prod* and *nonprod*).
-    
-    > 🧭 Support for automatic routing setup is planned in a future release.
-    > 
-- **Private Actions** and **Private Views:** Cannot be exported or migrated through the DR tool.
+[Alert 2	24](#alert-2)
 
----
+[**Disaster Incident	25**](#disaster-incident)
 
-**TAM Responsibility during DR:**
+[Set Quota for Team B	25](#set-quota-for-team-b)
 
-## 📦 **Installation**
+[Data Sources (as of document creation)	25](#data-sources-\(as-of-document-creation\))
 
-### 1️⃣ Clone the Repository
+[Kubernetes clusters	25](#kubernetes-clusters)
 
-```bash
-git clone https://github.com/cxthulasi/cx-drmigration-tool.git(currently private, needs access) 
-cd cx-drmigration-tool
+[Real User Monitoring	26](#real-user-monitoring)
 
-```
+[AWS Metrics from CloudWatch	26](#aws-metrics-from-cloudwatch)
 
-### 2️⃣ Setup Virtual Env and Install Dependencies
+[**Reverting Changes After the Disaster Incident	26**](#reverting-changes-after-the-disaster-incident)
 
-```bash
-chmod +x scripts/setup_venv.sh
+[Confirm Team A Availability	26](#confirm-team-a-availability)
 
-./scripts/setup_venv.sh
+[Redirect Traffic Back to Team A	27](#redirect-traffic-back-to-team-a)
 
-source venv/bin/activate
+[Revert Quota Changes	27](#revert-quota-changes)
 
-pip install -r requirements.txt
+# 
 
-```
+# Description {#description}
 
-### 3️⃣ Verify Installation
+This procedure describes all steps which need to be performed before, during and after the Coralogix region disaster to move traffic to Coralogix from one team to another which are hosted in two different regions.
 
-```bash
-python dr-tool.py --help
+Naming convention:  
+Team A \- it is the source team in Region A, for example in ap-south-1 (Mumbai)  
+Team B \- it is the source team in Region B, for example in ap-southeast-1 (Singapore)
 
-```
+Note:   
+The GitHub link repository to this tool: [https://github.com/cxthulasi/cx-drs-tool](https://github.com/cxthulasi/cx-drs-tool)
 
----
+# Prerequisites {#prerequisites}
 
-## ⚙️ **Configuration**
+1. Disaster Recovery Syncing (DRS) tool
 
-### 1️⃣ Create Environment File
+# Preparation {#preparation}
 
-Create a `.env` file in the root directory or copy from `.env.example`:
+Steps below describe how to prepare the team B before setting the Disaster Recovery Syncing tool:
 
-**Note:** Be cautious your  source TEAMA key should be readonly and should not have delete permissions just in case if any manual errors in wrongly updating .env files below
+1. Create TeamB  
+   [https://coralogix.com/docs/user-guides/account-management/user-management/create-and-manage-teams/](https://coralogix.com/docs/user-guides/account-management/user-management/create-and-manage-teams/)  
+2. Ask the Coralogix Support Team to set alerts, parsing rules, enhancements and other limits. Provide the Team A URL and the Team B URL.  
+3. Ask the Coralogix Support Team to create a plan with minimal quota size.  
+4. Configure SSO on Team B if configured on TeamA  
+   [https://coralogix.com/docs/user-guides/account-management/user-management/sso-with-saml/](https://coralogix.com/docs/user-guides/account-management/user-management/sso-with-saml/)  
+5. Configure Groups & Scopes, System Custom Roles on Team B if configured on TeamA.  
+   [https://coralogix.com/docs/user-guides/account-management/user-management/assign-user-roles-and-scopes-via-groups/create-and-manage-groups/](https://coralogix.com/docs/user-guides/account-management/user-management/assign-user-roles-and-scopes-via-groups/create-and-manage-groups/)  
+   [https://coralogix.com/docs/user-guides/account-management/user-management/scopes/](https://coralogix.com/docs/user-guides/account-management/user-management/scopes/)  
+   [https://coralogix.com/docs/user-guides/account-management/user-management/create-roles-and-permissions/](https://coralogix.com/docs/user-guides/account-management/user-management/create-roles-and-permissions/)  
+6. Configure S3 archive buckets and archive retentions (same as TeamA) for Team B which will be hosted on the same AWS region as Team B  
+   [https://coralogix.com/docs/user-guides/data-flow/s3-archive/connect-s3-archive/](https://coralogix.com/docs/user-guides/data-flow/s3-archive/connect-s3-archive/)  
+7. Opensearch Dashboards are **not supported** by the Disaster Recovery Syncing tool. Re-create Opensearch dashboards as Custom Dashboards.  
+   [https://coralogix.com/docs/user-guides/custom-dashboards/introduction/](https://coralogix.com/docs/user-guides/custom-dashboards/introduction/)  
+8. Alerts and outbound webhooks are not supported by the DRS tool.  They should be managed by Terraform and the customer’s CI/CD.  
+   Note: Notification Center \- It is supported by Terraform but there will be a need to set the routing manually. This part will be supported soon.  
+   [https://coralogix.com/docs/user-guides/notification-center/routing/introduction/](https://coralogix.com/docs/user-guides/notification-center/routing/introduction/)
+
+### Limitations {#limitations}
+
+Private Actions and Private Views can’t be exported by the DRS tool. It means that if a user has his own Views and/or Actions then he will not be able to find them on Team B. 
+
+# Disaster Recovery Syncing (DRS) tool {#disaster-recovery-syncing-(drs)-tool}
+
+## Overview {#overview}
+
+The Disaster Recovery Syncing (DRS) tool automates the process of migrating Coralogix configurations between teams, ensuring disaster recovery readiness and environment synchronization.
+
+### Key Features: {#key-features:}
+
+* 🧪 **Dry Run Mode** – Preview changes before execution  
+* 📜 **Comprehensive Logging** – Detailed operation logs  
+* 🔁 **Error Recovery** – Retry logic with exponential backoff  
+* 📊 **Tabular Statistics** – Clear migration results  
+* 💾 **Artifact Export** – Save configurations for comparison
+
+## Prerequisites {#prerequisites-1}
+
+* 🐍 Python 3.10+, pip, grpcurl installed  
+* 🔑 Coralogix API Key for the source (Team A) \- only read permissions \- see steps below  
+* 🔑 Coralogix API Key for the destination (Team B) \- only read and write permissions \- see steps below  
+* 🌐 Network access to Coralogix APIs
+
+### Create API Keys {#create-api-keys}
+
+9. Log into Coralogix Team A.  
+10. Click on **Settings** from the left side menu.  
+11. Click on **API Keys** at the Users & Teams section  
+12. Click on **\+ Personal Key** button.  
+13. Put the name for the key. Example: DRS \- TeamA Source.  
+14. Choose the following permissions:  
+    View Team Actions  
+    View User Actions  
+    View Configurations for Native Integrations (Contextual Data)  
+    View Public Custom Dashboards  
+    View Archive Bucket Settings (Logs)  
+    View Archive Bucket Settings (Metrics)  
+    View AWS Enrichment Configuration  
+    View Geo Enrichment Configuration  
+    View Unified Threat Intelligence Enrichment Configuration  
+    View Custom Enrichment Configuration  
+    View Custom Enrichment Data  
+    View Events2Metrics Configuration (Logs)  
+    View Events2Metrics Configuration (Spans)  
+    View Extensions  
+    View Grafana Dashboards  
+    View Deployed Integrations  
+    View Parsing Rules  
+    View Recording Rules  
+    View Public Saved Views in Explore Screen  
+    View Private Saved Views in Explore Screen  
+    View SLO Based Alert Settings  
+    View SLO Settings  
+    View Logs TCO Policies  
+    View Tracing TCO Policies  
+    View Metrics TCO Policies  
+15. Log into Coralogix Team B.  
+16. Click on **Settings** from the left side menu.  
+17. Click on **API Keys** at the Users & Teams section  
+18. Click on **\+ Personal Key** button.  
+19. Put the name for the key. Example: DRS \- TeamB Destination.  
+20. Choose the following presets:  
+    ContextualData  
+    Dashboards  
+    Events2Metrics  
+    Extensions  
+    Enrichments  
+    Grafana  
+    Integrations  
+    ParsingRules  
+    RecordingRules  
+    SavedViews  
+    TCOPolicies  
+    DataSetup  
+    Actions  
+    SLO
+
+## Disaster Recovery Tool on EC2 instance {#disaster-recovery-tool-on-ec2-instance}
+
+The Disaster Recovery Syncing (DRS) tool logs to files on the filesystem. To collect those logs Opentelemetry Collector will be needed. Create an EC2 instance using AWS Cloudformation.
+
+### Cloudformation for EC2 with Opentelemetry Collector and prerequisites installed. {#cloudformation-for-ec2-with-opentelemetry-collector-and-prerequisites-installed.}
+
+**Note: Use it if you want to deploy the DRS tool on an EC2 instance.**
+
+Open [`https://github.com/cxthulasi/cx-drs-tool.git`](https://github.com/cxthulasi/cx-drs-tool.git) and download two cfn templates.
+
+1. vpc.yaml (for vpc and network requirements for the EC2 to be placed)  
+2. ec2-otel.yaml (EC2 with Opentelemetry Collector installed)
+
+**Deployment (AWS CLI)** 
 
-```bash
-# Coralogix DR Tool Environment Variables
-
-# Team A (Source) Configuration
-CX_API_KEY_TEAMA=your-team-a-api-key
-CX_API_URL_TEAMA=https://api.ap1.coralogix.com/mgmt/openapi
-CX_TEAMA_URL=  # Used for replacing URLs in custom actions
-
-# Team B (Target) Configuration
-CX_API_KEY_TEAMB=your-team-b-api-key
-CX_API_URL_TEAMB=https://api.eu2.coralogix.com/mgmt/openapi
-CX_TEAMB_URL=   # Used for replacing URLs in custom actions
-
-# Optional: Logging Configuration
-LOG_LEVEL=INFO
-LOG_FORMAT=json
-
-# Optional: Rate Limiting
-API_RATE_LIMIT_PER_SECOND=10
-API_RETRY_MAX_ATTEMPTS=3
-API_RETRY_BACKOFF_FACTOR=2
-
-# Grafana Configuration
-
-TEAMA_HOST=https://ng-api-http.ap1.coralogix.com/grafana
-TEAMB_HOST=https://ng-api-http.eu2.coralogix.com/grafana
-TEAMA_KEY=your-team-a-api-key
-TEAMB_KEY=your-team-b-api-key
-
-```
-
-### 2️⃣ API Key Setup
-
-1. Get Team A API Key → Settings → API Keys → Create Management Key
-2. Get Team B API Key → Settings → API Keys → Create Management Key
-3. Ensure correct permissions (read for A, write for B)
-
-### 3️⃣ API URL Examples
-
-```bash
-CX_API_URL_TEAMA=https://api.coralogix.com/mgmt          # EU1
-CX_API_URL_TEAMB=https://api.eu2.coralogix.com/mgmt      # EU2
-
-```
-
----
-
-## 🚀 Little bit about the tool
-
-**🧭 Entry Point:** `dr-tool.py`
-
-This is the main entry point for the DR migration tool. It defines key orchestration methods responsible for creating service instances and managing the migration flow.
-
-**⚙️ Key Methods:**
-
-- **`create_service`** → A factory function that creates service instances from `src/service/<service_name>.py` and runs them with user options.
-- **`run_all_services`** → The main function to sync all the services from **TeamA** to **TeamB**. You can add the services that you want to include for migration here as well.
-
-**📁 src Folder Structure:**
-
-- **`src/`** → Contains the core implementation for all services and logic. Each service module under `src/service/` represents a specific integration or data migration component.
-
-```jsx
-src/
-├── core/ (where the base api's and other configs are defined)
-│   ├── api_client.py
-│   └── base_service.py
-     ....
-     
-├── services/ (actual logic for getting and comparing the artefacts from teama to teamb
-│   ├── slo.py
-│   └── tco.py
-     ... so on
-```
-
-## 🚀 **Quick Start**
-
-### ✅ Test Connection
-
-```bash
-python dr-tool.py slo --dry-run
-
-```
-
-### 🚚 Your First Migration
-
-```bash
-python dr-tool.py slo --dry-run
-python dr-tool.py slo
-
-python dr-tool.py custom-dashboards --dry-run
-python dr-tool.py custom-dashboards
-
-```
-
----
-
-## 🛠️ **Available Services**
-
-| Service | Description | Command |
-| --- | --- | --- |
-| **SLO** | Service Level Objectives | `slo` |
-| **Custom Dashboards** | Dashboard configurations | `custom-dashboards` |
-| **Views** | Saved views & folders | `views` |
-| **TCO** | Cost policies | `tco` |
-| **Recording Rules** | Prometheus rule groups | `recording-rules` |
-| **Parsing Rules** | Log parsing rules | `parsing-rules` |
-| **Enrichments** | Data enrichments | `enrichments` |
-| **Alerts** | Alert definitions(removes webhooks and migrates) | `alerts` |
-| **Event2Metrics** | Event → Metric rules | `event2metrics` |
-| **Custom Actions** | Manage actions | `custom-actions` |
-
----
-
-## 📖 **Usage Examples**
-
-### 🧩 Basic Commands
-
-```bash
-python dr-tool.py <service> --dry-run
-python dr-tool.py <service>
-python dr-tool.py all
-python dr-tool.py all --dry-run
-
-```
-
-### 🔍 Service-Specific
-
-```bash
-python dr-tool.py slo --dry-run
-python dr-tool.py slo
-
-python dr-tool.py custom-dashboards --dry-run
-python dr-tool.py custom-dashboards
-
-```
-
-### ⚙️ Advanced Usage(Exclude services)
-
-```bash
-python dr-tool.py all --exclude custom-dashboards views
-
-```
-
----
-
-## 🔍 **Understanding Output**
-
-### 🧪 Dry Run Example
-
-```
-DRY RUN RESULTS - SLOS
-============================================================
-Team A SLOs: 79
-Team B SLOs: 54
-
-Planned:
- - Delete 54 SLOs from B
- - Create 79 from A
-
-```
-
-### ✅ Migration Example
-
-```
-SLO MIGRATION RESULTS
-============================================================
-Team A: 79 | Team B (before): 54
-Deleted: 54 | Created: 79
-Success rate: 100%
-✅ SUCCESS: Team B now matches Team A
-
-```
-
----
-
-### 🧪 Full Dry Run Example
-
-```jsx
-python dr-tool.py all  --dry-run
-
-============================================================
-DRY RUN RESULTS - PARSING RULE GROUPS
-============================================================
-📊 Team A rule groups: 17
-📊 Team B rule groups: 8
-✅ New rule groups to create in Team B: 1
-  + Quota (ID: 14b9ae0d-3ad7-11ef-add4-02eb9fef6cad)
-🔄 Changed rule groups to recreate in Team B: 8
-  ~ k8s Opentelemetry parsing (Team A ID: cd331660-d566-4623-b9f4-c09ec8a5128c, Team B ID: 02a9271f-1453-4084-84d8-f8397da37de9)
-  ~ remove fields (Team A ID: 75cd854c-e5fc-4bac-ba01-2be6656a8512, Team B ID: b250ed7d-d599-4960-8eb6-fbefb370e14c)
-  ~ Severity Rules (Team A ID: c5720aa0-73ce-4a03-b41a-8d1ef3b71cb4, Team B ID: 020d0b50-535c-4d4c-a73a-4d13154b56d6)
-  ~ Cloudtrail rules (Team A ID: 24765544-59da-45f2-a6cb-fa0ae3c9804f, Team B ID: a2978599-bf94-4966-927c-bfff21a31803)
-  ~ topipaddress (Team A ID: f3db97ac-3d7b-4cc5-b4ee-6f471cdf47e8, Team B ID: b6935286-8d00-43b6-af20-e0119680ca2f)
-  ~ refined-parsingrule (Team A ID: a4b7b33e-7c77-4e2a-9e92-6e683b8d8ebf, Team B ID: 49578641-7497-4645-a28e-f844177c82bc)
-  ~ Change Severity of Elb logs (Team A ID: 25a630c0-0491-4ad0-a46a-531b64f509d1, Team B ID: 8ada107e-cfb9-4b63-a64b-b0a86db6bc64)
-  ~ parsing rule for sample application (Team A ID: d9710bea-cbe1-4cd9-b12b-28e46b4391ba, Team B ID: e5dbaec0-f405-4bb7-9235-b34482b6dd26)
-📋 Total operations planned: 9
-  - Create: 1
-  - Recreate: 8
-  - Delete: 0
-============================================================
-
-============================================================
-DRY RUN RESULTS - RECORDING RULE GROUP SETS
-============================================================
-📊 Team A rule group sets: 2
-📊 Team B rule group sets: 163
-✅ New rule group sets to create in Team B: 2
-  + samplegroup (ID: 01K7M1MPWM8XFPNCKJ67X6ZB4Y)
-  + cx:slo:76af8c83-2b65-476f-8f04-d3df1fd954f0 (ID: 01K87VPWWYCZKT0DP470GPYN0K)
-🗑️ Rule group sets to delete from Team B: 163
-  - filesystem_usage_avz_us_east (ID: 01K8E2VFKJNEQJYA0YXRCDZAN4)
-  - cx:slo:d195131f-0676-4d87-87ad-cd4c48d30852 (ID: 01K8E2VH5WG0V0JHF3NTRXSHYR)
-  - cx:slo:1c045ba8-04b4-4cd9-bad8-91b219617790 (ID: 01K8E2VHYYKC07W61D5VT1N47K)
-  - cx:slo:894f83ca-e970-488b-be89-84f5512e5899 (ID: 01K8E2VKHH4XJQWJ9VBKZHC27J)
-  - cx:slo:1283144f-6eb8-4581-b32c-db893bed2e6e (ID: 01K8E2VMAT5RCS5F02C6M1DYZW)
-  - cx:slo:86f19921-49f7-444e-9ede-3b504aa19f2e (ID: 01K8E2VN41KHYFE4KQRARJ1HGJ)
-  - cx:slo:dade9b92-965a-40c7-9807-93ca97ac5d7c (ID: 01K8E2VNXD6NF3ZHX6RSNVHPZ6)
-  - cx:slo:40ef910a-622b-4328-a2e0-8167fdff709d (ID: 01K8E2VPPTPSJNHG7W5E5G6QV9)
-  - cx:slo:96efd023-ba06-43ee-abfa-3d222bec7472 (ID: 01K8E2VQFYD0S84B24FEZCKP5X)
-  
-📋 Total operations planned: 165
-  - Create: 2
-  - Recreate: 0
-  - Delete: 163
-============================================================
-
-============================================================
-DRY RUN RESULTS - EVENTS2METRICS
-============================================================
-📊 Team A E2Ms: 12
-📊 Team B E2Ms: 9
-✅ New E2Ms to create in Team B: 3
-  + cx_db_catalog_duration (ID: 61e4fcc8-b2aa-4457-b788-c83301a62311)
-  + cx_db_catalog_duration_compact (ID: 9623b614-65a5-4663-84af-07777a918aa3)
-  + cx_service_catalog_duration_update (ID: 9cfaf50d-7302-4e0d-971b-3ab2082fdd86)
-🔄 Changed E2Ms to recreate in Team B: 7
-  ~ cx_db_catalog_apdex_satisfied (Team A ID: 742e377a-3d0f-4b40-b09b-d50caf5f5a5c, Team B ID: 02331e5f-e013-44a2-bbc6-8023e2082ae1)
-  ~ SourceIP_Event_Count (Team A ID: 85a293b4-4ce2-4899-87c7-2aaffc73ebf6, Team B ID: 38217579-74c8-4482-90af-8895048c8cc2)
-  ~ cx_service_catalog_apdex_satisfied (Team A ID: 981abd5a-361d-4dd1-ac7e-d39b73024092, Team B ID: 4099b6d8-b7c9-4f8b-8336-a3d2fb3f77b8)
-  ~ catalogue_latency (Team A ID: a4afa4c7-3212-43c4-b30d-ab141bec704b, Team B ID: 48461bb8-fe45-4a3b-810f-3ec06d97b257)
-  ~ cx_db_catalog_apdex_tolerating (Team A ID: c7ab379b-70cd-43db-9885-bb53fff0f134, Team B ID: a938a5de-ef9e-4f8e-b7ac-8cb39d640791)
-  ~ cx_serverless_runtime_done (Team A ID: f1803ff8-c625-44d6-92c1-b3902d932973, Team B ID: 1a7b0341-fc97-45e0-bffd-9cb3cd28b10c)
-  ~ cx_service_catalog_apdex_tolerating (Team A ID: f66aa59f-9d6e-469e-adc2-e587899a11a8, Team B ID: 41d7860c-0875-4644-b421-0af97c1d14a2)
-📋 Total operations planned: 10
-  - Create: 3
-  - Recreate: 7
-  - Delete: 0
-============================================================
-
-============================================================
-DRY RUN RESULTS - CUSTOM DASHBOARDS
-============================================================
-📊 Team A dashboards: 21
-📊 Team B dashboards: 252
-✅ New dashboards to create in Team B: 13
-  + AWS ALB (ID: bsGuKOwn6TuwiUtgQ5ANF)
-  + Aeries Web CPU by Zone (imported) (ID: lAxVttvJowzGLsaJfYVjc)
-  + Host Dashboard (imported) (ID: YuCc4hh00aQgTJAtbQYjl)
-  + Log Ingestion Monitoring (imported) (ID: ONDW8miQ1fyRwfszPo9UW)
-  + MySQL (ID: mINU7F6HGQYrf9p8gdgyI)
-  + PE logs (imported) (ID: 5Ojoy8IWeRy0XDcy85Wqy)
-  + System Monitoring - Otel (ID: g2dQD7tbVG94ZAzNF4L1r)
-  + Test Sample Dashboard (imported) (ID: 1RGx8iB3ysqBOCwnXphcf)
-  + Thulasi custom dashboard (ID: IoUVPbMxWyuzAOEi6A9Bf)
-  + custom-dashboard (ID: GgY5GwkoqXFfzmzFQoLVl)
-  + data usage metrics (ID: KZxbHaO06k8KN9oQwcEPy)
-  + gauge dashboard (ID: oCj01GPdWTX5aRpwFSTxe)
-  + metrics-visualization (ID: M9qdtZRKJGbgzgMqs6ewq)
-┌───────────────────────────────────────────────────────────────────────────────┐
-│ Resource Type │ Total │ Created │ Recreated │ Deleted │ Failed │ Success Rate │
-├───────────────────────────────────────────────────────────────────────────────┤
-│ Folders       │     6 │      [] │         0 │       0 │      0 │       100.0% │
-│ Dashboards    │    21 │      13 │         7 │     245 │      0 │       100.0% │
-└───────────────────────────────────────────────────────────────────────────────┘
-
-🔄 Changed dashboards to recreate in Team B: 7
-  ~ Adam back-engineering
-  ~ Kubernetes Complete Observability - Coralogix Helmchart Supported
-  ~ Kubernetes Dashboard - Legacy - KSM, cAdvisor,nodemetrics Supported
-  ... and 4 more
-
-🗑️ Dashboards to delete from Team B: 245
-  - A dashboard #updated
-  - A-test-multiquery
-  - A23
-  ... and 242 more
-
-📋 Ready to migrate! Run without --dry-run to execute these changes.
-================================================================================
-┌───────────────┬────────┬────────┬─────────────────────┐
-│ Resource Type │ Team A │ Team B │ Status              │
-├───────────────┼────────┼────────┼─────────────────────┤
-│ Dashboards    │     10 │      0 │ Ready for migration │
-│ Folders       │      3 │      1 │ Ready for migration │
-└───────────────┴────────┴────────┴─────────────────────┘
-
-📊 MIGRATION SUMMARY
-────────────────────────────────────────
-Total Team A Resources:           13
-  - Dashboards:                   10
-  - Folders:                       3
-Total Team B Resources:            1
-  - Dashboards:                    0
-  - Folders:                       1
-
-📋 MIGRATION PROCESS:
-1. Run import.sh script to export from Team A
-2. Run exports.sh script to export from Team B
-3. Compare and analyze differences
-
-⚠️  NOTE: This service uses shell scripts for migration
-📁 Exported files will be available in the scripts directory
-
-======================================================================
-DRY RUN RESULTS - VIEWS & FOLDERS (Delete All + Recreate All Strategy)
-======================================================================
-📊 Team A Resources:
-   📁 Folders: 1
-   📄 Views: 1
-📊 Team B Resources:
-   📁 Folders: 19
-   📄 Views: 101
-
-🎯 PLANNED OPERATIONS:
-  Step 1: Delete ALL 101 views from Team B
-  Step 2: Delete ALL 19 folders from Team B
-  Step 3: Create ALL 1 folders from Team A
-  Step 4: Create ALL 1 views from Team A
-  Total operations: 122
-
-🗑️ Sample views to be DELETED from Team B (showing first 5):
-  - Traces (ID: 109935)
-  - Default traces (ID: 109936)
-  - DataPrime - Revenue (ID: 109937)
-  - DataPrime - Enrich (ID: 109938)
-  - DataPrime - Enrich and Calculate (ID: 109939)
-  ... and 96 more views
-
-✨ Sample views to be CREATED in Team B (showing first 5):
-  - sampleview
-
-🎯 EXPECTED RESULT:
-  Team B will have 1 folders and 1 views (same as Team A)
-======================================================================
-┌────────────────┬────────┬────────┬───────────┬───────────┬────────────┐
-│ Resource Type  │ Team A │ Team B │ To Delete │ To Create │ Operations │
-├────────────────┼────────┼────────┼───────────┼───────────┼────────────┤
-│ Custom Actions │      0 │     56 │        56 │         0 │         56 │
-└────────────────┴────────┴────────┴───────────┴───────────┴────────────┘
-
-📊 MIGRATION SUMMARY
-────────────────────────────────────────
-Total Team A Actions:              0
-Total Team B Actions:             56
-Actions to Delete:                56
-Actions to Create:                 0
-Total Operations:                 56
-
-⚠️  IMPORTANT: ALL existing custom actions in Team B will be DELETED and recreated from Team A
-
-============================================================
-DRY RUN RESULTS - SLOS (Delete All + Recreate All Strategy)
-============================================================
-📊 Team A SLOs: 1
-📊 Team B SLOs: 79
-
-🎯 PLANNED OPERATIONS:
-  Step 1: Delete ALL 79 SLOs from Team B
-  Step 2: Create ALL 1 SLOs from Team A
-  Total operations: 80
-
-🗑️ Sample SLOs to be DELETED from Team B (showing first 5):
-  - Amir_Time_Window (ID: c3fe2139-11ff-4d19-8243-7f48897a15f1)
-  - Amir_test_Time_window (ID: a83cab8e-7302-4cf8-901f-c583e4e21813)
-  - Rahul Test - CPU Utilisation SLO (ID: 5d4b0b58-c1eb-41b4-8885-74037e3ec54e)
-  - Health of Env (ID: 20094abd-b483-4b6e-afca-57083aaf87ed)
-  - netanel test slo (ID: 6120b7d7-4a92-43f8-bc0b-bbe77494678c)
-  ... and 74 more SLOs
-
-✅ Sample SLOs to be CREATED in Team B (showing first 5):
-  + API Availability SLO
-
-🎯 EXPECTED RESULT:
-  Team B will have 1 SLOs (same as Team A)
-  📉 Team B will lose 78 SLOs
-============================================================
-┌─────────────────────────┬────────┬────────┬───────────┬───────────┬────────────┐
-│ Source Type             │ Team A │ Team B │ To Delete │ To Create │ Operations │
-├─────────────────────────┼────────┼────────┼───────────┼───────────┼────────────┤
-│ SOURCE_TYPE_UNSPECIFIED │      2 │      2 │         2 │         2 │          4 │
-│ SOURCE_TYPE_LOGS        │      2 │      2 │         2 │         2 │          4 │
-│ SOURCE_TYPE_SPANS       │      0 │      0 │         0 │         0 │          0 │
-└─────────────────────────┴────────┴────────┴───────────┴───────────┴────────────┘
-
-📊 MIGRATION SUMMARY
-────────────────────────────────────────
-Archive Retentions:      
-  Team A Retentions:               4
-  Team B Retentions:               4
-  Missing in Team B:               0
-  Retention Mappings:              4
-
-TCO Policies:            
-  Total Team A Policies:           4
-  Total Team B Policies:           4
-  Policies to Delete:              4
-  Policies to Create:              4
-  Total Operations:                8
-
-⚠️  IMPORTANT: ALL existing policies in Team B will be DELETED and recreated from Team A
-```
-
-## 🎛️ **Advanced Features**
-
-### 🔄 Migration Strategy
-
-**Delete All → Recreate All**
-
-1. Delete everything from Team B 
-2. Recreate from Team A
-3. Ensure full sync
-
-### ⚠️ Error Handling
-
-- Exponential backoff retries
-- Failed resource logging
-- Partial success continuation
-- Comprehensive statistics
-
-### 📁 Artifact Management
-
-```
-outputs/
-├── slo/
-│   ├── slo_teama_latest.json
-│   └── slo_teamb_latest.json
-├── dashboards/
-│   ├── custom-dashboards_teama_latest.json
-│   └── custom-dashboards_teamb_latest.json
-
-```
-
-### Logging
-
-```
-logs/
-├── main/
-│   ├── cx-dr-log-slo-2024-10-27-14.log
-│   ├── cx-dr-log-all-services-2024-10-27-14.log
-
-```
-
----
-
-## 🔧 **Troubleshooting**
-
-### 🧩 API Authentication Errors
-
-```bash
-# Verify .env keys and permissions
-
-```
-
-### 📉 Resource Count Mismatch
-
-Check logs for failed operations — counts must match.
-
-### ⏱️ Rate Limiting
-
-The tool auto-retries, but you can increase delay if frequent.
-
-### Getting Help
-
-1. Check logs in `logs/`
-2. Run `-dry-run` first
-3. Compare artifacts in `outputs/`
-
----
-
-## 📊 **Service-Specific Notes**
-
-- **SLO:** Handles nested IDs, delete-all strategy
-- **TCO:** Auto maps archive retentions
-- **Dashboards:** Maintains folder hierarchy
-- **Views:** Excludes private views
-- **Recording Rules:** Cleans read-only fields
-- **Enrichments:** All types supported
-- **Alerts:** Preserves conditions and webhooks
-
----
-
-## 🎯 **Best Practices**
-
-✅ Always dry run first
-
-🧾 Check logs for warnings
-
-📊 Verify final counts
-
-💾 Keep backups in `outputs/`
-
-🧪 Test in staging
-
-📡 Monitor API rate limits
-
-🔐 Keep `.env` secure
-
----
-
-## 🤝 **Contributing**
-
-1. Fork repo
-2. Create branch
-3. Commit changes
-4. Add tests
-5. Open PR
-
----
-
-## 📞 **Support**
-
-- 📚 Documentation: `documentation/`
-- 🪵 Logs: `logs/` directory
-- 💾 Artifacts: `outputs/` directory
-
----
-
-========================================================================
-
-# Cloudformation for EC2 with otel and prerequisites installed.
-
-The repo has two cfn templates.
-
-1. vpc.yaml (for vpc and network requirements for the ec2 to be placed)
-
-2. ec2-otel.yaml (ec2 with otel installed)
-
-📌 **Deployment (AWS CLI)**
 Note: Assuming you have configured your awscli. You directly deploy using aws console as well.
 
-```jsx
-# ADJUST/RENAME PARAMETERS AS PER YOUR NEEDS
+Deploy VPC stack if there is no VPC already:
+
+```shell
+aws cloudformation create-stack \
+  --stack-name CFN_STACK_NAME \
+  --template-body file://vpc.yaml 
+```
+
+Deploy EC2 Stack. Get the VPCID, SUBNETID from the vpc stack outputs or use the existing VPC details as params for networking.
+
+```shell
 aws cloudformation create-stack \
   --stack-name otel-ec2-stack \
-  --template-body file://template.yaml \
+  --template-body file://ec2-otel.yaml \
   --parameters \
       ParameterKey=InstanceType,ParameterValue=t3.micro \
       ParameterKey=ExistingVpcId,ParameterValue=your-vpc-id \
@@ -675,12 +222,557 @@ aws cloudformation create-stack \
       ParameterKey=KeyPairName,ParameterValue=my-key-pair \
       ParameterKey=MyIpAddress,ParameterValue=your-ip-address \
       ParameterKey=CoralogixDomain,ParameterValue=cx-domain \
-      ParameterKey=CoralogixPrivateKey,ParameterValue=your-private-key \
+      ParameterKey=CoralogixPrivateKey,ParameterValue=send-your-data-key \
       ParameterKey=CoralogixApp,ParameterValue=your-application-name \
       ParameterKey=CoralogixSubsystem,ParameterValue=your-subsystem-name \
       ParameterKey=AL2023AmiParameter,ParameterValue=/aws/service/ami-amazon-linux-latest/al2023-ami-kernel-default-x86_64 \
       ParameterKey=OTELVersion,ParameterValue=0.135.0 \
   --capabilities CAPABILITY_NAMED_IAM \
   --region REGION
+```
+
+### Installation {#installation}
+
+1. Log into EC2 instance.  
+2. Clone the repository
+
+```shell
+git clone https://github.com/cxthulasi/cx-drs-tool.git 
+cd cx-drs-tool
+```
+
+3. Setup Virtual Env and Install Dependencies
+
+```shell
+chmod +x scripts/setup_venv.sh
+./scripts/setup_venv.sh
+source .venv/bin/activate
+pip install -r requirements.txt
+```
+
+4. Verify Installation
+
+```shell
+python drs-tool.py --help
+```
+
+### Configuration {#configuration}
+
+1. Log into EC2 instance if you have been logged out.   
+2. If you are not inside the cx-drs-tool:  
+   `cd cx-drs-tool`  
+3. Create Environment File  
+   Create a `.env` file or copy from `.env.example`:  
+   **Note:** Be cautious your source TEAMA key should be readonly and should not have delete permissions just in case if any manual errors in wrongly updating .env files below
+
+```shell
+# Coralogix DRS Tool Environment Variables
+
+# Team A (Source) Configuration
+CX_API_KEY_TEAMA=your-team-a-api-key # READONLY KEY WITH REQUIRED PERMISSIONS
+CX_API_URL_TEAMA=https://api.eu1.coralogix.com/mgmt/openapi
+# Grafana Endpoint Configuration
+TEAMA_HOST=https://ng-api-http.eu1.coralogix.com/grafana
+CX_TEAMA_URL= https://hs-prod.coralogix.com # Used for replacing URLs in custom actions
+
+# Team B (Target) Configuration
+CX_API_KEY_TEAMB=your-team-b-api-key
+CX_API_URL_TEAMB=https://api.eu2.coralogix.com/mgmt/openapi
+# Grafana Endpoint Configuration
+TEAMA_HOST=https://ng-api-http.eu2.coralogix.com/grafana
+CX_TEAMB_URL= https://hs-prod-dr.app.eu2.coralogix.com  # Used for replacing URLs in custom actions
+
+# Optional: Logging Configuration
+LOG_LEVEL=INFO # use ERROR for production to reduce noise   
+LOG_FORMAT=json
+
+# Optional: Rate Limiting
+API_RATE_LIMIT_PER_SECOND=10
+API_RETRY_MAX_ATTEMPTS=3
+API_RETRY_BACKOFF_FACTOR=2
+
 
 ```
+
+### The first synchronization {#the-first-synchronization}
+
+Run the following command to do the dry-run:
+
+```shell
+python drs-tool.py all --dry-run
+```
+
+Dry Run Example:
+
+```shell
+
+============================================================
+DRY RUN RESULTS - PARSING RULE GROUPS (DELETE & RECREATE ALL)
+============================================================
+📊 Team A rule groups: 56
+📊 Team B rule groups: 55
+🗑️ Rule groups to delete from Team B: 55
+  - OTEL -> filebeat (ID: 5ab5484f-b66c-4b64-bb15-733f8d291abc, Order: 1)
+  - k8s Opentelemetry parsing (ID: 7a33a07c-ee63-436d-bb29-0c62ec18465e, Order: 2)
+  - Aws status events rules (ID: 048cd168-a86a-491c-a02c-85e4a8216b62, Order: 3)
+  - Mapping exception for message field (ID: 56722372-676e-462e-ac53-1afa114fb1d5, Order: 4)
+  - Loggregation fix: Extract nested message from message_object (ID: e78b84d1-6859-4e76-b415-1d71ce54bd2b, Order: 5)
+  - Severity Rules (ID: 0f8c887f-9bee-4582-b505-43432fe9d741, Order: 6)
+  - Block PC Unwanted Logs (ID: bcaa948c-d730-4376-bd44-aaaa17ab20b7, Order: 7)
+  - Block PA unwanted logs (ID: 777e5525-9deb-4022-a57a-cb6bb4edfdd3, Order: 8)
+  - PC rocky unwanted logs  (ID: d72548b8-6dc5-4c6a-bc7b-e4da56079035, Order: 9)
+  - SSAI Block Failed to Fetch Manifest HTTP 404 Error Logs (ID: 50bb9ea1-e49e-449e-829d-bd24f45ed159, Order: 10)
+  - Severity Rules (ID: 85245f09-bc4b-4384-9c9b-6e933cec1922, Order: 11)
+  - Ceph MDS (ID: f46dadd1-3bcb-4946-b30b-5a413e59c8a4, Order: 12)
+  - New Group (ID: db96146e-5821-4079-bd50-7cbe447a4b7a, Order: 13)
+  - Extract server API Error (ID: bd1d01a2-a4ec-45a9-837a-ed683b448982, Order: 14)
+  - Severity Rules for non prod (ID: 33292b76-1437-4828-a423-7e7884564a6c, Order: 15)
+  - Extract server API Error for non prod (ID: 8edadb5e-279f-42b6-9ef0-bac27b743f79, Order: 16)
+  - mygroup (ID: e14c1438-8e38-489f-8eee-fee8aedb2c69, Order: 17)
+  - fix mapping exception for message with Object (ID: f3c908a2-dab8-478e-bbe9-ec9294ebc394, Order: 18)
+  - UM-Concurrency-rule (ID: 5b843d4f-8ef6-449b-a464-4ea43e4bf8b6, Order: 19)
+  - Block LaunchDarkly Warning Logs (ID: 51762f31-6434-451f-be55-5490692ec511, Order: 20)
+  - [PC]: blocking "Empty or null maturityLevel in userToken" (ID: ac996aa6-f4fa-4a27-88b1-8c89074fad74, Order: 21)
+  - Received GetPlaybackURL request with passport data (ID: 339c43b6-52e4-41cc-93d2-dee61f188a49, Order: 22)
+  - Received request in GetPlaybackURL of graphql service (ID: 46d45d84-c218-421b-97db-56b6fb31df28, Order: 23)
+  - Blocking communication otp logs (ID: 39da4f32-02aa-4516-912e-b9ccc2ecbfb2, Order: 24)
+  - Block PC UnWanted Logs (ID: e47e0a48-b91a-458e-9c0a-b86f7f1e7d1c, Order: 25)
+  - Parse HS-core Logs (ID: 2de416f4-8c09-45d8-baa3-a3552d08fd91, Order: 26)
+  - Block specific logs (ID: b785fe58-d760-48cb-b302-7042e755bfce, Order: 27)
+  - Sample logs (ID: 2655fd37-2fad-4f45-abe9-b46b8ffafce9, Order: 28)
+  - zplay-rules (ID: 8a84d326-d47a-4082-bfdb-a49023d5e7c0, Order: 29)
+  - Fix Mapping Exception (ID: ed8113c2-6204-426d-a8fe-dcdfb7a4f6a0, Order: 30)
+  - Subscription | Block country backfill logs And Block Offer Service Logs in subs (ID: 176d9879-9497-4eae-9a87-910024a26738, Order: 31)
+  - Block Country Code Fallback Logs | For Different PGs (ID: a980f4f2-4fc8-40f2-8422-a3e2fe8360ec, Order: 32)
+  - Block Coupon Service GetOffer Logs (ID: 03858570-8ee1-42de-9dac-ca393e42050f, Order: 33)
+  - Hspay Debug and Info Log (ID: 871bac48-1e69-43d1-8e42-fed1c0c262c4, Order: 34)
+  - Block unwanted subs info/error logs (ID: fcb750f7-5602-493c-9bd4-9f0c827cceb3, Order: 35)
+  - Parse Useful Fields from Adtech (ID: 2747d522-04f6-44fe-a759-ded13f9fadb2, Order: 36)
+  - Parse Useful Fields from CMS (ID: cf8ee679-7551-4b63-8390-d8d96bce24df, Order: 37)
+  - Block Prefetch Service (ID: f3d62551-ab93-462d-a8fe-f9631b390e85, Order: 38)
+  - Block Programmatic decision service (ID: a6637615-0e81-4e6c-a61b-0c5fd71f6c5b, Order: 39)
+  - Block lp service (ID: b1d72d76-44b5-4ad8-83ab-cd952cb7f920, Order: 40)
+  - Parse useful field for Consumption application (ID: f4ed2ad5-e4c3-4d20-aad4-60cd6e453626, Order: 41)
+  - Block empty gam id log (ID: 5820cdf6-2a61-44ab-a96d-319bf4777eb5, Order: 42)
+  - Extract ERR_PB_*  errors from logs  (ID: a7125fa7-cb2d-40eb-a354-53268c09ac81, Order: 43)
+  - Suppress com.hotstar.lp.validator.Validator (ID: 39d8d11e-52fd-47c3-a7f6-c59c9d3ad1f9, Order: 44)
+  - Cx-Teodor | Fixing mapping exception for PageLayoutFilters (ID: 214b8a3e-c31d-4df3-b925-2715e5e2ed5b, Order: 45)
+  - Block Trivial logs (ID: b3580616-270d-4bb9-ac9d-5ea0b47d4fce, Order: 46)
+  - Block audience platform hedwig logs (ID: 37d69fbb-dfc4-41d1-900f-2f531d984abf, Order: 47)
+  - Block CMS multi-get queue lenght health check log (ID: ec0ac738-4020-4afb-8686-3b10ea76101c, Order: 48)
+  - Shifu Cohort CTR Block (ID: 7990f734-f416-49ad-9837-c62ef506e2f6, Order: 49)
+  - Block FCAP (ID: db2de377-07b4-44f2-b834-9ddd9f88fa63, Order: 50)
+  - CX-Stefaena (ID: 326cfb87-50ac-448f-8d8a-fef8fa665995, Order: 51)
+  - Extract trace_id and span_id from all application logs or transform traceId/spanId (ID: 08c8cc4b-3291-480d-878a-9d293cd32c4e, Order: 52)
+  - Block Consumption log message (ID: 07b44159-f612-4cc7-92a6-994d95fe4ec1, Order: 53)
+  - Parse Inner message json fields (ID: 9e7bada4-00eb-4fa4-9e4c-288f669fcfda, Order: 54)
+  - Block AB logs for persona (ID: 38acc5eb-c795-4c0f-8456-9484e9e87741, Order: 55)
+📄 Rule groups to create from Team A: 56
+  + OTEL -> filebeat (ID: b8cf20d6-73a9-4ba5-80d1-1055e3c7e1cf, Order: 1)
+  + k8s Opentelemetry parsing (ID: 27e39abd-db61-4b75-acb7-d33338bc63ca, Order: 2)
+  + Aws status events rules (ID: 4b1352f7-1613-48e3-aa9f-b0f52794b30e, Order: 3)
+  + Mapping exception for message field (ID: 5734dd7e-ccb0-11ea-8856-06364196e782, Order: 4)
+  + Loggregation fix: Extract nested message from message_object (ID: 1391569e-f9a0-6e08-0170-ec434e2ab4f6, Order: 5)
+  + Severity Rules (ID: 4d1dee1d-a472-11e8-984b-02420a000706, Order: 6)
+  + Block PC Unwanted Logs (ID: d9e1c73e-01c8-4f4d-92f3-c3c9b40bc99a, Order: 7)
+  + Block PA unwanted logs (ID: c5487321-7cbf-4d10-9773-7d1479e6648d, Order: 8)
+  + PC rocky unwanted logs  (ID: be93a724-15f0-4be4-9888-1d28e6e064da, Order: 9)
+  + SSAI Block Failed to Fetch Manifest HTTP 404 Error Logs (ID: ba26a803-9c39-4221-a159-540f953bce6c, Order: 10)
+  + Severity Rules (ID: 68c008a6-7a8d-4f58-bb44-42a546b7a98b, Order: 11)
+  + Ceph MDS (ID: 159de70a-e0db-4e3d-944d-372bc2a5df59, Order: 12)
+  + New Group (ID: 9a37f05b-31ea-4fde-b7ca-570b4713564b, Order: 13)
+  + Extract server API Error (ID: 78a37334-206e-49ec-8779-6962a21c0223, Order: 14)
+  + Severity Rules for non prod (ID: 61a92468-fd35-4bd7-8dc9-c8249def1517, Order: 15)
+  + Extract server API Error for non prod (ID: a6259d86-79b5-415b-b463-6a9c5a86c231, Order: 16)
+  + mygroup (ID: 379eaad3-0c06-4a05-a4a8-6eb325ebbee0, Order: 17)
+  + fix mapping exception for message with Object (ID: 5edcc290-fd8d-4260-9c12-0a174ca75e5e, Order: 18)
+  + UM-Concurrency-rule (ID: 04bdaad8-e4f5-4bc7-aa1f-eb064b68a601, Order: 19)
+  + Block LaunchDarkly Warning Logs (ID: 5cb7e7e3-7f6d-43fd-9891-b3fa20873129, Order: 20)
+  + [PC]: blocking "Empty or null maturityLevel in userToken" (ID: c35d8eb1-c19f-4760-a230-5fa9dc91d630, Order: 21)
+  + Received GetPlaybackURL request with passport data (ID: a890aa02-a188-4e13-98ae-a8e98daae462, Order: 22)
+  + Received request in GetPlaybackURL of graphql service (ID: 59a36fba-5fe7-4d7e-af5c-19d108d63c25, Order: 23)
+  + Blocking communication otp logs (ID: 2664142c-9240-4d99-b5f1-626ab9864176, Order: 24)
+  + Block PC UnWanted Logs (ID: f5eebbf7-6b47-40e9-80c0-31c5fafef646, Order: 25)
+  + Parse HS-core Logs (ID: 75660865-0e4c-4045-8abd-881a7a152207, Order: 26)
+  + Block specific logs (ID: b6bf9218-6bbb-4218-8ae2-440d27bb759f, Order: 27)
+  + Sample logs (ID: 421ce603-4bb2-4fde-abc0-466490f39c44, Order: 28)
+  + zplay-rules (ID: ff8338c7-b6a0-475c-a435-c3a43e3aca91, Order: 29)
+  + Fix Mapping Exception (ID: c6fc4613-3efb-464e-b0ed-52b6052c7c86, Order: 30)
+  + Subscription | Block country backfill logs And Block Offer Service Logs in subs (ID: c3cb8bfb-a201-427a-8df8-8097e25e9d78, Order: 31)
+  + Block Country Code Fallback Logs | For Different PGs (ID: 9f1ddc3e-2e6c-4e02-8411-5e51e4b95202, Order: 32)
+  + Block Coupon Service GetOffer Logs (ID: f1b6c747-eef0-4116-a3f3-e928ebbe05cc, Order: 33)
+  + Hspay Debug and Info Log (ID: ec5d1afd-c4de-4d04-99bd-6592ec68e158, Order: 34)
+  + Block unwanted subs info/error logs (ID: 55a80c91-e1a3-4ab2-a06f-a3eea82c5c17, Order: 35)
+  + Parse Useful Fields from Adtech (ID: ac834665-5d0b-8178-d7b9-92f768700d53, Order: 36)
+  + Parse Useful Fields from CMS (ID: e1c76ab4-1097-d115-d0bd-a8b78cf41bbb, Order: 37)
+  + Block Prefetch Service (ID: d959d079-5693-a168-ff2d-cb2015553a98, Order: 38)
+  + Block Programmatic decision service (ID: ecfa1018-c9f0-d533-e1ed-7b0eae416e74, Order: 39)
+  + Block lp service (ID: 03753e43-a3db-41ba-81e0-31dcc660fb9e, Order: 40)
+  + Parse useful field for Consumption application (ID: 8bfd75d2-7c6d-59e5-3c36-3c0b23a48047, Order: 41)
+  + Block empty gam id log (ID: d4496f8b-cc0c-42f0-12f5-e8932df92ddb, Order: 42)
+  + Extract ERR_PB_*  errors from logs  (ID: 09e4a0b3-a3d0-5bbf-fdef-f82e0bf2bf24, Order: 43)
+  + Suppress com.hotstar.lp.validator.Validator (ID: f255b2f1-3257-514e-930f-e4a6f103379f, Order: 44)
+  + Cx-Teodor | Fixing mapping exception for PageLayoutFilters (ID: 7a3b9746-f879-4925-9d6f-ebe0908129d6, Order: 45)
+  + Block Trivial logs (ID: ee2837b7-0ff0-49ce-933d-8910bf74caf4, Order: 46)
+  + Block audience platform hedwig logs (ID: ccd59a6a-0991-4347-8588-1151823e24ed, Order: 47)
+  + Block CMS multi-get queue lenght health check log (ID: 0f6baa55-b829-4dd5-82ff-7369cadc18ed, Order: 48)
+  + Shifu Cohort CTR Block (ID: 30e87080-88ef-499e-ba90-1aab6207cce8, Order: 49)
+  + Block FCAP (ID: 093f149b-aaab-46e8-9645-ee74b303fb93, Order: 50)
+  + CX-Stefaena (ID: acba247e-9473-4a6b-be7d-40c82e4e1fdc, Order: 51)
+  + Extract trace_id and span_id from all application logs or transform traceId/spanId (ID: cd920d15-9fc9-4ed8-821b-8c9716abd545, Order: 52)
+  + Block Consumption log message (ID: 58bb31a1-a702-44a8-847f-6279f3684cda, Order: 53)
+  + Parse Inner message json fields (ID: 7da3bc3f-fe77-4825-87ef-0e2aa61c4c3e, Order: 54)
+  + Block AB logs for persona (ID: f03ae0e8-c503-416f-90a9-c795933f4fb0, Order: 55)
+  + Quota (ID: 30b74c1c-4283-11ea-8856-06364196e782, Order: 9196)
+📋 Total operations planned: 111
+  - Delete: 55
+  - Create: 56
+
+⚠️  IMPORTANT: ALL existing rule groups in Team B will be DELETED and recreated from Team A
+🎯 This ensures perfect order synchronization and rule consistency
+============================================================
+
+============================================================
+DRY RUN - RECORDING RULE GROUP SETS MIGRATION
+============================================================
+📊 Team A rule group sets: 6
+📊 Team B rule group sets (current): 11
+
+🔄 Planned Operations:
+   🗑️  Delete ALL 11 rule group sets from Team B
+   ✅ Create 6 rule group sets from Team A
+
+📋 Total operations: 17
+============================================================
+
+Sample rule group sets from Team A (first 5):
+  1. Hotstar_recording_rule.yaml (ID: 01JMEEZRN2JNCSK9JQA2Z5ERF6)
+  2. cx:slo:7681fe9d-03f4-4d8b-957b-23135f2a597f (ID: 01K7KS21V38PVN5A3D39AXMSMM)
+  3. cx:slo:0bef3430-77ab-483e-8a13-a6bbb66dc652 (ID: 01K9VB4E1Z6TCB62R7AS9S0CDM)
+  4. cx:slo:f30d643d-3263-49b3-88d6-328718935809 (ID: 01K9VZ3QFB42E0MW643CTAFKEP)
+  5. cx:slo:ca1246c5-daeb-48e5-a7e8-01c4b0267cb4 (ID: 01K9YJBACGK269T1ZE7EBEBJNF)
+
+
+============================================================
+DRY RUN - GENERAL ENRICHMENT RULES MIGRATION
+============================================================
+📊 Team A enrichments (migratable): 1
+📊 Team B enrichments (current): 1
+
+🔄 Planned Operations:
+   🗑️  Delete ALL 1 enrichments from Team B
+   ✅ Create 1 enrichments from Team A
+
+📋 Total operations: 2
+============================================================
+
+Sample migratable enrichments from Team A (first 5):
+  1. Unknown (from: client_ip, type: suspiciousIp)
+
+
+============================================================
+DRY RUN - EVENTS2METRICS MIGRATION
+============================================================
+📊 Team A E2Ms: 14
+📊 Team B E2Ms (current): 14
+
+🔄 Planned Operations:
+   🗑️  Delete ALL 14 E2Ms from Team B
+   ✅ Create 14 E2Ms from Team A
+
+📋 Total operations: 28
+============================================================
+
+Sample E2Ms from Team A (first 5):
+  1. cx_service_catalog_apdex_satisfied (ID: 0b2e39ce-653f-4723-a8ad-bb66069f1292)
+  2. binder_id (ID: 0c7dbaab-4c7d-4907-a3d4-ce9f6748050b)
+  3. cx_db_catalog_duration (ID: 1a497ce0-be4c-4142-9aa0-68517697cea7)
+  4. cx_serverless_runtime_done (ID: 51e2f7db-c662-4108-b2f5-2b819f483a22)
+  5. cx_service_catalog_service_duration (ID: 8397f3a2-e305-4f48-a58d-db34caf195b6)
+
+┌────────────────┬────────┬────────┬───────────┬───────────┬────────────┐
+│ Resource Type  │ Team A │ Team B │ To Delete │ To Create │ Operations │
+├────────────────┼────────┼────────┼───────────┼───────────┼────────────┤
+│ Custom Actions │     16 │     16 │        16 │        16 │         32 │
+└────────────────┴────────┴────────┴───────────┴───────────┴────────────┘
+
+📊 MIGRATION SUMMARY
+────────────────────────────────────────
+Total Team A Actions:             16
+Total Team B Actions:             16
+Actions to Delete:                16
+Actions to Create:                16
+Total Operations:                 32
+
+⚠️  IMPORTANT: ALL existing custom actions in Team B will be DELETED and recreated from Team A
+
+============================================================
+DRY RUN RESULTS - SLOS (Delete All + Recreate All Strategy)
+============================================================
+📊 Team A SLOs: 5
+📊 Team B SLOs: 5
+
+🎯 PLANNED OPERATIONS:
+  Step 1: Delete ALL 5 SLOs from Team B
+  Step 2: Create ALL 5 SLOs from Team A
+  Total operations: 10
+
+🗑️ Sample SLOs to be DELETED from Team B (showing first 5):
+  - ELB-Health-SLO (ID: 0c4505df-1ead-4cb7-bc36-3f77065238f4)
+  - ALB Health SLO (ID: 8484848d-9c75-45b1-a4aa-ae58b86a23a5)
+  - ELB Teamwise Health - SLO (ID: 1178817b-72e1-4f47-bf27-33b87d8142fa)
+  - Baseline RDS Uptime WIP (ID: 9e1df3ae-0bff-4aa4-83fb-238595a517be)
+  - 6-9s Uptime RDS (ID: 57ada566-5bdb-416b-a0e5-448a181bb569)
+
+✅ Sample SLOs to be CREATED in Team B (showing first 5):
+  + ELB-Health-SLO
+  + ALB Health SLO
+  + ELB Teamwise Health - SLO
+  + Baseline RDS Uptime WIP
+  + 6-9s Uptime RDS
+
+🎯 EXPECTED RESULT:
+  Team B will have 5 SLOs (same as Team A)
+  ✨ Teams are already in sync, but migration will ensure consistency
+============================================================
+
+========================================================================================================================
+📊 DRY RUN SUMMARY - ALL SERVICES
+========================================================================================================================
++---------------------+----------+----------+------------+-----------+-----------+-----------+----------+-----------+-------------+-------------+
+| Service             | Status   |   Team A |     Team B |    Team B |   Created |   Deleted |   Failed |   Skipped |   Total Ops | Success %   |
+|                     |          |          |   (Before) |   (After) |           |           |          |           |             |             |
++=====================+==========+==========+============+===========+===========+===========+==========+===========+=============+=============+
+| parsing-rules       | SUCCESS  |       55 |         55 |        55 |        56 |        55 |        0 |         0 |         111 | 100.0%      |
++---------------------+----------+----------+------------+-----------+-----------+-----------+----------+-----------+-------------+-------------+
+| recording-rules     | SUCCESS  |        6 |         11 |         6 |         6 |        11 |        0 |         0 |          17 | 100.0%      |
++---------------------+----------+----------+------------+-----------+-----------+-----------+----------+-----------+-------------+-------------+
+| general-enrichments | SUCCESS  |        1 |          1 |         1 |         0 |         0 |        0 |         0 |           0 | 100.0%      |
++---------------------+----------+----------+------------+-----------+-----------+-----------+----------+-----------+-------------+-------------+
+| events2metrics      | SUCCESS  |       14 |         14 |        14 |        14 |        14 |        0 |         0 |          28 | 100.0%      |
++---------------------+----------+----------+------------+-----------+-----------+-----------+----------+-----------+-------------+-------------+
+| views               | SUCCESS  |       30 |         30 |        30 |        30 |        30 |        0 |         0 |          60 | 100.0%      |
++---------------------+----------+----------+------------+-----------+-----------+-----------+----------+-----------+-------------+-------------+
+| custom-actions      | SUCCESS  |       16 |         16 |        16 |        16 |        16 |        0 |         0 |          32 | 100.0%      |
++---------------------+----------+----------+------------+-----------+-----------+-----------+----------+-----------+-------------+-------------+
+| slo                 | SUCCESS  |        5 |          5 |         5 |         0 |         0 |        0 |         0 |           0 | 100.0%      |
++---------------------+----------+----------+------------+-----------+-----------+-----------+----------+-----------+-------------+-------------+
+
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+📈 OVERALL STATISTICS
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+Total Services Processed:               7
+Successful Services:                    7
+Failed Services:                        0
+Overall Success Rate:              100.0%
+Total Duration:                      4.7s
+========================================================================================================================
+
+📄 Detailed summary saved to: outputs/migration-summary/migration-summary-dry-run-2025-12-04-10-19-13.json
+📄 Latest summary saved to: outputs/migration-summary/migration-summary-dry-run-latest.json
+📄 Coralogix logs saved to: outputs/migration-summary/coralogix-logs-dry-run-2025-12-04-10-19-13.jsonl
+📄 Coralogix logs (latest) saved to: outputs/migration-summary/coralogix-logs-dry-run-latest.jsonl
+
+========================================================================================================================
+📊 MIGRATION SUMMARY (JSON FORMAT FOR MONITORING)
+========================================================================================================================
+{"log_type": "migration_summary", "runtime": "2025-12-04-10-19-08-6601580e", "mode": "DRY RUN", "timestamp": "2025-12-04T10:19:13.683900", "duration_seconds": 4.705614, "total_services": 7, "successful_services": 7, "failed_services": 0, "success_rate": "100.0%"}
+{"log_type": "service_detail", "runtime": "2025-12-04-10-19-08-6601580e", "mode": "DRY RUN", "timestamp": "2025-12-04T10:19:13.683900", "service": "parsing-rules", "status": "SUCCESS", "teama_count": 55, "teamb_before": 55, "teamb_after": 55, "created": 56, "updated": 0, "deleted": 55, "failed": 0, "skipped": 0, "total_operations": 111, "success_rate": "100.0%", "error_message": null}
+{"log_type": "service_detail", "runtime": "2025-12-04-10-19-08-6601580e", "mode": "DRY RUN", "timestamp": "2025-12-04T10:19:13.683900", "service": "recording-rules", "status": "SUCCESS", "teama_count": 6, "teamb_before": 11, "teamb_after": 6, "created": 6, "updated": 0, "deleted": 11, "failed": 0, "skipped": 0, "total_operations": 17, "success_rate": "100.0%", "error_message": null}
+{"log_type": "service_detail", "runtime": "2025-12-04-10-19-08-6601580e", "mode": "DRY RUN", "timestamp": "2025-12-04T10:19:13.683900", "service": "general-enrichments", "status": "SUCCESS", "teama_count": 1, "teamb_before": 1, "teamb_after": 1, "created": 0, "updated": 0, "deleted": 0, "failed": 0, "skipped": 0, "total_operations": 0, "success_rate": "100.0%", "error_message": null}
+{"log_type": "service_detail", "runtime": "2025-12-04-10-19-08-6601580e", "mode": "DRY RUN", "timestamp": "2025-12-04T10:19:13.683900", "service": "events2metrics", "status": "SUCCESS", "teama_count": 14, "teamb_before": 14, "teamb_after": 14, "created": 14, "updated": 0, "deleted": 14, "failed": 0, "skipped": 0, "total_operations": 28, "success_rate": "100.0%", "error_message": null}
+{"log_type": "service_detail", "runtime": "2025-12-04-10-19-08-6601580e", "mode": "DRY RUN", "timestamp": "2025-12-04T10:19:13.683900", "service": "views", "status": "SUCCESS", "teama_count": 30, "teamb_before": 30, "teamb_after": 30, "created": 30, "updated": 0, "deleted": 30, "failed": 0, "skipped": 0, "total_operations": 60, "success_rate": "100.0%", "error_message": null}
+{"log_type": "service_detail", "runtime": "2025-12-04-10-19-08-6601580e", "mode": "DRY RUN", "timestamp": "2025-12-04T10:19:13.683900", "service": "custom-actions", "status": "SUCCESS", "teama_count": 16, "teamb_before": 16, "teamb_after": 16, "created": 16, "updated": 0, "deleted": 16, "failed": 0, "skipped": 0, "total_operations": 32, "success_rate": "100.0%", "error_message": null}
+{"log_type": "service_detail", "runtime": "2025-12-04-10-19-08-6601580e", "mode": "DRY RUN", "timestamp": "2025-12-04T10:19:13.683900", "service": "slo", "status": "SUCCESS", "teama_count": 5, "teamb_before": 5, "teamb_after": 5, "created": 0, "updated": 0, "deleted": 0, "failed": 0, "skipped": 0, "total_operations": 0, "success_rate": "100.0%", "error_message": null}
+========================================================================================================================
+```
+
+Sample Summary Output:
+
+![][image1]
+
+If no errors then run the first synchronization from Team A to Team B.
+
+```shell
+python drs-tool.py all
+```
+
+### Important Directories and Files {#important-directories-and-files}
+
+[drs-tool.py](http://drs-tool.py) is the entry script   
+logs – stores logs for each service;  
+src – contains service definitions, helper scripts, and core API logic;  
+outputs – holds Team A/Team B service configs and migration summary stats for each run.
+
+## ![][image2]
+
+### Set the process to run every day {#set-the-process-to-run-every-day}
+
+1. Edit cron. Execute:  
+   `crontab -e`   
+2. `Add the following entries:`
+
+```
+30 0 * * * /usr/bin/aws s3 sync /home/ec2-user/cx-drs-tool s3://cx-coe-jiostar-drtool-backup-bucket/cx-drs-tool/ --exclude ".*" --exclude "*/.*" >> /home/ec2-user/s3_sync.log 2>&1
+
+30 1 * * * cd /home/ec2-user/cx-drs-tool && source /home/ec2-user/cx-drs-tool/.venv/bin/activate && /home/ec2-user/cx-drs-tool/.venv/bin/python drs-tool.py all --dry-run >> /home/ec2-user/drs-tool.log 2>&1
+```
+
+## 
+
+# Disaster Recovery Tool on K8s cluster {#disaster-recovery-tool-on-k8s-cluster}
+
+The following steps need to be followed if you are going to deploy the DRS tool on K8s cluster.
+
+Note: This configuration assumes that the Coralogix Opentelemetry Helm chart is deployed on K8s cluster. The Opentelemetry Collector will send DRS logs to Coralogix.  
+For the code and settings details refer to [https://github.com/cxthulasi/cx-drs-tool/tree/main/k8s-persistent](https://github.com/cxthulasi/cx-drs-tool/tree/main/k8s-persistent)
+
+1. Clone the repository
+
+```shell
+git clone https://github.com/cxthulasi/cx-drs-tool.git 
+```
+
+2. Enter the directory:
+
+```shell
+cd cx-drs-tool 
+```
+
+3. Build the image:
+
+```shell
+docker build -f k8s-persistent/Dockerfile -t <Docker Hub username / repository namespace>/cx-drs-tool:latest . 
+```
+
+4. Push the image to your repo:
+
+```shell
+docker push <Docker Hub username / repository namespace>/cx-drs-tool:latest
+```
+
+5. Enter the k8s-persistent directory:
+
+```shell
+cd k8s-persistent
+```
+
+6. Edit the secrets.yaml file.  
+   Note: API Keys were created at this section: [Coralogix Disaster Recovery procedure](https://docs.google.com/document/d/1dk2mn-aX1KUNh1KxNBZVRz4SyOFNsJHRNU6quP361os/edit?tab=t.0#heading=h.irmq3zhuhw2d)
+
+```shell
+vi secrets.yaml
+```
+
+7. Edit the configmap.yaml file.
+
+```shell
+vi configmap.yaml
+```
+
+8. Deploy the tool.
+
+```shell
+# Create namespace
+kubectl apply -f namespace.yaml
+# Create ConfigMap and Secrets
+kubectl apply -f secrets.yamlkubectl apply -f configmap.yaml
+# Deploy the pod
+kubectl apply -f deployment.yaml
+```
+
+9. Verify the deployment.
+
+```shell
+# Check if pod is running
+kubectl get pods -n cx-drs
+# View pod logs
+kubectl logs -n cx-drs -l app=cx-drs-tool -f
+# Check deployment status
+kubectl get deployment -n cx-drs
+```
+
+10. Manual execution.  
+    It is recommended to run the DRS tool the first time manually to monitor and verify that the process finished any issues.
+
+```shell
+# Trigger migration manually (without waiting for schedule)
+POD_NAME=$(kubectl get pods -n cx-drs -l app=cx-drs-tool -o jsonpath='{.items[0].metadata.name}')
+kubectl exec -n cx-drs $POD_NAME -- sh -c 'cd /app && python3 -u /app/drs-tool.py all 2>&1 | tee /proc/1/fd/1'
+
+# Trigger S3 sync manually
+kubectl exec -n cx-drs $POD_NAME -- sh -c 'cd /app && /usr/local/bin/aws s3 sync /app ${S3_BUCKET_NAME} --exclude ".*" --exclude "*/.*" 2>&1 | tee /proc/1/fd/1'
+
+# Cleanup - Daily at ${CLEANUP_SCHEDULE} UTC (delete files older than 7 days)
+kubectl exec -n cx-drs $POD_NAME -- sh -c 'find /app/logs /app/outputs /app/snapshots /app/state /app/src/scripts/dashboards /app/src/scripts/folders -mindepth 1 -mtime +7 -exec rm -rf {} +'
+
+```
+
+## Safety Check Process {#safety-check-process}
+
+For any reason if the TeamA API fails, there is a safety check implemented for each service to safely exit the migration process and not delete any of the TeamB resources. 
+
+## Troubleshooting {#troubleshooting}
+
+* API Authentication Errors
+
+```shell
+# Verify .env keys and permissions
+```
+
+* Resource Count Mismatch
+
+Check logs for failed operations — counts must match.
+
+* Rate Limiting
+
+The tool auto-retries, but you can increase delay if frequent.
+
+* Getting Help  
+- Log into Coralogix and check collected logs  
+- Check logs in `logs/`  
+- Compare artifacts in `outputs/`
+
+# Dashboard  {#dashboard}
+
+Note: For any reason if TeamA fetching fails, the safety check kicks in and safely exits the migration of the service, status and success\_ratio are updated accordingly.  
+Dashboard file: \<github link will be provided\>  
+![][image3]
+
+# Create alert {#create-alert}
+
+Create the following alerts to be notified about errors reported by the running DRS tool.
+
+## Alert 1 {#alert-1}
+
+Alert Type: Standard  
+Alert Name: DRS Sync Tool \- Synchronization completed with failures  
+Alert Description: DRS Sync Tool \- One or more of services was not synchronized. Check DRS Synchronization Dashboard  
+Labels:drs-tool  
+Search query: mode:"MIGRATION" AND log\_type:"migration\_summary" AND failed\_services.numeric:\[1 TO \*\]  
+Applications: drs-tool (adjust it if your application name is different)  
+Subsystem: All  
+Severities: All  
+Conditions:   
+Alert when: Notify Immediately  
+	Set Condition Rules: when the query matches a log trigger a P2 alert.  
+Notifications: set notifications accordingly to the way you want to be notified.
+
+Click on the **Create Alert** button.
+
+## Alert 2 {#alert-2}
+
+Alert Type: Standard  
+Alert Name: DRS Sync Tool \- Service failed to sync  
+Alert Description: A service failed to sync between Team A and Team B. Check DRS Synchronization Dashboard  
+Labels: drs-tool  
+Search query: mode:"MIGRATION" AND log\_type:"service\_detail" AND status:"failed"  
+Applications: drs-tool (adjust it if your application name is different)  
+Subsystem: All  
+Severities: All  
+Conditions:   
+Alert when: More than threshold  
+	Set Condition Rules:  
+When the number of logs within **10 Minutes**  is more than **0** trigger a P2 alert.  
+Group By: service  
+Notifications: set notifications accordingly to the way you want to be notified.
