@@ -8,11 +8,11 @@
 
 [Limitations	4](#limitations)
 
-[**Disaster Recovery Syncing (DRS) tool	4**](#disaster-recovery-syncing-\(drs\)-tool)
+[**Disaster Recovery Syncing (DRS) tool	4**](#disaster-recovery-syncing-drs)-tool)
 
 [Overview	4](#overview)
 
-[Key Features:	4](#key-features:)
+[Key Features:	4](#key-features)
 
 [Prerequisites	4](#prerequisites-1)
 
@@ -20,7 +20,7 @@
 
 [Disaster Recovery Tool on EC2 instance	6](#disaster-recovery-tool-on-ec2-instance)
 
-[Cloudformation for EC2 with Opentelemetry Collector and prerequisites installed.	6](#cloudformation-for-ec2-with-opentelemetry-collector-and-prerequisites-installed.)
+[Cloudformation for EC2 with Opentelemetry Collector and prerequisites installed.	6](#cloudformation-for-ec2-with-opentelemetry-collector-and-prerequisites-installed)
 
 [Installation	8](#installation)
 
@@ -50,7 +50,7 @@
 
 [Set Quota for Team B	25](#set-quota-for-team-b)
 
-[Data Sources (as of document creation)	25](#data-sources-\(as-of-document-creation\))
+[Data Sources (as of document creation)	25](#data-sources-as-of-document-creation))
 
 [Kubernetes clusters	25](#kubernetes-clusters)
 
@@ -66,10 +66,8 @@
 
 [Revert Quota Changes	27](#revert-quota-changes)
 
-# 
-
-# Description {#description}
-
+<a id="description"></a>
+# # Description
 This procedure describes all steps which need to be performed before, during and after the Coralogix region disaster to move traffic to Coralogix from one team to another which are hosted in two different regions.
 
 Naming convention:  
@@ -79,12 +77,12 @@ Team B \- it is the source team in Region B, for example in ap-southeast-1 (Sing
 Note:   
 The GitHub link repository to this tool: [https://github.com/cxthulasi/cx-drs-tool](https://github.com/cxthulasi/cx-drs-tool)
 
-# Prerequisites {#prerequisites}
-
+<a id="prerequisites"></a>
+# Prerequisites
 1. Disaster Recovery Syncing (DRS) tool
 
-# Preparation {#preparation}
-
+<a id="preparation"></a>
+# Preparation
 Steps below describe how to prepare the team B before setting the Disaster Recovery Syncing tool:
 
 1. Create TeamB  
@@ -105,33 +103,33 @@ Steps below describe how to prepare the team B before setting the Disaster Recov
    Note: Notification Center \- It is supported by Terraform but there will be a need to set the routing manually. This part will be supported soon.  
    [https://coralogix.com/docs/user-guides/notification-center/routing/introduction/](https://coralogix.com/docs/user-guides/notification-center/routing/introduction/)
 
-### Limitations {#limitations}
-
+<a id="limitations"></a>
+### Limitations
 Private Actions and Private Views can’t be exported by the DRS tool. It means that if a user has his own Views and/or Actions then he will not be able to find them on Team B. 
 
-# Disaster Recovery Syncing (DRS) tool {#disaster-recovery-syncing-(drs)-tool}
-
-## Overview {#overview}
-
+<a id="disaster-recovery-syncing-drs-tool"></a>
+# Disaster Recovery Syncing (DRS) tool
+<a id="overview"></a>
+## Overview
 The Disaster Recovery Syncing (DRS) tool automates the process of migrating Coralogix configurations between teams, ensuring disaster recovery readiness and environment synchronization.
 
-### Key Features: {#key-features:}
-
+<a id="key-features"></a>
+### Key Features
 * 🧪 **Dry Run Mode** – Preview changes before execution  
 * 📜 **Comprehensive Logging** – Detailed operation logs  
 * 🔁 **Error Recovery** – Retry logic with exponential backoff  
 * 📊 **Tabular Statistics** – Clear migration results  
 * 💾 **Artifact Export** – Save configurations for comparison
 
-## Prerequisites {#prerequisites-1}
-
+<a id="prerequisites-1"></a>
+## Prerequisites
 * 🐍 Python 3.10+, pip, grpcurl installed  
 * 🔑 Coralogix API Key for the source (Team A) \- only read permissions \- see steps below  
 * 🔑 Coralogix API Key for the destination (Team B) \- only read and write permissions \- see steps below  
 * 🌐 Network access to Coralogix APIs
 
-### Create API Keys {#create-api-keys}
-
+<a id="create-api-keys"></a>
+### Create API Keys
 9. Log into Coralogix Team A.  
 10. Click on **Settings** from the left side menu.  
 11. Click on **API Keys** at the Users & Teams section  
@@ -184,12 +182,12 @@ The Disaster Recovery Syncing (DRS) tool automates the process of migrating Cora
     Actions  
     SLO
 
-## Disaster Recovery Tool on EC2 instance {#disaster-recovery-tool-on-ec2-instance}
-
+<a id="disaster-recovery-tool-on-ec2-instance"></a>
+## Disaster Recovery Tool on EC2 instance
 The Disaster Recovery Syncing (DRS) tool logs to files on the filesystem. To collect those logs Opentelemetry Collector will be needed. Create an EC2 instance using AWS Cloudformation.
 
-### Cloudformation for EC2 with Opentelemetry Collector and prerequisites installed. {#cloudformation-for-ec2-with-opentelemetry-collector-and-prerequisites-installed.}
-
+<a id="cloudformation-for-ec2-with-opentelemetry-collector-and-prerequisites-installed"></a>
+### Cloudformation for EC2 with Opentelemetry Collector and prerequisites installed
 **Note: Use it if you want to deploy the DRS tool on an EC2 instance.**
 
 Open [`https://github.com/cxthulasi/cx-drs-tool.git`](https://github.com/cxthulasi/cx-drs-tool.git) and download two cfn templates.
@@ -231,8 +229,8 @@ aws cloudformation create-stack \
   --region REGION
 ```
 
-### Installation {#installation}
-
+<a id="installation"></a>
+### Installation
 1. Log into EC2 instance.  
 2. Clone the repository
 
@@ -256,8 +254,8 @@ pip install -r requirements.txt
 python drs-tool.py --help
 ```
 
-### Configuration {#configuration}
-
+<a id="configuration"></a>
+### Configuration
 1. Log into EC2 instance if you have been logged out.   
 2. If you are not inside the cx-drs-tool:  
    `cd cx-drs-tool`  
@@ -291,11 +289,10 @@ API_RATE_LIMIT_PER_SECOND=10
 API_RETRY_MAX_ATTEMPTS=3
 API_RETRY_BACKOFF_FACTOR=2
 
-
 ```
 
-### The first synchronization {#the-first-synchronization}
-
+<a id="the-first-synchronization"></a>
+### The first synchronization
 Run the following command to do the dry-run:
 
 ```shell
@@ -452,7 +449,6 @@ Sample rule group sets from Team A (first 5):
   4. cx:slo:f30d643d-3263-49b3-88d6-328718935809 (ID: 01K9VZ3QFB42E0MW643CTAFKEP)
   5. cx:slo:ca1246c5-daeb-48e5-a7e8-01c4b0267cb4 (ID: 01K9YJBACGK269T1ZE7EBEBJNF)
 
-
 ============================================================
 DRY RUN - GENERAL ENRICHMENT RULES MIGRATION
 ============================================================
@@ -468,7 +464,6 @@ DRY RUN - GENERAL ENRICHMENT RULES MIGRATION
 
 Sample migratable enrichments from Team A (first 5):
   1. Unknown (from: client_ip, type: suspiciousIp)
-
 
 ============================================================
 DRY RUN - EVENTS2METRICS MIGRATION
@@ -587,25 +582,21 @@ Total Duration:                      4.7s
 ========================================================================================================================
 ```
 
-
-
 If no errors then run the first synchronization from Team A to Team B.
 
 ```shell
 python drs-tool.py all
 ```
 
-### Important Directories and Files {#important-directories-and-files}
-
+<a id="important-directories-and-files"></a>
+### Important Directories and Files
 [drs-tool.py](http://drs-tool.py) is the entry script   
 logs – stores logs for each service;  
 src – contains service definitions, helper scripts, and core API logic;  
 outputs – holds Team A/Team B service configs and migration summary stats for each run.
 
-
-
-### Set the process to run every day {#set-the-process-to-run-every-day}
-
+<a id="set-the-process-to-run-every-day"></a>
+### Set the process to run every day
 1. Edit cron. Execute:  
    `crontab -e`   
 2. `Add the following entries:`
@@ -616,10 +607,8 @@ outputs – holds Team A/Team B service configs and migration summary stats for 
 30 1 * * * cd /home/ec2-user/cx-drs-tool && source /home/ec2-user/cx-drs-tool/.venv/bin/activate && /home/ec2-user/cx-drs-tool/.venv/bin/python drs-tool.py all --dry-run >> /home/ec2-user/drs-tool.log 2>&1
 ```
 
-## 
-
-# Disaster Recovery Tool on K8s cluster {#disaster-recovery-tool-on-k8s-cluster}
-
+<a id="disaster-recovery-tool-on-k8s-cluster"></a>
+## # Disaster Recovery Tool on K8s cluster
 The following steps need to be followed if you are going to deploy the DRS tool on K8s cluster.
 
 Note: This configuration assumes that the Coralogix Opentelemetry Helm chart is deployed on K8s cluster. The Opentelemetry Collector will send DRS logs to Coralogix.  
@@ -706,12 +695,12 @@ kubectl exec -n cx-drs $POD_NAME -- sh -c 'find /app/logs /app/outputs /app/snap
 
 ```
 
-## Safety Check Process {#safety-check-process}
-
+<a id="safety-check-process"></a>
+## Safety Check Process
 For any reason if the TeamA API fails, there is a safety check implemented for each service to safely exit the migration process and not delete any of the TeamB resources. 
 
-## Troubleshooting {#troubleshooting}
-
+<a id="troubleshooting"></a>
+## Troubleshooting
 * API Authentication Errors
 
 ```shell
@@ -731,18 +720,18 @@ The tool auto-retries, but you can increase delay if frequent.
 - Check logs in `logs/`  
 - Compare artifacts in `outputs/`
 
-# Dashboard  {#dashboard}
-
+<a id="dashboard"></a>
+# Dashboard
 Note: For any reason if TeamA fetching fails, the safety check kicks in and safely exits the migration of the service, status and success\_ratio are updated accordingly.  
 Dashboard file: \<github link will be provided\>  
 ![][image3]
 
-# Create alert {#create-alert}
-
+<a id="create-alert"></a>
+# Create alert
 Create the following alerts to be notified about errors reported by the running DRS tool.
 
-## Alert 1 {#alert-1}
-
+<a id="alert-1"></a>
+## Alert 1
 Alert Type: Standard  
 Alert Name: DRS Sync Tool \- Synchronization completed with failures  
 Alert Description: DRS Sync Tool \- One or more of services was not synchronized. Check DRS Synchronization Dashboard  
@@ -758,8 +747,8 @@ Notifications: set notifications accordingly to the way you want to be notified.
 
 Click on the **Create Alert** button.
 
-## Alert 2 {#alert-2}
-
+<a id="alert-2"></a>
+## Alert 2
 Alert Type: Standard  
 Alert Name: DRS Sync Tool \- Service failed to sync  
 Alert Description: A service failed to sync between Team A and Team B. Check DRS Synchronization Dashboard  

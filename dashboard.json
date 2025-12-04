@@ -1,0 +1,570 @@
+{
+  "id": "jewSy5qeY5ljqrE2FcA7C",
+  "name": "DRS Synchronization Dashboard (imported)",
+  "layout": {
+    "sections": [
+      {
+        "id": {
+          "value": "92f6a5b4-c09a-456d-abc6-2e6eec996eb3"
+        },
+        "rows": [
+          {
+            "id": {
+              "value": "a858026b-3f41-478e-949d-cd65cba6e11b"
+            },
+            "appearance": {
+              "height": 8
+            },
+            "widgets": [
+              {
+                "id": {
+                  "value": "b8b76f0a-3646-4423-af89-2babdac02f16"
+                },
+                "title": "New Markdown",
+                "definition": {
+                  "markdown": {
+                    "markdownText": "# Overall Status of Synchronizations"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "id": {
+              "value": "b6500de9-78c7-4406-8604-b5a49c2a183e"
+            },
+            "appearance": {
+              "height": 11
+            },
+            "widgets": [
+              {
+                "id": {
+                  "value": "23080d24-abc3-4330-a335-766c8dccfe75"
+                },
+                "title": "Number of Synchronizations",
+                "definition": {
+                  "gauge": {
+                    "query": {
+                      "dataprime": {
+                        "dataprimeQuery": {
+                          "text": "source logs\n| filter mode == 'MIGRATION' && log_type == 'migration_summary'\n| filter $p.Runtime == null || $p.Runtime.arrayContains($d.runtime)\n| groupby runtime as $d.Runtime agg count()\n| count into Runtimes"
+                        },
+                        "filters": []
+                      }
+                    },
+                    "min": 0,
+                    "max": 100,
+                    "showInnerArc": false,
+                    "showOuterArc": false,
+                    "unit": "UNIT_NUMBER",
+                    "thresholds": [
+                      {
+                        "from": 0,
+                        "color": "var(--c-severity-log-verbose)"
+                      }
+                    ],
+                    "dataModeType": "DATA_MODE_TYPE_HIGH_UNSPECIFIED",
+                    "thresholdBy": "THRESHOLD_BY_BACKGROUND",
+                    "decimal": 2,
+                    "thresholdType": "THRESHOLD_TYPE_RELATIVE",
+                    "legend": {
+                      "isVisible": true,
+                      "columns": [],
+                      "groupByQuery": true,
+                      "placement": "LEGEND_PLACEMENT_AUTO"
+                    },
+                    "legendBy": "LEGEND_BY_GROUPS",
+                    "displaySeriesName": false,
+                    "decimalPrecision": false
+                  }
+                }
+              },
+              {
+                "id": {
+                  "value": "c1b6087e-4a8f-4e7f-b79e-013f57b6adb4"
+                },
+                "title": "Successful Synchronizations",
+                "definition": {
+                  "gauge": {
+                    "query": {
+                      "dataprime": {
+                        "dataprimeQuery": {
+                          "text": "source logs\n| filter mode == 'MIGRATION' && log_type == 'migration_summary' && failed_services <1\n| filter $p.Runtime == null || $p.Runtime.arrayContains($d.runtime)\n| groupby runtime agg count()\n| count into Successful_Runtimes"
+                        },
+                        "filters": []
+                      }
+                    },
+                    "min": 0,
+                    "max": 100,
+                    "showInnerArc": false,
+                    "showOuterArc": false,
+                    "unit": "UNIT_NUMBER",
+                    "thresholds": [
+                      {
+                        "from": 0,
+                        "color": "var(--c-severity-log-error)"
+                      },
+                      {
+                        "from": 1,
+                        "color": "var(--c-severity-log-verbose)"
+                      }
+                    ],
+                    "dataModeType": "DATA_MODE_TYPE_HIGH_UNSPECIFIED",
+                    "thresholdBy": "THRESHOLD_BY_BACKGROUND",
+                    "decimal": 2,
+                    "thresholdType": "THRESHOLD_TYPE_ABSOLUTE",
+                    "legend": {
+                      "isVisible": true,
+                      "columns": [],
+                      "groupByQuery": true,
+                      "placement": "LEGEND_PLACEMENT_AUTO"
+                    },
+                    "legendBy": "LEGEND_BY_GROUPS",
+                    "displaySeriesName": false,
+                    "decimalPrecision": false
+                  }
+                }
+              },
+              {
+                "id": {
+                  "value": "25253653-0df2-43be-b86f-24776b5f8864"
+                },
+                "title": "Failed Synchronizations",
+                "definition": {
+                  "gauge": {
+                    "query": {
+                      "dataprime": {
+                        "dataprimeQuery": {
+                          "text": "source logs\n| filter mode == 'MIGRATION' && log_type == 'migration_summary' && failed_services >0\n| filter $p.Runtime == null || $p.Runtime.arrayContains($d.runtime)\n| groupby runtime agg count()\n| count into Successful_Runtimes"
+                        },
+                        "filters": []
+                      }
+                    },
+                    "min": 0,
+                    "max": 100,
+                    "showInnerArc": false,
+                    "showOuterArc": false,
+                    "unit": "UNIT_NUMBER",
+                    "thresholds": [
+                      {
+                        "from": 0,
+                        "color": "var(--c-severity-log-verbose)"
+                      },
+                      {
+                        "from": 1,
+                        "color": "var(--c-severity-log-error)"
+                      }
+                    ],
+                    "dataModeType": "DATA_MODE_TYPE_HIGH_UNSPECIFIED",
+                    "thresholdBy": "THRESHOLD_BY_BACKGROUND",
+                    "decimal": 2,
+                    "thresholdType": "THRESHOLD_TYPE_ABSOLUTE",
+                    "legend": {
+                      "isVisible": true,
+                      "columns": [],
+                      "groupByQuery": true,
+                      "placement": "LEGEND_PLACEMENT_AUTO"
+                    },
+                    "legendBy": "LEGEND_BY_GROUPS",
+                    "displaySeriesName": false,
+                    "decimalPrecision": false
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "id": {
+              "value": "0fa8af01-e772-45fc-a195-f00042b24175"
+            },
+            "appearance": {
+              "height": 15
+            },
+            "widgets": [
+              {
+                "id": {
+                  "value": "3281f2e2-dfda-4f8e-86bb-16a0881c47e4"
+                },
+                "title": "Overall Migration Summary",
+                "definition": {
+                  "dataTable": {
+                    "query": {
+                      "dataprime": {
+                        "dataprimeQuery": {
+                          "text": "source logs\n| filter mode == 'MIGRATION' && log_type == 'migration_summary'\n| filter $p.Runtime == null || $p.Runtime.arrayContains($d.runtime)\n| groupby runtime as Runtime_ID,failed_services as Failed_Services, total_services as Total_Services, success_rate as Success_Rate"
+                        },
+                        "filters": []
+                      }
+                    },
+                    "resultsPerPage": 100,
+                    "rowStyle": "ROW_STYLE_ONE_LINE",
+                    "columns": [
+                      {
+                        "field": "$d.Runtime_ID",
+                        "width": 268
+                      },
+                      {
+                        "field": "$d.Failed_Services",
+                        "width": 200
+                      },
+                      {
+                        "field": "$d.Total_Services",
+                        "width": 153
+                      },
+                      {
+                        "field": "$d.Success_Rate",
+                        "width": 200
+                      }
+                    ],
+                    "dataModeType": "DATA_MODE_TYPE_HIGH_UNSPECIFIED"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "id": {
+              "value": "7d1ec332-6b6e-41c5-9360-22c1aea16650"
+            },
+            "appearance": {
+              "height": 8
+            },
+            "widgets": [
+              {
+                "id": {
+                  "value": "891115a4-cbc9-4fee-a52a-0341c1fbaad0"
+                },
+                "title": "New Markdown",
+                "definition": {
+                  "markdown": {
+                    "markdownText": "# Status of synchronizations per Service"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "id": {
+              "value": "85717995-ecf8-4e67-ad34-0f3207b7bd20"
+            },
+            "appearance": {
+              "height": 19
+            },
+            "widgets": [
+              {
+                "id": {
+                  "value": "f42066d1-12c7-4f78-ad3c-aa493481911c"
+                },
+                "title": "Success Count",
+                "definition": {
+                  "gauge": {
+                    "query": {
+                      "dataprime": {
+                        "dataprimeQuery": {
+                          "text": "source logs\n| filter $d.mode ~ 'MIGRATION' && $d.log_type ~ 'service_detail'\n| filter $p.Runtime == null || $p.Runtime.arrayContains($d.runtime)\n| filter $d.status == 'success'\n| groupby status agg count()"
+                        },
+                        "filters": []
+                      }
+                    },
+                    "min": 0,
+                    "max": 100,
+                    "showInnerArc": false,
+                    "showOuterArc": false,
+                    "unit": "UNIT_NUMBER",
+                    "thresholds": [
+                      {
+                        "from": 0,
+                        "color": "var(--c-severity-log-verbose)"
+                      }
+                    ],
+                    "dataModeType": "DATA_MODE_TYPE_HIGH_UNSPECIFIED",
+                    "thresholdBy": "THRESHOLD_BY_BACKGROUND",
+                    "decimal": 2,
+                    "thresholdType": "THRESHOLD_TYPE_RELATIVE",
+                    "legend": {
+                      "isVisible": true,
+                      "columns": [],
+                      "groupByQuery": true,
+                      "placement": "LEGEND_PLACEMENT_AUTO"
+                    },
+                    "legendBy": "LEGEND_BY_GROUPS",
+                    "displaySeriesName": false,
+                    "decimalPrecision": false
+                  }
+                }
+              },
+              {
+                "id": {
+                  "value": "e498cf47-8be7-498d-bca4-ac6b531b5468"
+                },
+                "title": "Failure Count",
+                "definition": {
+                  "gauge": {
+                    "query": {
+                      "dataprime": {
+                        "dataprimeQuery": {
+                          "text": "source logs\n| filter $d.mode ~ 'MIGRATION' && $d.log_type ~ 'service_detail'\n| filter $p.Runtime == null || $p.Runtime.arrayContains($d.runtime)\n| filter $d.status == 'failed'\n| groupby status agg count()"
+                        },
+                        "filters": []
+                      }
+                    },
+                    "min": 0,
+                    "max": 100,
+                    "showInnerArc": false,
+                    "showOuterArc": false,
+                    "unit": "UNIT_NUMBER",
+                    "thresholds": [
+                      {
+                        "from": 0,
+                        "color": "var(--c-severity-log-error)"
+                      }
+                    ],
+                    "dataModeType": "DATA_MODE_TYPE_HIGH_UNSPECIFIED",
+                    "thresholdBy": "THRESHOLD_BY_BACKGROUND",
+                    "decimal": 2,
+                    "thresholdType": "THRESHOLD_TYPE_RELATIVE",
+                    "legend": {
+                      "isVisible": true,
+                      "columns": [],
+                      "groupByQuery": true,
+                      "placement": "LEGEND_PLACEMENT_AUTO"
+                    },
+                    "legendBy": "LEGEND_BY_GROUPS",
+                    "displaySeriesName": false,
+                    "decimalPrecision": false
+                  }
+                }
+              },
+              {
+                "id": {
+                  "value": "b6be5c99-e629-4755-a091-5e459c7accab"
+                },
+                "title": "Success vs Failure",
+                "definition": {
+                  "pieChart": {
+                    "query": {
+                      "dataprime": {
+                        "dataprimeQuery": {
+                          "text": "source logs\n| filter $d.mode ~ 'MIGRATION' && $d.log_type ~ 'service_detail'\n| filter $p.Runtime == null || $p.Runtime.arrayContains($d.runtime)\n| groupby status agg count()"
+                        },
+                        "filters": [],
+                        "groupNames": [
+                          "status"
+                        ]
+                      }
+                    },
+                    "maxSlicesPerChart": 8,
+                    "minSlicePercentage": 1,
+                    "stackDefinition": {
+                      "maxSlicesPerStack": 4
+                    },
+                    "labelDefinition": {
+                      "labelSource": "LABEL_SOURCE_INNER",
+                      "isVisible": true,
+                      "showName": true,
+                      "showValue": true,
+                      "showPercentage": true
+                    },
+                    "showLegend": true,
+                    "unit": "UNIT_UNSPECIFIED",
+                    "colorScheme": "classic",
+                    "dataModeType": "DATA_MODE_TYPE_HIGH_UNSPECIFIED",
+                    "decimal": 2,
+                    "legend": {
+                      "isVisible": true,
+                      "columns": [],
+                      "groupByQuery": true,
+                      "placement": "LEGEND_PLACEMENT_AUTO"
+                    },
+                    "hashColors": false,
+                    "decimalPrecision": false,
+                    "showTotal": false
+                  }
+                }
+              },
+              {
+                "id": {
+                  "value": "ae2422fc-3bb9-4a43-a66c-a69a10a131f1"
+                },
+                "title": "Failed Services",
+                "definition": {
+                  "dataTable": {
+                    "query": {
+                      "dataprime": {
+                        "dataprimeQuery": {
+                          "text": "source logs\n| filter log_type == 'failed_services'\n| filter $p.Runtime == null || $p.Runtime.arrayContains($d.runtime)\n| explode  failed_service_names into failedservices | distinct  failedservices as Failed_Services"
+                        },
+                        "filters": []
+                      }
+                    },
+                    "resultsPerPage": 100,
+                    "rowStyle": "ROW_STYLE_ONE_LINE",
+                    "columns": [
+                      {
+                        "field": "$d.Failed_Services"
+                      }
+                    ],
+                    "dataModeType": "DATA_MODE_TYPE_HIGH_UNSPECIFIED"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "id": {
+              "value": "6c100b2c-066c-4b3f-b1ee-c7c9b74a7e2f"
+            },
+            "appearance": {
+              "height": 19
+            },
+            "widgets": [
+              {
+                "id": {
+                  "value": "6ede86f7-5bc9-4eb1-876d-8d9c45a4a8a6"
+                },
+                "title": "Success vs Failures per service",
+                "definition": {
+                  "horizontalBarChart": {
+                    "query": {
+                      "dataprime": {
+                        "dataprimeQuery": {
+                          "text": "source logs\n| filter $d.mode ~ 'MIGRATION' && $d.log_type ~ 'service_detail'\n| filter $p.Runtime == null || $p.Runtime.arrayContains($d.runtime)\n| groupby status, service agg count()"
+                        },
+                        "filters": [],
+                        "groupNames": [
+                          "status"
+                        ],
+                        "stackedGroupName": "service"
+                      }
+                    },
+                    "maxBarsPerChart": 39,
+                    "stackDefinition": {
+                      "maxSlicesPerBar": 16
+                    },
+                    "scaleType": "SCALE_TYPE_LINEAR",
+                    "colorsBy": {
+                      "stack": {}
+                    },
+                    "unit": "UNIT_UNSPECIFIED",
+                    "displayOnBar": true,
+                    "yAxisViewBy": {
+                      "category": {}
+                    },
+                    "sortBy": "SORT_BY_TYPE_VALUE",
+                    "colorScheme": "classic",
+                    "dataModeType": "DATA_MODE_TYPE_HIGH_UNSPECIFIED",
+                    "decimal": 2,
+                    "legend": {
+                      "isVisible": true,
+                      "columns": [],
+                      "groupByQuery": true,
+                      "placement": "LEGEND_PLACEMENT_AUTO"
+                    },
+                    "hashColors": false,
+                    "decimalPrecision": false
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "id": {
+              "value": "6ad2867f-2b13-4e5f-8dac-e15d1d2a3169"
+            },
+            "appearance": {
+              "height": 19
+            },
+            "widgets": [
+              {
+                "id": {
+                  "value": "07b81a1c-eb26-413a-ae76-ba283d36ecc7"
+                },
+                "title": "Service Migration Summary",
+                "definition": {
+                  "dataTable": {
+                    "query": {
+                      "dataprime": {
+                        "dataprimeQuery": {
+                          "text": "source logs | filter mode == 'MIGRATION' && log_type == 'service_detail' \n| filter $p.Runtime == null || $p.Runtime.arrayContains($d.runtime)\n| groupby  service as Service,teama_count as TeamA,teamb_before as TeamB_before, teamb_after as TeamB_after,status as Status,success_rate as Success_Rate"
+                        },
+                        "filters": []
+                      }
+                    },
+                    "resultsPerPage": 100,
+                    "rowStyle": "ROW_STYLE_ONE_LINE",
+                    "columns": [
+                      {
+                        "field": "$d.Service"
+                      },
+                      {
+                        "field": "$d.TeamA"
+                      },
+                      {
+                        "field": "$d.TeamB_before"
+                      },
+                      {
+                        "field": "$d.TeamB_after"
+                      },
+                      {
+                        "field": "$d.Status"
+                      },
+                      {
+                        "field": "$d.Success_Rate"
+                      }
+                    ],
+                    "dataModeType": "DATA_MODE_TYPE_HIGH_UNSPECIFIED"
+                  }
+                }
+              }
+            ]
+          }
+        ],
+        "options": {
+          "internal": {}
+        }
+      }
+    ]
+  },
+  "variables": [],
+  "variablesV2": [
+    {
+      "name": "Runtime",
+      "displayName": "Runtime",
+      "description": "Each DRS execution generates one runtime",
+      "displayType": "VARIABLE_DISPLAY_TYPE_V2_LABEL_VALUE",
+      "source": {
+        "query": {
+          "logsQuery": {
+            "type": {
+              "fieldValue": {
+                "observationField": {
+                  "keypath": [
+                    "runtime"
+                  ],
+                  "scope": "DATASET_SCOPE_USER_DATA"
+                }
+              }
+            }
+          },
+          "valuesOrderDirection": "ORDER_DIRECTION_ASC",
+          "refreshStrategy": "REFRESH_STRATEGY_UNSPECIFIED",
+          "valueDisplayOptions": {},
+          "allOption": {
+            "includeAll": true
+          }
+        }
+      },
+      "value": {
+        "multiString": {
+          "all": {}
+        }
+      },
+      "displayFullRow": false
+    }
+  ],
+  "filters": [],
+  "relativeTimeFrame": "86400s",
+  "annotations": [],
+  "off": {},
+  "actions": []
+}
