@@ -206,7 +206,7 @@ def run_all_services(config: Config, logger, dry_run: bool = False, force: bool 
     """Run migration for all services with meaningful separation."""
     all_services = [
         'parsing-rules', 'recording-rules',  'general-enrichments', 'events2metrics',
-         'views', 'custom-actions', 'slo'
+         'views', 'custom-actions', 'slo', 'custom-dashboards', 'grafana-dashboards',  'tco'
     ]
 
     # Filter out excluded services
